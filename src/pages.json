@@ -1,6 +1,13 @@
 {
 	"pages": [
 		{
+			"path": "pages/learnData/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "学习数据"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "安全生产网络培训平台"
@@ -15,7 +22,7 @@
 		{
 			"path": "pages/study/index",
 			"style": {
-				"navigationBarTitleText": "安全生产网络培训平台"	
+				"navigationBarTitleText": "安全生产网络培训平台"
 			}
 		},
 		{
