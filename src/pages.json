@@ -29,6 +29,12 @@
 			"style": {
 				"navigationBarTitleText": "测试"
 			}
+		},
+		{
+			"path": "pages/search/index",
+			"style": {
+				"navigationBarTitleText": "搜索"
+			}
 		}
 	],
 	"tabBar": {
@@ -39,26 +45,26 @@
 		"list": [
 			{
 				"pagePath": "pages/index/index",
-				"iconPath": "static/logo.png",
-				"selectedIconPath": "static/logo.png",
+				"iconPath": "static/tabbar/home.png",
+				"selectedIconPath": "static/tabbar/home_active.png",
 				"text": "首页"
 			},
 			{
 				"pagePath": "pages/study/index",
-				"iconPath": "static/logo.png",
-				"selectedIconPath": "static/logo.png",
+				"iconPath": "static/tabbar/video.png",
+				"selectedIconPath": "static/tabbar/video_active.png",
 				"text": "学习"
 			},
 			{
 				"pagePath": "pages/examination/index",
-				"iconPath": "static/logo.png",
-				"selectedIconPath": "static/logo.png",
+				"iconPath": "static/tabbar/examination.png",
+				"selectedIconPath": "static/tabbar/examination_avtive.png",
 				"text": "考试"
 			},
 			{
 				"pagePath": "pages/user/index",
-				"iconPath": "static/logo.png",
-				"selectedIconPath": "static/logo.png",
+				"iconPath": "static/tabbar/user.png",
+				"selectedIconPath": "static/tabbar/user_active.png",
 				"text": "我的"
 			}
 		]

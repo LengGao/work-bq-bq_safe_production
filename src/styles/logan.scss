@@ -20,6 +20,7 @@ $text-color-inverse: #fff;//反色
 $text-color-grey: #999;//辅助灰色，如加载更多的提示信息
 $text-color-placeholder: #808080;
 $text-color-disable: #c0c0c0;
+$text-color-default: #777;  // 选项点击文案色
 
 /* 背景颜色 */
 $bg-color: #ffffff;
@@ -29,6 +30,7 @@ $bg-color-mask: rgba(0, 0, 0, 0.4);//遮罩颜色
 
 /* 边框颜色 */
 $border-color:#c8c7cc;
+$border-color-spacing: #f8f8f8;
 
 /* 尺寸变量 */
 
@@ -93,18 +95,6 @@ $logan-border-spacing: 16rpx solid #f8f8f8;
     flex-direction: column;
 }
 
-.logan-card-body {
-    position: relative;
-    display: flex;
-    flex-basis: 4;
-    flex-direction: row;
-    align-items: center;
-    height: $img-size-height-md; // 同时控制着子元素的高度
-    overflow: hidden;
-    padding: 16rpx 20rpx;
-    box-sizing: content-box;
-}
-
 .logan-card-head {
     display: flex;
     flex-direction: row;
@@ -129,26 +119,12 @@ $logan-border-spacing: 16rpx solid #f8f8f8;
 }
 
 .logan-card-body-left {
+    position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;
     height: 100%;
     width: $img-size-width-md;
-}
-
-.logan-card-body-right {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    height: 100%;
-    overflow: hidden;
-    margin-left: 10rpx;
-}
-
-.logan-card-row-image {
-    width: $img-size-width-md;
-    height: $img-size-height-md;
 }
 
 .logan-card-body-right {
@@ -195,6 +171,12 @@ $logan-border-spacing: 16rpx solid #f8f8f8;
     font-size: $font-size-base;
     color: $text-color-grey;
 }
+
+.logan-card-row-image {
+    width: $img-size-width-md;
+    height: $img-size-height-md;
+}
+
 
 // .card-body-col {
 //     position: relative;
