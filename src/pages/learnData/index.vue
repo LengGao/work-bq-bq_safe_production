@@ -3,14 +3,27 @@
     <view class="learn-data-header">
       <view class="status_bar"></view>
       <view class="nav-bar"
-        ><uni-icons type="back" color="#fff" size="20"></uni-icons>
+        ><uni-icons
+          class="nav-bar-back"
+          type="back"
+          @click="goBack"
+          color="#fff"
+          size="20"
+        ></uni-icons>
         <text class="nav-bar-title">学习数据</text>
       </view>
     </view>
-    <view class="learn-data-select">
-      <uni-icons type="bars" color="#fff" size="20"></uni-icons>
-      <text class="course-name">学习数据</text>
-    </view>
+    <picker
+      @change="bindPickerChange"
+      :value="activeCourseIndex"
+      :range="array"
+    >
+      <view class="learn-data-select">
+        <uni-icons type="bars" color="#fff" size="40rpx"></uni-icons>
+        <text class="course-name">{{ array[activeCourseIndex] }}</text>
+      </view>
+    </picker>
+
     <div class="learn-data-card">
       <div class="learn-data-card-header">
         <div class="learn-data-card-header-title">
@@ -18,7 +31,7 @@
           <uni-icons
             type="paperplane-filled"
             color="#fff"
-            size="20"
+            size="40rpx"
           ></uni-icons>
         </div>
         <div class="learn-data-card-header-tabs">
@@ -36,7 +49,16 @@
           </div>
         </div>
       </div>
-      <div class="learn-data-card-content"></div>
+      <div class="learn-data-card-content">
+        <view class="charts-box">
+          <qiun-data-charts
+            type="column"
+            :tap-legend="false"
+            :chartData="chartData"
+            :opts="chartsOpts"
+          />
+        </view>
+      </div>
     </div>
     <div class="learn-data-card">
       <div class="learn-data-card-header">
@@ -45,7 +67,7 @@
           <uni-icons
             type="paperplane-filled"
             color="#fff"
-            size="20"
+            size="40rpx"
           ></uni-icons>
         </div>
       </div>
@@ -84,13 +106,61 @@
 </template>
 
 <script>
+import qiunDataCharts from "@/uni_modules/components/qiun-data-charts/qiun-data-charts.vue";
 export default {
-  components: {},
+  components: {
+    qiunDataCharts,
+  },
+  data() {
+    return {
+      array: ["一回合或或", "发送范德萨个都", "hgfhgfhgfh", 4, 5],
+      activeCourseIndex: 1,
+      chartsOpts: {
+        legend: {
+          show: false,
+        },
+        extra: {
+          column: {
+            width: 20,
+          },
+        },
+      },
+      chartData: {
+        categories: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+        series: [
+          {
+            name: "目标值",
+            data: [35, 36, 31, 33, 13, 34, 5],
+          },
+        ],
+      },
+    };
+  },
+  methods: {
+    goBack() {
+      uni.navigateBack();
+    },
+    bindPickerChange({ detail }) {
+      this.activeCourseIndex = detail.value;
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
+.picker-view {
+  width: 750rpx;
+  height: 600rpx;
+  margin-top: 20rpx;
+  background-color: red;
+}
+.item {
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
 .learn-data {
   height: 100%;
   padding-bottom: 40rpx;
@@ -101,15 +171,19 @@ export default {
     height: var(--status-bar-height);
     width: 100%;
   }
+
   &-header {
-    padding: 0 20rpx;
     .nav-bar {
       height: 44px;
       font-size: $font-size-base;
       display: flex;
       align-items: center;
       color: #fff;
+      &-back {
+        padding: 0 20rpx;
+      }
       &-title {
+        padding-right: 60rpx;
         margin: 0 auto;
       }
     }
@@ -118,6 +192,9 @@ export default {
     padding: 20rpx;
     display: flex;
     align-items: center;
+    &:active {
+      opacity: 0.8;
+    }
     .course-name {
       color: #fff;
       margin-left: 17rpx;
@@ -158,6 +235,9 @@ export default {
       border-bottom-left-radius: 12rpx;
       border-bottom-right-radius: 12rpx;
       background-color: #fff;
+      .charts-box {
+        height: 380rpx;
+      }
       &.block {
         display: flex;
         flex-wrap: wrap;
