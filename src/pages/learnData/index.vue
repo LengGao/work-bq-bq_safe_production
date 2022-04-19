@@ -131,7 +131,7 @@ export default {
   padding-bottom: 40rpx;
   background: url("../../static/learn-data-bc.png") no-repeat;
   background-size: 100% 686rpx;
-  font-size: $font-size-base;
+  font-size: $uni-font-size-base;
   .status_bar {
     height: var(--status-bar-height);
     width: 100%;
@@ -140,7 +140,7 @@ export default {
   &-header {
     .nav-bar {
       height: 44px;
-      font-size: $font-size-base;
+      font-size: $uni-font-size-base;
       display: flex;
       align-items: center;
       color: #fff;
@@ -163,7 +163,7 @@ export default {
     .course-name {
       color: #fff;
       margin-left: 17rpx;
-      font-size: $font-size-base;
+      font-size: $uni-font-size-base;
     }
   }
   &-card {
@@ -179,7 +179,7 @@ export default {
       &-title {
         display: flex;
         justify-content: space-between;
-        font-size: $font-size-lg;
+        font-size: $uni-font-size-lg;
       }
       &-tabs {
         padding-top: 20rpx;
