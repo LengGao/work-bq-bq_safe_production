@@ -126,18 +126,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
-.picker-view {
-  width: 750rpx;
-  height: 600rpx;
-  margin-top: 20rpx;
-  background-color: red;
-}
-.item {
-  height: 50px;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
 .learn-data {
   height: 100%;
   padding-bottom: 40rpx;
