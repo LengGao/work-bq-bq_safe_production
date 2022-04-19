@@ -154,7 +154,7 @@ $padding: 16rpx 20rpx;
 
 .course-bar {
   padding: 24rpx 0;
-  border-top: $logan-border-spacing;
+  border-top: $logan-border-spacing-md;
 
   .logan-card-right-center {
     margin-top: 8rpx;

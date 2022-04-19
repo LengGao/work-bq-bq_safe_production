@@ -2,13 +2,13 @@
   <view class="card-row">
     <view class="card-body">
       <slot name="cardBodyLeft">
-        <view class="card-body-left">
+        <view class="card-body-left" @click="onClickLeft">
           <image @load="onLoadImage" @errr="onerrorImagee" class="card-row-image" :src="leftImage || errorImage"
                  mode="aspectFit" webp />
         </view>
       </slot>
       <slot name="cardBodyRight">
-        <view class="card-body-right">
+        <view class="card-body-right" @click="onClickRight">
           <view class="card-right-top">
             <slot name="rightTop"> {{ rightTop }} </slot>
           </view>
@@ -52,6 +52,14 @@ export default {
   mounted() {
   },
   methods: {
+    // 点击左槽
+    onClickLeft() {
+      this.$emit('clickLeft')
+    },
+    // 点击右槽
+    onClickRight() {
+      this.$emit('clickRight')
+    },
     // 图片加载成功
     onLoadImage() {
       console.log('onLoadImage', arguments);
@@ -70,6 +78,7 @@ export default {
 
 .card-row {
   position: relative;
+  border-top: 2rpx solid #f8f8f8;;
 }
 
 .card-body {
@@ -78,8 +87,8 @@ export default {
   flex-basis: 4;
   flex-direction: row;
   align-items: center;
-  height: $img-size-height-md; // 同时控制着子元素的高度
   overflow: hidden;
+  height: calc($img-size-height-md + 60rpx); // 同时控制着子元素的高度
   padding: 16rpx 20rpx;
   box-sizing: content-box;
 }
@@ -89,6 +98,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+  flex: 1;
   height: 100%;
   width: $img-size-width-md;
 }
@@ -101,9 +111,9 @@ export default {
 .card-body-right {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: flex-start;
-  flex: 3;
+  flex-grow: 3;
   height: 100%;
   overflow: hidden;
   margin-left: 20rpx;
@@ -115,7 +125,7 @@ export default {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  flex: 0 1 1;
+  flex: 1 1 1;
   width: 100%;
   color: $text-color;
 }
@@ -125,8 +135,9 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  flex: 2 1 0;
+  flex: 1 1 1;
   width: 100%;
+  font-size: $font-size-sm;
   color: $text-color-grey;
 }
 
@@ -135,8 +146,9 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  flex: 0 1 1;
+  flex: 2 1 1;
   width: 100%;
+  font-size: $font-size-sm;
   color: $text-color-grey;
 }
 </style>

@@ -72,7 +72,7 @@ export default {
 }
 
 .examinationcard-bar {
-  border-top: $logan-border-spacing;
+  border-top: $logan-border-spacing-md;
   padding: 16rpx 20rpx;
 }
 

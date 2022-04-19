@@ -14,7 +14,7 @@
     <view class="swiper-bar">
       <swiper @change="onChangeSwiper" :interval="2000" autoplay circular disable-touch class="swiper">
         <swiper-item v-for="swiper in swipers" :key="swiper.id" :current-item-id="swiper.id" class="swiper-item">
-          <image :src="swiper.thumb" class="swiper-image" mode="aspectFit" />
+          <image :src="swiper.thumb" class="swiper-image" mode="aspectFit" @click="onClickSwiperImg" />
         </swiper-item>
       </swiper>
     </view>
@@ -22,13 +22,14 @@
     <view class="business-bar">
       <view class="business-head">
         <view class="business-head-left">安全生产</view>
-        <view class="business-head-right">
+        <view class="business-head-right" @click="() => onClickAll(1)">
           <text>全部</text>
           <uni-icons type="forward" size="32rpx" />
         </view>
       </view>
       <view class="business">
-        <view v-for="business in businesses" :key="business.id" :class="'block ' + business.type">
+        <view v-for="business in businesses" :key="business.id" @click="() => onClickCource(business.id)"
+              :class="'block ' + business.type">
           <text class="business-text"> {{ business.title }} </text>
         </view>
       </view>
@@ -37,7 +38,7 @@
     <view class="course-bar">
       <view class="logan-list-head">
         <view class="logan-list-head-left">推荐课程</view>
-        <view class="logan-list-head-right">
+        <view class="logan-list-head-right" @click="() => onClickAll(2)">
           <text>全部</text>
           <uni-icons type="forward" size="32rpx" />
         </view>
@@ -51,7 +52,7 @@
             </view>
           </template>
           <template v-slot:cardBodyRight>
-            <view class="logan-card-body-right">
+            <view class="logan-card-body-right" @click="() => onClickRecommend()">
               <view class="logan-card-right-top">
                 <text>{{ course.title }}</text>
               </view>
@@ -63,8 +64,8 @@
                     <text class="present-price">￥{{ course.money }}</text>
                     <text class="original-price">{{ course.oldMoney }}</text>
                   </view>
-                  <uni-tag v-else custom-style="position: relative; bottom: 4rpx; font-size: 12rpx;" type="warning"
-                           text="免费" inverted />
+                  <uni-tag v-else custom-style="position: relative; bottom: 8rpx; font-size: 24rpx;" type="warning"
+                           size="small" text="免费" inverted />
                 </view>
               </view>
             </view>
@@ -76,16 +77,16 @@
     <view class="policy-bar">
       <view class="logan-list-head">
         <view class="logan-list-head-left">政策专栏</view>
-        <view class="logan-list-head-right">
+        <view class="logan-list-head-right" @click="() => onClickAll(3)">
           <text>全部</text>
           <uni-icons type="forward" size="32rpx" />
         </view>
       </view>
 
       <view class="policy-swiper">
-        <swiper @change="onChangeSwiper" :display-multiple-items="3" :autoplay="false" circular>
+        <swiper @change="onChangeSwiper" :display-multiple-items="3" :autoplay="false" circular class="swiper">
           <swiper-item v-for="policy in policys" :key="policy.id" :current-item-id="policy.id">
-            <view class="swiper-item-box">
+            <view class="swiper-item-box" @click="() => onClickPolicy()">
               <image :src="policy.thumb" class="swiper-image" mode="aspectFit" />
               <view class="swiper-text">{{ policy.title }}</view>
             </view>
@@ -97,14 +98,15 @@
     <view class="library-bar">
       <view class="logan-list-head">
         <view class="logan-list-head-left">文库资料</view>
-        <view class="logan-list-head-right">
+        <view class="logan-list-head-right" @click="onClickAll(4)">
           <text>全部</text>
           <uni-icons type="forward" size="32rpx" />
         </view>
       </view>
 
       <view class="library-list">
-        <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.thumb" :rightFooter="library.time">
+        <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.thumb" :rightFooter="library.time"
+                 @clickRight="() => onClickLibrary()">
           <template v-slot:rightTop>
             <view class="logan-card-right-top">
               <uni-icons type="wallet" size="32rpx" color="#dd524d" />
@@ -175,16 +177,25 @@ export default {
       // 轮播
       swipers: [
         { id: 1, thumb: '/static/img/index_swiper.png', url: "" },
+        { id: 2, thumb: '/static/img/index_swiper.png', url: "" }
       ],
     };
   },
   created() {
     console.log("加载了", moment({}).format());
   },
+  onReachBottom() {
+    console.log("到底了");
+  },
   methods: {
-    // 打开搜索页面
-    onOpenSearch() {
-      uni.navigateTo({ url: '/pages/search/index' })
+    // 点击筛选
+    onOpenFilter() {
+      console.log(this.$refs.popup);
+      this.$refs.popup.open('top')
+    },
+    // 关闭筛选
+    onCloseFilter() {
+      this.$refs.popup.close()
     },
     // 地区选择
     onChangeRegion({ index, checked }) {
@@ -194,27 +205,53 @@ export default {
       if (pre !== -1) { this.regions[pre].checked = false }
       this.regions[index].checked = checked
     },
-    // 点击筛选
-    onOpenFilter() {
-      console.log(this.$refs.popup);
-      this.$refs.popup.open('top')
+    // 打开搜索页面
+    onOpenSearch() {
+      uni.navigateTo({ url: '/pages/search/index' })
     },
-    onCloseFilter() {
-      this.$refs.popup.close()
-    },
+    // 轮播图切换事件 
     onChangeSwiper({ detail }) {
       // console.log("onChangeSwiper", detail);
     },
-    sliderChange() { },
-    goTo() {
-      uni.navigateTo({
-        url: "/pages/test/index",
-      });
+    // 轮播图点击事件
+    onClickSwiperImg() {
+      console.log("onClickSwiperImg");
     },
-  },
-  onReachBottom() {
-    console.log("到底了");
-  },
+    // 查看全部
+    onClickAll(type) {
+      console.log('onClickAll');
+      switch (type) {
+        case 1: break;
+        case 2: break;
+        case 3: break;
+        case 4: break;
+      }
+    },
+    // 点击安全生产课程
+    onClickCource(type) {
+      console.log('onClickCource');
+      switch (type) {
+        case 1: break;
+        case 2: break;
+        case 3: break;
+      }
+    },
+    // 点击推荐课程
+    onClickRecommend() {
+      console.log('onClickRecommend');
+    },
+    // 点击政策栏
+    onClickPolicy() {
+      console.log('onClickPolicy');
+    },
+    // 点击资料
+    onClickLibrary() {
+      console.log('onClickLibrary');
+    },
+    // 数据获取
+    getData() {
+    },
+  }, // methods end
 };
 </script>
 
@@ -259,7 +296,7 @@ $padding-lr: 20rpx;
     width: 710rpx;
     height: 280rpx; // 同时控制着轮播图
   }
-  
+
   .swiper-image {
     width: 100%;
     height: 100%;
@@ -279,9 +316,9 @@ $padding-lr: 20rpx;
     margin: 16rpx 0;
     font-size: $font-size-base;
     color: $text-color-inverse;
-    
+
     &-text {
-      display: inline-block;;
+      display: inline-block;
       margin: 40rpx 40rpx 0 20rpx;
     }
 
@@ -292,19 +329,19 @@ $padding-lr: 20rpx;
     }
 
     .one {
-      background-image: url('/static/img/index_bg_business1.png');
+      background-image: url("/static/img/index_bg_business1.png");
       background-size: 100% 100%;
     }
 
     .two {
       margin-left: 24rpx;
-      background-image: url('/static/img/index_bg_business2.png');
+      background-image: url("/static/img/index_bg_business2.png");
       background-size: 100% 100%;
     }
 
     .three {
       margin-left: 24rpx;
-      background-image: url('/static/img/index_bg_business3.png');
+      background-image: url("/static/img/index_bg_business3.png");
       background-size: 100% 100%;
     }
   }
@@ -330,15 +367,15 @@ $padding-lr: 20rpx;
 
 .course-bar {
   padding: 24rpx 0;
-  border-top: $logan-border-spacing;
+  border-top: $logan-border-spacing-md;
 
   .logan-card-right-center {
-    margin-top: 8rpx;
+    font-size: $font-size-sm;
   }
 
   .logan-card-right-footer {
     align-items: baseline;
-    font-size: $font-size-base;
+    font-size: $font-size-sm;
   }
 
   .audience {
@@ -359,11 +396,17 @@ $padding-lr: 20rpx;
 
 .policy-bar {
   padding: 24rpx 0;
-  border-top: $logan-border-spacing;
+  border-top: $logan-border-spacing-md;
 }
 
 .policy-swiper {
-  padding: $padding-tb $padding-lr;
+  padding: 0 $padding-lr;
+  border: $logan-border-spacing-md-sm;
+
+  .swiper {
+    padding: 16rpx 0rpx;
+    height: 200rpx;
+  }
 
   .swiper-item-box {
     display: flex;
@@ -372,10 +415,11 @@ $padding-lr: 20rpx;
     flex-wrap: nowrap;
     width: $img-size-width-sm;
     height: 100%;
+    color: $text-color;
 
     .swiper-image {
-      width: $img-size-width-sm;
-      height: $img-size-height-sm;
+      width: $img-size-width-md;
+      height: $img-size-height-md;
     }
 
     .swiper-text {
@@ -383,7 +427,7 @@ $padding-lr: 20rpx;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      margin-top: 24rpx;
+      margin-top: 16rpx;
       font-size: $font-size-base;
     }
   }
@@ -391,7 +435,8 @@ $padding-lr: 20rpx;
 
 .library-bar {
   padding: 24rpx 0;
-  border-top: $logan-border-spacing;
+  border-top: $logan-border-spacing-md;
+
   .library-text {
     margin-left: 8rpx;
   }
