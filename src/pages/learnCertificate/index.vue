@@ -28,7 +28,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/logan.scss";
 .learn-certificate {
   box-sizing: border-box;
   min-height: calc(100vh - 44px);

@@ -125,7 +125,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/styles/logan.scss";
 .learn-data {
   height: 100%;
   padding-bottom: 40rpx;
