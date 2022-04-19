@@ -3,6 +3,7 @@
 		{
 			"path": "pages/learnReport/index",
 			"style": {
+				"navigationStyle": "custom",
 				"navigationBarTitleText": "学习报告"
 			}
 		},
