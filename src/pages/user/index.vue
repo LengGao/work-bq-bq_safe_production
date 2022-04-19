@@ -108,7 +108,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
-$page-padding: 0 20rpx;
+$page-padding: 0rpx 20rpx;
 
 .user {
     position: static;
@@ -141,7 +141,7 @@ $page-padding: 0 20rpx;
     position: relative;
     top: -60rpx;
     margin: 0 40rpx;
-    padding: 16rpx 0;
+    padding: 16rpx 0rpx;
     background-color: #fff;
     border-bottom: 2rpx solid $color-primary;
     border-radius: 24rpx;
