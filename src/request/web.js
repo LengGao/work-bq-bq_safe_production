@@ -1,8 +1,8 @@
-import {combineURLs, isAbsoluteURL } from './utils'
+import { combineURLs, isAbsoluteURL } from './utils'
 
 
-const GLOBAL            =             uni,
-      BASE_URL          =             process.env.VUE_APP_BASE_API;
+const GLOBAL = uni,
+    BASE_URL = process.env.VUE_APP_BASE_API;
 
 
 class Http {
@@ -16,7 +16,7 @@ class Http {
         this.$config = {
             dataType: 'json',
             responseTtype: 'json',
-            header: { 
+            header: {
                 // "X-Token": '1111'
                 'content-type': 'application/json; charset=utf8'
             }
@@ -29,7 +29,7 @@ class Http {
         this.responseInterceptors = []
         this.errInterceptors = []
     }
-    
+
     __defaultInterceptr() {
         const tipsRequest = (data, config) => {
             if (config.loading) {
@@ -37,7 +37,7 @@ class Http {
             } else if (config.toast) {
                 GLOBAL.showToast(config.toast)
             } else {
-                return;1
+                return; 1
             }
         }
 
@@ -50,7 +50,7 @@ class Http {
             }
             return;
         }
-        
+
         const tipsError = (data, config) => {
             console.log('tipsError', data, config);
             if (config.loading) {
@@ -60,7 +60,7 @@ class Http {
             } else {
                 return;
             }
-        } 
+        }
 
         this.requestInterceptorsInject(tipsRequest)
         this.responseInterceptorsInject(tipsRespone)
@@ -73,7 +73,7 @@ class Http {
      */
     request(options) {
         let { url, data, header } = options
-        
+
         if (!isAbsoluteURL(url)) { url = BASE_URL + url }
         header = this.mergConfig(this.$config.header, header)
 
@@ -105,12 +105,12 @@ class Http {
     mergConfig(target, source) {
         return Object.assign(target, source)
     }
-    
+
     // 数据转换 
     dataTransform(response) {
         console.log("dataTransform", response);
         let { data } = response
-        if (typeof data === 'string' ) {
+        if (typeof data === 'string') {
             return JSON.parse(data)
         } else {
             return data
@@ -160,8 +160,8 @@ class Http {
     // 取消异常拦截器 
     errorInterceptorsEject(index) {
         this.errInterceptors[index] = undefined
-    } 
-    
+    }
+
     // 执行拦截器
     forEach(arr) {
         let args = Array.prototype.slice.call(arguments, 1)
@@ -172,7 +172,7 @@ class Http {
             }
         } catch (e) {
             console.log("Request error", e);
-        } 
+        }
     }
 
     /**
@@ -189,7 +189,7 @@ class Http {
                 this.forEach(this.responseInterceptors, res, options)
             }
             return GLOBAL.request(options)
-        })        
+        })
     }
 
     // 检查拦截器类型
