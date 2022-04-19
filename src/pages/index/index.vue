@@ -11,9 +11,9 @@
       </view>
     </view>
 
-    <view class="swiper">
-      <swiper @change="onChangeSwiper" :interval="2000" autoplay circular disable-touch>
-        <swiper-item v-for="swiper in swipers" :key="swiper.id" :current-item-id="swiper.id">
+    <view class="swiper-bar">
+      <swiper @change="onChangeSwiper" :interval="2000" autoplay circular disable-touch class="swiper">
+        <swiper-item v-for="swiper in swipers" :key="swiper.id" :current-item-id="swiper.id" class="swiper-item">
           <image :src="swiper.thumb" class="swiper-image" mode="aspectFit" />
         </swiper-item>
       </swiper>
@@ -29,7 +29,7 @@
       </view>
       <view class="business">
         <view v-for="business in businesses" :key="business.id" :class="'block ' + business.type">
-          {{ business.title }}
+          <text class="business-text"> {{ business.title }} </text>
         </view>
       </view>
     </view>
@@ -149,47 +149,22 @@ export default {
         { id: 5, title: '368旅', checked: false },
         { id: 6, title: '太原', checked: false },
         { id: 7, title: '平安县', checked: false },
-        { id: 11, title: '关东关东关东关东', checked: false },
-        { id: 22, title: '关西', checked: false },
-        { id: 33, title: '山西', checked: false },
-        { id: 44, title: '赵家域', checked: false },
-        { id: 55, title: '368旅', checked: false },
-        { id: 66, title: '太原', checked: false },
-        { id: 77, title: '平安县', checked: false },
-        { id: 111, title: '关东关东关东关东', checked: false },
-        { id: 222, title: '关西', checked: false },
-        { id: 333, title: '山西', checked: false },
-        { id: 444, title: '赵家域', checked: false },
-        { id: 555, title: '368旅', checked: false },
-        { id: 666, title: '太原', checked: false },
-        { id: 777, title: '平安县', checked: false },
-        { id: 1111, title: '关东关东关东关东', checked: false },
-        { id: 2222, title: '关西', checked: false },
-        { id: 3333, title: '山西', checked: false },
-        { id: 4444, title: '赵家域', checked: false },
-        { id: 5666, title: '368旅', checked: false },
-        { id: 6666, title: '太原', checked: false },
-        { id: 7777, title: '平安县', checked: false },
-        { id: 8, title: '平安县', checked: false },
-        { id: 88, title: '平安县', checked: false },
-        { id: 888, title: '平安县', checked: false },
-        { id: 8888, title: '平安县', checked: false },
       ],
       // 文库资料
       librarys: [
-        { id: 1, name: "name1", thumb: "../../static/logo.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "2022-03-18 18:30" },
-        { id: 2, name: "name1", thumb: "../../static/logo.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
+        { id: 1, name: "name1", thumb: "/static/img/index_library1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "2022-03-18 18:30" },
+        { id: 2, name: "name1", thumb: "/static/img/index_library2.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
       ],
       // 政策专栏
       policys: [
-        { id: 1, thumb: "../../static/logo.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
-        { id: 2, thumb: "../../static/logo.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
-        { id: 3, thumb: "../../static/logo.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
+        { id: 1, thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
+        { id: 2, thumb: "/static/img/index_policy2.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
+        { id: 3, thumb: "/static/img/index_policy3.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
       ],
       // 推荐课程
       courses: [
-        { id: 1, name: "name1", money: 0, oldMoney: 0, thumb: "../../static/logo.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
-        { id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "../../static/logo.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
+        { id: 1, name: "name1", money: 0, oldMoney: 0, thumb: '/static/img/index_cource1.png', title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
+        { id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource2.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
       ],
       // 业务板块
       businesses: [
@@ -199,9 +174,7 @@ export default {
       ],
       // 轮播
       swipers: [
-        { id: 1, thumb: "../../static/logo.png", url: "" },
-        { id: 2, thumb: "../../static/logo.png", url: "" },
-        { id: 3, thumb: "../../static/logo.png", url: "" },
+        { id: 1, thumb: '/static/img/index_swiper.png', url: "" },
       ],
     };
   },
@@ -279,18 +252,22 @@ $padding-lr: 20rpx;
   }
 }
 
-.swiper {
-  margin: 16rpx 0;
-  background: gold;
+.swiper-bar {
+  padding: 0 20rpx;
 
-  &-image {
+  .swiper {
+    width: 710rpx;
+    height: 280rpx; // 同时控制着轮播图
+  }
+  
+  .swiper-image {
     width: 100%;
     height: 100%;
   }
 }
 
 .business-bar {
-  padding: $padding-tb $padding-lr;
+  padding: 0 $padding-lr 24rpx;
 
   .business {
     display: flex;
@@ -298,31 +275,37 @@ $padding-lr: 20rpx;
     justify-content: space-around;
     align-items: center;
     flex-wrap: nowrap;
-    height: 200rpx;
-    margin: 8rpx 0;
-    font-size: $font-size-md;
-    line-height: 200rpx;
-    text-align: center;
+    height: 184rpx;
+    margin: 16rpx 0;
+    font-size: $font-size-base;
     color: $text-color-inverse;
+    
+    &-text {
+      display: inline-block;;
+      margin: 40rpx 40rpx 0 20rpx;
+    }
 
     .block {
       height: 100%;
       flex: 1;
-      border-radius: 24rpx;
+      border-radius: 12rpx;
     }
 
     .one {
-      background-color: $color-primary;
+      background-image: url('/static/img/index_bg_business1.png');
+      background-size: 100% 100%;
     }
 
     .two {
       margin-left: 24rpx;
-      background-color: $color-warning;
+      background-image: url('/static/img/index_bg_business2.png');
+      background-size: 100% 100%;
     }
 
     .three {
       margin-left: 24rpx;
-      background-color: $color-success;
+      background-image: url('/static/img/index_bg_business3.png');
+      background-size: 100% 100%;
     }
   }
 }

@@ -55,8 +55,8 @@ $img-size-base: 104rpx;
 $img-size-lg: 160rpx;
 $img-size-width-sm: 200rpx;
 $img-size-height-sm: 160rpx;
-$img-size-width-md: 240rpx;
-$img-size-height-md: 200rpx;
+$img-size-width-md: 216rpx;
+$img-size-height-md: 120rpx;
 
 
 /* Border Radius */
@@ -135,7 +135,7 @@ $logan-border-spacing: 16rpx solid #f8f8f8;
     flex: 3;
     height: 100%;
     overflow: hidden;
-    margin-left: 10rpx;
+    margin-left: 20rpx;
     font-size: $font-size-base;
 }
 

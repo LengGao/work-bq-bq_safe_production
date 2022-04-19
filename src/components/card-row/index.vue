@@ -106,7 +106,7 @@ export default {
   flex: 3;
   height: 100%;
   overflow: hidden;
-  margin-left: 10rpx;
+  margin-left: 20rpx;
   font-size: $font-size-base;
 }
 
