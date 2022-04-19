@@ -2,22 +2,12 @@
   <view class="learn-data">
     <view class="learn-data-header">
       <view class="status_bar"></view>
-      <view class="nav-bar"
-        ><uni-icons
-          class="nav-bar-back"
-          type="back"
-          @click="goBack"
-          color="#fff"
-          size="20"
-        ></uni-icons>
+      <view class="nav-bar">
+        <uni-icons class="nav-bar-back" type="back" @click="goBack" color="#fff" size="20"></uni-icons>
         <text class="nav-bar-title">学习数据</text>
       </view>
     </view>
-    <picker
-      @change="bindPickerChange"
-      :value="activeCourseIndex"
-      :range="array"
-    >
+    <picker @change="bindPickerChange" :value="activeCourseIndex" :range="array">
       <view class="learn-data-select">
         <uni-icons type="bars" color="#fff" size="40rpx"></uni-icons>
         <text class="course-name">{{ array[activeCourseIndex] }}</text>
@@ -28,11 +18,7 @@
       <div class="learn-data-card-header">
         <div class="learn-data-card-header-title">
           <div>本周数据</div>
-          <uni-icons
-            type="paperplane-filled"
-            color="#fff"
-            size="40rpx"
-          ></uni-icons>
+          <uni-icons type="paperplane-filled" color="#fff" size="40rpx"></uni-icons>
         </div>
         <div class="learn-data-card-header-tabs">
           <div class="tab-item">
@@ -51,12 +37,7 @@
       </div>
       <div class="learn-data-card-content">
         <view class="charts-box">
-          <qiun-data-charts
-            type="column"
-            :tap-legend="false"
-            :chartData="chartData"
-            :opts="chartsOpts"
-          />
+          <qiun-data-charts type="column" :tap-legend="false" :chartData="chartData" :opts="chartsOpts" />
         </view>
       </div>
     </div>
@@ -64,11 +45,7 @@
       <div class="learn-data-card-header">
         <div class="learn-data-card-header-title">
           <div>累计数据</div>
-          <uni-icons
-            type="paperplane-filled"
-            color="#fff"
-            size="40rpx"
-          ></uni-icons>
+          <uni-icons type="paperplane-filled" color="#fff" size="40rpx"></uni-icons>
         </div>
       </div>
       <div class="learn-data-card-content block">
@@ -149,18 +126,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
-.picker-view {
-  width: 750rpx;
-  height: 600rpx;
-  margin-top: 20rpx;
-  background-color: red;
-}
-.item {
-  height: 50px;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
 .learn-data {
   height: 100%;
   padding-bottom: 40rpx;
@@ -198,6 +163,7 @@ export default {
     .course-name {
       color: #fff;
       margin-left: 17rpx;
+      font-size: $font-size-base;
     }
   }
   &-card {

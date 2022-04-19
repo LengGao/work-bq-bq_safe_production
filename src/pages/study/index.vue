@@ -7,18 +7,10 @@
 
       <view class="header-two">
         <view class="header-two-box" @click="to('../learnData/index')">
-          <image
-            class="header-two-img"
-            :src="defaultImage"
-            mode="scaleToFill"
-          />
+          <image class="header-two-img" :src="defaultImage" mode="scaleToFill" />
         </view>
-        <view class="header-two-box">
-          <image
-            class="header-two-img"
-            :src="defaultImage"
-            mode="scaleToFill"
-          />
+        <view class="header-two-box" @click="to('../learnCertificate/index')">
+          <image class="header-two-img" :src="defaultImage" mode="scaleToFill" />
         </view>
       </view>
     </view>
@@ -33,20 +25,11 @@
       </view>
 
       <view class="courses-list">
-        <CardRow
-          v-for="course in courses"
-          :key="course.id"
-          :leftImage="course.thumb"
-          :rightTop="course.title"
-          :rightFooter="course.time"
-        >
+        <CardRow v-for="course in courses" :key="course.id" :leftImage="course.thumb" :rightTop="course.title"
+                 :rightFooter="course.time">
           <template v-slot:rightFooterIcon>
-            <uni-tag
-              custom-style="position: relative; bottom: 4rpx; font-size: 12rpx;"
-              type="primary"
-              :text="course.tag"
-              inverted
-            />
+            <uni-tag custom-style="position: relative; bottom: 4rpx; font-size: 12rpx;" type="primary"
+                     :text="course.tag" inverted />
           </template>
         </CardRow>
       </view>
