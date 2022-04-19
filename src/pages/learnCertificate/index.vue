@@ -48,18 +48,18 @@ export default {
         content: "";
         width: 8rpx;
         height: 32rpx;
-        background-color: $color-primary;
+        background-color: $uni-color-primary;
         margin-right: 8rpx;
       }
     }
     &-time {
       padding: 14rpx;
-      font-size: $font-size-sm;
+      font-size: $uni-font-size-sm;
       color: #a0a0a0;
     }
     &-save {
       text-align: center;
-      font-size: $font-size-sm;
+      font-size: $uni-font-size-sm;
       color: #a0a0a0;
     }
   }

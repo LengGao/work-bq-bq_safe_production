@@ -7,12 +7,12 @@
     </swiper>
 
     <view class="grids">
-      <uni-grid :column="4" :showBorder="false" @change="onChangeGrid" class="grid">
+      <uni-grid :column="4" :showBorder="false" class="grid">
         <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item">
-          <view class="grid-box">
+          <navigator class="grid-box" :url="grid.url">
             <image :src="grid.thumb" class="grid-image" mode="widthFix" />
             <text class="grid-text">{{ grid.title }}</text>
-          </view>
+          </navigator>
         </uni-grid-item>
       </uni-grid>
     </view>
@@ -41,8 +41,9 @@ export default {
       grids: [
         { id: 1, thumb: "../../static/logo.png", title: "我的课程", url: "" },
         { id: 2, thumb: "../../static/logo.png", title: "我的题库", url: "" },
-        { id: 3, thumb: "../../static/logo.png", title: "我的班级", url: "" },
-        { id: 4, thumb: "../../static/logo.png", title: "我的问答", url: "" }
+        { id: 3, thumb: "../../static/logo.png", title: "学习报告", url: "../learnReport/index" },
+        { id: 4, thumb: "../../static/logo.png", title: "我的班级", url: "" },
+        { id: 5, thumb: "../../static/logo.png", title: "我的问答", url: "" }
       ],
       // 推荐课程
       examinations: [
@@ -82,32 +83,31 @@ export default {
 }
 
 .grids {
-    margin-top: 40rpx;
+  margin-top: 40rpx;
 }
 
 .grid {
-    &-item {
-        flex: 1 1 1;
-    }
+  &-item {
+    flex: 1 1 1;
+  }
 
-    &-box {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
-        height: 100%;
-    }
+  &-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+  }
 
-    &-image {
-        width: 80rpx;
-        height: 80rpx;
-        border-radius: $border-radius-circle;
-    }
+  &-image {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: $border-radius-circle;
+  }
 
-    &-text {
-        margin-top: 10rpx;
-        font-size: $font-size-sm;
-    }
+  &-text {
+    margin-top: 10rpx;
+    font-size: $font-size-sm;
+  }
 }
-
 </style>

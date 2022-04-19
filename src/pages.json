@@ -1,12 +1,6 @@
 {
 	"pages": [
 		{
-			"path": "pages/study/index",
-			"style": {
-				"navigationBarTitleText": "安全生产网络培训平台"
-			}
-		},
-		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "安全生产网络培训平台"
@@ -34,6 +28,13 @@
 			"path": "pages/learnCertificate/index",
 			"style": {
 				"navigationBarTitleText": "学习凭证"
+			}
+		},
+		{
+			"path": "pages/learnReport/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "学习报告"
 			}
 		},
 		{
