@@ -62,7 +62,7 @@ $height: 100rpx;
 .user {
     width: 100%;
     overflow: hidden;
-    color: $color-primary;
+    color: $text-color-inverse;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -76,7 +76,7 @@ $height: 100rpx;
 }
 
 .days {
-    color: #999;
+    color: $text-color-inverse 
 }
 
 </style>
