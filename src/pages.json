@@ -13,27 +13,15 @@
 			}
 		},
 		{
-			"path": "pages/user/index",
-			"style": {
-				"navigationBarTitleText": "安全生产网络培训平台"
-			}
-		},
-		{
-			"path": "pages/study/index",
-			"style": {
-				"navigationBarTitleText": "安全生产网络培训平台"
-			}
-		},
-		{
 			"path": "pages/examination/index",
 			"style": {
 				"navigationBarTitleText": "安全生产网络培训平台"
 			}
 		},
 		{
-			"path": "pages/test/index",
+			"path": "pages/user/index",
 			"style": {
-				"navigationBarTitleText": "测试"
+				"navigationBarTitleText": "安全生产网络培训平台"
 			}
 		},
 		{
@@ -60,6 +48,18 @@
 			"style": {
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "学习数据"
+			}
+		},
+		{
+			"path": "pages/learnReport/index",
+			"style": {
+				"navigationBarTitleText": "学习报告"
+			}
+		},
+		{
+			"path": "pages/test/index",
+			"style": {
+				"navigationBarTitleText": "测试"
 			}
 		}
 	],

@@ -58,7 +58,10 @@
               </view>
               <view class="logan-card-right-center">{{ course.time }}</view>
               <view class="logan-card-right-footer">
-                <view class="audience">{{ course.num }}人看过</view>
+                <view class="audience">
+                  <uni-icons type="person" size="24rpx" />
+                  <text style="margin-left: 10rpx">{{ course.num }}人看过</text>
+                </view>
                 <view class="cost">
                   <view v-if="course.money > 0">
                     <text class="present-price">￥{{ course.money }}</text>

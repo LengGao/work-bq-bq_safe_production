@@ -2,15 +2,28 @@
   <view class="study">
     <view class="header">
       <view class="header-one">
-        <image class="header-one-img" :src="defaultImage" mode="scaleToFill" />
+        <image class="header-one-img" :src="titleBg" mode="scaleToFill" />
       </view>
 
       <view class="header-two">
-        <view class="header-two-box" @click="to('../learnData/index')">
-          <image class="header-two-img" :src="defaultImage" mode="scaleToFill" />
+        <view class="header-two-box header-two-gb1" @click="to('../learnData/index')">
+          <view class="box-left">
+            <text class="box-left-title">学习数据</text>
+            <text class="box-left-text">精准数据把控进度</text>
+          </view>
+          <view class="box-right">
+            <image :src="dataIcon" mode="scaleToFill" class="box-right-img" />
+          </view>
         </view>
-        <view class="header-two-box" @click="to('../learnCertificate/index')">
-          <image class="header-two-img" :src="defaultImage" mode="scaleToFill" />
+
+        <view class="header-two-box header-two-gb2" @click="to('../learnCertificate/index')">
+          <view class="box-left">
+            <text class="box-left-title">学习凭证</text>
+            <text class="box-left-text">专业/高效拿证</text>
+          </view>
+          <view class="box-right">
+            <image :src="voucherIcon" mode="scaleToFill" class="box-right-img" />
+          </view>
         </view>
       </view>
     </view>
@@ -20,13 +33,13 @@
         <view class="logan-list-head-left"> 推荐课程 </view>
         <view class="logan-list-head-right">
           <text>全部</text>
-          <uni-icons type="forward" size="16" />
+          <uni-icons type="forward" size="32rpx" />
         </view>
       </view>
 
       <view class="courses-list">
         <CardRow v-for="course in courses" :key="course.id" :leftImage="course.thumb" :rightTop="course.title"
-                 :rightFooter="course.time">
+                 :rightFooter="course.time" @clickRight="onClickCource">
           <template v-slot:rightFooterIcon>
             <uni-tag custom-style="position: relative; bottom: 4rpx; font-size: 12rpx;" type="primary"
                      :text="course.tag" inverted />
@@ -39,7 +52,9 @@
 
 <script>
 import CardRow from "@/components/card-row/index";
-import defaultImage from "@/static/logo.png";
+import titleBg from '@/static/img/study_swiper.png';
+import dataIcon from "@/static/img/study_iicon_data.png";
+import voucherIcon from "@/static/img/study_icon_voucher.png";
 
 export default {
   components: {
@@ -47,32 +62,15 @@ export default {
   },
   data() {
     return {
-      defaultImage: defaultImage,
+      titleBg,
+      dataIcon,
+      voucherIcon,
+
       // 推荐课程
       courses: [
-        {
-          id: 1,
-          name: "name1",
-          money: 0,
-          oldMoney: 0,
-          thumb: "../../static/logo.png",
-          title:
-            "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准",
-          time: "12章24课时",
-          num: 897,
-          tag: "免费",
-        },
-        {
-          id: 2,
-          name: "name2",
-          money: 998,
-          oldMoney: 1998,
-          thumb: "../../static/logo.png",
-          title: "特种作业低压电工实操课",
-          time: "12章24课时",
-          num: 987,
-          tag: "未开始",
-        },
+        { id: 1, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "已完成", prpress: 800 },
+        { id: 2, thumb: "/static/img/study_cource2.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 100 },
+        { id: 3, thumb: "/static/img/study_cource3.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 0 }
       ],
     };
   },
@@ -81,11 +79,14 @@ export default {
   },
   methods: {
     to(url) {
-      uni.navigateTo({
-        url,
-      });
+      uni.navigateTo({ url })
     },
-  },
+    // 点击课程
+    onClickCource() {
+      console.log("onClickCource");
+    }  
+  
+  }, // methods end
 };
 </script>
 
@@ -127,11 +128,41 @@ $padding: 16rpx 20rpx;
   &-box {
     width: 48%;
     height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
   }
 
-  &-img {
-    width: 100%;
-    height: 100%;
+  &-gb1 {
+    background-image: url("/static/img/study_bg_data.png");
+    background-size: 100% 100%;
+  }
+
+  &-gb2 {
+    background-image: url("/static/img/study_bg_voucher.png");
+    background-size: 100% 100%;
+  }
+
+  .box-left {
+    display: flex;
+    flex-direction: column;
+    color: $text-color-inverse;
+
+    &-title {
+      font-size: $font-size-lg;
+    }
+
+    &-text {
+      font-size: $font-size-sm;
+    }
+  }
+
+  .box-right {
+    &-img {
+      height: 52rpx;
+      width: 52rpx;
+    }
   }
 }
 
