@@ -4,8 +4,8 @@
             <view class="user-card">
                 <UserInfo :info="user" />
                 <view class="card-setting">
-                    <uni-icons type="chatbubble" size="40rpx" />
-                    <uni-icons type="gear" size="40rpx" style="margin-left: 20rpx" />
+                    <image src="/static/img/user_icon_msg.png" class="card-setting-icon" mode="scaleToFill" />
+                    <image src="/static/img/user_icon_setting.png" class="card-setting-icon" mode="scaleToFill" />
                 </view>
             </view>
         </view>
@@ -55,35 +55,22 @@ export default {
                 name: "周杰伦",
                 phone: "156****9914",
                 avator: "",
+                days: 7
             },
             gridIndex: 0,
             // 宫格数据
             grids: [
-                { id: 1, thumb: "../../static/logo.png", title: "我的课程", url: "" },
-                { id: 2, thumb: "../../static/logo.png", title: "我的题库", url: "" },
-                { id: 3, thumb: "../../static/logo.png", title: "我的班级", url: "" },
-                { id: 4, thumb: "../../static/logo.png", title: "我的问答", url: "" }
+                { id: 1, thumb: "/static/img/user_gird1.png", title: "我的课程", url: "" },
+                { id: 2, thumb: "/static/img/user_gird2.png", title: "我的题库", url: "" },
+                { id: 3, thumb: "/static/img/user_gird3.png", title: "我的班级", url: "" },
+                { id: 4, thumb: "/static/img/user_gird4.png", title: "我的问答", url: "" }
             ],
             listIndex: 0,
             links: [
-                {
-                    id: 1,
-                    thumb: "../../static/logo.png",
-                    title: "课程收藏",
-                    url: "",
-                },
-                {
-                    id: 2,
-                    thumb: "../../static/logo.png",
-                    title: "意见反馈",
-                    url: "",
-                },
-                {
-                    id: 3,
-                    thumb: "../../static/logo.png",
-                    title: "关于我们",
-                    url: "",
-                },
+                { id: 1, thumb: "/static/img/user_icon_list1.png", title: "课程收藏", url: "" },
+                { id: 2, thumb: "/static/img/user_icon_list2.png", title: "意见反馈", url: "" },
+                { id: 3, thumb: "/static/img/user_icon_list3.png", title: "关于我们", url: "" },
+                { id: 3, thumb: "/static/img/user_icon_list4.png", title: "关于我们", url: "" },
             ],
         };
     },
@@ -119,6 +106,9 @@ $page-padding: 0rpx 20rpx;
 .user-header {
     height: 300rpx;
     width: 100%;
+    background-image: url('/static/img/user_bg_head.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 
 .user-card {
@@ -132,8 +122,17 @@ $page-padding: 0rpx 20rpx;
     .card-setting {
         position: relative;
         top: -40rpx;
-        text-align: right;
         flex: 2;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        text-align: right;
+
+        &-icon {
+            height: 36rpx;
+            width: 36rpx;
+            margin-left: 40rpx;
+        }
     }
 }
 
