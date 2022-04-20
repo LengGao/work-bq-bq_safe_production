@@ -20,7 +20,7 @@
 import Request from '@/request/miniapp'
 
 export function login(data) {
-    return new Request({
+    return Request({
         url: '',
         method: 'get',
         data
