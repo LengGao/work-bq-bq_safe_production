@@ -8,11 +8,11 @@
           <view>{{categoryName}}</view>
         </view>
       </picker>
-      <picker class="picker" @change="categoryPickerChange" @columnchange="onColumnchange" range-key="name"
-              mode="multiSelector" :value="categoryIndex" :range="categoryData">
+      <picker class="picker" @change="onTypePickerChange" range-key="name" mode="selector" :value="typeIndex"
+              :range="typeData">
         <view class="picker-btn">
-          <uni-icons type="bars" size="40rpx"></uni-icons>
-          <view>{{categoryName}}</view>
+          <uni-icons custom-prefix="iconfont" type="icon-file-pdf-fill" size="40rpx"></uni-icons>
+          <view>{{typeData[typeIndex].name}}</view>
         </view>
       </picker>
     </view>
@@ -66,6 +66,13 @@ export default {
         0: [{ name: '全部', id: 0 }],
         1: [{ name: '测试', id: 4 }],
       },
+      typeIndex: 0,
+      typeValue: '',
+      typeData: [
+        { name: '全部类型', value: '' },
+        { name: '免费课', value: 1 },
+        { name: '认证课', value: 2 },
+      ],
       pageNum: 1,
       courseData: [],
     };
@@ -108,6 +115,13 @@ export default {
         })
       })
 
+    },
+    onTypePickerChange({ detail }) {
+      console.log(detail)
+      const { value: index = 0 } = detail
+      this.typeIndex = index
+      this.typeValue = this.typeData[index].value
+      this.mescroll.resetUpScroll();
     },
     onColumnchange({ detail }) {
       console.log(detail)
