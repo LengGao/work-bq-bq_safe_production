@@ -98,7 +98,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
-  flex: 1;
+  flex: 1 1 1;
   height: 100%;
   width: $img-size-width-md;
 }
@@ -113,11 +113,12 @@ export default {
   flex-direction: column;
   justify-content: space-evenly;
   align-items: flex-start;
-  flex-grow: 3;
+  flex: 3 1 0;
   height: 100%;
   overflow: hidden;
   margin-left: 20rpx;
   font-size: $font-size-base;
+  letter-spacing: 1rpx;
 }
 
 .card-right-top {
@@ -128,6 +129,7 @@ export default {
   flex: 1 1 1;
   width: 100%;
   color: $text-color;
+  word-spacing: 2rpx;
 }
 
 .card-right-center {

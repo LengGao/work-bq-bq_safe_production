@@ -2,12 +2,12 @@
   <view class="content">
     <view class="filter">
       <view class="filter-left" @click="onOpenFilter">
-        <uni-icons type="location" size="32rpx" color="#007aff" />
+        <image src="/static/img/index_icon1.png" mode="aspectFit" class="icon-location" />
         <text class="location">广东地区</text>
-        <uni-icons type="forward" size="32rpx" />
+        <uni-icons type="bottom" size="32rpx" />
       </view>
       <view class="filter-right">
-        <uni-icons type="search" size="48rpx" @click="onOpenSearch" />
+        <uni-icons type="search" size="40rpx" @click="onOpenSearch" />
       </view>
     </view>
 
@@ -20,11 +20,11 @@
     </view>
 
     <view class="business-bar">
-      <view class="business-head">
-        <view class="business-head-left">安全生产</view>
-        <view class="business-head-right" @click="() => onClickAll(1)">
-          <text>全部</text>
-          <uni-icons type="forward" size="32rpx" />
+      <view class="logan-list-head">
+        <view class="logan-list-head-left">安全生产</view>
+        <view class="logan-list-head-right" @click="() => onClickAll(1)">
+          <text>查看全部</text>
+          <uni-icons type="forward" size="28rpx" />
         </view>
       </view>
       <view class="business">
@@ -39,8 +39,8 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left">推荐课程</view>
         <view class="logan-list-head-right" @click="() => onClickAll(2)">
-          <text>全部</text>
-          <uni-icons type="forward" size="32rpx" />
+          <text>查看全部</text>
+          <uni-icons type="forward" size="28rpx" />
         </view>
       </view>
 
@@ -67,7 +67,7 @@
                     <text class="present-price">￥{{ course.money }}</text>
                     <text class="original-price">{{ course.oldMoney }}</text>
                   </view>
-                  <uni-tag v-else custom-style="position: relative; bottom: 8rpx; font-size: 24rpx;" type="warning"
+                  <uni-tag v-else class="tag" type="warning"
                            size="small" text="免费" inverted />
                 </view>
               </view>
@@ -81,8 +81,8 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left">政策专栏</view>
         <view class="logan-list-head-right" @click="() => onClickAll(3)">
-          <text>全部</text>
-          <uni-icons type="forward" size="32rpx" />
+          <text>查看全部</text>
+          <uni-icons type="forward" size="28rpx" />
         </view>
       </view>
 
@@ -102,8 +102,8 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left">文库资料</view>
         <view class="logan-list-head-right" @click="onClickAll(4)">
-          <text>全部</text>
-          <uni-icons type="forward" size="32rpx" />
+          <text>查看全部</text>
+          <uni-icons type="forward" size="28rpx" />
         </view>
       </view>
 
@@ -112,7 +112,7 @@
                  @clickRight="() => onClickLibrary()">
           <template v-slot:rightTop>
             <view class="logan-card-right-top">
-              <uni-icons type="wallet" size="32rpx" color="#dd524d" />
+              <uni-icons type="wallet" size="28rpx" color="#dd524d" />
               <text class="library-text">{{ library.title }}</text>
             </view>
           </template>
@@ -270,26 +270,30 @@ $padding-lr: 20rpx;
 .filter {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   padding: $padding-tb $padding-lr;
-  font-size: $font-size-md;
+  font-size: $font-size-base;
   color: $text-color;
 
   &-left {
     flex: 1;
-    justify-content: space-around;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    
   }
 
   &-right {
     flex: 1;
     text-align: right;
-    height: 24rpx;
-    line-height: 24rpx;
   }
 
-  .location {
+  .icon-location {
     margin: 0 4rpx;
-  }
+    width: 28rpx;  
+    height: 28rpx;
+  } 
 }
 
 .swiper-bar {
@@ -395,6 +399,13 @@ $padding-lr: 20rpx;
     font-size: $font-size-base;
     text-decoration: line-through #999;
   }
+
+  .tag {
+    position: relative; 
+    bottom: 8rpx; 
+    font-size: 24rpx;
+    font-weight: normal;
+  }
 }
 
 .policy-bar {
@@ -418,7 +429,7 @@ $padding-lr: 20rpx;
     flex-wrap: nowrap;
     width: $img-size-width-sm;
     height: 100%;
-    color: $text-color;
+    color: $text-color-title;
 
     .swiper-image {
       width: $img-size-width-md;

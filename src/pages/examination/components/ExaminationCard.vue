@@ -5,8 +5,15 @@
         <image :src="leftImage || errorImage" class="logan-card-row-image" mode="aspectFit" />
       </view>
       <view class="logan-card-body-right">
-        <view class="logan-card-right-top">{{ rightTop }}</view>
-        <view class="logan-card-right-footer">{{ rightFooter }}</view>
+        <view class="logan-card-right-top">
+          <text>{{ rightTop }}</text>
+        </view>
+        <view class="logan-card-right-footer">
+          <text>{{ rightFooter }}</text>
+        </view>
+      </view>
+      <view class="card-arrow">
+        <uni-icons type="forward" size="32rpx" color="#E0E0E0" />
       </view>
     </view>
   </view>
@@ -46,8 +53,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/styles/logan.scss';
-$size: $img-size-base;
+@import "@/styles/logan.scss";
+$size: 80rpx;
+
+.logan-card-body-row {
+  height: 100%;
+}
 
 .logan-card-body-left {
   width: $size;
@@ -57,7 +68,19 @@ $size: $img-size-base;
   width: $size;
   height: $size;
 }
+
 .logan-card-body-right {
-   height: $size;
+  height: calc($size + 40rpx);
+}
+
+.logan-card-right-top {
+  font-size: $font-size-md;
+  font-weight: bold;
+  line-height: calc(2 * $font-size-md);
+}
+
+.logan-card-right-footer {
+  font-size: $font-size-sm;
+  line-height: calc(2 * $font-size-sm);
 }
 </style>
