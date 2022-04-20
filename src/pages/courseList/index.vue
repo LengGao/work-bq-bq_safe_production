@@ -4,15 +4,15 @@
       <picker class="picker" @change="categoryPickerChange" @columnchange="onColumnchange" range-key="name"
               mode="multiSelector" :value="categoryIndex" :range="categoryData">
         <view class="picker-btn">
-          <uni-icons type="bars" size="40rpx"></uni-icons>
-          <view>{{categoryName}}</view>
+          <view class="picker-btn-title">{{categoryName}}</view>
+          <uni-icons custom-prefix="iconfont" type="icon-sanjiao1" size="24rpx"></uni-icons>
         </view>
       </picker>
       <picker class="picker" @change="onTypePickerChange" range-key="name" mode="selector" :value="typeIndex"
               :range="typeData">
         <view class="picker-btn">
-          <uni-icons custom-prefix="iconfont" type="icon-file-pdf-fill" size="40rpx"></uni-icons>
-          <view>{{typeData[typeIndex].name}}</view>
+          <view class="picker-btn-title">{{typeData[typeIndex].name}}</view>
+          <uni-icons custom-prefix="iconfont" type="icon-sanjiao1" size="24rpx"></uni-icons>
         </view>
       </picker>
     </view>
@@ -160,6 +160,10 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
+        &-title {
+          font-size: $uni-font-size-lg;
+          margin-right: 4rpx;
+        }
       }
     }
   }
