@@ -44,7 +44,7 @@
   </view>
 </template>
 <script>
-import { getChapterList } from "@/api/index";
+import { getChapterList } from "@/api/question";
 import NoData from "@/components/noData";
 export default {
   name: "chapter",
@@ -101,6 +101,7 @@ export default {
     },
     async getChapterList() {
       const res = await getChapterList();
+      console.log(res)
       this.chapterList = res.data.list || [];
       this.statisticalData = res.data.data || {};
     },

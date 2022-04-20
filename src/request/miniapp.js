@@ -1,11 +1,10 @@
 import Interceptor from './interceptor'
 
 // bases-uytrew 
-const BASE_URL = process.env.VUE_APP_BASE_URL,
-      PREFIX = '',
-      SUFFIX = '',
-      GLOBAL = uni;
-
+const BASE_URL = process.env.VUE_APP_BASE_API,
+    PREFIX = '',
+    SUFFIX = '',
+    GLOBAL = uni;
 
 // main
 class Request extends Interceptor {
@@ -31,7 +30,10 @@ class Request extends Interceptor {
             baseUrl: BASE_URL,
             confirm: false,
             toast: false,
-            loading: false
+            loading: false,
+            header: {
+                token: 'eyJvcmdhbml6YXRpb25faWQiOjM0NiwiYXV0b2dyYXBoIjoiTitqOEpEZThUWVJkb0hhYXV6WDRCSjJTM05YM1I1dWdGVWJ0a3ZcL3FFbHB2cWNyNVZ2b09FMHpueEN2M2NpQUxGTWpoVFZRR3U5YjVPa0h3SkZsM2MwNVY4bm0wd25vNmlQbXdcLzBOT1dFTT0iLCJwcml2YXRlX2tleSI6IjI4NDgxNTE1NDE1MTA3MTgiLCJ1aWQiOjQ1OTAwLCJvcmlnaW5hbF91c2VyX2tleSI6IjI4NDgxNTE1NDE1MTA3MTgifQ'
+            }
         }
     }
 
@@ -42,14 +44,14 @@ class Request extends Interceptor {
             config = this.mergeConfig(options),
             promise = Promise.resolve(config);
 
-        const forEach = (interceptors) => { 
+        const forEach = (interceptors) => {
             let len = interceptors.length, index = 0
             while (index < len) {
                 let interceptor = interceptors[index++]
                 if (interceptor) promise = promise.then(interceptor);
             }
         }
-        
+
         forEach(requetInterceptors)
         promise = this.send(config)
         forEach(responseInterceptors)
@@ -71,11 +73,11 @@ class Request extends Interceptor {
     mergeConfig(options) {
         let url = options.url, config = Object.assign(this.$config, options)
         if (!this.isAbsolute.test(url)) {
-            config.url = config.baseUrl + config.prefix + url + config.suffix 
+            config.url = config.baseUrl + config.prefix + url + config.suffix
         }
         return config
     }
-    
+
     getToken() {
 
     }
@@ -91,8 +93,9 @@ request.useRequestInterceptor(() => {
 
 })
 
-request.useRequestInterceptor(() => {
-    console.log("useRequestInterceptor", this, request)
+request.useResponseInterceptor((res) => {
+    console.log("useRequestInterceptor", res, this, request)
+    return res.data
 })
 
 
