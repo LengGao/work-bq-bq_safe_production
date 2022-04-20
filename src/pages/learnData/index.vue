@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import qiunDataCharts from "@/uni_modules/components/qiun-data-charts/qiun-data-charts.vue";
+import qiunDataCharts from "@/uni_modules/ucharts/components/qiun-data-charts/qiun-data-charts.vue";
 export default {
   components: {
     qiunDataCharts,
