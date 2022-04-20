@@ -38,7 +38,7 @@
             v-on:touchend="rdcharts.touchEnd" :id="'UC'+cid" :prop="uchartsOpts" :change:prop="rdcharts.ucinit">
         <canvas :id="cid" :canvasId="cid"
                 :style="{ width: cWidth + 'px', height: cHeight + 'px', background: background }"
-                :disable-scroll="disableScroll" $uni-color-error="_error" v-show="showchart" />
+                :disable-scroll="disableScroll" @error="_error" v-show="showchart" />
       </view>
     </block>
     <!-- #endif -->
@@ -48,12 +48,12 @@
       <canvas :id="cid" :canvasId="cid" :width="cWidth * pixel" :height="cHeight * pixel"
               :style="{ width: cWidth + 'px', height: cHeight + 'px', background: background }"
               :disable-scroll="disScroll" @tap="_tap" @touchstart="_touchStart" @touchmove="_touchMove"
-              @touchend="_touchEnd" $uni-color-error="_error" v-show="showchart" />
+              @touchend="_touchEnd" @error="_error" v-show="showchart" />
     </block>
     <block v-if="!ontouch">
       <canvas :id="cid" :canvasId="cid" :width="cWidth * pixel" :height="cHeight * pixel"
               :style="{ width: cWidth + 'px', height: cHeight + 'px', background: background }"
-              :disable-scroll="disScroll" @tap="_tap" $uni-color-error="_error" v-show="showchart" />
+              :disable-scroll="disScroll" @tap="_tap" @error="_error" v-show="showchart" />
     </block>
     <!-- #endif -->
     <!-- 其他小程序通过vue渲染图表 -->
@@ -63,12 +63,12 @@
         <canvas :id="cid" :canvasId="cid"
                 :style="{ width: cWidth + 'px', height: cHeight + 'px', background: background }" type="2d"
                 :disable-scroll="disScroll" @touchstart="_touchStart" @touchmove="_touchMove" @touchend="_touchEnd"
-                $uni-color-error="_error" v-show="showchart" />
+                @error="_error" v-show="showchart" />
       </view>
       <view v-if="!ontouch" @tap="_tap">
         <canvas :id="cid" :canvasId="cid"
                 :style="{ width: cWidth + 'px', height: cHeight + 'px', background: background }" type="2d"
-                :disable-scroll="disScroll" $uni-color-error="_error" v-show="showchart" />
+                :disable-scroll="disScroll" @error="_error" v-show="showchart" />
       </view>
     </block>
     <block v-if="!type2d">
@@ -76,12 +76,12 @@
         <canvas :id="cid" :canvasId="cid"
                 :style="{ width: cWidth + 'px', height: cHeight + 'px', background: background }"
                 @touchstart="_touchStart" @touchmove="_touchMove" @touchend="_touchEnd" :disable-scroll="disScroll"
-                $uni-color-error="_error" v-if="showchart" />
+                @error="_error" v-if="showchart" />
       </view>
       <view v-if="!ontouch">
         <canvas :id="cid" :canvasId="cid"
                 :style="{ width: cWidth + 'px', height: cHeight + 'px', background: background }"
-                :disable-scroll="disScroll" @tap="_tap" $uni-color-error="_error" v-if="showchart" />
+                :disable-scroll="disScroll" @tap="_tap" @error="_error" v-if="showchart" />
       </view>
     </block>
     <!-- #endif -->
