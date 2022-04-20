@@ -4,7 +4,7 @@ import Interceptor from './interceptor'
 const BASE_URL = process.env.VUE_APP_BASE_URL,
       PREFIX = '',
       SUFFIX = '',
-      GLOBAL = wx;
+      GLOBAL = uni;
 
 
 // main
