@@ -186,7 +186,6 @@ export default {
   },
   created() {
     console.log("加载了", moment({}).format());
-    // uni.navigateTo({ url: '/pages/test/index' })
   },
   onReachBottom() {
     console.log("到底了");
