@@ -10,14 +10,15 @@
 
 /* 行为相关颜色 */
 $color-primary: #199fff;
-$color-success: #030303;
+$color-success: #4cd964;
 $color-warning: #f0ad4e;
 $color-error: #dd524d;
 
 /* 文字基本颜色 */
 $text-color: #333;//基本色
+$text-color-title: #000; // 标题色
 $text-color-inverse: #fff;//反色
-$text-color-grey: #999;//辅助灰色，如加载更多的提示信息
+$text-color-grey: #BBBBBB;//辅助灰色，如加载更多的提示信息
 $text-color-placeholder: #808080;
 $text-color-disable: #c0c0c0;
 $text-color-default: #777;  // 选项点击文案色
@@ -57,12 +58,13 @@ $img-size-width-sm: 200rpx;
 $img-size-height-sm: 160rpx;
 $img-size-width-md: 228rpx;
 $img-size-height-md: 132rpx;
+$img-size-icon: 64rpx;
 
 
 /* Border Radius */
-$border-radius-sm: 4rpx;
-$border-radius-base: 6rpx;
-$border-radius-lg: 12rpx;
+$border-radius-sm: 8rpx;
+$border-radius-base: 12rpx;
+$border-radius-lg: 24rpx;
 $border-radius-circle: 50%;
 
 /* 水平间距 */
@@ -124,6 +126,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     display: flex;
     flex-direction: row;
     align-items: center;
+    flex: 1 1 1;
     height: 100%;
     width: $img-size-width-md;
 }
@@ -133,7 +136,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    flex: 3;
+    flex: 3 1 0;
     height: 100%;
     overflow: hidden;
     margin-left: 20rpx;
@@ -147,7 +150,6 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     -webkit-box-orient: vertical;
     flex: 1 1 1;
     width: 100%;
-    font-size: $font-size-base;
     color: $text-color;
 }
 
@@ -159,7 +161,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     flex: 1 1 1;
     width: 100%;
     font-size: $font-size-sm;
-    line-height: calc(2 * $font-size-sm);
+    line-height: calc(2 * $font-size-sm); // 重写字体时需要重写行高。它会决定行与行上下的留白
     color: $text-color-grey;
 }
 
@@ -171,7 +173,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     flex: 1 1 1;
     width: 100%;
     font-size: $font-size-sm;
-    line-height: calc(2 * $font-size-sm);
+    line-height: calc(2 * $font-size-sm); // 重写字体时需要重写行高。它会决定行与行上下的留白
     color: $text-color-grey;
 }
 
@@ -214,12 +216,13 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
 
 .logan-list-head-left {
     font-size: $font-size-md;
-    color: $color-primary;
+    font-weight: 600;
+    color: $text-color-title;
 }
 
 .logan-list-head-right {
-    font-size: $font-size-md;
-    color: $text-color-grey;
+    font-size: $font-size-base;
+    color: $text-color-default;
 }
 
 .logan-img-size-sm {

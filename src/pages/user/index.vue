@@ -13,10 +13,10 @@
         <view class="grids">
             <uni-grid :column="4" :showBorder="false" @change="onChangeGrid" class="grid">
                 <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item">
-                    <view class="grid-box">
-                        <image :src="grid.thumb" class="grid-image" mode="widthFix" />
+                    <navigator class="grid-box" :url="grid.url">
+                        <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
                         <text class="grid-text">{{ grid.title }}</text>
-                    </view>
+                    </navigator>
                 </uni-grid-item>
             </uni-grid>
         </view>
@@ -156,17 +156,16 @@ $page-padding: 0rpx 20rpx;
         flex-direction: column;
         justify-content: space-around;
         align-items: center;
-        height: 100%;
+        margin: auto 0;
     }
 
     &-image {
-        width: 80rpx;
-        height: 80rpx;
-        border-radius: $border-radius-circle;
+        width: $img-size-icon;
+        height: $img-size-icon;
     }
 
     &-text {
-        margin-top: 10rpx;
+        margin-top: 20rpx;
         font-size: $font-size-sm;
     }
 }

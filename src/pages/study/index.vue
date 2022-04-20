@@ -41,8 +41,7 @@
         <CardRow v-for="course in courses" :key="course.id" :leftImage="course.thumb" :rightTop="course.title"
                  :rightFooter="course.time" @clickRight="onClickCource">
           <template v-slot:rightFooterIcon>
-            <uni-tag custom-style="position: relative; bottom: 4rpx; font-size: 12rpx;" type="primary"
-                     :text="course.tag" inverted />
+            <uni-tag type="primary" class="tag" :class="course.type" :text="course.tag" inverted />
           </template>
         </CardRow>
       </view>
@@ -68,9 +67,9 @@ export default {
 
       // 推荐课程
       courses: [
-        { id: 1, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "已完成", prpress: 800 },
-        { id: 2, thumb: "/static/img/study_cource2.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 100 },
-        { id: 3, thumb: "/static/img/study_cource3.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 0 }
+        { id: 1, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "已完成", prpress: 800, type: 'tag-one' },
+        { id: 2, thumb: "/static/img/study_cource2.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 100, type: 'tag-two'},
+        { id: 3, thumb: "/static/img/study_cource3.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 0, type: 'tag-three'}
       ],
     };
   },
@@ -177,6 +176,28 @@ $padding: 16rpx 20rpx;
   .logan-card-right-footer {
     align-items: baseline;
     font-size: $font-size-base;
+  }
+
+  .tag {
+    position: relative; 
+    bottom: 8rpx; 
+    font-size: 24rpx;
+    font-weight: normal;
+  }
+
+  .tag-one {
+    color: $color-primary;
+    border-color: $color-primary;
+  }
+  
+  .tag-two {
+    color: $color-success;
+    border-color: $color-success; 
+  }
+
+  .tag-three {
+    color: $text-color-grey;
+    border-color: $text-color-grey;
   }
 }
 </style>
