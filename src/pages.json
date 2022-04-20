@@ -1,6 +1,12 @@
 {
 	"pages": [
 		{
+			"path": "pages/libraryList/index",
+			"style": {
+				"navigationBarTitleText": "章节练习"
+			}
+		},
+		{
 			"path": "pages/chapterList/index",
 			"style": {
 				"navigationBarTitleText": "章节练习"
@@ -66,6 +72,12 @@
 			"path": "pages/courseList/index",
 			"style": {
 				"navigationBarTitleText": "课程列表"
+			}
+		},
+		{
+			"path": "pages/policyList/index",
+			"style": {
+				"navigationBarTitleText": "章节练习"
 			}
 		},
 		{
