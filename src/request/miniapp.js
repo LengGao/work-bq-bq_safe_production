@@ -31,6 +31,7 @@ class Request extends Interceptor {
             confirm: false,
             toast: false,
             loading: false,
+            data: {},
             header: {
                 token: 'eyJvcmdhbml6YXRpb25faWQiOjM0NiwiYXV0b2dyYXBoIjoiTitqOEpEZThUWVJkb0hhYXV6WDRCSjJTM05YM1I1dWdGVWJ0a3ZcL3FFbHB2cWNyNVZ2b09FMHpueEN2M2NpQUxGTWpoVFZRR3U5YjVPa0h3SkZsM2MwNVY4bm0wd25vNmlQbXdcLzBOT1dFTT0iLCJwcml2YXRlX2tleSI6IjI4NDgxNTE1NDE1MTA3MTgiLCJ1aWQiOjQ1OTAwLCJvcmlnaW5hbF91c2VyX2tleSI6IjI4NDgxNTE1NDE1MTA3MTgifQ'
             }
@@ -72,9 +73,14 @@ class Request extends Interceptor {
     // 合并配置
     mergeConfig(options) {
         let url = options.url, config = Object.assign(this.$config, options)
+        config.data = {
+            ...config.data,
+            question_bank_id: 12
+        }
         if (!this.isAbsolute.test(url)) {
             config.url = config.baseUrl + config.prefix + url + config.suffix
         }
+        console.log(config)
         return config
     }
 

@@ -81,27 +81,26 @@ export default {
         });
         return;
       }
-      Dialog.confirm({
-        title: "提示",
-        message: "检测到您有做题记录",
-        confirmButtonColor: "#199fff",
-        confirmButtonText: "继续上一次",
-        cancelButtonText: "重新开始",
-      })
-        .then(() => {
-          uni.navigateTo({
-            url: `/pages/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=1`,
-          });
-        })
-        .catch(() => {
-          uni.navigateTo({
-            url: `/pages/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=0`,
-          });
-        });
+      // Dialog.confirm({
+      //   title: "提示",
+      //   message: "检测到您有做题记录",
+      //   confirmButtonColor: "#199fff",
+      //   confirmButtonText: "继续上一次",
+      //   cancelButtonText: "重新开始",
+      // })
+      //   .then(() => {
+      //     uni.navigateTo({
+      //       url: `/pages/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=1`,
+      //     });
+      //   })
+      //   .catch(() => {
+      //     uni.navigateTo({
+      //       url: `/pages/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=0`,
+      //     });
+      //   });
     },
     async getChapterList() {
       const res = await getChapterList();
-      console.log(res)
       this.chapterList = res.data.list || [];
       this.statisticalData = res.data.data || {};
     },
@@ -110,6 +109,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .chapter {
+  font-size: $uni-font-size-base;
   .b-img {
     position: absolute;
     left: 0;
