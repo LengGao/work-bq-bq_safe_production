@@ -1,6 +1,12 @@
 {
 	"pages": [
 		{
+			"path": "pages/chapterList/index",
+			"style": {
+				"navigationBarTitleText": "章节练习"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "安培课堂"
