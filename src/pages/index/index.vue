@@ -225,10 +225,13 @@ export default {
       console.log('onClickAll');
       switch (type) {
         case 1: break;
-        case 2: break;
+        case 2:
+          uni.navigateTo({ url: '../courseList/index' })
+          break;
         case 3: break;
         case 4: break;
       }
+
     },
     // 点击安全生产课程
     onClickCource(type) {
