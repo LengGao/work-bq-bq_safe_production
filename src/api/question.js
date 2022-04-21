@@ -1,9 +1,9 @@
 
-import requset from '@/request/miniapp'
+import requset from '@/request/index'
 // 获取章节列表
 export const getChapterList = (data) => {
   return requset({
-    url: 'practice/chapter',
+    url: 'QuestionBank/Lists',
     method: 'get',
     data: {
       ...data,

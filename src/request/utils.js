@@ -8,7 +8,7 @@ export const isDef = (v) => {
 }
 
 export const isObject = (v) => {
-	return v !== null && typeof v === 'object'
+	return v !== null && typeof v === 'object' && !v.length
 }
 
 // 是否为原始值
@@ -26,7 +26,6 @@ export const cachePureFunction = (fn) => {
 			return  cache[args] || (cache[args] = fn(args) )
 	}
 }
-
 
 export const toNumbe = (val) => {
 	return isNaN(n = parseFloat(val)) ? val : n

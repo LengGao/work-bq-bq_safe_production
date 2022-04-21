@@ -1,15 +1,14 @@
 <template>
   <view class="search">
-    <uni-search-bar :radius="100" @confirm="search"></uni-search-bar>
+    <uni-search-bar @confirm="onSearch" v-model="keyword" :radius="24" placeholder="搜索您感兴趣的课程"></uni-search-bar>
     <view class="history" v-if="showRecond">
       <view class="head">
         <view class="title">搜索历史</view>
-        <uni-c<icon type="trash-filled" size="32rpx" color="#999" @click="onClearHistry" />
+        <uni-icons type="trash-filled" size="48rpx" color="#999" @click="onClearHistry" />
       </view>
       <view class="history-list">
-        <button @click="onCLickHistory('his', index)" v-for="(history,index) in historys" :key="index" class="btn"
-                :class="history.checked ? 'active': 'default'">
-          {{ history.name}}
+        <button @click="onCLickHistory('his', index)" v-for="(history,index) in historys" :key="index" class="btn">
+          <text>{{ history.name }}</text>
         </button>
       </view>
     </view>
@@ -18,41 +17,40 @@
         <view class="title">热门搜索</view>
       </view>
       <view class="hot-list">
-        <button @click="onCLickHot('hot', index)" v-for="(hot, index) in hots" :key="index" class="btn"
-                :class="hot.checked ? 'active': 'default'">
-          <uni-icons type="trash" size="32rpx" />
-          {{ hot.name}}
+        <button @click="onCLickHot('hot', index)" v-for="(hot, index) in hots" :key="index" class="btn">
+          <text>{{ hot.name }}</text>
         </button>
       </view>
     </view>
 
     <view class="cources-list">
-      <CardRow v-for="course in cources" :key="course.id">
-        <template v-slot:cardBodyLeft>
-          <view class="logan-card-body-left">
-            <image class="logan-img-size-lg" :src="course.thumb" mode="aspectFit" />
-          </view>
-        </template>
-        <template v-slot:cardBodyRight>
-          <view class="logan-card-body-right">
-            <view class="logan-card-right-top">
-              <text>{{ course.title }}</text>
+      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="onDown" @up="onUp">
+        <CardRow v-for="course in cources" :key="course.id">
+          <template v-slot:cardBodyLeft>
+            <view class="logan-card-body-left">
+              <image class="logan-img-size-lg" :src="course.thumb" mode="aspectFit" />
             </view>
-            <view class="logan-card-right-center">{{ course.time }}</view>
-            <view class="logan-card-right-footer">
-              <view class="audience">{{ course.num }}人看过</view>
-              <view class="cost">
-                <view v-if="course.money > 0">
-                  <text class="present-price">￥{{ course.money }}</text>
-                  <text class="original-price">{{ course.oldMoney }}</text>
+          </template>
+          <template v-slot:cardBodyRight>
+            <view class="logan-card-body-right">
+              <view class="logan-card-right-top">
+                <text>{{ course.title }}</text>
+              </view>
+              <view class="logan-card-right-center">{{ course.time }}</view>
+              <view class="logan-card-right-footer">
+                <view class="audience">{{ course.num }}人看过</view>
+                <view class="cost">
+                  <view v-if="course.money > 0">
+                    <text class="present-price">￥{{ course.money }}</text>
+                    <text class="original-price">{{ course.oldMoney }}</text>
+                  </view>
+                  <uni-tag v-else class="tag" type="warning" text="免费" inverted />
                 </view>
-                <uni-tag v-else custom-style="position: relative; bottom: 4rpx; font-size: 12rpx;" type="warning"
-                         text="免费" inverted />
               </view>
             </view>
-          </view>
-        </template>
-      </CardRow>
+          </template>
+        </CardRow>
+      </mescroll-body>
     </view>
 
   </view>
@@ -60,14 +58,17 @@
 
 <script>
 import CardRow from "@/components/card-row/index";
+import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 
 export default {
+  mixins: [MescrollMixin],
   components: {
     CardRow
   },
   data() {
     return {
       showRecond: true,
+      keyword: '',
 
       historys: [
         { id: 1, name: '管理工程师', tag: 'hot', checked: false },
@@ -87,8 +88,8 @@ export default {
     // 点击搜索历史
     onCLickHistory() {
       this.cources = [
-        { id: 1, name: "name1", money: 0, oldMoney: 0, thumb: "../../static/logo.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
-        { id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "../../static/logo.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
+        { id: 1, name: "name1", money: 0, oldMoney: 0, thumb: "/static/img/index_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
+        { id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource2.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
       ]
       this.showRecond = false
     },
@@ -109,13 +110,18 @@ export default {
 
     },
     // 搜索
-    onSearch() {
-
+    onSearch(e) {
+      console.log(e);
     },
-    // 搜索廓输入
-    onInputSearch() {
-
+    // 上拉加载
+    onUp() {
+      this.mescroll.endBySize(1, 1)
+    },
+    // 下拉刷新
+    onDown() {
+      this.mescroll.endBySize(1, 1)
     }
+
   },
 
 }
@@ -133,6 +139,18 @@ export default {
 .hot {
   display: flex;
   flex-direction: column;
+
+  .head {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16rpx;
+
+    .title {
+      font-size: $font-size-md;
+    }
+  }
 }
 
 .history-list,
@@ -147,31 +165,16 @@ export default {
 }
 
 .btn {
-  margin-left: 0rpx;
-  margin-right: 0rpx;
+  flex: 1 1 1;
+  margin: 8rpx 10rpx;
   font-size: $font-size-base;
-  border-width: 2rpx;
-  border-style: solid;
-  background-color: #f8f8f8;
-}
-
-.active {
-  color: #007aff;
-  border-color: #007aff;
-}
-
-.default {
-  color: #777;
-  border-color: #f8f8f8;
+  background-color: #fff;
+  color: $text-color-default;
 }
 
 .course-bar {
   padding: 24rpx 0;
   border-top: $logan-border-spacing-md;
-
-  .logan-card-right-center {
-    margin-top: 8rpx;
-  }
 
   .logan-card-right-footer {
     align-items: baseline;
@@ -192,5 +195,16 @@ export default {
     font-size: $font-size-base;
     text-decoration: line-through #999;
   }
+
+  .tag {
+    position: relative;
+    bottom: 8rpx;
+    font-size: 24rpx;
+    font-weight: normal;
+  }
 }
+
+::v-deep .uni-searchbar__box {
+  justify-content: flex-start;
+} 
 </style>

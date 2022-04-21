@@ -1,7 +1,8 @@
 <template>
   <view class="library-list">
     <view class="search-bar">
-      <uni-search-bar placeholder="自定义背景色" bgColor="#EEEEEE" @confirm="search" />
+      <uni-search-bar @confirm="onSearch" v-model="keyword" placeholder="请输入您想要搜索的关键词" >
+      </uni-search-bar>
     </view>
 
     <view class="list">
@@ -10,7 +11,7 @@
                  @clickRight="() => onClickLibrary()">
           <template v-slot:rightTop>
             <view class="logan-card-right-top">
-              <uni-icons type="wallet" size="28rpx" color="#dd524d" />
+              <uni-icons customPrefix="iconfont" type="icon-file-pdf-fill" size="28rpx" color="#dd524d" />
               <text class="library-text">{{ library.title }}</text>
             </view>
           </template>
@@ -24,6 +25,7 @@
 <script>
 import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import { getChapterList } from '@/api/question'
 
 export default {
   components: { CardRow },
@@ -31,6 +33,7 @@ export default {
   data() {
     return {
       // mescroll: null,
+      keyword: '',
       courseData: [],
       // 政策列表数据
       policys: [
@@ -44,57 +47,37 @@ export default {
       ],
     }
   },
+  mounted() {
+
+  },
   methods: {
+    // 清空搜索
+    onClear(e) {
+      console.log('onClear', e);
+    },
+    // 搜索
+    onSearch(e) {
+      console.log('onSearch', e)
+    },
     // 点击政策栏
     onClickPolicy() {
-
     },
-    // 
+    // 初始化 
     mescrollInit(e) {
-      console.log("mescrollInit", e);
 
     },
-    // 上拉
+    // 上拉加载
     async onUp(page) {
-      console.log('page', page);
-      // this.pageNum = page.num; // 页码, 默认从1开始
-      // // const pageSize = page.size; // 页长, 默认每页10条
-      // const res = await this.getData()
-      // console.log(res)
-      // // 接口返回的当前页数据列表 (数组)
-      // let curPageData = res.data.data;
-      // // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
-      // let curPageLen = curPageData.length;
-      // // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
-      // let totalSize = 30 || res.data.total;
-      // //设置列表数据
-      // if (page.num == 1) this.courseData = []; //如果是第一页需手动置空列表
-      // this.courseData = this.courseData.concat(curPageData); //追加新数据
-      // // 请求成功,隐藏加载状态
-      // //方法二(推荐): 后台接口有返回列表的总数据量 totalSize
-      this.mescroll.endBySize(1, 1);
+      this.mescroll.endBySize(1, 1)
     },
-    // 下拉
+    // 下拉刷新
     async onDown(page) {
-      console.log('page2', page);
+      // const res = await getChapterList()
+      page.endBySize(1, 1)
     },
     // 数据获取
     getData() {
-      return new Promise((resove) => {
-        uni.request({
-          url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
-          data: {
-            page: this.pageNum,
-            limit: 10
-          },
-          header: {
-            token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwNTE5MzIxfQ=='
-          },
-          success: (res) => {
-            resove(res.data)
-          }
-        })
-      })
+
     }
 
   }, // methods end
@@ -105,10 +88,9 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 
-@import "@/styles/logan.scss";
-
 .policy-list {
   padding: $page-padding;
+  height: 100%;
 }
 
 .list {
@@ -146,4 +128,8 @@ export default {
     font-weight: normal;
   }
 }
+
+::v-deep .uni-searchbar__box {
+  justify-content: flex-start;
+} 
 </style>

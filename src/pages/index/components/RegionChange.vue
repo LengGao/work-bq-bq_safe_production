@@ -2,8 +2,8 @@
   <view class="regionChange">
     <scroll-view scroll-y show-scrollbar>
       <view class="head">
-        <uni-icons type="location" size="32rpx" />
-        <text>{{ location.address }}</text>
+        <uni-icons type="location" size="40rpx" />
+        <text class="address">{{ location.address }}</text>
       </view>
 
       <view class="buttons-bar">
@@ -45,6 +45,12 @@ export default {
 
 .head {
   padding: 24rpx 40rpx;
+
+  .address {
+    margin-left: 10rpx;
+    font-size: $font-size-md;
+    color: $text-color-grey;
+  }
 }
 
 .buttons-bar {
@@ -53,7 +59,6 @@ export default {
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
-  padding: 16rpx;
 }
 
 .btn {
@@ -62,7 +67,7 @@ export default {
   font-size: $font-size-base;
   border-width: 2rpx;
   border-style: solid;
-  background-color: #f8f8f8;
+  background-color: #fff;
 }
 
 .active {

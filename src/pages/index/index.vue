@@ -119,8 +119,8 @@
         </CardRow>
       </view>
     </view>
-
-    <uni-popup ref="popup" mask-background-color="#fff">
+    
+    <uni-popup ref="popup" mask-background-color="#f8f8f8">
       <RegionChange @change="onChangeRegion" @close="onCloseFilter" :location="location" :buttons="regions" />
     </uni-popup>
 
