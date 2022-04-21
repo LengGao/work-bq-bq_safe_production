@@ -13,7 +13,7 @@
         <div class="statistics-top">
           <div class="statistics-top-user">
             <image class="user-avatar"
-                   src="https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500" />
+                   :src="srcImage" />
             <div>
               <div class="user-name">娿饿肚肚</div>
               <div class="user-time">2021-20-20 开始学习</div>
@@ -119,6 +119,7 @@ export default {
   },
   data() {
     return {
+      srcImage: 'https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
       chartsLineOpts: {
         legend: {
           show: false,
@@ -191,6 +192,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/styles/logan.scss";
 .learn-report {
   padding-bottom: 40rpx;
   background: url("../../static/learn-report-background.png") no-repeat;

@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import moment from "@/utils/date";
+// import moment from "@/utils/date";
 import { login, list } from "@/api/user";
 import CardRow from "@/components/card-row/index";
 import RegionChange from './components/RegionChange'
@@ -185,7 +185,7 @@ export default {
     };
   },
   created() {
-    console.log("加载了", moment({}).format());
+    // console.log("加载了", moment({}).format());
   },
   onReachBottom() {
     console.log("到底了");

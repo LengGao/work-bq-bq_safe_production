@@ -1,11 +1,10 @@
 {
 	"name": "",
-	"appid": "wx144ecd41221fbacc",
+	"appid": "",
 	"description": "",
 	"versionName": "1.0.0",
 	"versionCode": "100",
 	"transformPx": false,
-	"uniStatistics": { "enable": true },
 	"app-plus": {
 		"usingComponents": true,
 		"splashscreen": {
@@ -54,8 +53,7 @@
 	"h5": {
 		"optimization": {
 			"prefetch": true,
-			"preload": true,
-			"treeShaking": { "enable": true }
+			"preload": true
 		}
 	},
 	"quickapp": { 
@@ -64,14 +62,11 @@
 	"mp-weixin": { 
 		"appid": "",
 		"setting": {
-			"miniprogramRoot": "./dist/dev/mp-weixin",
 			"urlCheck": false,
 			"postcss": true,
 			"minified": true,
-			"packNpmManually": true,
-			"packNpmRelationList": [{ 
-				"packageJsonPath": "./package.json",
-				"miniprogramNpmDistDir": "./miniprogram/"
+			"packNpmManually": false,
+			"packNpmRelationList": [{
 			}]
 		},
 		"usingComponents": true

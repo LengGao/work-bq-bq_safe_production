@@ -75,12 +75,6 @@
 			}
 		},
 		{
-			"path": "pages/learnReport/index",
-			"style": {
-				"navigationBarTitleText": "学习报告"
-			}
-		},
-		{
 			"path": "pages/courseList/index",
 			"style": {
 				"navigationBarTitleText": "课程列表"
