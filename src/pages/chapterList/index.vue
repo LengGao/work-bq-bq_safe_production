@@ -26,7 +26,7 @@
               @click="toAnswer(item.id, item.chapter_name, item.answer_num,item.topic_num)">
           <view class="chapter-info">
             <view class="chapter-info-title">
-              <text class="iconfont">&#xe7ed;</text>
+              <uni-icons custom-prefix="iconfont" type="icon-book" size="28rpx"></uni-icons>
               <view class="title van-ellipsis">{{ item.chapter_name }}</view>
             </view>
             <view class="chapter-info-progress">
@@ -35,7 +35,7 @@
             </view>
           </view>
           <view>
-            <text class="iconfont">&#xe66b;</text>
+            <uni-icons custom-prefix="iconfont" type="icon-pagenext" color="#ddd" size="28rpx"></uni-icons>
           </view>
         </view>
       </view>
