@@ -1,13 +1,10 @@
 <template>
   <view class="test">
     <view class="my-picker">
-
-      <mescroll-body>
-        <view></view>
-
-      </mescroll-body>
+      <uni-file-picker v-model="imageValue" fileMediatype="image" mode="grid" @select="select" @progress="progress"
+                       @success="success" @fail="fail" />
     </view>
-    
+
   </view>
 </template>
 
@@ -17,6 +14,7 @@ export default {
   components: { mescrollBody },
   data() {
     return {
+      imageValue: [],
       data: [
         { id: 1, name: 'a' },
         { id: 2, name: 'a' },
@@ -33,23 +31,39 @@ export default {
     };
   },
   methods: {
-      downFn(e) {
-        console.log('d',e);
-      },
-      onchange(e) {
-        const value = e.detail.value
-      },
-      onnodeclick(node) {
-      },
-      bindPickerChange() {
-        
-      }
-  
+    downFn(e) {
+      console.log('d', e);
+    },
+    onchange(e) {
+      const value = e.detail.value
+    },
+    onnodeclick(node) {
+    },
+    bindPickerChange() {
+
+    },
+    // 获取上传状态
+    select(e) {
+      console.log('选择文件：', e)
+    },
+    // 获取上传进度
+    progress(e) {
+      console.log('上传进度：', e)
+    },
+
+    // 上传成功
+    success(e) {
+      console.log('上传成功')
+    },
+
+    // 上传失败
+    fail(e) {
+      console.log('上传失败：', e)
+    }
+
   },
 };
 </script>
 
 <style>
-
-
 </style>
