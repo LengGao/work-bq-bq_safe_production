@@ -1,7 +1,7 @@
 <template>
   <view class="answer-head">
     <view class="answer-head-title">{{ typeMap[type] }}</view>
-    <view class="answer-head-number">{{ current }}/{{ total }}</view>
+    <view class="answer-head-number">{{ serialNumber }}/{{ total }}</view>
   </view>
 </template>
 <script>
@@ -16,7 +16,7 @@ export default {
       type: [String, Number],
       default: "",
     },
-    current: {
+    serialNumber: {
       type: [String, Number],
       default: "",
     },

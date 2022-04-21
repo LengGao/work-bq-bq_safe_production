@@ -10,7 +10,7 @@
 import IOption from "../option";
 import uParse from "@/components/gaoyia-parse/parse.vue";
 export default {
-  name: "select",
+  name: "ISelect",
   components: {
     IOption,
     uParse,

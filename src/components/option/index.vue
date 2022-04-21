@@ -14,7 +14,7 @@
 </template>
 <script>
 export default {
-  name: "option",
+  name: "IOption",
   props: {
     noletter: {
       type: Boolean,
@@ -80,24 +80,24 @@ export default {
     }
   }
   &--success {
-    color: $uni-color-success;
-    border-color: $uni-color-success;
+    color: $uni-answer-success;
+    border-color: $uni-answer-success;
     .option-label {
-      border-color: $uni-color-success;
-      background-color: $uni-color-success;
+      border-color: $uni-answer-success;
+      background-color: $uni-answer-success;
       color: #fff;
     }
   }
   &--error {
-    color: $uni-color-error;
-    border-color: $uni-color-error;
+    color: $uni-answer-error;
+    border-color: $uni-answer-error;
     .option-label {
-      border-color: $uni-color-error;
-      background-color: $uni-color-error;
+      border-color: $uni-answer-error;
+      background-color: $uni-answer-error;
       color: #fff;
     }
     .iconfont {
-      color: $uni-color-error;
+      color: $uni-answer-error;
     }
   }
 }

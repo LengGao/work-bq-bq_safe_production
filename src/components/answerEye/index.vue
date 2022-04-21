@@ -1,8 +1,12 @@
 <template>
   <view class="answer-eye" :class="{ 'answer-eye--active': active }" @click="handleClick">
     <view class="eye-btn">
-      <text class="iconfont" v-show="!active">&#xe65f;</text>
-      <text class="iconfont" v-show="active">&#xe600;</text>
+      <uni-icons custom-prefix="iconfont" v-show="active" color="#199fff" type="icon-view" size="32rpx">
+      </uni-icons>
+      <uni-icons custom-prefix="iconfont" v-show="!active" type="icon-hide" size="32rpx">
+      </uni-icons>
+      <!-- <text class="iconfont" v-show="!active">&#xe65f;</text>
+      <text class="iconfont" v-show="active">&#xe600;</text> -->
       <text class="text">答案</text>
     </view>
   </view>

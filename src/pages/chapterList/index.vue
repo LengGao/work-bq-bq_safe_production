@@ -23,7 +23,7 @@
     <view class="chapter-container" v-if="chapterList.length">
       <view class="chapter-list">
         <view class="chapter-list-item" v-for="item in chapterList" :key="item.id"
-              @click="toAnswer(item.id, item.chapter_name, item.answer_num)">
+              @click="toAnswer(item.id, item.chapter_name, item.answer_num,item.topic_num)">
           <view class="chapter-info">
             <view class="chapter-info-title">
               <text class="iconfont">&#xe7ed;</text>
@@ -66,7 +66,7 @@ export default {
     !this.isOnload &&
       setTimeout(() => {
         this.getChapterList();
-      }, 1000);
+      }, 500);
     this.isOnload = false;
   },
   onLoad() {
@@ -74,30 +74,35 @@ export default {
     this.isOnload = true;
   },
   methods: {
-    toAnswer(chapterId, title, answer_num) {
+    toAnswer(chapterId, title, answer_num, topic_num) {
+      if (!topic_num) {
+        uni.showToast({
+          title: '当前章节暂未配置题目',
+          icon: 'none'
+        })
+        return
+      }
       if (!answer_num) {
         uni.navigateTo({
           url: `/pages/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=0`,
         });
         return;
       }
-      // Dialog.confirm({
-      //   title: "提示",
-      //   message: "检测到您有做题记录",
-      //   confirmButtonColor: "#199fff",
-      //   confirmButtonText: "继续上一次",
-      //   cancelButtonText: "重新开始",
-      // })
-      //   .then(() => {
-      //     uni.navigateTo({
-      //       url: `/pages/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=1`,
-      //     });
-      //   })
-      //   .catch(() => {
-      //     uni.navigateTo({
-      //       url: `/pages/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=0`,
-      //     });
-      //   });
+      uni.showModal({
+        title: '提示',
+        content: '检测到您有做题记录',
+        cancelText: '重新开始',
+        confirmText: '继续上次',
+        success: function (res) {
+          let isContinue = 1 // 1继续上次 2重新开始
+          if (res.cancel) {
+            isContinue = 0
+          }
+          uni.navigateTo({
+            url: `/pages/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=${isContinue}`,
+          });
+        }
+      });
     },
     async getChapterList() {
       const res = await getChapterList();

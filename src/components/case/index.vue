@@ -46,7 +46,7 @@ import Judg from "@/components/judg";
 import Indefinite from "@/components/indefinite";
 import Completion from "@/components/completion";
 import Short from "@/components/short";
-import { submitAnswer } from "@/api/index";
+import { submitAnswer } from "@/api/question";
 export default {
   name: "case",
   components: {
@@ -125,6 +125,11 @@ export default {
   created() {
     this.total = this.options.child.length;
   },
+  onUnload() {
+    if (!["7", "8"].includes(this.type)) {
+      this.submitOtherAnswer()
+    }
+  },
   methods: {
     // 提交其他题型答案
     submitOtherAnswer() {
@@ -149,9 +154,6 @@ export default {
     onSwiperChange({ detail }) {
       const { current } = detail;
       this.currentIndex = current;
-      this.$nextTick(() => {
-        this.submitOtherAnswer();
-      });
       this.$emit("indexChange", current);
     },
     // 提交答案
@@ -201,6 +203,7 @@ export default {
     },
     onAnimationfinish({ detail }) {
       const { current } = detail;
+      this.submitOtherAnswer()
       this.onSwiperBoundary();
     },
     handleToggle() {

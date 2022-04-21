@@ -62,7 +62,6 @@ class Request extends Interceptor {
 
     // 发送请求
     send(config) {
-        console.log("config", config)
         return new Promise((resolve, reject) => {
             config.success = resolve
             config.fail = reject
@@ -75,12 +74,11 @@ class Request extends Interceptor {
         let url = options.url, config = Object.assign(this.$config, options)
         config.data = {
             ...config.data,
-            question_bank_id: 12
+            question_bank_id: 14
         }
         if (!this.isAbsolute.test(url)) {
             config.url = config.baseUrl + config.prefix + url + config.suffix
         }
-        console.log(config)
         return config
     }
 
@@ -100,7 +98,6 @@ request.useRequestInterceptor(() => {
 })
 
 request.useResponseInterceptor((res) => {
-    console.log("useRequestInterceptor", res, this, request)
     return res.data
 })
 
