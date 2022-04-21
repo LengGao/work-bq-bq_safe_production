@@ -69,15 +69,15 @@
 			}
 		},
 		{
-			"path": "pages/policyList/index",
+			"path": "pages/answer/index",
 			"style": {
-				"navigationBarTitleText": "章节练习"
+				"navigationBarTitleText": "答题"
 			}
 		},
 		{
-			"path": "pages/libraryList/index",
+			"path": "pages/answerSheet/index",
 			"style": {
-				"navigationBarTitleText": "章节练习"
+				"navigationBarTitleText": "答题卡"
 			}
 		},
 		{

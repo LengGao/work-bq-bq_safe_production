@@ -1,5 +1,5 @@
 <template>
-  <view class="xamination-card">
+  <view class="xamination-card" @click="handleClick">
     <view class="logan-card-body-row">
       <view class="logan-card-body-left">
         <image :src="leftImage || errorImage" class="logan-card-row-image" mode="aspectFit" />
@@ -41,6 +41,9 @@ export default {
     }
   },
   methods: {
+    handleClick(e) {
+      this.$emit('click', e)
+    },
     // 图片架子陈功
     onLoadImage() {
 

@@ -29,7 +29,7 @@
     <view class="examinationcard-bar">
       <view class="examinationcard-list">
         <view v-for="examination in examinations" :key="examination.id" class="examinationcard-list-item">
-          <ExaminationCard :leftImage="examination.thumb" :rightTop="examination.name"
+          <ExaminationCard @click="to(examination.url)" :leftImage="examination.thumb" :rightTop="examination.name"
                            :rightFooter="examination.desc" />
         </view>
       </view>
@@ -56,7 +56,7 @@ export default {
       ],
       // 推荐课程
       examinations: [
-        { id: 1, name: "章节练习", desc: '这是描述文案', thumb: '/static/img/examination_icon_list1.png', url: "" },
+        { id: 1, name: "章节练习", desc: '这是描述文案', thumb: '/static/img/examination_icon_list1.png', url: "../chapterList/index" },
         { id: 2, name: "模拟考试", desc: '这是描述文案', thumb: '/static/img/examination_icon_list2.png', url: '' },
         { id: 3, name: "模拟考试", desc: '这是描述文案', thumb: '/static/img/examination_icon_list3.png', url: '' },
       ],
@@ -66,8 +66,13 @@ export default {
       ],
     };
   },
-  
+
   methods: {
+    to(url) {
+      uni.navigateTo({
+        url
+      })
+    },
     // 滑动选择事件
     onChangeSwiper() { },
   },
