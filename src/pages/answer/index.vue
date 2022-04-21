@@ -195,7 +195,7 @@ export default {
         title: '提示',
         showCancel: false,
         content: '考试时间到，系统自动交卷',
-        success: function ({ confirm }) {
+        success: ({ confirm }) => {
           if (confirm) {
             this.toTestResoult();
           }
@@ -244,10 +244,11 @@ export default {
       this.model === "2" && this.handleNext();
     },
     handlePrev() {
-      this.currentIndex--;
+      !this.isStart && this.currentIndex--;
     },
     handleNext() {
-      this.currentIndex++;
+      !this.isEnd &&
+        this.currentIndex++;
     },
     onAnimationfinish({ detail }) {
       this.submitOtherAnswer();

@@ -3,7 +3,7 @@ import requset from '@/request/index'
 // 获取章节列表
 export const getChapterList = (data) => {
   return requset({
-    url: 'QuestionBank/Lists',
+    url: 'practice/chapter',
     method: 'get',
     data,
   })
@@ -14,7 +14,6 @@ export const createPractice = (data) => {
     url: 'practice/create',
     method: 'get',
     data,
-    loading: true
   })
 }
 // 答题卡
@@ -23,7 +22,6 @@ export const getQuestionBoard = (data) => {
     url: 'Topic/questionBoard',
     method: 'get',
     data,
-    loading: true
   })
 }
 // 提交答案
@@ -32,6 +30,7 @@ export const submitAnswer = (data) => {
     url: 'Topic/submitAnswer',
     method: 'post',
     data,
+    loading: false
   })
 }
 // 结算成绩
@@ -56,7 +55,6 @@ export const testExamConfig = (data) => {
     url: 'mockExam/testExamConfig',
     method: 'post',
     data,
-    loading: true
   })
 }
 // 生成模拟考试题目
@@ -65,7 +63,6 @@ export const createMockExam = (data) => {
     url: 'MockExam/create',
     method: 'post',
     data,
-    loading: true
   })
 }
 // 历年真题配置
@@ -74,7 +71,6 @@ export const getOverYearConfig = (data) => {
     url: 'RealTopic/testExamConfig',
     method: 'get',
     data,
-    loading: true
   })
 }
 // 生成历年真题题目
@@ -83,7 +79,6 @@ export const createRealTopic = (data) => {
     url: 'realTopic/create',
     method: 'post',
     data,
-    loading: true
   })
 }
 // 自主出题配置
@@ -92,7 +87,6 @@ export const getIndependentConfig = (data) => {
     url: 'independent/testExamConfig',
     method: 'get',
     data,
-    loading: true
   })
 }
 // 生成自主出题题目
@@ -101,7 +95,6 @@ export const createIndependent = (data) => {
     url: 'independent/create',
     method: 'post',
     data,
-    loading: true
   })
 }
 // 生成每日打卡题目
@@ -110,7 +103,6 @@ export const createDailyClock = (data) => {
     url: 'DailyClock/create',
     method: 'post',
     data,
-    loading: true
   })
 }
 // 生成刷题挑战题目
@@ -119,7 +111,6 @@ export const createChallenge = (data) => {
     url: 'Challenge/create',
     method: 'post',
     data,
-    loading: true
   })
 }
 // 收藏夹错题集题目
@@ -128,7 +119,6 @@ export const getUserTopicRecord = (data) => {
     url: 'UserTopicRecord/Topic',
     method: 'post',
     data,
-    loading: true
   })
 }
 // 提交错题集答案
@@ -136,6 +126,30 @@ export const submitWrongQuestion = (data) => {
   return requset({
     url: 'UserTopicRecord/submit',
     method: 'post',
+    data,
+  })
+}
+// 模拟考试记录列表
+export const getMockExamHistory = (data) => {
+  return requset({
+    url: 'MockExam/history',
+    method: 'get',
+    data,
+  })
+}
+// 自主出题题目列表
+export const getIndependentPapers = (data) => {
+  return requset({
+    url: 'independent/independentPapers',
+    method: 'get',
+    data,
+  })
+}
+// 历年真题列表
+export const getRealTestPapers = (data) => {
+  return requset({
+    url: 'RealTopic/realTestPapers',
+    method: 'get',
     data,
   })
 }
