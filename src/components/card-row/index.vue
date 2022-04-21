@@ -62,11 +62,11 @@ export default {
     },
     // 图片加载成功
     onLoadImage() {
-      console.log('onLoadImage', arguments);
+      // console.log('onLoadImage', arguments);
     },
     // 图片加载失败
     onerrorImagee() {
-      console.log('onerrorImagee', arguments);
+      // console.log('onerrorImagee', arguments);
       Promise.resolve(errorImage).then(res => this.leftImage = res)
     }
   }

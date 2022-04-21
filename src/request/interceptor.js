@@ -3,6 +3,7 @@ class Interceptor {
     constructor() {
         this.requetInterceptors = []
         this.responseInterceptors = []
+        this.rejectInterceptor = null
     }
 
     /**
@@ -46,7 +47,13 @@ class Interceptor {
             }
         }
     }
+
+    // 设置Reject异常拦处理器
+    setRejectInterceptor(handler) {
+        if (this.checkType(handler)) this.rejectInterceptor = handler
+    }
     
+
     /**
      * 单独注册请求拦截
      * @param { Array | Function } interceptor fn1, fn2...
