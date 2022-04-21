@@ -81,6 +81,25 @@
 			}
 		},
 		{
+			"path": "pages/testPaperIntroduce/index",
+			"style": {
+				"navigationBarTitleText": "试卷简介"
+			}
+		},
+		{
+			"path": "pages/testResults/index",
+			"style": {
+				"navigationBarTitleText": "考试结果"
+			}
+		},
+		{
+			"path": "pages/independentPaper/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "自主出题"
+			}
+		},
+		{
 			"path": "pages/test/index",
 			"style": {
 				"navigationBarTitleText": "测试"

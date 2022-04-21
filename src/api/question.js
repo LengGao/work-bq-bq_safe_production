@@ -139,3 +139,30 @@ export const submitWrongQuestion = (data) => {
     data,
   })
 }
+// 模拟考试记录列表
+export const getMockExamHistory = (data) => {
+  return requset({
+    url: 'MockExam/history',
+    method: 'get',
+    data,
+    loading: true
+  })
+}
+// 自主出题题目列表
+export const getIndependentPapers = (data) => {
+  return requset({
+    url: 'independent/independentPapers',
+    method: 'get',
+    data,
+    loading: true
+  })
+}
+// 历年真题列表
+export const getRealTestPapers = (data) => {
+  return requset({
+    url: 'RealTopic/realTestPapers',
+    method: 'get',
+    data,
+    loading: true
+  })
+}

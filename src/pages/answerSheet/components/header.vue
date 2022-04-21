@@ -13,7 +13,7 @@
 </template>
 <script>
 export default {
-  name: "header",
+  name: "IHeader",
   props: {
     model: {
       type: String,

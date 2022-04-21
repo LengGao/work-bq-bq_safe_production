@@ -14,7 +14,7 @@
 </template>
 <script>
 export default {
-  name: "footer",
+  name: "IFooter",
   props: {
     model: {
       type: String,
