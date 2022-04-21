@@ -340,3 +340,13 @@ export function chooseMessageFile(options) {
     })
   })
 }
+
+export function downloadFile (options) {
+  return new Promise((resolve, reject) => {
+    uni.downloadFile({
+      ...options,
+      success: (res) => resolve(res),
+      fail: (err) => reject(err)
+    })
+  })
+}

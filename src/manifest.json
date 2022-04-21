@@ -1,6 +1,6 @@
 {
 	"name": "",
-	"appid": "",
+	"appid": "wx144ecd41221fbacc",
 	"description": "",
 	"versionName": "1.0.0",
 	"versionCode": "100",
@@ -15,7 +15,7 @@
 			"delay": 0
 		},
 		"modules": {
-
+			
 		},
 		"distribute": {
 			"android": {
@@ -64,12 +64,14 @@
 	"mp-weixin": { 
 		"appid": "",
 		"setting": {
+			"miniprogramRoot": "./dist/dev/mp-weixin",
 			"urlCheck": false,
 			"postcss": true,
 			"minified": true,
 			"packNpmManually": true,
 			"packNpmRelationList": [{ 
-				"packageJsonPath": "./package.json" 
+				"packageJsonPath": "./package.json",
+				"miniprogramNpmDistDir": "./miniprogram/"
 			}]
 		},
 		"usingComponents": true

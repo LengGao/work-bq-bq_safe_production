@@ -4,12 +4,17 @@
       <uni-file-picker v-model="imageValue" fileMediatype="image" mode="grid" @select="select" @progress="progress"
                        @success="success" @fail="fail" />
     </view>
+    <button hover-class="button-hover" @click="saveFile">
+      点击下载
+    </button>
 
   </view>
 </template>
 
 <script>
 import mescrollBody from '../../uni_modules/mescroll-uni/components/mescroll-body/mescroll-body.vue';
+import { login } from '@/api/user'
+
 export default {
   components: { mescrollBody },
   data() {
@@ -59,11 +64,16 @@ export default {
     // 上传失败
     fail(e) {
       console.log('上传失败：', e)
-    }
+    },
 
+    saveFile() {
+      let data = { page: 1, limit: 10 }
+      login(data)
+    }
   },
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import "@/styles/logan.scss";
 </style>

@@ -17,11 +17,11 @@
 // }
 
 
-import Request from '@/request/miniapp'
+import Request from '@/request/index'
 
 export function login(data) {
     return Request({
-        url: '',
+        url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
         method: 'get',
         data
     })
