@@ -36,11 +36,11 @@ export default {
   color: #666;
   border-radius: 50%;
   &--success {
-    background-color: $uni-color-success;
+    background-color: $uni-answer-success;
     color: #fff;
   }
   &--error {
-    background-color: $uni-color-error;
+    background-color: $uni-answer-error;
     color: #fff;
   }
   &--primary {

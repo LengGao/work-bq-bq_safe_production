@@ -75,6 +75,12 @@
 			}
 		},
 		{
+			"path": "pages/answerSheet/index",
+			"style": {
+				"navigationBarTitleText": "答题卡"
+			}
+		},
+		{
 			"path": "pages/test/index",
 			"style": {
 				"navigationBarTitleText": "测试"
