@@ -82,8 +82,8 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 .examination {
-  width: 100%;
-  overflow: hidden;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .head-swiper {

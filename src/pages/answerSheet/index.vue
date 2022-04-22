@@ -123,12 +123,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-/* 页面高度100% */
-page,
-uni-page-body,
-uni-page-refresh {
-  height: 100%;
-}
 .answer-sheet {
   height: 100%;
   display: flex;

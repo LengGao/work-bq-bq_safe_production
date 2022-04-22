@@ -28,12 +28,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* 页面高度100% */
-page,
-uni-page-body,
-uni-page-refresh {
-  height: 100%;
-}
 .learn-certificate {
   box-sizing: border-box;
   min-height: 100%;

@@ -68,8 +68,8 @@ export default {
       // 推荐课程
       courses: [
         { id: 1, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "已完成", prpress: 800, type: 'tag-one' },
-        { id: 2, thumb: "/static/img/study_cource2.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 100, type: 'tag-two'},
-        { id: 3, thumb: "/static/img/study_cource3.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 0, type: 'tag-three'}
+        { id: 2, thumb: "/static/img/study_cource2.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 100, type: 'tag-two' },
+        { id: 3, thumb: "/static/img/study_cource3.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 0, type: 'tag-three' }
       ],
     };
   },
@@ -83,8 +83,8 @@ export default {
     // 点击课程
     onClickCource() {
       console.log("onClickCource");
-    }  
-  
+    }
+
   }, // methods end
 };
 </script>
@@ -94,8 +94,8 @@ export default {
 $padding: 16rpx 20rpx;
 
 .study {
-  width: 100%;
-  overflow: hidden;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .header {
@@ -179,8 +179,8 @@ $padding: 16rpx 20rpx;
   }
 
   .tag {
-    position: relative; 
-    bottom: 8rpx; 
+    position: relative;
+    bottom: 8rpx;
     font-size: 24rpx;
     font-weight: normal;
   }
@@ -189,10 +189,10 @@ $padding: 16rpx 20rpx;
     color: $color-primary;
     border-color: $color-primary;
   }
-  
+
   .tag-two {
     color: $color-success;
-    border-color: $color-success; 
+    border-color: $color-success;
   }
 
   .tag-three {

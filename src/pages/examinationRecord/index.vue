@@ -68,12 +68,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-/* 页面高度100% */
-page,
-uni-page-body,
-uni-page-refresh {
-  height: 100%;
-}
 .examination-record {
   height: 100%;
   .b-img {
