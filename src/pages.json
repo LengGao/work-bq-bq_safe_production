@@ -46,7 +46,7 @@
 			"path": "pages/policyDetails/index",
 			"style": {
 				"navigationBarTitleText": "政策详情"
-			}
+			}	
 		},
 		{
 			"path": "pages/libraryList/index",
