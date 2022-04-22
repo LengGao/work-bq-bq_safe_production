@@ -81,10 +81,6 @@ class Service extends Interceptor {
     mergeConfig(options) {
         // Object.assign(target, source) return target 故 config => this.$config
         let url = options.url, config = Object.assign(this.$config, options)
-        config.data = {
-            ...config.data,
-            question_bank_id: 14
-        }
         if (!this.isAbsolute.test(url)) {
             config.url = config.baseUrl + config.prefix + url + config.suffix
         }
