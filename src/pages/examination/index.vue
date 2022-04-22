@@ -48,8 +48,8 @@ export default {
       // 宫格数据
       gridIndex: 0,
       grids: [
-        { id: 1, thumb: "/static/img/examination_gird1.png", title: "收藏夹", url: "" },
-        { id: 2, thumb: "/static/img/examination_gird2.png", title: "错题集", url: "" },
+        { id: 1, thumb: "/static/img/examination_gird1.png", title: "收藏夹", url: "../favorites/index" },
+        { id: 2, thumb: "/static/img/examination_gird2.png", title: "错题集", url: "../wrongQuestion/index" },
         { id: 3, thumb: "/static/img/examination_gird3.png", title: "学习报告", url: "../learnReport/index" },
         { id: 4, thumb: "/static/img/examination_gird4.png", title: "考试记录", url: "" },
         { id: 5, thumb: "/static/img/examination_gird5.png", title: "题目答疑", url: "" }

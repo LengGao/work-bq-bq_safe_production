@@ -53,7 +53,7 @@
 			"style": {
 				"navigationBarTitleText": "文库资料"
 			}
-		},		
+		},
 		{
 			"path": "pages/learnCertificate/index",
 			"style": {
@@ -115,6 +115,18 @@
 			"style": {
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "自主出题"
+			}
+		},
+		{
+			"path": "pages/favorites/index",
+			"style": {
+				"navigationBarTitleText": "收藏夹"
+			}
+		},
+		{
+			"path": "pages/wrongQuestion/index",
+			"style": {
+				"navigationBarTitleText": "错题集"
 			}
 		},
 		{

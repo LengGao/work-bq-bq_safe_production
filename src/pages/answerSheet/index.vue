@@ -124,7 +124,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .answer-sheet {
-  height: calc(100vh - 44px);
+  height: 100%;
   display: flex;
   flex-direction: column;
   .content {

@@ -2,7 +2,18 @@
 const MescrollMixin = {
 	data() {
 		return {
-			mescroll: null //mescroll实例对象
+			mescroll: null, //mescroll实例对象
+			downOption: {
+				page: {
+					size: 20 // 每页数据的数量,默认10
+				},
+			},
+			// 上拉加载的配置(可选, 绝大部分情况无需配置)
+			upOption: {
+				page: {
+					size: 20 // 每页数据的数量,默认10
+				},
+			},
 		}
 	},
 	// 注册系统自带的下拉刷新 (配置down.native为true时生效, 还需在pages配置enablePullDownRefresh:true;详请参考mescroll-native的案例)

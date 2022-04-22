@@ -381,7 +381,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .answer {
-  height: calc(100vh - 44px);
+  height: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

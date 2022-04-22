@@ -96,6 +96,10 @@ export default {
     top: 0;
     left: 0;
     width: 100%;
+    .status_bar {
+      height: var(--status-bar-height);
+      width: 100%;
+    }
     .nav-bar {
       height: 44px;
       font-size: $uni-font-size-base;
