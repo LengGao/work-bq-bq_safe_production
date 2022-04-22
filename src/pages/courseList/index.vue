@@ -1,8 +1,10 @@
 <template>
   <view class="course-list">
+    <DropdownFilter :data="categoryData" v-model="categoryType" />
     <view class="course-list-header">
-      <picker class="picker" @change="categoryPickerChange" @columnchange="onColumnchange" range-key="name"
-              mode="multiSelector" :value="categoryIndex" :range="categoryData">
+
+      <!-- <picker class="picker" @change="categoryPickerChange" @columnchange="onColumnchange" range-key="name"
+              mode="multiSelector" :value="categoryType" :range="categoryData">
         <view class="picker-btn">
           <view class="picker-btn-title">{{categoryName}}</view>
           <uni-icons custom-prefix="iconfont" type="icon-sanjiao1" size="24rpx"></uni-icons>
@@ -14,7 +16,7 @@
           <view class="picker-btn-title">{{typeData[typeIndex].name}}</view>
           <uni-icons custom-prefix="iconfont" type="icon-sanjiao1" size="24rpx"></uni-icons>
         </view>
-      </picker>
+      </picker> -->
     </view>
     <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback">
       <view class="course-list-container">
@@ -50,22 +52,82 @@
 
 <script>
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import DropdownFilter from '@/components/dropdown-filter'
 export default {
+  components: {
+    DropdownFilter
+  },
   mixins: [MescrollMixin], // 使用mixin
   data() {
     return {
       categoryName: '全部分类',
       categoryId: 0,
-      categoryIndex: [],
+      categoryType: '',
       categoryData: [
-        [{ name: '全部', id: 0 }, { name: '安监类', id: 2 }]
-        ,
-        [{ name: '全部', id: 3 }]
+        {
+          name: '全部',
+          value: 0,
+          children: [
+            {
+              name: '全部',
+              value: 0,
+            }
+          ]
+        },
+        {
+          name: '安监类',
+          value: 1,
+          children: [
+            {
+              name: '测试111111111111111111111111111',
+              value: 2
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 3
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 4
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 5
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 6
+            },
+          ]
+        },
+        {
+          name: '学历类',
+          value: 3,
+          children: [
+            {
+              name: '测试2222222222222',
+              value: 2
+            },
+            {
+              name: '测试2222222222222',
+              value: 3
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 4
+            },
+            {
+              name: '测试2222222222222',
+              value: 5
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 6
+            },
+          ]
+        }
       ],
-      colunmMap: {
-        0: [{ name: '全部', id: 0 }],
-        1: [{ name: '测试', id: 4 }],
-      },
+
       typeIndex: 0,
       typeValue: '',
       typeData: [
@@ -73,17 +135,29 @@ export default {
         { name: '免费课', value: 1 },
         { name: '认证课', value: 2 },
       ],
-      pageNum: 1,
+      filterData: [
+        [{ text: '全部状态', value: '' }, { text: '状态1', value: 1 }, { text: '状态2', value: 2 }, { text: '状态3', value: 3 }],
+        [{ text: '全部类型', value: '' }, { text: '类型1', value: 1 }, { text: '类型2', value: 2 }, { text: '类型3', value: 3 }]
+      ],
+      defaultIndex: [0, 0],
       courseData: [],
     };
   },
   created() {
   },
   methods: {
+    ed(res) {
+      console.log(res)
+    },
+    dateChange(d) {
+      uni.showToast({
+        icon: 'none',
+        title: d
+      })
+    },
     async upCallback(page) {
-      this.pageNum = page.num; // 页码, 默认从1开始
       // const pageSize = page.size; // 页长, 默认每页10条
-      const res = await this.getCousrList()
+      const res = await this.getCousrList({ page: page.num, limit: page.size })
       console.log(res)
       // 接口返回的当前页数据列表 (数组)
       let curPageData = res.data.data;
@@ -98,16 +172,13 @@ export default {
       //方法二(推荐): 后台接口有返回列表的总数据量 totalSize
       this.mescroll.endBySize(curPageLen, totalSize);
     },
-    getCousrList() {
+    getCousrList(data) {
       return new Promise((resove) => {
         uni.request({
           url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
-          data: {
-            page: this.pageNum,
-            limit: 10
-          },
+          data,
           header: {
-            token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwNTE5MzIxfQ=='
+            token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwNzAyODkwfQ=='
           },
           success: (res) => {
             resove(res.data)
@@ -132,7 +203,6 @@ export default {
     },
     categoryPickerChange({ detail }) {
       console.log(detail)
-      this.categoryIndex = detail.value;
       const [a, b] = detail.value
       this.categoryName = this.categoryData[1][b].name
       this.categoryId = this.categoryData[b].id
