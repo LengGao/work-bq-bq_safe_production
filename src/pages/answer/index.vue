@@ -380,6 +380,12 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+/* 页面高度100% */
+page,
+uni-page-body,
+uni-page-refresh {
+  height: 100%;
+}
 .answer {
   height: 100%;
   box-sizing: border-box;

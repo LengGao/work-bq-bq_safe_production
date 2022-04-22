@@ -35,7 +35,7 @@
 import { getRealTestPapers } from "@/api/question";
 import NoData from "@/components/noData";
 export default {
-  name: "autonomy",
+  name: "independentPaper",
   components: {
     NoData,
   },

@@ -1,6 +1,6 @@
 <template>
   <view class="wrong-question">
-    <uni-notice-bar class="notice" show-icon text="答对一次后自动移除错题 " />
+    <uni-notice-bar show-icon text="答对一次后自动移除错题 " />
     <mescroll-body class="wrong-question-list" ref="mescrollRef" @init="mescrollInit" @down="downCallback"
                    :down="downOption" :up="upOption" @up="upCallback">
       <view class="wrong-question-list-item" v-for="item in list" :key="item.id">
@@ -57,10 +57,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .wrong-question {
-  .notice {
-    position: static;
-    top: 0;
-  }
   .wrong-question-list {
     &-item {
       padding: 0 30rpx;

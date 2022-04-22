@@ -46,7 +46,7 @@
 			"path": "pages/policyDetails/index",
 			"style": {
 				"navigationBarTitleText": "政策详情"
-			}	
+			}
 		},
 		{
 			"path": "pages/libraryList/index",
@@ -127,6 +127,12 @@
 			"path": "pages/wrongQuestion/index",
 			"style": {
 				"navigationBarTitleText": "错题集"
+			}
+		},
+		{
+			"path": "pages/examinationRecord/index",
+			"style": {
+				"navigationBarTitleText": "考试记录"
 			}
 		},
 		{

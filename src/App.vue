@@ -15,10 +15,4 @@ export default {
 <style>
 /*每个页面公共css */
 @import "@/static/iconfont/iconfont.css";
-/* 页面高度100% */
-page,
-uni-page-body,
-uni-page-refresh {
-  height: 100%;
-}
 </style>
