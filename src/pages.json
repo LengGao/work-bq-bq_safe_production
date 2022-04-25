@@ -7,6 +7,12 @@
 	},
 	"pages": [
 		{
+			"path": "pages/courseDetail/index",
+			"style": {
+				"navigationBarTitleText": "课程列表"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "安培课堂"
@@ -80,6 +86,8 @@
 				"navigationBarTitleText": "课程列表"
 			}
 		},
+
+
 		{
 			"path": "pages/chapterList/index",
 			"style": {
