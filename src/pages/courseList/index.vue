@@ -1,22 +1,8 @@
 <template>
   <view class="course-list">
-    <DropdownFilter :data="categoryData" v-model="categoryType" />
     <view class="course-list-header">
-
-      <!-- <picker class="picker" @change="categoryPickerChange" @columnchange="onColumnchange" range-key="name"
-              mode="multiSelector" :value="categoryType" :range="categoryData">
-        <view class="picker-btn">
-          <view class="picker-btn-title">{{categoryName}}</view>
-          <uni-icons custom-prefix="iconfont" type="icon-sanjiao1" size="24rpx"></uni-icons>
-        </view>
-      </picker>
-      <picker class="picker" @change="onTypePickerChange" range-key="name" mode="selector" :value="typeIndex"
-              :range="typeData">
-        <view class="picker-btn">
-          <view class="picker-btn-title">{{typeData[typeIndex].name}}</view>
-          <uni-icons custom-prefix="iconfont" type="icon-sanjiao1" size="24rpx"></uni-icons>
-        </view>
-      </picker> -->
+      <DropdownFilter class="picker" :data="categoryData" v-model="categoryType" @change="reloadList" />
+      <DropdownSelect class="picker" :data="typeData" v-model="typeValue" @change="reloadList" />
     </view>
     <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback">
       <view class="course-list-container">
@@ -53,9 +39,11 @@
 <script>
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import DropdownFilter from '@/components/dropdown-filter'
+import DropdownSelect from '@/components/dropdown-select'
 export default {
   components: {
-    DropdownFilter
+    DropdownFilter,
+    DropdownSelect
   },
   mixins: [MescrollMixin], // 使用mixin
   data() {
@@ -127,40 +115,32 @@ export default {
           ]
         }
       ],
-
-      typeIndex: 0,
-      typeValue: '',
+      typeValue: 0,
       typeData: [
         { name: '全部类型', value: '' },
         { name: '免费课', value: 1 },
         { name: '认证课', value: 2 },
       ],
-      filterData: [
-        [{ text: '全部状态', value: '' }, { text: '状态1', value: 1 }, { text: '状态2', value: 2 }, { text: '状态3', value: 3 }],
-        [{ text: '全部类型', value: '' }, { text: '类型1', value: 1 }, { text: '类型2', value: 2 }, { text: '类型3', value: 3 }]
-      ],
-      defaultIndex: [0, 0],
       courseData: [],
     };
   },
   created() {
   },
   methods: {
-    ed(res) {
-      console.log(res)
-    },
-    dateChange(d) {
-      uni.showToast({
-        icon: 'none',
-        title: d
-      })
+    reloadList() {
+      this.mescroll.resetUpScroll();
     },
     async upCallback(page) {
       // const pageSize = page.size; // 页长, 默认每页10条
-      const res = await this.getCousrList({ page: page.num, limit: page.size })
-      console.log(res)
+      const data = {
+        page: page.num,
+        limit: page.size,
+        categoryType: this.categoryType,
+        typeValue: this.typeValue
+      }
+      const res = await this.getCousrList(data)
       // 接口返回的当前页数据列表 (数组)
-      let curPageData = res.data.data;
+      let curPageData = res.data.data || [];
       // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
       let curPageLen = curPageData.length;
       // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
@@ -178,7 +158,7 @@ export default {
           url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
           data,
           header: {
-            token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwNzAyODkwfQ=='
+            token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwODY4OTY2fQ=='
           },
           success: (res) => {
             resove(res.data)
@@ -187,28 +167,6 @@ export default {
       })
 
     },
-    onTypePickerChange({ detail }) {
-      console.log(detail)
-      const { value: index = 0 } = detail
-      this.typeIndex = index
-      this.typeValue = this.typeData[index].value
-      this.mescroll.resetUpScroll();
-    },
-    onColumnchange({ detail }) {
-      console.log(detail)
-      if (detail.column === 0) {
-        console.log(this.colunmMap[detail.value])
-        this.categoryData[1] = this.colunmMap[detail.value]
-      }
-    },
-    categoryPickerChange({ detail }) {
-      console.log(detail)
-      const [a, b] = detail.value
-      this.categoryName = this.categoryData[1][b].name
-      this.categoryId = this.categoryData[b].id
-
-    },
-
   },
 };
 </script>
@@ -225,16 +183,6 @@ export default {
     background-color: #fff;
     .picker {
       flex: 1;
-      &-btn {
-        padding: 20rpx 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        &-title {
-          font-size: $uni-font-size-lg;
-          margin-right: 4rpx;
-        }
-      }
     }
   }
   &-container {

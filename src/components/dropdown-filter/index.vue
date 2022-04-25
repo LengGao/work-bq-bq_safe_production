@@ -48,6 +48,7 @@ export default {
     handleRightClick(item) {
       this.activeRightName = item.name
       this.$emit('input', item.value)
+      this.$emit('change', item.value)
       this.hanldeToggle()
     },
     handleLeftClick(index) {
@@ -66,7 +67,7 @@ export default {
   color: #333;
   &-header {
     position: relative;
-    z-index: 10;
+    z-index: 100;
     background-color: #fff;
     height: 88rpx;
     display: flex;
