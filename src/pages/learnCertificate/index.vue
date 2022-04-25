@@ -1,11 +1,11 @@
 <template>
   <view class="learn-certificate">
-    <div class="learn-certificate-item">
-      <div class="learn-certificate-item-title">课程名称</div>
-      <div class="learn-certificate-item-time">获取时间：202121-221-4544</div>
+    <view class="learn-certificate-item">
+      <view class="learn-certificate-item-title">课程名称</view>
+      <view class="learn-certificate-item-time">获取时间：202121-221-4544</view>
       <image @click="preiviewImg(src)" :src="src" mode="scaleToFill" />
-      <div class="learn-certificate-item-save">长按保存证书</div>
-    </div>
+      <view class="learn-certificate-item-save">长按保存证书</view>
+    </view>
   </view>
 </template>
 
@@ -30,7 +30,7 @@ export default {
 <style lang="scss" scoped>
 .learn-certificate {
   box-sizing: border-box;
-  min-height: calc(100vh - 44px);
+  min-height: 100%;
   padding: 30rpx;
   background-color: #f7f7f7;
   &-item {

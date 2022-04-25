@@ -67,8 +67,7 @@
                     <text class="present-price">￥{{ course.money }}</text>
                     <text class="original-price">{{ course.oldMoney }}</text>
                   </view>
-                  <uni-tag v-else class="tag" type="warning"
-                           size="small" text="免费" inverted />
+                  <uni-tag v-else class="tag" type="warning" size="small" text="免费" inverted />
                 </view>
               </view>
             </view>
@@ -119,7 +118,7 @@
         </CardRow>
       </view>
     </view>
-    
+
     <uni-popup ref="popup" mask-background-color="#f8f8f8">
       <RegionChange @change="onChangeRegion" @close="onCloseFilter" :location="location" :buttons="regions" />
     </uni-popup>
@@ -267,7 +266,8 @@ $padding-tb: 16rpx;
 $padding-lr: 20rpx;
 
 .content {
-  overflow: hidden;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .filter {
@@ -284,7 +284,6 @@ $padding-lr: 20rpx;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    
   }
 
   &-right {
@@ -294,9 +293,9 @@ $padding-lr: 20rpx;
 
   .icon-location {
     margin: 0 4rpx;
-    width: 28rpx;  
+    width: 28rpx;
     height: 28rpx;
-  } 
+  }
 }
 
 .swiper-bar {
@@ -404,8 +403,8 @@ $padding-lr: 20rpx;
   }
 
   .tag {
-    position: relative; 
-    bottom: 8rpx; 
+    position: relative;
+    bottom: 8rpx;
     font-size: 24rpx;
     font-weight: normal;
   }

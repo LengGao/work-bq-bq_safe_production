@@ -7,78 +7,79 @@
         <text class="nav-bar-title">学习数据</text>
       </view>
     </view>
-    <picker @change="bindPickerChange" :value="activeCourseIndex" :range="array">
-      <view class="learn-data-select">
-        <uni-icons type="bars" color="#fff" size="40rpx"></uni-icons>
-        <text class="course-name">{{ array[activeCourseIndex] }}</text>
-      </view>
-    </picker>
-
-    <div class="learn-data-card">
-      <div class="learn-data-card-header">
-        <div class="learn-data-card-header-title">
-          <div>本周数据</div>
-          <uni-icons type="paperplane-filled" color="#fff" size="40rpx"></uni-icons>
-        </div>
-        <div class="learn-data-card-header-tabs">
-          <div class="tab-item">
-            <div class="tab-item-value"><text>888</text> 分钟</div>
-            <div class="tab-item-title">本周累计</div>
-          </div>
-          <div class="tab-item">
-            <div class="tab-item-value"><text>888</text> 分钟</div>
-            <div class="tab-item-title">今日已学</div>
-          </div>
-          <div class="tab-item">
-            <div class="tab-item-value"><text>56</text> %</div>
-            <div class="tab-item-title">打败同学</div>
-          </div>
-        </div>
-      </div>
-      <div class="learn-data-card-content">
-        <view class="charts-box">
-          <qiun-data-charts type="column" :tap-legend="false" :chartData="chartData" :opts="chartsOpts" />
+    <view class="learn-data-container">
+      <picker @change="bindPickerChange" :value="activeCourseIndex" :range="array">
+        <view class="learn-data-select">
+          <uni-icons type="bars" color="#fff" size="40rpx"></uni-icons>
+          <text class="course-name">{{ array[activeCourseIndex] }}</text>
         </view>
-      </div>
-    </div>
-    <div class="learn-data-card">
-      <div class="learn-data-card-header">
-        <div class="learn-data-card-header-title">
-          <div>累计数据</div>
-          <uni-icons type="paperplane-filled" color="#fff" size="40rpx"></uni-icons>
-        </div>
-      </div>
-      <div class="learn-data-card-content block">
-        <div class="block-item primary">
-          <div class="block-item-value">
-            <text>110</text>
-            分钟
-          </div>
-          <div class="block-item-title">累计学习时长</div>
-        </div>
-        <div class="block-item warning">
-          <div class="block-item-value">
-            <text>110</text>
-            天
-          </div>
-          <div class="block-item-title">累计学习天数</div>
-        </div>
-        <div class="block-item success">
-          <div class="block-item-value">
-            <text>88</text>
-            个
-          </div>
-          <div class="block-item-title">完成学时总数</div>
-        </div>
-        <div class="block-item danger">
-          <div class="block-item-value">
-            <text>78</text>
-            %
-          </div>
-          <div class="block-item-title">课程总进度</div>
-        </div>
-      </div>
-    </div>
+      </picker>
+      <view class="learn-data-card">
+        <view class="learn-data-card-header">
+          <view class="learn-data-card-header-title">
+            <view>本周数据</view>
+            <uni-icons type="paperplane-filled" color="#fff" size="40rpx"></uni-icons>
+          </view>
+          <view class="learn-data-card-header-tabs">
+            <view class="tab-item">
+              <view class="tab-item-value"><text>888</text> 分钟</view>
+              <view class="tab-item-title">本周累计</view>
+            </view>
+            <view class="tab-item">
+              <view class="tab-item-value"><text>888</text> 分钟</view>
+              <view class="tab-item-title">今日已学</view>
+            </view>
+            <view class="tab-item">
+              <view class="tab-item-value"><text>56</text> %</view>
+              <view class="tab-item-title">打败同学</view>
+            </view>
+          </view>
+        </view>
+        <view class="learn-data-card-content">
+          <view class="charts-box">
+            <qiun-data-charts type="column" :tap-legend="false" :chartData="chartData" :opts="chartsOpts" />
+          </view>
+        </view>
+      </view>
+      <view class="learn-data-card">
+        <view class="learn-data-card-header">
+          <view class="learn-data-card-header-title">
+            <view>累计数据</view>
+            <uni-icons type="paperplane-filled" color="#fff" size="40rpx"></uni-icons>
+          </view>
+        </view>
+        <view class="learn-data-card-content block">
+          <view class="block-item primary">
+            <view class="block-item-value">
+              <text>110</text>
+              分钟
+            </view>
+            <view class="block-item-title">累计学习时长</view>
+          </view>
+          <view class="block-item warning">
+            <view class="block-item-value">
+              <text>110</text>
+              天
+            </view>
+            <view class="block-item-title">累计学习天数</view>
+          </view>
+          <view class="block-item success">
+            <view class="block-item-value">
+              <text>88</text>
+              个
+            </view>
+            <view class="block-item-title">完成学时总数</view>
+          </view>
+          <view class="block-item danger">
+            <view class="block-item-value">
+              <text>78</text>
+              %
+            </view>
+            <view class="block-item-title">课程总进度</view>
+          </view>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -128,14 +129,14 @@ export default {
 .learn-data {
   height: 100%;
   padding-bottom: 40rpx;
-  background: url("../../static/learn-data-bc.png") no-repeat;
+  background: url("http://dpsystem.oss-cn-shenzhen.aliyuncs.com/moren1607659060/340e61e5421cc2d3a8e211d564159037")
+    no-repeat;
   background-size: 100% 686rpx;
   font-size: $uni-font-size-base;
   .status_bar {
     height: var(--status-bar-height);
     width: 100%;
   }
-
   &-header {
     .nav-bar {
       height: 44px;
@@ -151,6 +152,10 @@ export default {
         margin: 0 auto;
       }
     }
+  }
+  &-container {
+    height: calc(100vh - 44px - var(--status-bar-height));
+    overflow-y: auto;
   }
   &-select {
     padding: 20rpx;

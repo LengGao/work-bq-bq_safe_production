@@ -7,106 +7,104 @@
         <text class="nav-bar-title">学习报告</text>
       </view>
     </view>
-    <div class="learn-report-container">
-
-      <div class="learn-report-statistics">
-        <div class="statistics-top">
-          <div class="statistics-top-user">
-            <image class="user-avatar"
-                   :src="srcImage" />
-            <div>
-              <div class="user-name">娿饿肚肚</div>
-              <div class="user-time">2021-20-20 开始学习</div>
-            </div>
-          </div>
-          <div class="statistics-top-day">
+    <view class="learn-report-container">
+      <view class="learn-report-statistics">
+        <view class="statistics-top">
+          <view class="statistics-top-user">
+            <image class="user-avatar" :src="srcImage" />
+            <view>
+              <view class="user-name">娿饿肚肚</view>
+              <view class="user-time">2021-20-20 开始学习</view>
+            </view>
+          </view>
+          <view class="statistics-top-day">
             <p class="day-title">累计答题天数</p>
             <p class="day-value">255</p>
-          </div>
-        </div>
-        <div class="statistics-data">
-          <div class="statistics-data-item">
-            <div class="statistics-data-item-value">9999</div>
-            <div class="statistics-data-item-title">今日答题数</div>
-          </div>
-          <div class="statistics-data-item">
-            <div class="statistics-data-item-value">9999<text>%</text></div>
-            <div class="statistics-data-item-title">今日正确率</div>
-          </div>
-          <div class="statistics-data-item">
-            <div class="statistics-data-item-value">9999</div>
-            <div class="statistics-data-item-title">总答题数</div>
-          </div>
-          <div class="statistics-data-item none">
-            <div class="statistics-data-item-value">9999<text>%</text></div>
-            <div class="statistics-data-item-title">总正确率</div>
-          </div>
-        </div>
-      </div>
-      <div class="learn-report-card">
-        <div class="learn-report-card-header">
-          <div class="card-title">章节练习</div>
-          <div class="card-icon">
-            <div class="card-icon-radio c-1"></div>
-            <div class="card-icon-radio c-2"></div>
-            <div class="card-icon-radio c-3"></div>
-          </div>
-        </div>
-        <div class="learn-report-card-contetn">
+          </view>
+        </view>
+        <view class="statistics-data">
+          <view class="statistics-data-item">
+            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-title">今日答题数</view>
+          </view>
+          <view class="statistics-data-item">
+            <view class="statistics-data-item-value">9999<text>%</text></view>
+            <view class="statistics-data-item-title">今日正确率</view>
+          </view>
+          <view class="statistics-data-item">
+            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-title">总答题数</view>
+          </view>
+          <view class="statistics-data-item none">
+            <view class="statistics-data-item-value">9999<text>%</text></view>
+            <view class="statistics-data-item-title">总正确率</view>
+          </view>
+        </view>
+      </view>
+      <view class="learn-report-card">
+        <view class="learn-report-card-header">
+          <view class="card-title">章节练习</view>
+          <view class="card-icon">
+            <view class="card-icon-radio c-1"></view>
+            <view class="card-icon-radio c-2"></view>
+            <view class="card-icon-radio c-3"></view>
+          </view>
+        </view>
+        <view class="learn-report-card-contetn">
           <view class="charts-gauge-box">
             <qiun-data-charts type="gauge" :chartData="chartGaugeData" :opts="chartGaugeOpts" />
           </view>
-        </div>
-        <div class="learn-report-card-statistics statistics-data">
-          <div class="statistics-data-item">
-            <div class="statistics-data-item-value">9999</div>
-            <div class="statistics-data-item-title">答题总数</div>
-          </div>
-          <div class="statistics-data-item">
-            <div class="statistics-data-item-value">9999<text>%</text></div>
-            <div class="statistics-data-item-title">答题进度</div>
-          </div>
-          <div class="statistics-data-item">
-            <div class="statistics-data-item-value">9999</div>
-            <div class="statistics-data-item-title">收藏题数</div>
-          </div>
-          <div class="statistics-data-item none">
-            <div class="statistics-data-item-value">9999</div>
-            <div class="statistics-data-item-title">答错题数</div>
-          </div>
-        </div>
-      </div>
-      <div class="learn-report-card">
-        <div class="learn-report-card-header">
-          <div class="card-title">模拟考试</div>
-          <div class="card-icon">
-            <div class="card-icon-radio c-1"></div>
-            <div class="card-icon-radio c-2"></div>
-            <div class="card-icon-radio c-3"></div>
-          </div>
-        </div>
-        <div class="learn-report-card-contetn">
-          <div class="charts-line-title">最近7次模拟考试成绩</div>
+        </view>
+        <view class="learn-report-card-statistics statistics-data">
+          <view class="statistics-data-item">
+            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-title">答题总数</view>
+          </view>
+          <view class="statistics-data-item">
+            <view class="statistics-data-item-value">9999<text>%</text></view>
+            <view class="statistics-data-item-title">答题进度</view>
+          </view>
+          <view class="statistics-data-item">
+            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-title">收藏题数</view>
+          </view>
+          <view class="statistics-data-item none">
+            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-title">答错题数</view>
+          </view>
+        </view>
+      </view>
+      <view class="learn-report-card">
+        <view class="learn-report-card-header">
+          <view class="card-title">模拟考试</view>
+          <view class="card-icon">
+            <view class="card-icon-radio c-1"></view>
+            <view class="card-icon-radio c-2"></view>
+            <view class="card-icon-radio c-3"></view>
+          </view>
+        </view>
+        <view class="learn-report-card-contetn">
+          <view class="charts-line-title">最近7次模拟考试成绩</view>
           <view class="charts-line-box">
             <qiun-data-charts type="line" :chartData="chartLineData" :opts="chartsLineOpts" />
           </view>
-        </div>
-        <div class="learn-report-card-statistics statistics-data">
-          <div class="statistics-data-item">
-            <div class="statistics-data-item-value">9999</div>
-            <div class="statistics-data-item-title">模拟考试次数</div>
-          </div>
-          <div class="statistics-data-item">
-            <div class="statistics-data-item-value">9999</div>
-            <div class="statistics-data-item-title">累计答题总数</div>
-          </div>
-          <div class="statistics-data-item none">
-            <div class="statistics-data-item-value">9999</div>
-            <div class="statistics-data-item-title">模拟考试最高分</div>
-          </div>
-        </div>
-      </div>
-    </div>
+        </view>
+        <view class="learn-report-card-statistics statistics-data">
+          <view class="statistics-data-item">
+            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-title">模拟考试次数</view>
+          </view>
+          <view class="statistics-data-item">
+            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-title">累计答题总数</view>
+          </view>
+          <view class="statistics-data-item none">
+            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-title">模拟考试最高分</view>
+          </view>
+        </view>
+      </view>
+    </view>
 
   </view>
 </template>
@@ -194,8 +192,8 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 .learn-report {
-  padding-bottom: 40rpx;
-  background: url("../../static/learn-report-background.png") no-repeat;
+  background: url("http://dpsystem.oss-cn-shenzhen.aliyuncs.com/moren1607659060/132ab6092475c66a9406898d4cfacb78")
+    no-repeat;
   background-size: cover;
   .statistics-data {
     display: flex;
@@ -221,10 +219,14 @@ export default {
     }
   }
   &-container {
-    height: calc(100vh - 44px);
+    height: calc(100vh - 44px - var(--status-bar-height));
     overflow-y: auto;
   }
   &-header {
+    .status_bar {
+      height: var(--status-bar-height);
+      width: 100%;
+    }
     .nav-bar {
       height: 44px;
       font-size: $uni-font-size-base;
@@ -248,7 +250,8 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: url("../../static/learn-report.png") no-repeat center center;
+    background: url("http://dpsystem.oss-cn-shenzhen.aliyuncs.com/moren1607659060/d4db137eff2370675dac5242d529074a")
+      no-repeat center center;
     background-size: contain;
     .statistics-top {
       height: 400rpx;

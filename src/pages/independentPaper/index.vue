@@ -35,7 +35,7 @@
 import { getRealTestPapers } from "@/api/question";
 import NoData from "@/components/noData";
 export default {
-  name: "autonomy",
+  name: "independentPaper",
   components: {
     NoData,
   },
@@ -96,6 +96,10 @@ export default {
     top: 0;
     left: 0;
     width: 100%;
+    .status_bar {
+      height: var(--status-bar-height);
+      width: 100%;
+    }
     .nav-bar {
       height: 44px;
       font-size: $uni-font-size-base;

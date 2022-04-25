@@ -1,20 +1,8 @@
 <template>
   <view class="course-list">
     <view class="course-list-header">
-      <picker class="picker" @change="categoryPickerChange" @columnchange="onColumnchange" range-key="name"
-              mode="multiSelector" :value="categoryIndex" :range="categoryData">
-        <view class="picker-btn">
-          <view class="picker-btn-title">{{categoryName}}</view>
-          <uni-icons custom-prefix="iconfont" type="icon-sanjiao1" size="24rpx"></uni-icons>
-        </view>
-      </picker>
-      <picker class="picker" @change="onTypePickerChange" range-key="name" mode="selector" :value="typeIndex"
-              :range="typeData">
-        <view class="picker-btn">
-          <view class="picker-btn-title">{{typeData[typeIndex].name}}</view>
-          <uni-icons custom-prefix="iconfont" type="icon-sanjiao1" size="24rpx"></uni-icons>
-        </view>
-      </picker>
+      <DropdownFilter class="picker" :data="categoryData" v-model="categoryType" @change="reloadList" />
+      <DropdownSelect class="picker" :data="typeData" v-model="typeValue" @change="reloadList" />
     </view>
     <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback">
       <view class="course-list-container">
@@ -50,43 +38,109 @@
 
 <script>
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import DropdownFilter from '@/components/dropdown-filter'
+import DropdownSelect from '@/components/dropdown-select'
 export default {
+  components: {
+    DropdownFilter,
+    DropdownSelect
+  },
   mixins: [MescrollMixin], // 使用mixin
   data() {
     return {
       categoryName: '全部分类',
       categoryId: 0,
-      categoryIndex: [],
+      categoryType: '',
       categoryData: [
-        [{ name: '全部', id: 0 }, { name: '安监类', id: 2 }]
-        ,
-        [{ name: '全部', id: 3 }]
+        {
+          name: '全部',
+          value: 0,
+          children: [
+            {
+              name: '全部',
+              value: 0,
+            }
+          ]
+        },
+        {
+          name: '安监类',
+          value: 1,
+          children: [
+            {
+              name: '测试111111111111111111111111111',
+              value: 2
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 3
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 4
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 5
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 6
+            },
+          ]
+        },
+        {
+          name: '学历类',
+          value: 3,
+          children: [
+            {
+              name: '测试2222222222222',
+              value: 2
+            },
+            {
+              name: '测试2222222222222',
+              value: 3
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 4
+            },
+            {
+              name: '测试2222222222222',
+              value: 5
+            },
+            {
+              name: '测试111111111111111111111111111',
+              value: 6
+            },
+          ]
+        }
       ],
-      colunmMap: {
-        0: [{ name: '全部', id: 0 }],
-        1: [{ name: '测试', id: 4 }],
-      },
-      typeIndex: 0,
-      typeValue: '',
+      typeValue: 0,
       typeData: [
         { name: '全部类型', value: '' },
         { name: '免费课', value: 1 },
         { name: '认证课', value: 2 },
       ],
-      pageNum: 1,
       courseData: [],
     };
   },
   created() {
   },
   methods: {
+    reloadList() {
+      this.mescroll.resetUpScroll();
+    },
     async upCallback(page) {
-      this.pageNum = page.num; // 页码, 默认从1开始
       // const pageSize = page.size; // 页长, 默认每页10条
-      const res = await this.getCousrList()
-      console.log(res)
+      const data = {
+        page: page.num,
+        limit: page.size,
+        categoryType: this.categoryType,
+        typeValue: this.typeValue
+      }
+      const res = await this.getCousrList(data)
       // 接口返回的当前页数据列表 (数组)
-      let curPageData = res.data.data;
+      let curPageData = res.data.data || [];
       // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
       let curPageLen = curPageData.length;
       // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
@@ -98,16 +152,13 @@ export default {
       //方法二(推荐): 后台接口有返回列表的总数据量 totalSize
       this.mescroll.endBySize(curPageLen, totalSize);
     },
-    getCousrList() {
+    getCousrList(data) {
       return new Promise((resove) => {
         uni.request({
           url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
-          data: {
-            page: this.pageNum,
-            limit: 10
-          },
+          data,
           header: {
-            token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwNTE5MzIxfQ=='
+            token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwODY4OTY2fQ=='
           },
           success: (res) => {
             resove(res.data)
@@ -116,29 +167,6 @@ export default {
       })
 
     },
-    onTypePickerChange({ detail }) {
-      console.log(detail)
-      const { value: index = 0 } = detail
-      this.typeIndex = index
-      this.typeValue = this.typeData[index].value
-      this.mescroll.resetUpScroll();
-    },
-    onColumnchange({ detail }) {
-      console.log(detail)
-      if (detail.column === 0) {
-        console.log(this.colunmMap[detail.value])
-        this.categoryData[1] = this.colunmMap[detail.value]
-      }
-    },
-    categoryPickerChange({ detail }) {
-      console.log(detail)
-      this.categoryIndex = detail.value;
-      const [a, b] = detail.value
-      this.categoryName = this.categoryData[1][b].name
-      this.categoryId = this.categoryData[b].id
-
-    },
-
   },
 };
 </script>
@@ -155,16 +183,6 @@ export default {
     background-color: #fff;
     .picker {
       flex: 1;
-      &-btn {
-        padding: 20rpx 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        &-title {
-          font-size: $uni-font-size-lg;
-          margin-right: 4rpx;
-        }
-      }
     }
   }
   &-container {

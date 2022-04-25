@@ -153,3 +153,12 @@ export const getRealTestPapers = (data) => {
     data,
   })
 }
+// 收藏夹列表
+export const getFavoritesList = (data) => {
+  return requset({
+    url: 'UserTopicRecord/chapter',
+    method: 'get',
+    data,
+    loading: true
+  })
+}
