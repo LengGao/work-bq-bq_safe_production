@@ -24,7 +24,6 @@
     <view class="footer">
       <button type="primary" class="footer-btn">开始学习</button>
     </view>
-
   </view>
 </template>
 

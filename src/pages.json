@@ -7,6 +7,30 @@
 	},
 	"pages": [
 		{
+			"path": "pages/ScanCode/index",
+			"style": {
+				"navigationBarTitleText": "练习客服"
+			}
+		},		
+		{
+			"path": "pages/test/index",
+			"style": {
+				"navigationBarTitleText": "测试"
+			}
+		},
+		{
+			"path": "pages/feedbackSubmit/index",
+			"style": {
+				"navigationBarTitleText": "意见反馈"
+			}					
+		},
+		{
+			"path": "pages/feedback/index",
+			"style": {
+				"navigationBarTitleText": "意见反馈"
+			}		
+		},
+		{
 			"path": "pages/courseDetail/index",
 			"style": {
 				"navigationBarTitleText": "课程列表"
@@ -141,12 +165,6 @@
 			"path": "pages/examinationRecord/index",
 			"style": {
 				"navigationBarTitleText": "考试记录"
-			}
-		},
-		{
-			"path": "pages/test/index",
-			"style": {
-				"navigationBarTitleText": "测试"
 			}
 		}
 	],

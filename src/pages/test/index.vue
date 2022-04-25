@@ -8,6 +8,9 @@
       点击下载
     </button>
 
+      <u-picker>
+      </u-picker>
+
   </view>
 </template>
 
