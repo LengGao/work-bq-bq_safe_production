@@ -98,7 +98,7 @@
 					if (self !== vm) {
 						vm.isOpen = false
 					}
-				})
+				})				
 			},
 			resize() {
 				this.childrens.forEach((vm, index) => {

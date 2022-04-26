@@ -1,6 +1,5 @@
 <template>
 	<view class="uni-collapse-item">
-		<!-- onClick(!isOpen) -->
 		<view @click="onClick(!isOpen)" class="uni-collapse-item__title"
 			:class="{'is-open':isOpen &&titleBorder === 'auto' ,'uni-collapse-item-border':titleBorder !== 'none'}">
 			<view class="uni-collapse-item__title-wrap">
@@ -17,14 +16,20 @@
 				<uni-icons :color="disabled?'#ddd':'#bbb'" size="14" type="bottom" />
 			</view>
 		</view>
-		<view class="uni-collapse-item__wrap" :class="{'is--transition':showAnimation}"
-			:style="{height: (isOpen ? height : 0 ) +'px'}">
-			<view :id="elId" ref="collapse--hook" class="uni-collapse-item__wrap-content"
-				:class="{open: isheight,'uni-collapse-item--border':border&&isOpen}">
+		
+		<view class="ollapse-item__wrap" v-show="isOpen">
+			<view :id="elId" ref="collapse--hook" class="ollapse-item__wrap-content">
 				<slot></slot>
 			</view>
 		</view>
 
+		<!-- <view class="uni-collapse-item__wrap" :class="{'is--transition':showAnimation}"
+			:style="{height: (isOpen ? height : 0) +'px'}">
+				:class="{open: isheight,'uni-collapse-item--border':border&&isOpen}">
+			<view :id="elId" ref="collapse--hook" class="uni-collapse-item__wrap-content"
+					<slot></slot>
+			</view>
+		</view> -->
 	</view>
 </template>
 
@@ -98,6 +103,10 @@
 			showArrow: {
 				type: Boolean,
 				default: true
+			},
+			type: {
+				type: String,
+				default: ''
 			}
 		},
 		data() {
@@ -106,7 +115,7 @@
 			return {
 				isOpen: false,
 				isheight: null,
-				height: 100,
+				height: 0,
 				elId,
 				nameSync: 0
 			}
@@ -195,9 +204,7 @@
 				const views = uni.createSelectorQuery().in(this)
 				views
 					.select(`#${this.elId}`)
-					.fields({
-						size: true
-					}, data => {
+					.fields({size: true, context: true}, data => {
 						// TODO 百度中可能获取不到节点信息 ，需要循环获取
 						if (index >= 10) return
 						if (!data) {
@@ -209,10 +216,10 @@
 						this.height = data.height + 1
 						// #endif
 						// #ifndef APP-NVUE
-						this.height = data.height + 100
+						this.height = data.height
 						// #endif
 						this.isheight = true
-						if (type) return
+						if (type) return;
 						this.onClick(this.isOpen, 'init')
 					})
 					.exec()
@@ -224,7 +231,7 @@
 						this.height = option.size.height + 1
 						// #endif
 						// #ifndef APP-NVUE
-						this.height = option.size.height + 100
+						this.height = option.size.height
 						// #endif
 						this.isheight = true
 						if (type) return
@@ -253,6 +260,7 @@
 	.uni-collapse-item {
 		/* #ifndef APP-NVUE */
 		box-sizing: border-box;
+		height: 100%;
 
 		/* #endif */
 		&__title {
@@ -356,12 +364,12 @@
 			box-sizing: border-box;
 			/* #endif */
 			background-color: #fff;
-			overflow: hidden;
+			// overflow: hidden;
 			position: relative;
-			height: 0;
+			height: 100%;
 
 			&.is--transition {
-				// transition: all 0.3s;
+				transition: all 0.3s;
 				transition-property: height, border-bottom-width;
 				transition-duration: 0.3s;
 				/* #ifndef APP-NVUE */
@@ -370,9 +378,10 @@
 			}
 
 
-
 			&-content {
-				position: absolute;
+				position: relative;
+				display: flex;
+				flex-direction: column;
 				font-size: 13px;
 				color: #303133;
 				transition: height 0.3s;
@@ -399,4 +408,27 @@
 		}
 
 	}
+
+
+.ollapse-item__wrap {
+			box-sizing: border-box;
+			background-color: #fff;
+			position: relative;
+			height: 100%;	
+			transition: all 0.3s;
+			transition-property: height, border-bottom-width;
+			transition-duration: 0.3s;
+}
+
+.ollapse-item__wrap-content {
+	display: flex;
+	flex-direction: column;
+	font-size: 13px;
+	color: #303133;
+	transition: height 0.3s;
+	border-bottom-color: transparent;
+	border-bottom-style: solid;
+	border-bottom-width: 0;
+}
+
 </style>

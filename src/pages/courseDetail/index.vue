@@ -18,7 +18,6 @@
           <Rate />
         </view>
       </view>
-
     </view>
 
     <view class="footer">
@@ -52,9 +51,6 @@ export default {
     },
     // 获取数据 
     getData() {
-
-
-
     },
   }
 }
@@ -72,8 +68,8 @@ export default {
   height: 30vh;
 }
 
-.segmented-bar {
-}
+// .segmented-bar {
+// }
 
 .footer {
   position: fixed;

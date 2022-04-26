@@ -1,28 +1,16 @@
-<template>
-  <view>
-    <Collapse @change="() => {}" v-for="item in catalogues" :key="'s'+ item.id">
-      <CollapseItem :title="item.title">
-        <Collapse @change="() => {}" v-for="item2 in item.list" :key="item2.id">
-          <CollapseItem :title="item2.title">
-            <Collapse @change="() => {}" v-for="item3 in item2.list" :key="item3.id">
-               <CollapseItem :title="item3.title">
-               </CollapseItem>
-            </Collapse>
-          </CollapseItem>
-        </Collapse>
-      </CollapseItem>
-    </Collapse>
-  </view>
-</template>
-
 <script>
+import Vue from 'vue'
 import Collapse from './Collapse'
 import CollapseItem from './CollapseItem'
+Vue.component('collapse', Collapse)
+Vue.component('collapse-item', CollapseItem)
 
 export default {
-  components: {
-    'Collapse': Collapse,
-    'CollapseItem': CollapseItem
+  render: function (h) {
+    let data = this.catalogues
+    let child = this.generatorContent(data)
+    let collapse = this.generatorContainer(child)
+    return h('view', { class: 'catalogue' }, [collapse])
   },
   data() {
     return {
@@ -35,16 +23,65 @@ export default {
           id: 1,
           title: '1',
           istree: true,
+          type: 'one',
           list: [
             {
               id: 3,
               title: '1-1',
               istree: true,
+              type: 'two',
               list: [
                 {
                   id: 9,
                   title: '1-1-1',
-                  istree: false
+                  istree: false,
+                  type: 'three',
+                  list: []
+                },
+                {
+                  id: 11,
+                  title: '1-1-1',
+                  istree: false,
+                  list: []
+                },
+                {
+                  id: 12,
+                  title: '1-1-1',
+                  istree: false,
+                  list: []
+                }
+              ]
+            },
+            {
+              id: 33,
+              title: '1-2',
+              istree: true,
+              list: [
+                {
+                  id: 22,
+                  title: '1-2-1',
+                  istree: false,
+                  list: []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 2,
+          title: '2',
+          istree: true,
+          list: [
+            {
+              id: 4,
+              title: '2-1',
+              istree: true,
+              list: [
+                {
+                  id: 8,
+                  title: '2-1-1',
+                  istree: false,
+                  list: []
                 }
               ]
             }
@@ -54,43 +91,36 @@ export default {
     }
   },
   methods: {
-    onChange(e) {
-      console.log('e', e);
-    }
-  },
-  render(h) {
-    let list = this.catalogues, nodes = []
-    const collapseOption = {}
-    const collapseItemOption = { props: {title: 'a'} }
-
-    for (let i = 0; i < list.length; i++) {
-      const item = list[i]
-      if (item.istree) {
-        nodes.push(h('collapse', collapseOption))
-        for(let ii = 0; ii < item.list.length; ii++) {
-          const item2 = item.list[ii]
-          console.log('tem2', item2);
-          if (!item2.istree) {
-            nodes[nodes.length -1].children = []
-            console.log(nodes[nodes.length -1]);
-            nodes[nodes.length -1].children.push(h('collapseItem', collapseItemOption, 'asdsadsad'))
+    generatorContent(list) {
+      return list.map(item => {
+        if (item.istree) {
+          return this.$createElement('collapse-item', { props: { title: item.title, type: item.type } }, this.generatorContent(item.list))
+        } else {
+          return this.$createElement('view', { class: 'last-node', slot: 'default' }, item.title)
+        }
+      })
+    },
+    generatorContainer(child) {
+      console.log("child", child);
+      let options = {
+        props: {
+          value: this.current
+        },
+        attrs: {
+        },
+        on: {
+          change(e) {
+            console.log("onChange`", e);
           }
         }
       }
-
+      return this.$createElement('collapse', options, child)
     }
-
-    console.log('nodes',nodes);
-    return h('view', {} , nodes)
-  }
+  }, // methods end
 }
 </script>
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
-
-::v-deep .CollapseItem-content {
-  position: relative;
-}
 </style>
 

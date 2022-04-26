@@ -8,8 +8,7 @@
       点击下载
     </button>
 
-      <u-picker>
-      </u-picker>
+      <u-picker :show="show" @close="() => { show = false }"  @change="() => {}" @confirm="() => {}"> </u-picker>
 
   </view>
 </template>
@@ -17,11 +16,13 @@
 <script>
 import mescrollBody from '../../uni_modules/mescroll-uni/components/mescroll-body/mescroll-body.vue';
 import { login } from '@/api/user'
+import uPicker from '@/components/uPicker/index'
 
 export default {
-  components: { mescrollBody },
+  components: { mescrollBody, uPicker },
   data() {
     return {
+      show: false,
       imageValue: [],
       data: [
         { id: 1, name: 'a' },
@@ -70,8 +71,9 @@ export default {
     },
 
     saveFile() {
-      let data = { page: 1, limit: 10 }
-      login(data)
+      // let data = { page: 1, limit: 10 }
+      // login(data)
+      this.show = !this.show
     }
   },
 };
