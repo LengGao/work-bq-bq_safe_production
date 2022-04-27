@@ -117,7 +117,7 @@ export default {
 }
 
 .head-swiper {
-  padding: 0 20rpx;
+  padding: 0 30rpx;
 
   .swiper {
     width: 710rpx;

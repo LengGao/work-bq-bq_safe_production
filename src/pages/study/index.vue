@@ -101,7 +101,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
-$padding: 16rpx 20rpx;
+$padding: 16rpx 30rpx;
 
 .study {
   height: 100%;

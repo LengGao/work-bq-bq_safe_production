@@ -269,7 +269,7 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 $padding-tb: 16rpx;
-$padding-lr: 20rpx;
+$padding-lr: 30rpx;
 
 .content {
   height: 100%;
@@ -305,10 +305,9 @@ $padding-lr: 20rpx;
 }
 
 .swiper-bar {
-  padding: 0 20rpx;
+  padding: 0 $padding-lr;
 
   .swiper {
-    width: 710rpx;
     height: 280rpx; // 同时控制着轮播图
   }
 

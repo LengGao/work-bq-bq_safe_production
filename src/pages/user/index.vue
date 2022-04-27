@@ -146,7 +146,7 @@ $page-padding: 0rpx 20rpx;
   align-items: center;
   background-color: #fff;
   border-radius: 24rpx;
-  box-shadow: 0 0 12rpx rgb(129, 202, 255, 0.75);
+  box-shadow: 0rpx 0rpx 12rpx rgb(129, 202, 255, 0.75);
 }
 
 ::v-deep .uni-grid {
@@ -154,15 +154,18 @@ $page-padding: 0rpx 20rpx;
 }
 
 .grid {
-  width: 100%;
+  width: 100%;  
   height: inherit;
-  
+
   &-box {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 190rpx;
+    // #ifdef H5
     height: 100%;
+    // #endif
   }
 
   &-image {
@@ -177,13 +180,15 @@ $page-padding: 0rpx 20rpx;
 }
   
 
-
 .links {
-  margin-top: 10rpx;
+  margin-top: 100rpx;
+}
+
+::v-deep .uni-list-item__container {
+  align-items: center
 }
 
 .list {
-  margin-top: 100rpx;
   font-size: $font-size-md;
 
   &-image {
