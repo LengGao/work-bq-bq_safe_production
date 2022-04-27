@@ -13,27 +13,21 @@
 			}
 		},
 		{
-			"path": "pages/study/index",
-			"style": {
-				"navigationBarTitleText": "安培课堂"
-			}
-		},
-		{
-			"path": "pages/examination/index",
-			"style": {
-				"navigationBarTitleText": "安培课堂"
-			}
-		},
-		{
-			"path": "pages/user/index",
-			"style": {
-				"navigationBarTitleText": "个人中心"
-			}
-		},
-		{
 			"path": "pages/search/index",
 			"style": {
 				"navigationBarTitleText": "搜索"
+			}
+		},
+		{
+			"path": "pages/courseList/index",
+			"style": {
+				"navigationBarTitleText": "课程列表"
+			}
+		},
+		{
+			"path": "pages/courseDetail/index",
+			"style": {
+				"navigationBarTitleText": "课程详情"
 			}
 		},
 		{
@@ -61,6 +55,18 @@
 			}
 		},
 		{
+			"path": "pages/study/index",
+			"style": {
+				"navigationBarTitleText": "安培课堂"
+			}
+		},
+		{
+			"path": "pages/examination/index",
+			"style": {
+				"navigationBarTitleText": "安培课堂"
+			}
+		},
+		{
 			"path": "pages/learnCertificate/index",
 			"style": {
 				"navigationBarTitleText": "学习凭证"
@@ -78,18 +84,6 @@
 			"style": {
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "学习数据"
-			}
-		},
-		{
-			"path": "pages/courseList/index",
-			"style": {
-				"navigationBarTitleText": "课程列表"
-			}
-		},
-		{
-			"path": "pages/courseDetail/index",
-			"style": {
-				"navigationBarTitleText": "课程详情"
 			}
 		},
 		{
@@ -148,6 +142,24 @@
 			}
 		},
 		{
+			"path": "pages/user/index",
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		},
+		{
+			"path": "pages/userCourceList/index",
+			"style": {
+				"navigationBarTitleText": "我的课程"
+			}
+		},
+		{
+			"path": "pages/userClassList/index",
+			"style": {
+				"navigationBarTitleText": "我的班级"
+			}
+		},
+		{
 			"path": "pages/feedback/index",
 			"style": {
 				"navigationBarTitleText": "意见反馈"
@@ -160,7 +172,13 @@
 			}					
 		},
 		{
-			"path": "pages/ScanCode/index",
+			"path": "pages/contactService/index",
+			"style": {
+				"navigationBarTitleText": "联系客服"
+			}
+		},
+		{
+			"path": "pages/aboutUs/index",
 			"style": {
 				"navigationBarTitleText": "联系客服"
 			}

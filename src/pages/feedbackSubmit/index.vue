@@ -2,11 +2,8 @@
   <view class="feedback-submit">
     <form @submit="onSubmit" @reset="onReset">
       <view class="form-item">
-        <view class="title">选择反馈类型</view>
-
-        <uni-data-picker :localdata="types" :map="map" :value="value" @change="onPicker" @nodeclick="onNodeClick" :step-searh="false"
-                         placeholder="请选择您的反馈类型">
-        </uni-data-picker>
+        <view class="title">请选择建议类型</view>
+        <uni-combox v-model="form.type" :candidates="types" placeholder="请选择建议类型"></uni-combox>
       </view>
 
       <view class="form-item">
@@ -38,15 +35,7 @@
 export default {
   data() {
     return {
-      map: {
-        text: 'text',
-        value: 'value'
-      },
-      types: [
-        { text: '类型1', value: '1' },
-        { text: '类型2', value: '2' },
-        { text: '类型3', value: '3' }
-      ],
+      types: ['类型1', '类型2', '类型3'],
       form: {
         type: '',
         remark: '',
@@ -91,7 +80,7 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 .feedback-submit {
-  padding: 60rpx 30px;
+  padding: 20rpx 40rpx;
   overflow: hidden;
 }
 

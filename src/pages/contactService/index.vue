@@ -1,5 +1,5 @@
 <template>
-<view class="scan-code">
+<view class="contact-service">
   <view class="box">
     <view>若有疑问请及时与我们联系</view>
     <view>工作事件: 8.30-24.00</view>
@@ -26,7 +26,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
-.scan-code {
+.contact-service {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -34,6 +34,7 @@ export default {
 
 .box {
   margin-top: 25vh;
+  font-size: $font-size-base;
   text-align: center;
 }
 

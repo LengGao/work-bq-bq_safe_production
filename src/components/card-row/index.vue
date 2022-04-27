@@ -3,7 +3,7 @@
     <view class="card-body">
       <slot name="cardBodyLeft">
         <view class="card-body-left" @click="onClickLeft">
-          <image @load="onLoadImage" @errr="onerrorImagee" class="card-row-image" :src="leftImage || errorImage"
+          <image @click="previewImg" @load="onLoadImage" @errr="onerrorImagee" class="card-row-image" :src="leftImage || errorImage"
                  mode="aspectFit" webp />
         </view>
       </slot>
@@ -42,7 +42,7 @@ export default {
     },
     rightFooter: {
       default: ''
-    }
+    },
   },
   data() {
     return {
@@ -59,6 +59,13 @@ export default {
     // 点击右槽
     onClickRight() {
       this.$emit('clickRight')
+    },
+    // 图片预览
+    previewImg() {
+      let url = this.leftImage || this.errorImage
+      if (this.$listeners.previewImg) {
+        this.$emit('previewImg', url)
+      }
     },
     // 图片加载成功
     onLoadImage() {

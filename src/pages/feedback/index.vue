@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     onClick() {
-      uni.navigateTo({ url: '' })
+      uni.navigateTo({ url: '/pages/feedbackSubmit/index' })
     },
   }
 }

@@ -13,8 +13,8 @@
 
     <view class="swiper-bar">
       <swiper :interval="2000" autoplay circular disable-touch class="swiper">
-        <swiper-item v-for="swiper in swipers" :key="swiper.id" :current-item-id="swiper.id" class="swiper-item">
-          <image :src="swiper.thumb" class="swiper-image" mode="aspectFit" @click="onClickSwiperImg" />
+        <swiper-item v-for="swiper in swipers" :key="swiper.id" @click="onClickSwiperImg" :current-item-id="swiper.id" class="swiper-item">
+          <image @click="() => previewImg(swiper.thumb)" :src="swiper.thumb" class="swiper-image" mode="aspectFit" />
         </swiper-item>
       </swiper>
     </view>
@@ -48,7 +48,7 @@
         <CardRow v-for="course in courses" :key="course.id">
           <template v-slot:cardBodyLeft>
             <view class="logan-card-body-left">
-              <image class="logan-img-size-lg" :src="course.thumb" mode="aspectFit" />
+              <image @click="() => previewImg(course.thumb)" :src="course.thumb" class="logan-img-size-lg" mode="aspectFit" />
             </view>
           </template>
           <template v-slot:cardBodyRight>
@@ -108,7 +108,7 @@
 
       <view class="library-list">
         <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.thumb" :rightFooter="library.time"
-                 @clickRight="() => onClickLibrary()">
+                 @clickRight="() => onClickLibrary()" @previewImg="previewImg">
           <template v-slot:rightTop>
             <view class="logan-card-right-top">
               <uni-icons type="wallet" size="28rpx" color="#dd524d" />
@@ -212,7 +212,7 @@ export default {
     },
     // 轮播图点击事件
     onClickSwiperImg() {
-      uni.navigateTo({ url: 'pages/courseDetail/index'} )
+      uni.navigateTo({ url: '/pages/courseDetail/index'} )
     },
     // 查看全部
     onClickAll(type) {
@@ -256,6 +256,12 @@ export default {
     // 数据获取
     getData() {
     },
+    // 图片预览
+    previewImg(url) {
+      uni.previewImage({
+        urls: [url]
+      })
+    }
   }, // methods end
 };
 </script>

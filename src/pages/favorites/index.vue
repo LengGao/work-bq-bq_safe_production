@@ -27,7 +27,7 @@ export default {
   methods: {
     /*若希望重新加载列表,只需调用此方法即可(内部会自动page.num=1,再主动触发up.callback)*/
     reloadList() {
-      this.mescroll.resetUpScroll();
+      this.mescroll && this.mescroll.resetUpScroll();
     },
     async upCallback(page) {
       const data = {

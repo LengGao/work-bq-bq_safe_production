@@ -4,16 +4,16 @@
       <view class="user-card">
         <UserInfo :info="user" />
         <view class="card-setting">
-          <image src="/static/img/user_icon_msg.png" class="card-setting-icon" mode="scaleToFill" />
-          <image src="/static/img/user_icon_setting.png" class="card-setting-icon" mode="scaleToFill" />
+          <uni-icons customPrefix="iconfont" type="icon-xiaoxi" color="#fff" size="42rpx" />
+          <uni-icons customPrefix="iconfont" type="icon-shezhi1" color="#fff" size="42rpx" class="card-setting-icon" />
         </view>
       </view>
     </view>
 
     <view class="grids">
-      <uni-grid :column="4" :showBorder="false" @change="onChangeGrid" class="grid">
-        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item">
-          <navigator class="grid-box" :url="grid.url">
+      <uni-grid :column="3" :showBorder="false" @change="onChangeGrid" class="grid">
+        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item" style="height: inherit;">
+          <navigator class="grid-box" :url="grid.url" :open-type="grid.blank || 'navigate'">
             <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
             <text class="grid-text">{{ grid.title }}</text>
           </navigator>
@@ -35,7 +35,7 @@
     </view>
 
     <view class="footer">
-      <button @click="loginlout" :loading="loading" class="btn-loginout" hover-class="button-hover">
+      <button @click="loginlout" class="btn-loginout" hover-class="button-hover">
         退出登录
       </button>
     </view>
@@ -61,34 +61,36 @@ export default {
       gridIndex: 0,
       // 宫格数据
       grids: [
-        { id: 1, thumb: "/static/img/user_gird1.png", title: "我的课程", url: "" },
-        { id: 2, thumb: "/static/img/user_gird2.png", title: "我的题库", url: "" },
-        { id: 3, thumb: "/static/img/user_gird3.png", title: "我的班级", url: "" },
-        { id: 4, thumb: "/static/img/user_gird4.png", title: "我的问答", url: "" }
+        { id: 1, thumb: "/static/img/user_gird1.png", title: "我的课程", url: "/pages/userCourceList/index" },
+        { id: 2, thumb: "/static/img/user_gird2.png", title: "我的题库", url: "/pages/examination/index", blank: 'switchTab' },
+        { id: 3, thumb: "/static/img/user_gird3.png", title: "我的班级", url: "/pages/userClassList/index" },
+        // { id: 4, thumb: "/static/img/user_gird4.png", title: "我的问答", url: "" }
       ],
       listIndex: 0,
       links: [
-        { id: 1, thumb: "/static/img/user_icon_list1.png", title: "课程收藏", url: "" },
-        { id: 2, thumb: "/static/img/user_icon_list2.png", title: "意见反馈", url: "" },
-        { id: 3, thumb: "/static/img/user_icon_list3.png", title: "关于我们", url: "" },
-        { id: 3, thumb: "/static/img/user_icon_list4.png", title: "关于我们", url: "" },
+        { id: 1, thumb: "/static/img/user_icon_list1.png", title: "课程收藏", url: "/pages/favorites/index" },
+        { id: 2, thumb: "/static/img/user_icon_list2.png", title: "意见反馈", url: "/pages/feedback/index" },
+        { id: 3, thumb: "/static/img/user_icon_list3.png", title: "关于我们", url: "/pages/aboutUs/index" },
+        { id: 4, thumb: "/static/img/user_icon_list4.png", title: "联系客服", url: "/pages/contactService/index" },
       ],
     };
   },
   methods: {
     onChangeGrid({ detail }) {
-      this.gridIndex = detail.index;
-      console.log("gridIndex", this.gridIndex);
+      console.log("gridIndex", this.gridIndex, detail);
     },
     onClickList(detail) {
       console.log("listIndex", detail);
       this.listIndex = detail;
     },
     loginlout() {
-      this.loading = true;
-      setTimeout(() => {
-        this.loading = false;
-      });
+      uni.showModal({ title: '系统提示', content: '确定要推出登录吗' })
+        .then(res => {
+          console.log('res',res);
+          if (res[1].confirm) {
+            uni.showToast({ title: '推出成功', icon: 'success'})
+          }
+        })
     },
   },
 };
@@ -104,7 +106,7 @@ $page-padding: 0rpx 20rpx;
 }
 
 .user-header {
-  height: 300rpx;
+  height: 330rpx;
   width: 100%;
   background-image: url("/static/img/user_bg_head.png");
   background-size: 100% 100%;
@@ -116,47 +118,51 @@ $page-padding: 0rpx 20rpx;
   flex-direction: row;
   align-content: space-between;
   align-items: center;
-  height: 80%;
+  height: 54%;
   padding: $page-padding;
 
   .card-setting {
     position: relative;
-    top: -40rpx;
-    flex: 2;
+    top: -30rpx;
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-right: 20rpx;
     text-align: right;
 
     &-icon {
-      height: 36rpx;
-      width: 36rpx;
       margin-left: 40rpx;
     }
   }
 }
 
 .grids {
-  position: relative;
-  top: -60rpx;
+  position: absolute;
+  top: 190rpx;
   margin: 0 40rpx;
-  padding: 16rpx 0rpx;
+  width: calc(750rpx - 80rpx);
+  height: 190rpx;
+  justify-content: center;
+  align-items: center;
   background-color: #fff;
-  border-bottom: 2rpx solid $color-primary;
   border-radius: 24rpx;
+  box-shadow: 0 0 12rpx rgb(129, 202, 255, 0.75);
+}
+
+::v-deep .uni-grid {
+  height: inherit
 }
 
 .grid {
-  &-item {
-    flex: 1 1 1;
-  }
-
+  width: 100%;
+  height: inherit;
+  
   &-box {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
-    margin: auto 0;
+    height: 100%;
   }
 
   &-image {
@@ -169,12 +175,15 @@ $page-padding: 0rpx 20rpx;
     font-size: $font-size-sm;
   }
 }
+  
+
 
 .links {
   margin-top: 10rpx;
 }
 
 .list {
+  margin-top: 100rpx;
   font-size: $font-size-md;
 
   &-image {

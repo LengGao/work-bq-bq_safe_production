@@ -31,7 +31,7 @@
     <view class="course-bar">
       <view class="logan-list-head">
         <view class="logan-list-head-left"> 推荐课程 </view>
-        <view class="logan-list-head-right">
+        <view class="logan-list-head-right" @click="onClickAll">
           <text>全部</text>
           <uni-icons type="forward" size="32rpx" />
         </view>
@@ -39,7 +39,7 @@
 
       <view class="courses-list">
         <CardRow v-for="course in courses" :key="course.id" :leftImage="course.thumb" :rightTop="course.title"
-                 :rightFooter="course.time" @clickRight="onClickCource">
+                 :rightFooter="course.time" @clickRight="onClickCource" @previewImg="previewImg">
           <template v-slot:rightFooterIcon>
             <uni-tag type="primary" class="tag" :class="course.type" :text="course.tag" inverted />
           </template>
@@ -80,11 +80,21 @@ export default {
     to(url) {
       uni.navigateTo({ url })
     },
-    // 点击课程
+    // 全部课程
+    onClickAll() {
+      let path = '/pages/courseList/index', query = `?type=${2}`
+      uni.navigateTo({ url: path + query })
+    },
+    // 课程详情
     onClickCource() {
-      console.log("onClickCource");
+      uni.navigateTo({ url: '/pages/courseDetail/index' })
+    },
+    // 图片预览
+    previewImg(url) {
+      uni.previewImage({
+        urls: [url]
+      })
     }
-
   }, // methods end
 };
 </script>

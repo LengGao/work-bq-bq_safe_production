@@ -1,7 +1,7 @@
 <template>
   <view class="examination">
     <view class="logan-list-head">
-      <view class="logan-list-head-left">
+      <view class="logan-list-head-left" @click="onCandidates">
         <text>低压电工作业题库</text>
         <uni-icons type="bottom" size="32rpx" />
       </view>
@@ -16,7 +16,7 @@
     </view>
 
     <view class="grids">
-      <uni-grid :column="5" :showBorder="false" class="grid">
+      <uni-grid :column="4" :showBorder="false" class="grid">
         <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item">
           <navigator class="grid-box" :url="grid.url">
             <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
@@ -34,6 +34,18 @@
         </view>
       </view>
     </view>
+
+    <uni-popup ref="popupRef" type="bottom">
+      <view class="popup-box">
+      <uni-list>
+        <uni-list-item v-for="item in candidates" :key="item.value" @click="onClickItem" clickable>
+          <template v-slot:body>
+            <view class="list-item-body-test">{{ item.name }}</view>
+          </template>
+        </uni-list-item>
+      </uni-list>
+      </view>
+    </uni-popup>
   </view>
 </template>
 
@@ -45,6 +57,13 @@ export default {
   },
   data() {
     return {
+      // 组合框
+      currentCandidates: '',
+      candidates: [
+        { name: '低压电工作业题库', value: 1 },
+        { name: '低压电工作业题库', value: 2 },
+        { name: '低压电工作业题库', value: 3 },
+      ],
       // 宫格数据
       gridIndex: 0,
       grids: [
@@ -52,7 +71,7 @@ export default {
         { id: 2, thumb: "/static/img/examination_gird2.png", title: "错题集", url: "../wrongQuestion/index" },
         { id: 3, thumb: "/static/img/examination_gird3.png", title: "学习报告", url: "../learnReport/index" },
         { id: 4, thumb: "/static/img/examination_gird4.png", title: "考试记录", url: "../examinationRecord/index" },
-        { id: 5, thumb: "/static/img/examination_gird5.png", title: "题目答疑", url: "" }
+        // { id: 5, thumb: "/static/img/examination_gird5.png", title: "题目答疑", url: "" }
       ],
       // 推荐课程
       examinations: [
@@ -74,7 +93,19 @@ export default {
       })
     },
     // 滑动选择事件
-    onChangeSwiper() { },
+    onChangeSwiper() {
+
+    },
+    // 
+    onCandidates(e) {
+      this.$refs.popupRef.open()
+      console.log('onCandidates', e);
+    },
+    // 
+    onClickItem(e) {
+      console.log('e',e);
+      this.$refs.popupRef.close()
+    }
   },
 };
 </script>
@@ -83,7 +114,6 @@ export default {
 @import "@/styles/logan.scss";
 .examination {
   height: 100%;
-  overflow-y: auto;
 }
 
 .head-swiper {
@@ -116,15 +146,15 @@ export default {
 
 .grid {
   &-item {
-    flex: 1 1 1;
+    flex: 1;
   }
 
   &-box {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
-    margin: auto 0;
+    height: 100%;;
   }
 
   &-image {
@@ -137,4 +167,15 @@ export default {
     font-size: $font-size-sm;
   }
 }
+
+.popup-box {
+  margin-bottom: calc(var(--window-bottom) + constant(safe-area-inset-bottom));
+  margin-bottom: calc(var(--window-bottom) + env(safe-area-inset-bottom));
+}
+
+.list-item-body-test {
+  width: 100%;
+  text-align: center;
+}
+
 </style>
