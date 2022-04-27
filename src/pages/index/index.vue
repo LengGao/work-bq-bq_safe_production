@@ -12,7 +12,7 @@
     </view>
 
     <view class="swiper-bar">
-      <swiper @change="onChangeSwiper" :interval="2000" autoplay circular disable-touch class="swiper">
+      <swiper :interval="2000" autoplay circular disable-touch class="swiper">
         <swiper-item v-for="swiper in swipers" :key="swiper.id" :current-item-id="swiper.id" class="swiper-item">
           <image :src="swiper.thumb" class="swiper-image" mode="aspectFit" @click="onClickSwiperImg" />
         </swiper-item>
@@ -127,8 +127,7 @@
 </template>
 
 <script>
-// import moment from "@/utils/date";
-import { login, list } from "@/api/user";
+import moment from "@/utils/date";
 import CardRow from "@/components/card-row/index";
 import RegionChange from './components/RegionChange'
 
@@ -184,7 +183,7 @@ export default {
     };
   },
   created() {
-    // console.log("加载了", moment({}).format());
+    console.log("加载了", moment({}).format());
   },
   onReachBottom() {
     console.log("到底了");
@@ -211,47 +210,48 @@ export default {
     onOpenSearch() {
       uni.navigateTo({ url: '/pages/search/index' })
     },
-    // 轮播图切换事件 
-    onChangeSwiper({ detail }) {
-      // console.log("onChangeSwiper", detail);
-    },
     // 轮播图点击事件
     onClickSwiperImg() {
-      console.log("onClickSwiperImg");
+      uni.navigateTo({ url: 'pages/courseDetail/index'} )
     },
     // 查看全部
     onClickAll(type) {
       console.log('onClickAll');
+      let path = '', query = `?type=${type}`
       switch (type) {
-        case 1: break;
+        case 1: 
+          path = '/pages/courseList/index'
+        break;
         case 2:
-          uni.navigateTo({ url: '../courseList/index' })
-          break;
-        case 3: break;
-        case 4: break;
+          path = '/pages/courseList/index'
+        break;
+        case 3: 
+          path = '/pages/policyList/index'
+        break;
+        case 4: 
+          path = '/pages/libraryList/index'
+        break;
       }
-
+      uni.navigateTo({ url: path + query })
     },
     // 点击安全生产课程
-    onClickCource(type) {
-      console.log('onClickCource');
-      switch (type) {
-        case 1: break;
-        case 2: break;
-        case 3: break;
-      }
+    onClickCource(courceType) {
+      let path = '/pages/courseList/index',
+          query = `?type=2&courceType=${courceType}`
+
+      uni.navigateTo({ url: path + query})
     },
     // 点击推荐课程
     onClickRecommend() {
-      console.log('onClickRecommend');
+      uni.navigateTo({ url: '/pages/courseDetail/index' })
     },
     // 点击政策栏
     onClickPolicy() {
-      console.log('onClickPolicy');
+      uni.navigateTo({ url: '/pages/policyDetails/index' })
     },
     // 点击资料
     onClickLibrary() {
-      console.log('onClickLibrary');
+      uni.navigateTo({ url: '/pages/libraryDetails/index' })
     },
     // 数据获取
     getData() {

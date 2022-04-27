@@ -7,12 +7,6 @@
 	},
 	"pages": [
 		{
-			"path": "pages/test/index",
-			"style": {
-				"navigationBarTitleText": "测试"
-			}
-		},
-		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "安培课堂"
@@ -61,6 +55,12 @@
 			}
 		},
 		{
+			"path": "pages/libraryDetails/index",
+			"style": {
+				"navigationBarTitleText": "资料详情"
+			}
+		},
+		{
 			"path": "pages/learnCertificate/index",
 			"style": {
 				"navigationBarTitleText": "学习凭证"
@@ -89,7 +89,7 @@
 		{
 			"path": "pages/courseDetail/index",
 			"style": {
-				"navigationBarTitleText": "课程列表"
+				"navigationBarTitleText": "课程详情"
 			}
 		},
 		{
@@ -163,6 +163,12 @@
 			"path": "pages/ScanCode/index",
 			"style": {
 				"navigationBarTitleText": "联系客服"
+			}
+		},
+		{
+			"path": "pages/test/index",
+			"style": {
+				"navigationBarTitleText": "测试"
 			}
 		}
 	],
