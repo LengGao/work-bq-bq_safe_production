@@ -1,18 +1,21 @@
 <template>
   <view class="user-class-list">
     <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="onDown" @up="onUp">
-      <u-section v-for="item in classList" :key="item.id"  :title="item.join" type="line" class="section">
+      <u-section v-for="item in classList" :key="item.id"  :title="item.join" type="line" class="section" color="#999">
         <CardRow :leftImage="item.thumb" :rightTop="item.title"
                  :rightFooter="item.time" @clickRight="onClickCource" @previewImg="previewImg">
           <template v-slot:rightCenter>
             <view class="logan-card-right-center">
               <text>班级人数：60人</text>
-              <text>视频数量：16</text>
+              <text style="margin-left: 30rpx;">视频数量：16</text>
             </view>
           </template>
           <template v-slot:rightFooter>
             <view class="logan-card-right-footer">
-              班主任： 朱老师
+              <view>
+                <uni-icons customPrefix="iconfont" type="icon-user-filling" color="#0387FB" size="28rpx" />
+                <text class="staff">朱老师</text>
+              </view>
             </view>
           </template>
         </CardRow>
@@ -80,4 +83,28 @@ export default {
   border: $logan-border-spacing-md-sm
 }
 
+::v-deep .uni-section-header {
+  padding: 0;
+}
+
+::v-deep .uni-section__content {
+  font-size: $font-size-sm;
+}
+
+.card-row {
+  padding: 16rpx 0;
+}
+
+.logan-card-right-center {
+  justify-content: flex-start;
+}
+
+.logan-card-right-footer {
+  color: #0387FB;
+}
+
+.staff {
+  margin-left: 10rpx; 
+  font-size: $font-size-sm;
+}
 </style>

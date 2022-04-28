@@ -22,7 +22,7 @@
                   <view v-if="course.money > 0">
                     <text class="present-price">￥{{ course.money }}</text>
                     <text class="original-price">{{ course.oldMoney }}</text>
-                  </view>
+                  </view>x
                   <view class="tag" :class="course.type">学习进度 {{ course.prpress }}%</view>
                 </view>
               </view>
@@ -87,6 +87,7 @@ export default {
 
   .audience {
     color: $color-primary;
+    font-size: $font-size-sm;
   }
 
   .present-price {

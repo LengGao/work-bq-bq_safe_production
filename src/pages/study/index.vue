@@ -190,16 +190,7 @@ $padding: 16rpx 30rpx;
 .course-bar {
   padding: 24rpx 0;
   border-top: $logan-border-spacing-md;
-
-  .logan-card-right-center {
-    margin-top: 8rpx;
-  }
-
-  .logan-card-right-footer {
-    align-items: baseline;
-    font-size: $font-size-base;
-  }
-
+  
   .tag {
     position: relative;
     bottom: 8rpx;

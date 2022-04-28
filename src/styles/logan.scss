@@ -56,8 +56,8 @@ $img-size-base: 104rpx;
 $img-size-lg: 160rpx;
 $img-size-width-sm: 200rpx;
 $img-size-height-sm: 160rpx;
-$img-size-width-md: 228rpx;
-$img-size-height-md: 132rpx;
+$img-size-width-md: 230rpx;
+$img-size-height-md: 135rpx;
 $img-size-icon: 64rpx;
 $img-size-grid: 80rpx;
 
@@ -97,6 +97,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
 .logan-card {
     display: flex;
     flex-direction: column;
+    padding: 16rpx 30rpx;
 }
 
 .logan-card-head {
@@ -116,9 +117,8 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     flex-basis: 4;
     flex-direction: row;
     align-items: center;
-    height: calc($img-size-height-md + 60rpx); // 同时控制着子元素的高度
+    height: $img-size-height-md; // 同时控制着子元素的高度
     overflow: hidden;
-    padding: 16rpx 30rpx;
     box-sizing: content-box;
 }
 
@@ -135,19 +135,20 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
 .logan-card-body-right {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: flex-start;
     flex: 3 1 0;
     height: 100%;
     overflow: hidden;
     margin-left: 20rpx;
     font-size: $font-size-base;
+    letter-spacing: 1rpx;
 }
 
 .logan-card-right-top {
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     flex: 1 1 1;
     width: 100%;
@@ -162,7 +163,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     flex: 1 1 1;
     width: 100%;
     font-size: $font-size-sm;
-    line-height: calc(2 * $font-size-sm); // 重写字体时需要重写行高。它会决定行与行上下的留白
+    // line-height: calc(2 * $font-size-sm); // 重写字体时需要重写行高。它会决定行与行上下的留白
     color: $text-color-grey;
 }
 
@@ -174,7 +175,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     flex: 1 1 1;
     width: 100%;
     font-size: $font-size-sm;
-    line-height: calc(2 * $font-size-sm); // 重写字体时需要重写行高。它会决定行与行上下的留白
+    // line-height: calc(2 * $font-size-sm); // 重写字体时需要重写行高。它会决定行与行上下的留白
     color: $text-color-grey;
 }
 

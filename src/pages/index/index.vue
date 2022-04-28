@@ -398,6 +398,7 @@ $padding-lr: 30rpx;
   }
 
   .audience {
+    font-size: $font-size-sm;
     color: $color-primary;
   }
 

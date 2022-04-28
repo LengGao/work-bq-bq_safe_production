@@ -82,10 +82,13 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
+$width: $img-size-width-sm;
+$height: $img-size-height-sm;
 
 .card-row {
   position: relative;
   border-top: 2rpx solid #f8f8f8;;
+  padding: 16rpx 30rpx;
 }
 
 .card-body {
@@ -95,8 +98,7 @@ export default {
   flex-direction: row;
   align-items: center;
   overflow: hidden;
-  height: calc($img-size-height-md + 60rpx); // 同时控制着子元素的高度
-  padding: 16rpx 30rpx;
+  height: $height; // 同时控制着子元素的高度
   box-sizing: content-box;
 }
 
@@ -107,12 +109,12 @@ export default {
   align-items: center;
   flex: 1 1 1;
   height: 100%;
-  width: $img-size-width-md;
+  width: $width;
 }
 
 .card-row-image {
-  width: $img-size-width-md;
-  height: $img-size-height-md;
+  width: $width;
+  height: $height;
   border-radius: 10rpx;
 }
 
@@ -132,12 +134,11 @@ export default {
 .card-right-top {
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   flex: 1 1 1;
   width: 100%;
   color: $text-color;
-  word-spacing: 2rpx;
 }
 
 .card-right-center {
