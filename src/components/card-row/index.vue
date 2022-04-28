@@ -96,7 +96,7 @@ export default {
   align-items: center;
   overflow: hidden;
   height: calc($img-size-height-md + 60rpx); // 同时控制着子元素的高度
-  padding: 16rpx 20rpx;
+  padding: 16rpx 30rpx;
   box-sizing: content-box;
 }
 
@@ -113,6 +113,7 @@ export default {
 .card-row-image {
   width: $img-size-width-md;
   height: $img-size-height-md;
+  border-radius: 10rpx;
 }
 
 .card-body-right {

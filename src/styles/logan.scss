@@ -59,6 +59,7 @@ $img-size-height-sm: 160rpx;
 $img-size-width-md: 228rpx;
 $img-size-height-md: 132rpx;
 $img-size-icon: 64rpx;
+$img-size-grid: 80rpx;
 
 
 /* Border Radius */
@@ -89,7 +90,7 @@ $color-paragraph: #3F536E; // 文章段落颜色
 $font-size-paragraph: 30rpx;
 
 /* custom */
-$page-padding: 16rpx 20rpx;      // 页面内边距
+$page-padding: 16rpx 30rpx;      // 页面内边距
 $logan-border-spacing-md: 16rpx solid #f8f8f8;
 $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
 
@@ -117,7 +118,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     align-items: center;
     height: calc($img-size-height-md + 60rpx); // 同时控制着子元素的高度
     overflow: hidden;
-    padding: 16rpx 20rpx;
+    padding: 16rpx 30rpx;
     box-sizing: content-box;
 }
 
@@ -211,7 +212,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: $page-padding;
+    padding: 16rpx 30rpx;
 }
 
 .logan-list-head-left {
@@ -221,7 +222,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
 }
 
 .logan-list-head-right {
-    font-size: $font-size-base;
+    font-size: $font-size-sm;
     color: $text-color-default;
 }
 

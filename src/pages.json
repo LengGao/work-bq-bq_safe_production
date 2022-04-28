@@ -206,13 +206,13 @@
 				"pagePath": "pages/study/index",
 				"iconPath": "static/tabbar/video.png",
 				"selectedIconPath": "static/tabbar/video_active.png",
-				"text": "学习"
+				"text": "课程资源"
 			},
 			{
 				"pagePath": "pages/examination/index",
 				"iconPath": "static/tabbar/examination.png",
 				"selectedIconPath": "static/tabbar/examination_avtive.png",
-				"text": "考试"
+				"text": "考试题库"
 			},
 			{
 				"pagePath": "pages/user/index",

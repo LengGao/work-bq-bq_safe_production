@@ -26,9 +26,7 @@
         <uni-list-item v-for="link in links" :key="link.id" :to="link.url" :title="link.title"
                        @click="onClickList(link.id)" showArrow clickable>
           <template v-slot:header>
-            <view class="list-box">
-              <image class="list-image" :src="link.thumb" mode="widthFix"></image>
-            </view>
+            <image class="list-image" :src="link.thumb" mode="widthFix"></image>
           </template>
         </uni-list-item>
       </uni-list>
@@ -86,9 +84,9 @@ export default {
     loginlout() {
       uni.showModal({ title: '系统提示', content: '确定要推出登录吗' })
         .then(res => {
-          console.log('res',res);
+          console.log('res', res);
           if (res[1].confirm) {
-            uni.showToast({ title: '推出成功', icon: 'success'})
+            uni.showToast({ title: '推出成功', icon: 'success' })
           }
         })
     },
@@ -140,7 +138,7 @@ $page-padding: 0rpx 20rpx;
   position: absolute;
   top: 190rpx;
   margin: 0 40rpx;
-  width: calc(750rpx - 80rpx);
+  width: calc(100% - 80rpx);
   height: 190rpx;
   justify-content: center;
   align-items: center;
@@ -150,11 +148,11 @@ $page-padding: 0rpx 20rpx;
 }
 
 ::v-deep .uni-grid {
-  height: inherit
+  height: inherit;
 }
 
 .grid {
-  width: 100%;  
+  width: 100%;
   height: inherit;
 
   &-box {
@@ -169,31 +167,35 @@ $page-padding: 0rpx 20rpx;
   }
 
   &-image {
-    width: $img-size-icon;
-    height: $img-size-icon;
+    width: $img-size-grid;
+    height: $img-size-grid;
+    border-radius: 10rpx;
   }
 
   &-text {
     margin-top: 20rpx;
-    font-size: $font-size-sm;
+    font-size: $font-size-base;
   }
 }
-  
 
 .links {
   margin-top: 100rpx;
 }
 
 ::v-deep .uni-list-item__container {
-  align-items: center
+  align-items: center;
+}
+
+::v-deep .uni-list-item__content-title {
+  font-size: $font-size-base;
 }
 
 .list {
-  font-size: $font-size-md;
+  font-size: $font-size-base;
 
   &-image {
-    width: 40rpx;
-    height: 40rpx;
+    width: 60rpx;
+    height: 60rpx;
     border-radius: $border-radius-circle;
     margin-right: 16rpx;
   }

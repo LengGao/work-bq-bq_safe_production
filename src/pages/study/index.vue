@@ -30,20 +30,22 @@
 
     <view class="course-bar">
       <view class="logan-list-head">
-        <view class="logan-list-head-left"> 推荐课程 </view>
+        <view class="logan-list-head-left"> 学习课程 </view>
         <view class="logan-list-head-right" @click="onClickAll">
           <text>全部</text>
           <uni-icons type="forward" size="32rpx" />
         </view>
       </view>
 
-      <view class="courses-list">
-        <CardRow v-for="course in courses" :key="course.id" :leftImage="course.thumb" :rightTop="course.title"
-                 :rightFooter="course.time" @clickRight="onClickCource" @previewImg="previewImg">
-          <template v-slot:rightFooterIcon>
-            <uni-tag type="primary" class="tag" :class="course.type" :text="course.tag" inverted />
-          </template>
-        </CardRow>
+      <view class="courses-list" style="height: 500rpx;">
+        <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="onDown" @up="onUp" :fixed="false">
+          <CardRow v-for="course in courses" :key="course.id" :leftImage="course.thumb" :rightTop="course.title"
+                  :rightFooter="course.time" @clickRight="onClickCource" @previewImg="previewImg">
+            <template v-slot:rightFooterIcon>
+              <uni-tag type="primary" class="tag" :class="course.type" :text="course.tag" inverted />
+            </template>
+          </CardRow>
+        </mescroll-body>
       </view>
     </view>
   </view>
@@ -54,11 +56,13 @@ import CardRow from "@/components/card-row/index";
 import titleBg from '@/static/img/study_swiper.png';
 import dataIcon from "@/static/img/study_iicon_data.png";
 import voucherIcon from "@/static/img/study_icon_voucher.png";
+import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 
 export default {
   components: {
     CardRow,
   },
+  mixins: [MescrollMixin],
   data() {
     return {
       titleBg,
@@ -73,9 +77,6 @@ export default {
       ],
     };
   },
-  onReachBottom() {
-    console.log("到底了");
-  },
   methods: {
     to(url) {
       uni.navigateTo({ url })
@@ -88,6 +89,16 @@ export default {
     // 课程详情
     onClickCource() {
       uni.navigateTo({ url: '/pages/courseDetail/index' })
+    },
+    // 下拉
+    onDown() {
+      console.log("到底了");
+      this.mescroll.endBySize(1, 1)
+    },
+    // 上拉
+    onUp() {
+      console.log("到底了");
+      this.mescroll.endBySize(1, 1)
     },
     // 图片预览
     previewImg(url) {
@@ -105,7 +116,7 @@ $padding: 16rpx 30rpx;
 
 .study {
   height: 100%;
-  overflow-y: auto;
+  padding: 16rpx 0;
 }
 
 .header {
@@ -122,6 +133,7 @@ $padding: 16rpx 30rpx;
   &-img {
     width: 100%;
     height: 100%;
+    border-radius: 20rpx;
   }
 }
 

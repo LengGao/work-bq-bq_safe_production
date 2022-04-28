@@ -10,7 +10,7 @@
     <view class="head-swiper">
       <swiper @change="onChangeSwiper" :autoplay="false" circular disable-touch class="swiper">
         <swiper-item v-for="swiper in swipers" :key="swiper.id" :current-item-id="swiper.id">
-          <image :src="swiper.thumb" class="swiper-image" mode="aspectFit" />
+            <image :src="swiper.thumb" class="swiper-image" mode="aspectFit" />
         </swiper-item>
       </swiper>
     </view>
@@ -112,27 +112,34 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
+$padding-tb: 16rpx;
+$padding-lr: 30rpx;
+
 .examination {
   height: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
+  padding: $padding-tb 0;
 }
 
 .head-swiper {
   padding: 0 30rpx;
 
   .swiper {
-    width: 710rpx;
+    width: 100%;
     height: 280rpx; // 同时控制着轮播图
   }
 
   .swiper-image {
     width: 100%;
     height: 100%;
+    border-radius: 20rpx;
   }
 }
 
 .examinationcard-bar {
   border-top: $logan-border-spacing-md;
-  padding: 16rpx 20rpx;
+  padding: 16rpx 30rpx;
 }
 
 .examinationcard-list-item {
@@ -154,17 +161,18 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;;
+    height: 100%;
   }
 
   &-image {
-    width: 64rpx;
-    height: 64rpx;
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 10rpx;
   }
 
   &-text {
     margin-top: 20rpx;
-    font-size: $font-size-sm;
+    font-size: $font-size-base;
   }
 }
 

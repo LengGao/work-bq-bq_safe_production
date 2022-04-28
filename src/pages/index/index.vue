@@ -1,8 +1,9 @@
 <template>
-  <view class="content">
+  <view class="index">
     <view class="filter">
       <view class="filter-left" @click="onOpenFilter">
-        <image src="/static/img/index_icon1.png" mode="aspectFit" class="icon-location" />
+        <!-- <image src="/static/img/index_icon1.png" mode="aspectFit" class="icon-location" /> -->
+        <uni-icons type="location" size="36rpx" color="#199fff" />
         <text class="location">广东地区</text>
         <uni-icons type="bottom" size="32rpx" />
       </view>
@@ -111,7 +112,7 @@
                  @clickRight="() => onClickLibrary()" @previewImg="previewImg">
           <template v-slot:rightTop>
             <view class="logan-card-right-top">
-              <uni-icons type="wallet" size="28rpx" color="#dd524d" />
+              <uni-icons custom-prefix="iconfont" type="icon-file-pdf-fill" size="28rpx" color="#dd524d" />
               <text class="library-text">{{ library.title }}</text>
             </view>
           </template>
@@ -145,7 +146,7 @@ export default {
       },
       // 地区数据
       regions: [
-        { id: 1, title: '关东关东关东关东', checked: false },
+        { id: 1, title: '关东关东', checked: false },
         { id: 2, title: '关西', checked: false },
         { id: 3, title: '山西', checked: false },
         { id: 4, title: '赵家域', checked: false },
@@ -271,9 +272,11 @@ export default {
 $padding-tb: 16rpx;
 $padding-lr: 30rpx;
 
-.content {
-  height: 100%;
-  overflow-y: auto;
+.index {
+  height:  100%;
+  overflow: hidden;
+  overflow-y: scroll;
+  padding: $padding-tb 0;
 }
 
 .filter {
@@ -308,17 +311,18 @@ $padding-lr: 30rpx;
   padding: 0 $padding-lr;
 
   .swiper {
-    height: 280rpx; // 同时控制着轮播图
+    height: 240rpx; // 同时控制着轮播图
+    width: calc(750rpx - (2 * $padding-lr));
   }
 
   .swiper-image {
     width: 100%;
     height: 100%;
+    border-radius: 20rpx;
   }
 }
 
 .business-bar {
-  padding: 0 $padding-lr 24rpx;
 
   .business {
     display: flex;
@@ -328,6 +332,7 @@ $padding-lr: 30rpx;
     flex-wrap: nowrap;
     height: 184rpx;
     margin: 16rpx 0;
+    padding: 0 $padding-lr;
     font-size: $font-size-base;
     color: $text-color-inverse;
 
@@ -348,13 +353,13 @@ $padding-lr: 30rpx;
     }
 
     .two {
-      margin-left: 24rpx;
+      margin-left: 25rpx;
       background-image: url("/static/img/index_bg_business2.png");
       background-size: 100% 100%;
     }
 
     .three {
-      margin-left: 24rpx;
+      margin-left: 25rpx;
       background-image: url("/static/img/index_bg_business3.png");
       background-size: 100% 100%;
     }
@@ -439,8 +444,8 @@ $padding-lr: 30rpx;
     color: $text-color-title;
 
     .swiper-image {
-      width: $img-size-width-md;
-      height: $img-size-height-md;
+      width: 200rpx;
+      height: 120rpx;
     }
 
     .swiper-text {
@@ -449,7 +454,7 @@ $padding-lr: 30rpx;
       -webkit-box-orient: vertical;
       overflow: hidden;
       margin-top: 16rpx;
-      font-size: $font-size-base;
+      font-size: $font-size-sm;
     }
   }
 }
