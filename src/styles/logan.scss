@@ -117,7 +117,7 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     flex-basis: 4;
     flex-direction: row;
     align-items: center;
-    height: $img-size-height-md; // 同时控制着子元素的高度
+    height: $img-size-height-md;
     overflow: hidden;
     box-sizing: content-box;
 }
@@ -163,7 +163,6 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     flex: 1 1 1;
     width: 100%;
     font-size: $font-size-sm;
-    // line-height: calc(2 * $font-size-sm); // 重写字体时需要重写行高。它会决定行与行上下的留白
     color: $text-color-grey;
 }
 
@@ -175,7 +174,6 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     flex: 1 1 1;
     width: 100%;
     font-size: $font-size-sm;
-    // line-height: calc(2 * $font-size-sm); // 重写字体时需要重写行高。它会决定行与行上下的留白
     color: $text-color-grey;
 }
 
@@ -183,30 +181,6 @@ $logan-border-spacing-md-sm: 2rpx solid #f8f8f8;;
     width: $img-size-width-md;
     height: $img-size-height-md;
 }
-
-
-// .card-body-col {
-//     position: relative;
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: space-between;    
-//     align-items: flex-start;
-//     background-color: #808080;
-//     width: 120rpx; // 同时控制着子元素的宽度
-//     padding: 8rpx 10rpx;
-// }
-
-// .card-body-top {
-//     display: flex;
-//     flex-direction: row;
-//     align-items: center;
-//     width: $img-size-width-md;
-// }
-
-// .card-body-bottom {
-//     width: 100%;
-//     margin-top: 10rpx;
-// }
 
 .logan-list-head {
     display: flex;

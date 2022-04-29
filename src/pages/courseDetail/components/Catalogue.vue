@@ -6,11 +6,13 @@ Vue.component('collapse', Collapse)
 Vue.component('collapse-item', CollapseItem)
 
 export default {
+  name: 'Catalogue',
+  components: { 'collapse': Collapse, 'collapse-item': CollapseItem },
   render: function (h) {
     let data = this.catalogues
     let child = this.generatorContent(data)
-    let collapse = this.generatorContainer(child)
-    return h('view', { class: 'catalogue' }, [collapse])
+    let nodes = this.generatorContainer(child)
+    return h('view', { class: 'catalogue' }, [nodes])
   },
   data() {
     return {
