@@ -45,7 +45,7 @@ export default {
     },
     toAnswer(isAnalysis, chapterId, title) {
       uni.navigateTo({
-        url: `/pages/answer/index?title=${title}&type=7&isAnalysis=${isAnalysis}&chapterId=${chapterId}`,
+        url: `/examination/answer/index?title=${title}&type=7&isAnalysis=${isAnalysis}&chapterId=${chapterId}`,
       });
     },
   },

@@ -84,7 +84,7 @@ export default {
       }
       if (!answer_num) {
         uni.navigateTo({
-          url: `/pages/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=0`,
+          url: `/examination/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=0`,
         });
         return;
       }
@@ -99,7 +99,7 @@ export default {
             isContinue = 0
           }
           uni.navigateTo({
-            url: `/pages/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=${isContinue}`,
+            url: `/examination/answer/index?chapterId=${chapterId}&title=${title}&type=1&isContinue=${isContinue}`,
           });
         }
       });

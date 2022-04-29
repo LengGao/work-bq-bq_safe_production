@@ -6,8 +6,6 @@ Vue.component('collapse', Collapse)
 Vue.component('collapse-item', CollapseItem)
 
 export default {
-  name: 'Catalogue',
-  components: { 'collapse': Collapse, 'collapse-item': CollapseItem },
   render: function (h) {
     let data = this.catalogues
     let child = this.generatorContent(data)

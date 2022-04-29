@@ -358,7 +358,7 @@ export default {
       this.hasSettlement = true;
       setTimeout(() => {
         uni.navigateTo({
-          url: `/pages/testResults/index?logId=${this.logId}`,
+          url: `/examination/testResults/index?logId=${this.logId}`,
         });
       }, 500);
     },
@@ -372,7 +372,7 @@ export default {
           isRequest = 0;
         }
         uni.navigateTo({
-          url: `/pages/answerSheet/index?logId=${this.logId}&model=${this.model}&isRequest=${isRequest}`,
+          url: `/examination/answerSheet/index?logId=${this.logId}&model=${this.model}&isRequest=${isRequest}`,
         });
       });
     },

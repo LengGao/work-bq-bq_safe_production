@@ -16,7 +16,7 @@
           </view>
         </view>
 
-        <view class="header-two-box header-two-gb2" @click="to('../learnCertificate/index')">
+        <view class="header-two-box header-two-gb2" @click="to('/study/learnCertificate/index')">
           <view class="box-left">
             <text class="box-left-title">学习凭证</text>
             <text class="box-left-text">专业/高效拿证</text>

@@ -59,17 +59,17 @@ export default {
       gridIndex: 0,
       // 宫格数据
       grids: [
-        { id: 1, thumb: "/static/img/user_gird1.png", title: "我的课程", url: "/pages/userCourceList/index" },
-        { id: 2, thumb: "/static/img/user_gird2.png", title: "我的题库", url: "/pages/examination/index", blank: 'switchTab' },
-        { id: 3, thumb: "/static/img/user_gird3.png", title: "我的班级", url: "/pages/userClassList/index" },
+        { id: 1, thumb: "/static/img/user_gird1.png", title: "我的课程", url: "/user/userCourceList/index" },
+        { id: 2, thumb: "/static/img/user_gird2.png", title: "我的题库", url: "/user/examination/index", blank: 'switchTab' },
+        { id: 3, thumb: "/static/img/user_gird3.png", title: "我的班级", url: "/user/userClassList/index" },
         // { id: 4, thumb: "/static/img/user_gird4.png", title: "我的问答", url: "" }
       ],
       listIndex: 0,
       links: [
         { id: 1, thumb: "/static/img/user_icon_list1.png", title: "课程收藏", url: "/pages/favorites/index" },
-        { id: 2, thumb: "/static/img/user_icon_list2.png", title: "意见反馈", url: "/pages/feedback/index" },
-        { id: 3, thumb: "/static/img/user_icon_list3.png", title: "关于我们", url: "/pages/aboutUs/index" },
-        { id: 4, thumb: "/static/img/user_icon_list4.png", title: "联系客服", url: "/pages/contactService/index" },
+        { id: 2, thumb: "/static/img/user_icon_list2.png", title: "意见反馈", url: "/user/feedback/index" },
+        { id: 3, thumb: "/static/img/user_icon_list3.png", title: "关于我们", url: "/user/aboutUs/index" },
+        { id: 4, thumb: "/static/img/user_icon_list4.png", title: "联系客服", url: "/user/contactService/index" },
       ],
     };
   },

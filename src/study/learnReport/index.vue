@@ -71,7 +71,7 @@
           <view class="statistics-data-item none">
             <view class="statistics-data-item-value">9999</view>
             <view class="statistics-data-item-title">答错题数</view>
-          </view>
+          </view>study
         </view>
       </view>
       <view class="learn-report-card">

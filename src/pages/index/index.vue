@@ -213,7 +213,7 @@ export default {
     },
     // 轮播图点击事件
     onClickSwiperImg() {
-      uni.navigateTo({ url: '/pages/courseDetail/index'} )
+      uni.navigateTo({ url: '/study/courseDetail/index'} )
     },
     // 查看全部
     onClickAll(type) {
@@ -221,38 +221,38 @@ export default {
       let path = '', query = `?type=${type}`
       switch (type) {
         case 1: 
-          path = '/pages/courseList/index'
+          path = '/study/courseList/index'
         break;
         case 2:
-          path = '/pages/courseList/index'
+          path = '/study/courseList/index'
         break;
         case 3: 
-          path = '/pages/policyList/index'
+          path = '/study/policyList/index'
         break;
         case 4: 
-          path = '/pages/libraryList/index'
+          path = '/study/libraryList/index'
         break;
       }
       uni.navigateTo({ url: path + query })
     },
     // 点击安全生产课程
     onClickCource(courceType) {
-      let path = '/pages/courseList/index',
+      let path = '/study/courseList/index',
           query = `?type=2&courceType=${courceType}`
 
       uni.navigateTo({ url: path + query})
     },
     // 点击推荐课程
     onClickRecommend() {
-      uni.navigateTo({ url: '/pages/courseDetail/index' })
+      uni.navigateTo({ url: '/study/courseDetail/index' })
     },
     // 点击政策栏
     onClickPolicy() {
-      uni.navigateTo({ url: '/pages/policyDetails/index' })
+      uni.navigateTo({ url: '/study/policyDetails/index' })
     },
     // 点击资料
     onClickLibrary() {
-      uni.navigateTo({ url: '/pages/libraryDetails/index' })
+      uni.navigateTo({ url: '/study/libraryDetails/index' })
     },
     // 数据获取
     getData() {

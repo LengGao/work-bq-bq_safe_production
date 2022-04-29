@@ -27,13 +27,13 @@
 
 <script>
 import Details from './components/Details'
-import Catalogue from "./components/Catalogue.vue"
+// import Catalogue from "./components/Catalogue.vue"
 import Rate from './components/Rate'
 
 export default {
   components: {
     Details,
-    Catalogue,
+    // Catalogue,
     Rate,
   },
   data() {

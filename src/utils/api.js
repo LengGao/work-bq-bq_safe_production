@@ -417,7 +417,6 @@ export const download_file_miniapp = async(url, header) =>{
   console.log("downloadMsg", downloadMsg);
   // const saveMsg = fileManager.saveFile({ tempFilePath: downloadMsg.tempFilePath })
   const open = await GLOBAL.openDocument({ filePath: downloadMsg.filePath })
-
-  
+  console.log("open", open);
 
 }

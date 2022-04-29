@@ -13,48 +13,6 @@
 			}
 		},
 		{
-			"path": "pages/search/index",
-			"style": {
-				"navigationBarTitleText": "搜索"
-			}
-		},
-		{
-			"path": "pages/courseList/index",
-			"style": {
-				"navigationBarTitleText": "课程列表"
-			}
-		},
-		{
-			"path": "pages/courseDetail/index",
-			"style": {
-				"navigationBarTitleText": "课程详情"
-			}
-		},
-		{
-			"path": "pages/policyList/index",
-			"style": {
-				"navigationBarTitleText": "政策列表"
-			}
-		},
-		{
-			"path": "pages/policyDetails/index",
-			"style": {
-				"navigationBarTitleText": "政策详情"
-			}
-		},
-		{
-			"path": "pages/libraryList/index",
-			"style": {
-				"navigationBarTitleText": "文库资料"
-			}
-		},
-		{
-			"path": "pages/libraryDetails/index",
-			"style": {
-				"navigationBarTitleText": "资料详情"
-			}
-		},
-		{
 			"path": "pages/study/index",
 			"style": {
 				"navigationBarTitleText": "安培课堂"
@@ -67,120 +25,15 @@
 			}
 		},
 		{
-			"path": "pages/learnCertificate/index",
-			"style": {
-				"navigationBarTitleText": "学习凭证"
-			}
-		},
-		{
-			"path": "pages/learnReport/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "学习报告"
-			}
-		},
-		{
-			"path": "pages/learnData/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "学习数据"
-			}
-		},
-		{
-			"path": "pages/chapterList/index",
-			"style": {
-				"navigationBarTitleText": "章节练习"
-			}
-		},
-		{
-			"path": "pages/answer/index",
-			"style": {
-				"navigationBarTitleText": "答题"
-			}
-		},
-		{
-			"path": "pages/answerSheet/index",
-			"style": {
-				"navigationBarTitleText": "答题卡"
-			}
-		},
-		{
-			"path": "pages/testPaperIntroduce/index",
-			"style": {
-				"navigationBarTitleText": "试卷简介"
-			}
-		},
-		{
-			"path": "pages/testResults/index",
-			"style": {
-				"navigationBarTitleText": "考试结果"
-			}
-		},
-		{
-			"path": "pages/independentPaper/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "自主出题"
-			}
-		},
-		{
-			"path": "pages/favorites/index",
-			"style": {
-				"navigationBarTitleText": "收藏夹"
-			}
-		},
-		{
-			"path": "pages/wrongQuestion/index",
-			"style": {
-				"navigationBarTitleText": "错题集"
-			}
-		},
-		{
-			"path": "pages/examinationRecord/index",
-			"style": {
-				"navigationBarTitleText": "考试记录"
-			}
-		},
-		{
 			"path": "pages/user/index",
 			"style": {
 				"navigationBarTitleText": "个人中心"
 			}
 		},
 		{
-			"path": "pages/userCourceList/index",
+			"path": "pages/search/index",
 			"style": {
-				"navigationBarTitleText": "我的课程"
-			}
-		},
-		{
-			"path": "pages/userClassList/index",
-			"style": {
-				"navigationBarTitleText": "我的班级"
-			}
-		},
-		{
-			"path": "pages/feedback/index",
-			"style": {
-				"navigationBarTitleText": "意见反馈"
-			}		
-		},
-		{
-			"path": "pages/feedbackSubmit/index",
-			"style": {
-				"navigationBarTitleText": "我要反馈"
-			}					
-		},
-		{
-			"path": "pages/contactService/index",
-			"style": {
-				"navigationBarTitleText": "联系客服"
-			}
-		},
-		{
-			"path": "pages/aboutUs/index",
-			"style": {
-				"navigationBarTitleText": "联系客服"
+				"navigationBarTitleText": "搜索"
 			}
 		},
 		{
@@ -188,6 +41,170 @@
 			"style": {
 				"navigationBarTitleText": "测试"
 			}
+		}
+	],
+	"subpackages": [
+		{
+			"root": "study",
+			"pages": [
+				{
+					"path": "courseList/index",
+					"style": {
+						"navigationBarTitleText": "课程列表"
+					}
+				},
+				{
+					"path": "courseDetail/index",
+					"style": {
+						"navigationBarTitleText": "课程详情"
+					}
+				},
+				{
+					"path": "policyList/index",
+					"style": {
+						"navigationBarTitleText": "政策列表"
+					}
+				},
+				{
+					"path": "policyDetails/index",
+					"style": {
+						"navigationBarTitleText": "政策详情"
+					}
+				},
+				{
+					"path": "libraryList/index",
+					"style": {
+						"navigationBarTitleText": "文库资料"
+					}
+				},
+				{
+					"path": "libraryDetails/index",
+					"style": {
+						"navigationBarTitleText": "资料详情"
+					}
+				},
+				{
+					"path": "learnCertificate/index",
+					"style": {
+						"navigationBarTitleText": "学习凭证"
+					}
+				},
+				{
+					"path": "learnReport/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "学习报告"
+					}
+				},
+				{
+					"path": "learnData/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "学习数据"
+					}
+				}
+			]
+		},
+		{
+			"root": "examination",
+			"pages": [
+				{
+					"path": "chapterList/index",
+					"style": {
+						"navigationBarTitleText": "章节练习"
+					}
+				},
+				{
+					"path": "answer/index",
+					"style": {
+						"navigationBarTitleText": "答题"
+					}
+				},
+				{
+					"path": "answerSheet/index",
+					"style": {
+						"navigationBarTitleText": "答题卡"
+					}
+				},
+				{
+					"path": "testPaperIntroduce/index",
+					"style": {
+						"navigationBarTitleText": "试卷简介"
+					}
+				},
+				{
+					"path": "testResults/index",
+					"style": {
+						"navigationBarTitleText": "考试结果"
+					}
+				},
+				{
+					"path": "independentPaper/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "自主出题"
+					}
+				},
+				{
+					"path": "favorites/index",
+					"style": {
+						"navigationBarTitleText": "收藏夹"
+					}
+				},
+				{
+					"path": "wrongQuestion/index",
+					"style": {
+						"navigationBarTitleText": "错题集"
+					}
+				},
+				{
+					"path": "examinationRecord/index",
+					"style": {
+						"navigationBarTitleText": "考试记录"
+					}
+				}
+			]
+		},
+		{
+			"root": "user",
+			"pages": [
+				{
+					"path": "userCourceList/index",
+					"style": {
+						"navigationBarTitleText": "我的课程"
+					}
+				},
+				{
+					"path": "userClassList/index",
+					"style": {
+						"navigationBarTitleText": "我的班级"
+					}
+				},
+				{
+					"path": "feedback/index",
+					"style": {
+						"navigationBarTitleText": "意见反馈"
+					}		
+				},
+				{
+					"path": "feedbackSubmit/index",
+					"style": {
+						"navigationBarTitleText": "我要反馈"
+					}					
+				},
+				{
+					"path": "contactService/index",
+					"style": {
+						"navigationBarTitleText": "联系客服"
+					}
+				},
+				{
+					"path": "aboutUs/index",
+					"style": {
+						"navigationBarTitleText": "联系客服"
+					}
+				}
+			]
 		}
 	],
 	"tabBar": {
