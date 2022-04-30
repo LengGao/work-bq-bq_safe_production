@@ -45,7 +45,48 @@
 	],
 	"subpackages": [
 		{
-			"root": "study",
+			"root": "pages/users",
+			"pages": [
+				{
+					"path": "userCourceList/index",
+					"style": {
+						"navigationBarTitleText": "我的课程"
+					}
+				},
+				{
+					"path": "userClassList/index",
+					"style": {
+						"navigationBarTitleText": "我的班级"
+					}
+				},
+				{
+					"path": "feedback/index",
+					"style": {
+						"navigationBarTitleText": "意见反馈"
+					}		
+				},
+				{
+					"path": "feedbackSubmit/index",
+					"style": {
+						"navigationBarTitleText": "我要反馈"
+					}					
+				},
+				{
+					"path": "contactService/index",
+					"style": {
+						"navigationBarTitleText": "联系客服"
+					}
+				},
+				{
+					"path": "aboutUs/index",
+					"style": {
+						"navigationBarTitleText": "联系客服"
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/studys",
 			"pages": [
 				{
 					"path": "courseList/index",
@@ -106,7 +147,7 @@
 			]
 		},
 		{
-			"root": "examination",
+			"root": "pages/examinations",
 			"pages": [
 				{
 					"path": "chapterList/index",
@@ -164,47 +205,6 @@
 					}
 				}
 			]
-		},
-		{
-			"root": "user",
-			"pages": [
-				{
-					"path": "userCourceList/index",
-					"style": {
-						"navigationBarTitleText": "我的课程"
-					}
-				},
-				{
-					"path": "userClassList/index",
-					"style": {
-						"navigationBarTitleText": "我的班级"
-					}
-				},
-				{
-					"path": "feedback/index",
-					"style": {
-						"navigationBarTitleText": "意见反馈"
-					}		
-				},
-				{
-					"path": "feedbackSubmit/index",
-					"style": {
-						"navigationBarTitleText": "我要反馈"
-					}					
-				},
-				{
-					"path": "contactService/index",
-					"style": {
-						"navigationBarTitleText": "联系客服"
-					}
-				},
-				{
-					"path": "aboutUs/index",
-					"style": {
-						"navigationBarTitleText": "联系客服"
-					}
-				}
-			]
 		}
 	],
 	"tabBar": {
@@ -238,6 +238,14 @@
 				"text": "我的"
 			}
 		]
+	},
+	"preloadRule": {
+		"pages/index/index": {
+			"network": "all",
+			"packages": [
+				"__APP__"
+			] 
+		}
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "white",

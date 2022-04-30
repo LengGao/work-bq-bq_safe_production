@@ -59,7 +59,7 @@ export default {
     },
     // 点击推荐课程
     onClickRecommend() {
-      uni.navigateTo({ url: '/pages/courseDetail/index' })
+      uni.navigateTo({ url: '/pages/studys/courseDetail/index' })
     },
     // 预览
     previewImg(url) {

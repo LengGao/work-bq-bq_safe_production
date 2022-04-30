@@ -59,7 +59,7 @@
 	"quickapp": { 
 
 	},
-	"mp-weixin": { 
+	"mp-weixin": {
 		"appid": "",
 		"setting": {
 			"urlCheck": false,
@@ -68,6 +68,9 @@
 			"packNpmManually": false,
 			"packNpmRelationList": [{
 			}]
+		},
+		"optimization": {
+			"subPackages": true
 		},
 		"usingComponents": true
 	},

@@ -16,7 +16,7 @@
           </view>
         </view>
 
-        <view class="header-two-box header-two-gb2" @click="to('/study/learnCertificate/index')">
+        <view class="header-two-box header-two-gb2" @click="to('../learnCertificate/index')">
           <view class="box-left">
             <text class="box-left-title">学习凭证</text>
             <text class="box-left-text">专业/高效拿证</text>
@@ -53,9 +53,6 @@
 
 <script>
 import CardRow from "@/components/card-row/index";
-import titleBg from '@/static/img/study_swiper.png';
-import dataIcon from "@/static/img/study_iicon_data.png";
-import voucherIcon from "@/static/img/study_icon_voucher.png";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 
 export default {
@@ -65,9 +62,9 @@ export default {
   mixins: [MescrollMixin],
   data() {
     return {
-      titleBg,
-      dataIcon,
-      voucherIcon,
+      titleBg: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/study_swiper.png',
+      dataIcon: '/static/img/study_iicon_data.png',
+      voucherIcon: '/static/img/study_icon_voucher.png',
 
       // 推荐课程
       courses: [
@@ -88,7 +85,7 @@ export default {
     },
     // 课程详情
     onClickCource() {
-      uni.navigateTo({ url: '/pages/courseDetail/index' })
+      uni.navigateTo({ url: '/pages/studys/courseDetail/index' })
     },
     // 下拉
     onDown() {

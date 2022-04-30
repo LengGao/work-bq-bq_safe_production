@@ -178,8 +178,8 @@ export default {
       ],
       // 轮播
       swipers: [
-        { id: 1, thumb: '/static/img/index_swiper.png', url: "" },
-        { id: 2, thumb: '/static/img/index_swiper.png', url: "" }
+        { id: 1, thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/index_swiper.png', url: "" },
+        { id: 2, thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/index_swiper.png', url: "" }
       ],
     };
   },
@@ -213,7 +213,7 @@ export default {
     },
     // 轮播图点击事件
     onClickSwiperImg() {
-      uni.navigateTo({ url: '/study/courseDetail/index'} )
+      uni.navigateTo({ url: '/pages/studys/courseDetail/index'} )
     },
     // 查看全部
     onClickAll(type) {
@@ -221,38 +221,38 @@ export default {
       let path = '', query = `?type=${type}`
       switch (type) {
         case 1: 
-          path = '/study/courseList/index'
+          path = '/pages/studys/courseList/index'
         break;
         case 2:
-          path = '/study/courseList/index'
+          path = '/pages/studys/courseList/index'
         break;
         case 3: 
-          path = '/study/policyList/index'
+          path = '/pages/studys/policyList/index'
         break;
         case 4: 
-          path = '/study/libraryList/index'
+          path = '/pages/studys/libraryList/index'
         break;
       }
       uni.navigateTo({ url: path + query })
     },
     // 点击安全生产课程
     onClickCource(courceType) {
-      let path = '/study/courseList/index',
+      let path = '/pages/studys/courseList/index',
           query = `?type=2&courceType=${courceType}`
 
       uni.navigateTo({ url: path + query})
     },
     // 点击推荐课程
     onClickRecommend() {
-      uni.navigateTo({ url: '/study/courseDetail/index' })
+      uni.navigateTo({ url: '/pages/studys/courseDetail/index' })
     },
     // 点击政策栏
     onClickPolicy() {
-      uni.navigateTo({ url: '/study/policyDetails/index' })
+      uni.navigateTo({ url: '/pages/studys/policyDetails/index' })
     },
     // 点击资料
     onClickLibrary() {
-      uni.navigateTo({ url: '/study/libraryDetails/index' })
+      uni.navigateTo({ url: '/pages/studys/libraryDetails/index' })
     },
     // 数据获取
     getData() {

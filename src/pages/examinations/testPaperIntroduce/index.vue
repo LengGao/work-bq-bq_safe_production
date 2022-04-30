@@ -68,28 +68,28 @@ export default {
   methods: {
     toAutonomyTestAnswer() {
       uni.navigateTo({
-        url: `/pages/answer/index?type=4&title=${this.configData.title
+        url: `/pages/examinations/answer/index?type=4&title=${this.configData.title
           }&chapterId=${this.chapterId}&time=${this.configData.duration * 60
           }`,
       });
     },
     toOverYearAnswer() {
       uni.navigateTo({
-        url: `/pages/answer/index?type=3&isExam=0&chapterId=${this.chapterId
+        url: `/pages/examinations/answer/index?type=3&isExam=0&chapterId=${this.chapterId
           }&title=${this.configData.title}&time=${this.configData.duration * 60
           }`,
       });
     },
     toOverYearTestAnswer() {
       uni.navigateTo({
-        url: `/pages/answer/index?type=3&isExam=1&chapterId=${this.chapterId
+        url: `/pages/examinations/answer/index?type=3&isExam=1&chapterId=${this.chapterId
           }&title=${this.configData.title}&time=${this.configData.duration * 60
           }`,
       });
     },
     toTestAnswer() {
       uni.navigateTo({
-        url: `/pages/answer/index?type=2&title=${this.configData.title}&time=${this.configData.duration * 60
+        url: `/pages/examinations/answer/index?type=2&title=${this.configData.title}&time=${this.configData.duration * 60
           }`,
       });
     },

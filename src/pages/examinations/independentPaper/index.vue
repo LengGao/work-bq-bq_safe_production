@@ -64,7 +64,7 @@ export default {
     },
     toConfig(chapterId) {
       uni.navigateTo({
-        url: `/examination/testPaperIntroduce/index?type=2&chapterId=${chapterId}`,
+        url: `/pages/examinations/testPaperIntroduce/index?type=2&chapterId=${chapterId}`,
       });
     },
     onScrolltolower() {

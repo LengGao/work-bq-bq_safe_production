@@ -14,7 +14,7 @@ export default {
 
 <style>
 /*每个页面公共css */
-@import "@/static/iconfont/iconfont.css";
+@import "@/assets/icon/iconfont.css";
 /* 页面高度100% */
 page {
   height: 100%;

@@ -67,21 +67,21 @@ export default {
       // 宫格数据
       gridIndex: 0,
       grids: [
-        { id: 1, thumb: "/static/img/examination_gird1.png", title: "收藏夹", url: "../favorites/index" },
-        { id: 2, thumb: "/static/img/examination_gird2.png", title: "错题集", url: "../wrongQuestion/index" },
-        { id: 3, thumb: "/static/img/examination_gird3.png", title: "学习报告", url: "../learnReport/index" },
-        { id: 4, thumb: "/static/img/examination_gird4.png", title: "考试记录", url: "../examinationRecord/index" },
-        // { id: 5, thumb: "/static/img/examination_gird5.png", title: "题目答疑", url: "" }
+        { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird1.png", title: "收藏夹", url: "../favorites/index" },
+        { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird2.png", title: "错题集", url: "../wrongQuestion/index" },
+        { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird3.png", title: "学习报告", url: "../learnReport/index" },
+        { id: 4, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird4.png", title: "考试记录", url: "../examinationRecord/index" },
+        // { id: 5, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird5.png", title: "题目答疑", url: "" }
       ],
       // 推荐课程
       examinations: [
-        { id: 1, name: "章节练习", desc: '这是描述文案', thumb: '/static/img/examination_icon_list1.png', url: "../chapterList/index" },
-        { id: 2, name: "模拟考试", desc: '这是描述文案', thumb: '/static/img/examination_icon_list2.png', url: '../testPaperIntroduce/index?type=1' },
-        { id: 3, name: "自主出题", desc: '这是描述文案', thumb: '/static/img/examination_icon_list3.png', url: '../independentPaper/index' },
+        { id: 1, name: "章节练习", desc: '这是描述文案', thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/examination_icon_list1.png', url: "../chapterList/index" },
+        { id: 2, name: "模拟考试", desc: '这是描述文案', thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/examination_icon_list2.png', url: '../testPaperIntroduce/index?type=1' },
+        { id: 3, name: "自主出题", desc: '这是描述文案', thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/examination_icon_list3.png', url: '../independentPaper/index' },
       ],
       // 轮播
       swipers: [
-        { id: 1, thumb: "/static/img/examination-swiper.png", url: "" }
+        { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon//examination-swiper.png", url: "" }
       ],
     };
   },
