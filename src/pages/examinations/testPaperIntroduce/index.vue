@@ -1,7 +1,7 @@
 <template>
   <div class="over-years-introduce">
     <view class="contaienr">
-      <image class="b-img" src="../../static/introduce-background.png"></image>
+      <image class="b-img" src="../static/introduce-background.png"></image>
       <view class="test-paper-name">{{ configData.title || "" }}</view>
       <view class="desc">
         <text class="iconfont">&#xe602;</text>

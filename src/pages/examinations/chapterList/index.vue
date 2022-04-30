@@ -1,6 +1,6 @@
 <template>
   <view class="chapter">
-    <image class="b-img" src="../../static/chapter-background.png"></image>
+    <image class="b-img" src="../static/chapter-background.png"></image>
     <view class="chapter-header">
       <view class="info-item">
         <view class="info-item-value">{{

@@ -7,7 +7,7 @@
         <text class="nav-bar-title">自主出题</text>
       </view>
     </view>
-    <image class="b-img" src="../../static/autonomy-background.png"></image>
+    <image class="b-img" src="../static/autonomy-background.png"></image>
     <scroll-view scroll-y class="independent-paper-content" @scrolltolower="onScrolltolower">
       <view class="question-list" v-if="list.length">
         <view class="question-list-item" v-for="item in list" :key="item.id" @click="toConfig(item.id)">

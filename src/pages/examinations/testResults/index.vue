@@ -2,7 +2,7 @@
   <view class="test-results">
     <view class="results-header">
       <view class="score">
-        <image class="score-img" src="../../static/icon-water.png"></image>
+        <image class="score-img" src="../static/icon-water.png"></image>
         <view class="score-title">最终得分</view>
         <view class="score-value">{{ testResult.info.mark || 0 }}</view>
       </view>

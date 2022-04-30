@@ -1,6 +1,6 @@
 <template>
   <view class="examination-record">
-    <image class="b-img" src="../../static/mock-background.png"></image>
+    <image class="b-img" src="../static/mock-background.png"></image>
     <view class="examination-record-content">
       <scroll-view class="record-list" scroll-y @scrolltolower="onScrolltolower">
         <view class="record-title">模拟考试历史记录</view>
