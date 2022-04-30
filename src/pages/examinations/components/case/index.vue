@@ -38,14 +38,14 @@
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerBar from "@/components/answerBar";
-import AnswerHead from "@/components/answerHead";
-import Single from "@/components/single";
-import Multiple from "@/components/multiple";
-import Judg from "@/components/judg";
-import Indefinite from "@/components/indefinite";
-import Completion from "@/components/completion";
-import Short from "@/components/short";
+import AnswerBar from "../answerBar";
+import AnswerHead from "../answerHead";
+import Single from "../single";
+import Multiple from "../multiple";
+import Judg from "../judg";
+import Indefinite from "../indefinite";
+import Completion from "../completion";
+import Short from "../short";
 import { submitAnswer } from "@/api/question";
 export default {
   name: "case",

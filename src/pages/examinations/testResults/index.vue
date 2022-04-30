@@ -45,8 +45,8 @@
   </view>
 </template>
 <script>
-import Title from "@/components/title";
-import Circular from "@/components/circular";
+import Title from "../components/title";
+import Circular from "../components/circular";
 import { settlement } from "@/api/question";
 export default {
   name: "testResults",

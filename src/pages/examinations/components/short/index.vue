@@ -1,23 +1,20 @@
 <template>
-  <div class="indefinite">
+  <div class="short">
     <view class="quetion-content">
       <u-parse :content="options.topic_description" />
     </view>
-    <Select :options="options.option" multiple v-model="checkedAnswer" :correct-answer="correctAnswer">
-    </Select>
+    <textarea :disabled="!!correctAnswer" class="text" @input="onInput" v-model="value" placeholder="请输入" />
     <AnswerEye @change="handleEyeChange" v-if="model === '1'" />
-    <AnswerAnalysis v-if="correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                    :desc="options.topic_analysis" />
+    <AnswerAnalysis short v-if="correctAnswer" :desc="correctAnswer" />
   </div>
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerAnalysis from "@/components/answerAnalysis";
-import Select from "@/components/select";
-import AnswerEye from "@/components/answerEye";
-
+import AnswerAnalysis from "../answerAnalysis";
+import Select from "../select";
+import AnswerEye from "../answerEye";
 export default {
-  name: "indefinite",
+  name: "short",
   components: {
     AnswerAnalysis,
     Select,
@@ -40,14 +37,10 @@ export default {
   data() {
     return {
       correctAnswer: "",
-      checkedAnswer: this.options.userAnswer || [],
-      userAnswerText: "",
+      value: this.options.userAnswer || "",
     };
   },
   watch: {
-    checkedAnswer(val) {
-      this.$emit("change", val, this.options.id);
-    },
     model(val) {
       if (val === "3") {
         this.handleEyeChange(true);
@@ -60,10 +53,12 @@ export default {
     }
   },
   methods: {
+    onInput() {
+      this.$emit("change", [this.value], this.options.id);
+    },
     handleEyeChange(val) {
       if (val) {
         this.correctAnswer = this.options.topic_answer;
-        this.userAnswerText = this.checkedAnswer.toString(",");
       } else {
         this.correctAnswer = "";
       }
@@ -73,6 +68,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 .quetion-content {
+  margin-bottom: 20rpx;
+}
+.text {
+  width: 100%;
+  box-sizing: border-box;
+  border: $uni-border;
+  padding: 24rpx;
+  border-radius: 10rpx;
   margin-bottom: 20rpx;
 }
 </style>

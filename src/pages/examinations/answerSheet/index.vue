@@ -24,9 +24,9 @@
 </template>
 <script>
 import Header from "./components/header.vue";
-import Title from "@/components/title";
-import Circular from "@/components/circular";
 import Footer from "./components/footer.vue";
+import Title from "../components/title";
+import Circular from "../components/circular";
 import { getQuestionBoard } from "@/api/question";
 // import { mapGetters } from "vuex";
 export default {

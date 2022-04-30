@@ -44,8 +44,8 @@
   </view>
 </template>
 <script>
-import { getChapterList } from "@/api/question";
 import NoData from "@/components/noData";
+import { getChapterList } from "@/api/question";
 export default {
   name: "chapter",
   components: {

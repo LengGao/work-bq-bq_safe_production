@@ -45,47 +45,6 @@
 	],
 	"subpackages": [
 		{
-			"root": "pages/users",
-			"pages": [
-				{
-					"path": "userCourceList/index",
-					"style": {
-						"navigationBarTitleText": "我的课程"
-					}
-				},
-				{
-					"path": "userClassList/index",
-					"style": {
-						"navigationBarTitleText": "我的班级"
-					}
-				},
-				{
-					"path": "feedback/index",
-					"style": {
-						"navigationBarTitleText": "意见反馈"
-					}		
-				},
-				{
-					"path": "feedbackSubmit/index",
-					"style": {
-						"navigationBarTitleText": "我要反馈"
-					}					
-				},
-				{
-					"path": "contactService/index",
-					"style": {
-						"navigationBarTitleText": "联系客服"
-					}
-				},
-				{
-					"path": "aboutUs/index",
-					"style": {
-						"navigationBarTitleText": "联系客服"
-					}
-				}
-			]
-		},
-		{
 			"root": "pages/studys",
 			"pages": [
 				{
@@ -202,6 +161,47 @@
 					"path": "examinationRecord/index",
 					"style": {
 						"navigationBarTitleText": "考试记录"
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/users",
+			"pages": [
+				{
+					"path": "userCourceList/index",
+					"style": {
+						"navigationBarTitleText": "我的课程"
+					}
+				},
+				{
+					"path": "userClassList/index",
+					"style": {
+						"navigationBarTitleText": "我的班级"
+					}
+				},
+				{
+					"path": "feedback/index",
+					"style": {
+						"navigationBarTitleText": "意见反馈"
+					}		
+				},
+				{
+					"path": "feedbackSubmit/index",
+					"style": {
+						"navigationBarTitleText": "我要反馈"
+					}					
+				},
+				{
+					"path": "contactService/index",
+					"style": {
+						"navigationBarTitleText": "联系客服"
+					}
+				},
+				{
+					"path": "aboutUs/index",
+					"style": {
+						"navigationBarTitleText": "联系客服"
 					}
 				}
 			]

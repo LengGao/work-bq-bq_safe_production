@@ -15,8 +15,8 @@
 
 </template>
 <script>
-import { getFavoritesList } from "@/api/question";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import { getFavoritesList } from "@/api/question";
 export default {
   mixins: [MescrollMixin], // 使用mixin
   name: "wrongQuestion",

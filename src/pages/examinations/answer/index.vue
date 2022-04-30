@@ -31,15 +31,16 @@
   </view>
 </template>
 <script>
-import AnswerBar from "@/components/answerBar";
-import AnswerHead from "@/components/answerHead";
-import Single from "@/components/single";
-import Multiple from "@/components/multiple";
-import Judg from "@/components/judg";
-import Indefinite from "@/components/indefinite";
-import Completion from "@/components/completion";
-import Short from "@/components/short";
-import Case from "@/components/case";
+import AnswerBar from "../components/answerBar";
+import AnswerHead from "../components/answerHead";
+import Single from "../components/single";
+import Multiple from "../components/multiple";
+import Judg from "../components/judg";
+import Indefinite from "../components/indefinite";
+import Completion from "../components/completion";
+import Short from "../components/short";
+import Case from "../components/case";
+
 import {
   createPractice,
   submitAnswer,

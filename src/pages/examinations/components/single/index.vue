@@ -11,8 +11,8 @@
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerAnalysis from "@/components/answerAnalysis";
-import Select from "@/components/select";
+import AnswerAnalysis from "../answerAnalysis";
+import Select from "../select";
 
 export default {
   name: "single",

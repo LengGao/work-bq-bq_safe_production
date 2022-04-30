@@ -28,8 +28,8 @@
   </view>
 </template>
 <script>
-import { getMockExamHistory } from "@/api/question";
 import NoData from "@/components/noData";
+import { getMockExamHistory } from "@/api/question";
 export default {
   name: "examinationRecord",
   components: {

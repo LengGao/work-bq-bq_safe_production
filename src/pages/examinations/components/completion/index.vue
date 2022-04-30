@@ -12,9 +12,9 @@
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerAnalysis from "@/components/answerAnalysis";
-import Select from "@/components/select";
-import AnswerEye from "@/components/answerEye";
+import AnswerAnalysis from "../answerAnalysis";
+import Select from "../select";
+import AnswerEye from "../answerEye";
 import IOption from "../option";
 export default {
   name: "completion",

@@ -10,8 +10,8 @@
   </div>
 </template>
 <script>
-import AnswerAnalysis from "@/components/answerAnalysis";
-import Select from "@/components/select";
+import AnswerAnalysis from "../answerAnalysis";
+import Select from "../select";
 import uParse from "@/components/gaoyia-parse/parse.vue";
 export default {
   name: "Judg",

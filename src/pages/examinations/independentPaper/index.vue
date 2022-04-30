@@ -32,8 +32,8 @@
   </view>
 </template>
 <script>
-import { getRealTestPapers } from "@/api/question";
 import NoData from "@/components/noData";
+import { getRealTestPapers } from "@/api/question";
 export default {
   name: "independentPaper",
   components: {
