@@ -15,16 +15,15 @@
         <uni-icons custom-prefix="iconfont" type="icon-file-text" size="300rpx" color="#199fff" />
       </view>
     </view>
-    <!-- <object data="/static/a.docx" type="docs"></object> -->
-
+    
     <view class="footer">
-      <button type="primary" @click="onDownLoad"> 点击下载 </button>
+      <button class="btn__primary" @click="onDownLoad"> 点击下载 </button>
     </view>
   </view>
 </template>
 
 <script>
-import { download_canva_h5, downLoad_link_H5, download_file_miniapp } from '@/utils/api'
+import { download_file_common } from '@/utils/api'
 export default {
   data() {
     return {
@@ -40,16 +39,10 @@ export default {
   methods: {
     // 点击下载
     onDownLoad() {
-      // let imgsrc = '/static/a.docx'
-      let imgsrc = 'http://192.168.8.194:8080/static/logo.png'
-      // downLoad_link_H5(imgsrc)
-      // download_canva_h5(imgsrc)
-      download_file_miniapp(imgsrc)
+      let docxFile = 'http://192.168.8.194:8080/pages/studys/static/a.docx'
+      let imgFile = 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/index_swiper.png'
+      download_file_common(docxFile, 'a.docx')
     },
-
-    send() {
-
-    }
   }
 }
 </script>
@@ -81,5 +74,10 @@ export default {
   bottom: 0;
   left: 0;
   width: 100%;
+
+  .btn__primary {
+    color: #fff;
+    background-color: #199fff;
+  }
 }
 </style>
