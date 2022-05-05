@@ -51,7 +51,7 @@
 	 * @property {Boolean} showArrow = [true|false] 是否显示右侧箭头
 	 */
 	export default {
-		name: 'collapseItem',
+		name: 'collapse-item',
 		props: {
 			// 列表标题
 			title: {

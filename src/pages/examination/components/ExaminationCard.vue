@@ -1,5 +1,5 @@
 <template>
-  <view class="xamination-card" @click="handleClick">
+  <view class="xamination-card" @click="handleClick" :style="bgColor ? 'background-color:' + bgColor : '' ">
     <view class="logan-card-body-row">
       <view class="logan-card-body-left">
         <image :src="leftImage || errorImage" class="logan-card-row-image" mode="aspectFit" />
@@ -12,8 +12,11 @@
           <text>{{ rightFooter }}</text>
         </view>
       </view>
+
       <view class="card-arrow">
-        <uni-icons type="forward" size="32rpx" color="#E0E0E0" />
+        <slot name="arrow">
+            <uni-icons type="forward" size="32rpx" color="#E0E0E0" />
+        </slot>
       </view>
     </view>
   </view>
@@ -31,6 +34,10 @@ export default {
       default: ''
     },
     rightFooter: {
+      default: ''
+    },
+    bgColor: {
+      type: [String],
       default: ''
     }
   },
@@ -59,11 +66,17 @@ export default {
 @import "@/styles/logan.scss";
 $size: 80rpx;
 
+.xamination-card {
+  position: relative;
+  height: 146rpx;
+}
+
 .logan-card-body-row {
-  height: 100%;
+  height: 100%
 }
 
 .logan-card-body-left {
+  margin-left: 20rpx;
   width: $size;
 }
 
@@ -73,17 +86,15 @@ $size: 80rpx;
 }
 
 .logan-card-body-right {
-  height: calc($size + 40rpx);
+  height: $size
 }
 
 .logan-card-right-top {
   font-size: $font-size-md;
   font-weight: bold;
-  line-height: calc(2 * $font-size-md);
 }
 
 .logan-card-right-footer {
   font-size: $font-size-sm;
-  line-height: calc(2 * $font-size-sm);
 }
 </style>

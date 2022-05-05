@@ -11,7 +11,7 @@
           <Details />
         </view>
         <view v-show="current === 1" class="segmented-pane">
-          <!-- <Catalogue /> -->
+          <Catalogue />
         </view>
         <view v-show="current === 2" class="segmented-pane">
           <Rate @openComment="onComment" />
@@ -32,7 +32,7 @@
               <view class="rate-content">{{ starText[rateForm.star] }}</view>
             </view>
             <view class="tags">
-              <view v-for="(tag, index) in tags" :key="tag.id" class="tags-btn" :class="tag.checked ? 'btn-active' : ''" size="mini" @click="() => onTagSelect(index)">{{ tag.label }}</view>
+              <view v-for="(tag, index) in tags" :key="tag.id" class="tags-btn" :class="tag.checked ? 'btn-active' : ''" @click="() => onTagSelect(index)">{{ tag.label }}</view>
             </view>
             <view class="remark">
               <input v-model="rateForm.remark" placeholder="说一说听课的感受和建议吧·" class="remark-input"/>
@@ -76,7 +76,7 @@ export default {
         { id: 6, label: '一二三四', value: '1' , checked: false},
         { id: 7, label: '一二三四无', value: '1', checked: false},
       ],
-      current: 2,
+      current: 0,
       items: ['简介', '目录', '评价'],
       video: "https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4"
     }
@@ -148,7 +148,7 @@ export default {
     width: 80%;
     font-size: $font-size-md;
     color: #fff;
-    border-radius: 24rpx;
+    border-radius: 64rpx;
     background-color: #199fff;
   }
 }
@@ -243,7 +243,7 @@ export default {
       font-size: $font-size-base;
       color: #199fff;
       border-color: #199fff;
-      border-radius: 64rpx;
+      border-radius: 24rpx;
     }
   }
 }

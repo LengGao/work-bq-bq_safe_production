@@ -1,23 +1,44 @@
+<template>
+  <view class="catalogue">
+    <collapse ref="catalogue" v-model="currents" @change="onChangeCollapse">
+      <collapse-item  v-for=" item1 in catalogues" :key="'1_' + item1.id">
+        <template v-slot:title>
+          <view class="title one-title">
+            一级目录
+            <uni-icons type="wallet" size="28rpx" />
+          </view>
+        </template>
+        <collapse-item  v-for="item2 in item1.list" :key="'2_' + item2.id">
+          <template v-slot:title>
+            <view class="title two-title">
+              二级目录
+              <uni-icons type="wallet" size="28rpx" />
+            </view>
+          </template>
+          <view class="title three-title"
+            v-for="item3 in item2.list" :key="'3_' + item3.id" @click="onClickThree">
+            三级目录
+          </view>
+        </collapse-item>
+      </collapse-item>
+    </collapse>
+  </view>
+</template>
+
 <script>
-import Vue from 'vue'
-import Collapse from './Collapse'
-import CollapseItem from './CollapseItem'
-Vue.component('collapse', Collapse)
-Vue.component('collapse-item', CollapseItem)
+import Collapse from './Collapse.vue'
+import CollapseItem from './CollapseItem.vue'
 
 export default {
-  render: function (h) {
-    let data = this.catalogues
-    let child = this.generatorContent(data)
-    let nodes = this.generatorContainer(child)
-    return h('view', { class: 'catalogue' }, [nodes])
+  components: {
+    Collapse,
+    CollapseItem
   },
   data() {
     return {
-      current: [],
-      current2: [],
-      current3: [],
-      current_id: 1,
+      collapseOpen: false,
+      currentId: 1,
+      currents: [],
       catalogues: [
         {
           id: 1,
@@ -91,36 +112,37 @@ export default {
     }
   },
   methods: {
-    generatorContent(list) {
-      return list.map(item => {
-        if (item.istree) {
-          return this.$createElement('collapse-item', { props: { title: item.title, type: item.type } }, this.generatorContent(item.list))
-        } else {
-          return this.$createElement('view', { class: 'last-node', slot: 'default' }, item.title)
-        }
-      })
+    onChangeCollapse(e) {
+      console.log('e', e);
     },
-    generatorContainer(child) {
-      console.log("child", child);
-      let options = {
-        props: {
-          value: this.current
-        },
-        attrs: {
-        },
-        on: {
-          change(e) {
-            console.log("onChange`", e);
-          }
-        }
-      }
-      return this.$createElement('collapse', options, child)
-    }
   }, // methods end
 }
 </script>
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
+
+.title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 60rpx;
+  padding: 10rpx 20rpx;
+  font-size: $font-size-base;
+}
+
+.two-title {
+  margin-left: 30rpx;
+}
+
+.three-title  {
+  margin-left: 60rpx;
+}
+
+.title-active{
+  color: #199fff;
+}
+
 </style>
 

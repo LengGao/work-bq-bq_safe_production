@@ -17,9 +17,9 @@
     </view>
 
     <view class="rate-tag">
-      <button v-for="(tag, i) in tags" :key="i" size="mini" class="tag">
+      <view v-for="(tag, index) in tags" :key="index" class="tag">
         <text class="tag-text">{{ tag.text }} ({{ tag.num }})</text>
-      </button>
+      </view>
     </view>
 
     <view class="comments">
@@ -57,7 +57,8 @@ export default {
       tags: [
         { text: '刀剑神域', num: 11 },
         { text: 'overlord', num: 10 },
-        { text: '从零开始的异世界生活', num: 12 }
+        { text: '从零开始的异世界生活', num: 12 },
+        { text: 'overlord', num: 10 },
       ],
       comments: [
         { id: 1, name: '周杰伦', content: '错哦哎呦不错哦', rate: 3, time: '1111-11-11 11::11:11', avator: 'https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' },
@@ -127,10 +128,13 @@ export default {
   padding: 0 18rpx 30rpx;
 
   .tag {
-    margin: 12rpx;
-    color: #000;
-    font-size: $font-size-sm;
-    background-color: #f8f8f8;
+    margin: 10rpx;
+    padding: 12rpx;
+    color: #777;
+    font-size: 24rpx;
+    text-align: center;
+    border: 2rpx solid rgb(236, 236, 236);
+    border-radius: 12rpx;
 
     &-text {
       font-size: $font-size-sm;
@@ -150,8 +154,8 @@ export default {
     flex-direction: row;
     justify-content: space-evenly;
     align-items: flex-start;
-    padding: 24rpx 20rpx;
-    width: calc(100% - 40rpx);
+    padding: 24rpx 30rpx;
+    width: calc(100% - 60rpx);
     border-top: $logan-border-spacing-md-sm;
   }
 
@@ -164,7 +168,7 @@ export default {
   &-content {
     display: flex;
     flex-direction: column;
-    margin: 0 20rpx;
+    margin: 0 30rpx;
     font-size: $font-size-sm;
     color: $text-color;
     flex: 4;
