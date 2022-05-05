@@ -7,12 +7,43 @@
       </view>
     </view>
 
-    <view class="head-swiper">
+    <!-- <view class="head-swiper">
       <swiper @change="onChangeSwiper" :autoplay="false" circular disable-touch class="swiper">
         <swiper-item v-for="swiper in swipers" :key="swiper.id" :current-item-id="swiper.id">
             <image :src="swiper.thumb" class="swiper-image" mode="aspectFit" />
         </swiper-item>
       </swiper>
+    </view> -->
+
+    <view class="report">
+        <view class="report-top">
+          <view class="report-top-title">每日学习，为梦想持续加码</view>
+          <view class="report-top-data">
+            <view class="report-top-col">
+              <text class="data-number">10天</text>
+              <text class="data-desc">累计答题天数</text>
+            </view>
+            <view class="spacing" style="width: 2rpx; height: 75rpx; background-color: #fff;"></view>
+            <view class="report-top-col">
+              <text class="data-number">--</text>
+              <text class="data-desc">今日答题数</text>
+            </view>
+            <view class="spacing" style="width: 2rpx; height: 75rpx; background-color: #fff;"></view>
+            <view class="report-top-col">
+              <text class="data-number">--%</text>
+              <text class="data-desc">累计答题天数</text>
+            </view>
+          </view>
+        </view>
+        <view class="report-bottom">
+          <view class="report-bottom-left">
+            <image src="/static/img/examination_icon_person.png" mode="aspectFit" class="icon-person" />
+            <text class="text-person">2650人正在学习</text>
+          </view>
+          <view class="report-bottom-right">
+            <button class="report-bottom-btn">今日未学习</button>
+          </view>
+        </view>
     </view>
 
     <view class="grids">
@@ -135,6 +166,80 @@ $padding-lr: 30rpx;
     width: 100%;
     height: 100%;
     border-radius: 20rpx;
+  }
+}
+
+.report {
+  padding: 0 30rpx;
+
+  &-top {
+    padding: 30rpx;
+    color: #fff;
+    border-top-left-radius: 24rpx;
+    border-top-right-radius: 24rpx;
+    background-color: #199FFF;
+    
+    &-title {
+      font-size: $font-size-md;
+    }
+
+    &-data {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin: 30rpx 0 0 20rpx;
+    }
+
+    &-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .data-number {
+        font-size: 48rpx;
+        font-weight: 500;
+      }
+
+      .data-desc {
+        font-size: $font-size-sm;
+        line-height: calc(2 * $font-size-sm);
+        font-weight: 300;
+      }
+    }
+  }
+
+
+  &-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30rpx;
+    box-shadow: 0 10rpx 20rpx #def1ff;
+
+    &-left {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    
+    &-btn {
+      color: #fff;
+      font-size: $font-size-sm;
+      border-radius: 12rpx;
+      background-color: $color-primary;
+    }
+  
+    .icon-person {
+      width: 140rpx;
+      height: 60rpx;
+    }
+
+    .text-person {
+      margin-left: 22rpx;
+      font-size: $font-size-sm;
+      color: $text-color-grey;
+    }
   }
 }
 

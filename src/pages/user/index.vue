@@ -60,7 +60,7 @@ export default {
       // 宫格数据
       grids: [
         { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird1.png", title: "我的课程", url: "/pages/users/userCourceList/index", blank: 'navigateTo' },
-        { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird2.png", title: "我的题库", url: "/pages/users/examination/index", blank: 'switchTab' },
+        { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird2.png", title: "我的题库", url: "/pages/examination/index", blank: 'switchTab' },
         { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird3.png", title: "我的班级", url: "/pages/users/userClassList/index", blank: 'navigateTo' },
         // { id: 4, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird4.png", title: "我的问答", url: "" }
       ],
@@ -82,10 +82,11 @@ export default {
       this.listIndex = detail;
     },
     onClickGrid(url, blank) {
-      if (blank !== 'switchTab') {
-        uni.switchTab({ url })
+      console.log(url);
+      if (blank === 'switchTab') {
+        uni.switchTab({ url: url })
       } else {
-        uni.navigateTo({ url })
+        uni.navigateTo({ url: url })
       }
     },
     loginlout() {

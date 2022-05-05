@@ -132,12 +132,18 @@ export default {
   font-size: $font-size-base;
 }
 
+.one-title {
+  font-weight: bold;
+}
+
 .two-title {
   margin-left: 30rpx;
+  color: #333;
 }
 
 .three-title  {
   margin-left: 60rpx;
+  color: #777;
 }
 
 .title-active{

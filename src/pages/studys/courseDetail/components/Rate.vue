@@ -29,12 +29,12 @@
         </view>
         <view class="comments-content">
           <text class="username">{{ comment.name }}</text>
+          <text class="content-time">{{comment.time}}</text>
           <text class="content">{{ comment.content }}</text>
         </view>
         <view class="comments-rate">
           <view class="rate">
             <uni-rate :value="comment.rate" @change="onChange" size="36rpx" allowHalf readonly />
-            <text class="commen-time">{{comment.time}}</text>
           </view>
         </view>
       </view>
@@ -163,6 +163,7 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
+    flex: 1;
   }
 
   &-content {
@@ -185,14 +186,15 @@ export default {
     color: $text-color-grey;
   }
 
-  &-time {
-    font-size: $font-size-sm;
-  }
-
   .avator {
     width: $img-size-sm;
     height: $img-size-sm;
     border-radius: 50%;
+  }
+
+  .content-time {
+    margin-top: 12rpx;
+    font-size: $font-size-sm;
   }
 }
 </style>
