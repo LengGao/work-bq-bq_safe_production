@@ -9,12 +9,10 @@
       </view>
       <view class="fotter">
         <view class="left">
-          <uni-icons customPrefix="iconfont" type="icon-user1" size="36rpx" color="#199fff" />
+          <uni-icons customPrefix="iconfont" type="icon-user1" size="28rpx" color="#199fff" />
           <text class="staff">赵老师</text>
         </view>
-        <view class="right">
-          <text class="person">500人在学</text>
-        </view>
+        <text class="person">500人在学</text>
       </view>
     </view>
 
@@ -49,29 +47,33 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
+$title-size: 34rpx;
+$subtitle-size: 24rpx;
+$text-size: 12rpx;
 
 .card {
   display: flex;
   flex-direction: column;
-  padding: 36rpx;
+  padding: 28rpx;
   color: #333;
 
   .title {
-    font-size: $font-size-lg;
+    font-size: $title-size;
     font-weight: bold;
   }
 
   .subtitle {
     margin-top: 24rpx;
-    font-size: $font-size-base;
+    font-size: $subtitle-size;
   }
 
   .fotter {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
     margin-top: 24rpx;
+    font-size: $text-size;
 
     .staff {
       margin-left: 10rpx;
@@ -90,13 +92,15 @@ export default {
   color: #333;
 
   .pane-title {
-    font-size: $font-size-lg;
+    font-size: $title-size;
     font-weight: bold;
+    line-height: calc(2 * $title-size);
   }
 
   .pane-text {
-    font-size: $font-size-base;
-    line-height: calc(2 * $font-size-base);
+    height: calc(2 * $subtitle-size);
+    font-size: $subtitle-size;
+    line-height: calc(2 * $subtitle-size);
   }
 }
 </style>

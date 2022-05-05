@@ -53,7 +53,7 @@ export default {
       user: {
         name: "周杰伦",
         phone: "156****9914",
-        avator: "",
+        avator: "https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500",
         days: 7
       },
       gridIndex: 0,

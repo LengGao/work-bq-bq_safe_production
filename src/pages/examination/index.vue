@@ -19,7 +19,7 @@
       <uni-grid :column="4" :showBorder="false" class="grid">
         <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item">
           <navigator class="grid-box" :url="grid.url">
-            <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
+            <image :src="grid.thumb" class="grid-image"  mode="aspectFit" />
             <text class="grid-text">{{ grid.title }}</text>
           </navigator>
         </uni-grid-item>
@@ -62,7 +62,7 @@ export default {
       candidates: [
         { name: '低压电工作业题库', value: 1 },
         { name: '低压电工作业题库', value: 2 },
-        { name: '低压电工作业题库', value: 3 },
+        { name: '低压电工作业题库', value: 3 }, 
       ],
       // 宫格数据
       gridIndex: 0,
@@ -81,7 +81,7 @@ export default {
       ],
       // 轮播
       swipers: [
-        { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon//examination-swiper.png", url: "" }
+        { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination-swiper.png", url: "" }
       ],
     };
   },

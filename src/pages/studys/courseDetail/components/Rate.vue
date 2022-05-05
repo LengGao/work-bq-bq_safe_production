@@ -10,14 +10,16 @@
       </view>
 
       <view class="right">
-        <button @click="onClickComments" type="primary" class="comments-btn">
-          我要评价
+        <button @click="onClickComments" class="comments-btn">
+          <text style="font-size: 24rpx;">我要评价</text>
         </button>
       </view>
     </view>
 
     <view class="rate-tag">
-      <uni-tag v-for="(tag, i) in tags" :key="i" :text="`${tag.text}(${tag.num})`" class="tag" disabled />
+      <button v-for="(tag, i) in tags" :key="i" size="mini" class="tag">
+        <text class="tag-text">{{ tag.text }} ({{ tag.num }})</text>
+      </button>
     </view>
 
     <view class="comments">
@@ -38,31 +40,6 @@
       </view>
     </view>
 
-    <!-- 
-<i-modal visible="{{ visible2 }}" bind:ok="handleClose2" bind:cancel="handleClose2">
-    <view class="model-title">这节课有收获吗？</view>
-    <view class="starts">
-        <i-cell title="自定义星星大小">
-            <i-rate bind:change="onChange2" value="{{starIndex2}}" size="50"></i-rate>
-        </i-cell>
-    </view>
-    <view class="pricesOfstart">{{ starIndextext }}</view>
-    <view class="tip-wrapper">
-        <view class="tipsOftip {{item.chooseOrNot == item.id?'tipsOftipColor' : ''}} " wx:for="{{ tips }}" wx:key="index" catchtap='chooseTips' data-index='{{ item.id }}'>
-            {{ item.name }}
-        </view>
-    </view>
-    <view class="fellings" wx:if='{{visible2}}'>
-        <i-panel title="基础用法">
-            <i-input value="{{ value2 }}" type="textarea" placeholder="说一说听课感受吧（最多输入80字）" maxlength="80" bind:change='changes' />
-        </i-panel>
-    </view>
-    <view class="lunchYourcomm" bindtap='sumbitComment'>发表评论</view>
-    <view class="closings" catchtap='handleClose2'>
-        <image class="closing" src="https://minproimg.oss-cn-hangzhou.aliyuncs.com/images/closeing.png" />
-    </view>
-</i-modal> -->
-
   </view>
 </template>
 
@@ -70,22 +47,31 @@
 export default {
   data() {
     return {
+      show: false,
       value: 2.5,
+      rateForm: {
+        tags: [],
+        star: 0,
+        remark: '',
+      },
       tags: [
         { text: '刀剑神域', num: 11 },
         { text: 'overlord', num: 10 },
         { text: '从零开始的异世界生活', num: 12 }
       ],
       comments: [
-        { id: 1, name: '周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦', content: '哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦哎呦不错哦', rate: 3, time: '1111-11-11 11::11:11', avator: '/static/logo.png' },
-        { id: 2, name: '周杰伦', content: '哎呦不错哦', rate: 1, time: '1111-11-11 11::11:11', avator: '/static/logo.png' },
-        { id: 3, name: '周杰伦', content: '哎呦不错哦', rate: 2, time: '1111-11-11 11::11:11', avator: '/static/logo.png' }
+        { id: 1, name: '周杰伦', content: '错哦哎呦不错哦', rate: 3, time: '1111-11-11 11::11:11', avator: 'https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' },
+        { id: 2, name: '周杰伦', content: '哎呦不错哦', rate: 1, time: '2012-11-11 11:11:11', avator: 'https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' },
+        { id: 3, name: '周杰伦', content: '哎呦不错哦', rate: 2, time: '2012-11-11 11:11:11', avator: 'https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' }
       ]
     }
   },
   methods: {
     onChange(e) {
       console.log('rate发生改变:' + JSON.stringify(e))
+    },
+    onClickComments() {
+      this.$emit('openComment')
     }
   }
 }
@@ -123,24 +109,33 @@ export default {
 
   .right {
     .comments-btn {
+      padding-left: 24rpx;
+      padding-right: 24rpx;
       font-size: $font-size-sm;
+      color: #fff;
       border-radius: 24rpx;
+      background-color: #199fff;
     }
   }
 }
+
 
 .rate-tag {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  padding: 0rpx 30rpx 30rpx;
+  padding: 0 18rpx 30rpx;
 
   .tag {
-    margin: 16rpx;
-    padding: 8rpx;
+    margin: 12rpx;
     color: #000;
     font-size: $font-size-sm;
     background-color: #f8f8f8;
+
+    &-text {
+      font-size: $font-size-sm;
+      color: #777;
+    }
   }
 }
 

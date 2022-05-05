@@ -1,7 +1,7 @@
 <template>
   <view class="feedback">
     <view class="head">
-      <image src="https://safetysystem.oss-cn-guangzhou.aliyuncs.com/feedback_bg_head.png" mode="aspectFit" class="head-bg_img" />
+      <image src="https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/feedback_bg_head.png" mode="aspectFit" class="head-bg_img" />
     </view>
 
     <view class="list">

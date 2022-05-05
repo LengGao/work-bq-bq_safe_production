@@ -22,7 +22,7 @@
 
     <view class="business-bar">
       <view class="logan-list-head">
-        <view class="logan-list-head-left">安全生产</view>
+        <view class="logan-list-head-left">安全生产资格培训</view>
         <view class="logan-list-head-right" @click="() => onClickAll(1)">
           <text>查看全部</text>
           <uni-icons type="forward" size="28rpx" />
@@ -323,6 +323,7 @@ $padding-lr: 30rpx;
 }
 
 .business-bar {
+  margin-top: 20rpx;
 
   .business {
     display: flex;

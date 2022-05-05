@@ -35,12 +35,6 @@
 			"style": {
 				"navigationBarTitleText": "搜索"
 			}
-		},
-		{
-			"path": "pages/test/index",
-			"style": {
-				"navigationBarTitleText": "测试"
-			}
 		}
 	],
 	"subpackages": [
