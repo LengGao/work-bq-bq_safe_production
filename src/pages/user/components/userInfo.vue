@@ -1,82 +1,87 @@
 <template>
-<view class="user-info" :class="customClass" :style="customStyle">
+  <view class="user-info" :class="customClass" :style="customStyle">
     <view class="avator">
-        <image class="avator" :src="info.avator || Avator" mode="aspectFit" />
+      <image class="avator" :src="info.avator || Avator" mode="aspectFit" @click="() => previewImg(info.avator)" />
     </view>
     <view class="infos">
-        <view class="user">
-            <text class="name"> {{ info.name }} </text>
-            <text class="phone"> {{ info.phone }} </text>
-        </view>
-        <view class="days">加入东培学堂 {{ info.days }} 天</view>
+      <view class="user">
+        <text class="name"> {{ info.name }} </text>
+        <text class="phone"> {{ info.phone }} </text>
+      </view>
+      <view class="days">加入东培学堂 {{ info.days }} 天</view>
     </view>
-</view>
+  </view>
 </template>
 
 <script>
 import Avator from "@/static/logo.png";
 export default {
-    props: {
-        info: { type: Object, default: {} },
-        customStyle: { default: '' },
-        customClass: { default: '' },
-    },
-    data() {
-        return {
-            Avator
-        }
-    },
-    mounted() {
+  props: {
+    info: { type: Object, default: {} },
+    customStyle: { default: '' },
+    customClass: { default: '' },
+  },
+  data() {
+    return {
+      Avator
     }
+  },
+  mounted() {
+  },
+  methods: {
+    // 图片预览
+    previewImg(url) {
+        uni.previewImage({ urls: [url] })
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/logan.scss';
+@import "@/styles/logan.scss";
 $height: 100rpx;
 
 .user-info {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-    flex: 1 1 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  flex: 1 1 1;
 }
 
 .avator {
-    height: $height;
-    width: $height;
-    border-radius: 50%;
+  height: $height;
+  width: $height;
+  border-radius: 50%;
 }
 
 .infos {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: flex-start;
-    font-size: $font-size-base;
-    height: $height;
-    margin-left: 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-start;
+  font-size: $font-size-base;
+  height: $height;
+  margin-left: 20rpx;
 }
 
 .user {
-    width: 100%;
-    overflow: hidden;
-    color: $text-color-inverse;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  color: $text-color-inverse;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .name {
-    font-size: 32rpx;
+  font-size: 32rpx;
 }
 
 .phone {
-    margin-left: 10rpx;
+  margin-left: 10rpx;
 }
 
 .days {
-    color: $text-color-inverse 
+  color: $text-color-inverse;
 }
-
 </style>

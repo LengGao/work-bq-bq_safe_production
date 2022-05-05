@@ -6,7 +6,7 @@
       </view>
 
       <view class="header-two">
-        <view class="header-two-box header-two-gb1" @click="to('../learnData/index')">
+        <view class="header-two-box header-two-gb1" @click="toLearn(1)">
           <view class="box-left">
             <text class="box-left-title">学习数据</text>
             <text class="box-left-text">精准数据把控进度</text>
@@ -16,7 +16,7 @@
           </view>
         </view>
 
-        <view class="header-two-box header-two-gb2" @click="to('../learnCertificate/index')">
+        <view class="header-two-box header-two-gb2" @click="toLearn(2)">
           <view class="box-left">
             <text class="box-left-title">学习凭证</text>
             <text class="box-left-text">专业/高效拿证</text>
@@ -75,8 +75,12 @@ export default {
     };
   },
   methods: {
-    to(url) {
-      uni.navigateTo({ url })
+    toLearn(val) {
+      if (val === 1) {
+        uni.navigateTo({ url: '/pages/studys/learnData/index' })
+      } else {
+        uni.navigateTo({ url: '/pages/studys/learnCertificate/index' })
+      }
     },
     // 全部课程
     onClickAll() {

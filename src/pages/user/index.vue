@@ -13,10 +13,10 @@
     <view class="grids">
       <uni-grid :column="3" :showBorder="false" @change="onChangeGrid" class="grid">
         <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item" style="height: inherit;">
-          <navigator class="grid-box" :url="grid.url" :open-type="grid.blank || 'navigate'">
+          <view class="grid-box" @click="() => onClickGrid(grid.url, grid.blank)">
             <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
             <text class="grid-text">{{ grid.title }}</text>
-          </navigator>
+          </view>
         </uni-grid-item>
       </uni-grid>
     </view>
@@ -59,9 +59,9 @@ export default {
       gridIndex: 0,
       // 宫格数据
       grids: [
-        { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird1.png", title: "我的课程", url: "/pages/users/userCourceList/index" },
+        { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird1.png", title: "我的课程", url: "/pages/users/userCourceList/index", blank: 'navigateTo' },
         { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird2.png", title: "我的题库", url: "/pages/users/examination/index", blank: 'switchTab' },
-        { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird3.png", title: "我的班级", url: "/pages/users/userClassList/index" },
+        { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird3.png", title: "我的班级", url: "/pages/users/userClassList/index", blank: 'navigateTo' },
         // { id: 4, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird4.png", title: "我的问答", url: "" }
       ],
       listIndex: 0,
@@ -81,14 +81,21 @@ export default {
       console.log("listIndex", detail);
       this.listIndex = detail;
     },
+    onClickGrid(url, blank) {
+      if (blank !== 'switchTab') {
+        uni.switchTab({ url })
+      } else {
+        uni.navigateTo({ url })
+      }
+    },
     loginlout() {
       uni.showModal({ title: '系统提示', content: '确定要推出登录吗' })
-        .then(res => {
-          console.log('res', res);
-          if (res[1].confirm) {
-            uni.showToast({ title: '推出成功', icon: 'success' })
-          }
-        })
+      .then(res => {
+        console.log('res', res);
+        if (res[1].confirm) {
+          uni.showToast({ title: '推出成功', icon: 'success' })
+        }
+      })
     },
   },
 };
