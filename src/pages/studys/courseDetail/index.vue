@@ -143,7 +143,9 @@ export default {
 
 .footer {
   position: fixed;
-  bottom: 0;
+  bottom: constant(safe-area-inset-bottom);
+  bottom: env(safe-area-inset-bottom);
+  
   left: 0;
   width: 100%;
 
@@ -206,11 +208,11 @@ export default {
       align-items: baseline;
       flex-wrap: wrap;
       margin: 40rpx 0;
-      padding: 30rpx;
+      padding: 30rpx 60rpx;
       height: 300rpx;
       
       &-btn {
-        margin: 0 20rpx;
+        margin: 0 10rpx;
         padding: 12rpx;
         color: #777;
         font-size: 24rpx;

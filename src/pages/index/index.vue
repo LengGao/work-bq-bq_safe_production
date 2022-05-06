@@ -1,5 +1,9 @@
 <template>
   <view class="index">
+    <!-- #ifdef MP-WEIXIN -->
+    <official-account @load="onbindload" @error="onbinderror" :hidden="isHidden"></official-account>
+    <!-- #endif -->
+
     <view class="filter">
       <view class="filter-left" @click="onOpenFilter">
         <!-- <image src="/static/img/index_icon1.png" mode="aspectFit" class="icon-location" /> -->
@@ -123,7 +127,6 @@
     <uni-popup ref="popup" mask-background-color="#f8f8f8">
       <RegionChange @change="onChangeRegion" @close="onCloseFilter" :location="location" :buttons="regions" />
     </uni-popup>
-
   </view>
 </template>
 
@@ -139,6 +142,7 @@ export default {
   },
   data() {
     return {
+      isHidden: false,
       showRegionChange: false,
       // 当前地理位置信息
       location: {
@@ -263,6 +267,15 @@ export default {
         urls: [url]
       })
     },
+    onbindload(e) {
+      console.log('onbindload', e);
+      setTimeout(() => {
+        this.isHidden = true
+      }, 5000)
+    },
+    onbinderror(e) {
+      console.log('onbinderror', e);
+    }
   }, // methods end
 };
 </script>
@@ -464,7 +477,6 @@ $padding-lr: 30rpx;
 .library-bar {
   padding: 24rpx 0;
   border-top: $logan-border-spacing-md;
-
   .library-text {
     margin-left: 8rpx;
   }
