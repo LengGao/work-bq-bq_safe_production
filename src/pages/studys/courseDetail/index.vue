@@ -51,7 +51,6 @@
 import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
-
 export default {
   components: {
     Details,
@@ -108,6 +107,10 @@ export default {
     // 发表 
     onPublish() {
       this.onClose()
+    },
+    // 分享
+    onShare() {
+
     }
   }
 }

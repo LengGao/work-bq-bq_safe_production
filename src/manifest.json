@@ -1,6 +1,6 @@
 {
 	"name": "bq_safe_production",
-	"appid": "wx144ecd41221fbacc",
+	"appid": "wxeccda70203c4f145",
 	"description": "安全网络生产移动端",
 	"versionName": "1.0.0",
 	"versionCode": "100",
@@ -60,7 +60,7 @@
 
 	},
 	"mp-weixin": {
-		"appid": "",
+		"appid": "wxeccda70203c4f145",
 		"setting": {
 			"uniStatistics": { "enable": false },
 			"urlCheck": false,

@@ -5,14 +5,26 @@
         新《安全生产法》宣传片
       </view>
       <view class="subtitle">
-        12章24课时  |  共30学时        
+        <uni-rate :value="value" readonly />
+        <view class="person">199911人在学</view>
       </view>
       <view class="fotter">
         <view class="left">
-          <uni-icons customPrefix="iconfont" type="icon-user1" size="28rpx" color="#199fff" />
-          <text class="staff">赵老师</text>
+          <text class="now-price">￥9999</text>
+          <text class="origin-price">￥3333</text>
         </view>
-        <text class="person">500人在学</text>
+        <view class="right">
+          <view class="right-col" @click="onConsultingService">
+            <uni-icons custom-prefix="iconfont" type="icon-kefu" size="36rpx" />
+            <text>咨询</text>
+          </view>
+          <view class="right-col" style="margin-left: 40rpx;">
+            <button @click="onShare" class="share-btn" open-type="share" plain size="mini">
+              <uni-icons custom-prefix="iconfont" type="icon-fenxiang" size="36rpx" />
+              <text class="share-btn-text">分享</text>
+            </button>
+          </view>
+        </view>
       </view>
     </view>
 
@@ -24,6 +36,7 @@
 
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
+
 export default {
   components: {
     uParse
@@ -31,11 +44,16 @@ export default {
   props: {
     detail: {
       type: Object,
-      default: () => {}
-    }
+      default: () => ({})
+    },
+    // nodes: {
+    //   type: Object,
+    //   default: () => ({})
+    // }
   },
   data() {
     return {
+      value: 3,
       nodes: {
         content: `
         <img src="https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500" />
@@ -49,6 +67,16 @@ export default {
           　　要加强防汛备汛宣传工作，积极发掘在防汛备汛过程中涌现的典型人物和案例，以模范带动提升基层三防责任人履职能力。
         </em>`
       }
+    }
+  },
+  methods: {
+    // 咨询
+    onConsultingService(e) {
+      this.value = e.value
+    },
+    // 分享
+    async onShare() {
+
     }
   }
 }
@@ -72,17 +100,73 @@ $text-size: 12rpx;
   }
 
   .subtitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     margin-top: 24rpx;
     font-size: $subtitle-size;
+
+    .person {
+      margin-left: 20rpx;
+      color: #777;
+      font-size: $font-size-sm;
+    }
   }
 
   .fotter {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: baseline;
-    margin-top: 24rpx;
+    align-items: center;
+    margin-top: 16rpx;
     font-size: $text-size;
+
+    .left {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      font-size: $font-size-sm;
+
+      .now-price {
+        font-size: $font-size-md;
+        color: #f0ad4e;
+      }
+
+      .origin-price {
+        margin-left: 10rpx;
+        color: #777;
+        text-decoration-line: line-through;
+      }
+    }
+
+    .right {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      color: #777;
+
+      &-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: $font-size-sm;
+
+        .share-btn {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          line-height: normal;
+          color: #777;
+          border: none;
+
+          .share-btn-text {
+            font-size: $font-size-sm;
+            line-height: calc(1.5 * $font-size-sm);
+          }
+        }
+      }
+    }
 
     .staff {
       margin-left: 10rpx;
@@ -114,6 +198,7 @@ $text-size: 12rpx;
 }
 
 .textarea {
+  border-top: $logan-border-spacing-md;
   padding: 30rpx;
 }
 </style>

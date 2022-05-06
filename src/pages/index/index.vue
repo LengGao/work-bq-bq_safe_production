@@ -262,7 +262,7 @@ export default {
       uni.previewImage({
         urls: [url]
       })
-    }
+    },
   }, // methods end
 };
 </script>
