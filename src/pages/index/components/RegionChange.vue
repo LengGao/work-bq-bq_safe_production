@@ -2,7 +2,7 @@
   <view class="regionChange">
     <scroll-view scroll-y show-scrollbar>
       <view class="head">
-        <uni-icons type="location" size="40rpx" />
+        <uni-icons type="location" size="40rpx" color="#BBBBBB" />
         <text class="address">{{ location.address }}</text>
       </view>
 
@@ -38,13 +38,15 @@ export default {
 
 .regionChange {
   overflow: auto;
-  max-height: calc(100vh - var(--window-bottom));
+  padding-left: 40rpx;
+  padding-right: 40rpx;
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
+  max-height: calc(100vh - var(--window-bottom));
 }
 
 .head {
-  padding: 24rpx 40rpx;
+  padding: 40rpx 0 20rpx;
 
   .address {
     margin-left: 10rpx;

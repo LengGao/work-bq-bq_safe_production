@@ -91,7 +91,7 @@ export default {
     height: 100%;
     z-index: 2;
     transition: opacity 300ms ease 0ms, transform 300ms ease 0ms,
-      transform 300ms ease 0ms;
+    transform 300ms ease 0ms;
     transform: translateY(-120%);
     background-color: #fff;
     opacity: 0;

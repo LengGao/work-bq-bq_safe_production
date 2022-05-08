@@ -3,10 +3,9 @@
     <!-- #ifdef MP-WEIXIN -->
     <official-account @load="onbindload" @error="onbinderror" :hidden="isHidden"></official-account>
     <!-- #endif -->
-
+  
     <view class="filter">
       <view class="filter-left" @click="onOpenFilter">
-        <!-- <image src="/static/img/index_icon1.png" mode="aspectFit" class="icon-location" /> -->
         <uni-icons type="location" size="36rpx" color="#199fff" />
         <text class="location">广东地区</text>
         <uni-icons type="bottom" size="32rpx" />
@@ -146,7 +145,7 @@ export default {
       showRegionChange: false,
       // 当前地理位置信息
       location: {
-        address: '陕西'
+        address: '安全生产网络培训平台'
       },
       // 地区数据
       regions: [
@@ -268,13 +267,12 @@ export default {
       })
     },
     onbindload(e) {
-      console.log('onbindload', e);
       setTimeout(() => {
         this.isHidden = true
       }, 5000)
     },
     onbinderror(e) {
-      console.log('onbinderror', e);
+      this.isHidden = true
     }
   }, // methods end
 };
