@@ -103,7 +103,11 @@ export default {
 @import "@/styles/logan.scss";
 
 .clause {
-  padding: 40rpx 60rpx;
+  padding-top: 40rpx;
+  padding-left: 60rpx;
+  padding-right: 60rpx;
+  padding-bottom: calc(30px + constant(safe-area-inset-bottom));
+  padding-bottom: calc(30px + env(safe-area-inset-bottom));
 }
 
 .btn-read {

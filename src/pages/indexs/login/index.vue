@@ -6,7 +6,8 @@
         <uni-icons customPrefix="iconfont" type="icon-user-filling" size="36rpx" color="#ccc"
                    style="margin-left: 10rpx" />
         <uni-easyinput class="input" v-model="username" placeholder="请输入手机号码" @focus="onFocus" @blur="onBlur"
-                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false">
+                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false"
+                       :clearable="false">
         </uni-easyinput>
       </view>
       <view class="input-box">
@@ -17,7 +18,7 @@
       </view>
       <button class="btn-submit" :class="!isRead ? 'btn-disable' : ''" :disable="!isRead" @click="onSubmit">登录</button>
       <view class="read">
-        <checkbox-group  @change="onChecked" >
+        <checkbox-group @change="onChecked">
           <label class="label">
             <checkbox class="checkbox" value="1" :checked="isRead" />
             我已阅读并同意<text class="label-em" @click="onRead">《用户协议与隐私政策》</text>
@@ -44,23 +45,33 @@ export default {
       visibility: false
     }
   },
-  updated() {
-    uni.onKeyboardHeightChange(res => {
-      console.log("onKeyboardHeightChange", res.height)
-      if (res.height) {
-        this.visibility = false
-      }
-    })
-  },
   methods: {
     onSubmit() {
-      let parent = { username: this.username, password: this.password }
+      let param = { username: this.username, password: this.password }
     },
     onChecked(e) {
-      this.isRead = e.target.value.length ? true :false
+      this.isRead = e.target.value.length ? true : false
     },
     onFocus() {
-      this.visibility = true
+      // #ifdef H5
+      const originHeight = document.documentElement.clientHeight || document.body.clientHeight;
+      window.addEventListener('resize', () => {
+        const resizeHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        if (parseInt(resizeHeight) < parseInt(originHeight)) {
+          this.visibility = true
+        } else {
+          this.visibility = false
+        }
+      }) // #endif
+
+      // #ifdef MP-WEIXIN
+      uni.onKeyboardHeightChange(res => {
+        if (res.height) {
+          this.visibility = true
+        } else {
+          this.visibility = false
+        }
+      }) // #endif
     },
     onBlur() {
       this.visibility = false
@@ -70,9 +81,9 @@ export default {
     },
     onRead() {
       uni.navigateTo({ url: '/pages/indexs/clause/index' })
-    }, 
+    },
     onForgine() {
-      uni.navigateTo({ url: '/pages/indexs/forget/index'})
+      uni.navigateTo({ url: '/pages/indexs/forget/index' })
     },
     regsoter() {
       uni.navigateTo({ url: '/pages/indexs/reisgter/index' })
@@ -107,6 +118,10 @@ export default {
     height: 72rpx;
     line-height: 72rpx;
     border: 2rpx solid #eee;
+
+    .input {
+      width: 100%;
+    }
   }
 
   .input-box:nth-of-type(2) {
@@ -151,9 +166,9 @@ export default {
   width: 100%;
   text-align: center;
   color: #999;
-  
+
   .bdi {
-    margin:  0 40rpx;
+    margin: 0 40rpx;
   }
 }
 </style>

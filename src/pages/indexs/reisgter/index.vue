@@ -6,23 +6,24 @@
         <uni-icons customPrefix="iconfont" type="icon-user-filling" size="36rpx" color="#ccc"
                    style="margin-left: 10rpx" />
         <uni-easyinput class="input" v-model="username" placeholder="请输入您的姓名" @focus="onFocus" @blur="onBlur"
-                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false">
+                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false"
+                       :clearable="false">
         </uni-easyinput>
       </view>
 
       <view class="input-box">
-        <uni-icons customPrefix="iconfont" type="icon-shouji" size="36rpx" color="#ccc"
-                   style="margin-left: 10rpx" />
+        <uni-icons customPrefix="iconfont" type="icon-shouji" size="36rpx" color="#ccc" style="margin-left: 10rpx" />
         <uni-easyinput class="input" v-model="phone" placeholder="请输入手机号码" @focus="onFocus" @blur="onBlur"
-                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false">
+                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false"
+                       :clearable="false">
         </uni-easyinput>
       </view>
 
       <view class="input-box">
-        <uni-icons customPrefix="iconfont" type="icon-xiaoxi6" size="36rpx" color="#ccc"
-                   style="margin-left: 10rpx" />
+        <uni-icons customPrefix="iconfont" type="icon-xiaoxi6" size="36rpx" color="#ccc" style="margin-left: 10rpx" />
         <uni-easyinput class="input" v-model="verifCode" placeholder="请输入短信验证码" @focus="onFocus" @blur="onBlur"
-                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false">
+                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false"
+                       :clearable="false">
         </uni-easyinput>
         <view class="verif-code">
           <text class="verif-code-text" v-if="!timeOut" @click="onClickVerif">发送验证码</text>
@@ -85,16 +86,16 @@ export default {
     onSubmit() {
       let { username, phone, verifCode, password, passwordRepeat } = this
       let param = { username, phone, verifCode, password, passwordRepeat }
-      if (this.validator(param) ) {
+      if (this.validator(param)) {
         // send request
       }
     },
     validator(param) {
       if (!/^1[3,4,5,7,8,9]\d{9}$/.test(param.phone)) {
-        uni.showToast({ icon: 'error', title: '请输入有效手机号码' }) 
+        uni.showToast({ icon: 'error', title: '请输入有效手机号码' })
         return false
       } else if (!param.verifCode) {
-        uni.showToast({ icon: 'error', title: '请输入验证码' }) 
+        uni.showToast({ icon: 'error', title: '请输入验证码' })
         return false
       } else if (param.password !== param.passwordRepeat) {
         uni.showToast({ icon: 'error', title: '两次密码不一致，请重新输入' })
@@ -104,23 +105,41 @@ export default {
       }
     },
     onChecked(e) {
-      this.isRead = e.target.value.length ? true :false
+      this.isRead = e.target.value.length ? true : false
     },
     onClickVerif() {
       this.timeOut = setInterval(() => {
-        this.timeCount = this.timeCount 
+        this.timeCount = this.timeCount
           ? this.timeCount - 1
           : 60 && (this.timeOut = null)
       }, 1000)
     },
     onFocus() {
-      this.visibility = true
+      // #ifdef H5
+      const originHeight = document.documentElement.clientHeight || document.body.clientHeight;
+      window.addEventListener('resize', () => {
+        const resizeHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        if (parseInt(resizeHeight) < parseInt(originHeight)) {
+          this.visibility = true
+        } else {
+          this.visibility = false
+        }
+      }) // #endif
+
+      // #ifdef MP-WEIXIN
+      uni.onKeyboardHeightChange(res => {
+        if (res.height) {
+          this.visibility = true
+        } else {
+          this.visibility = false
+        }
+      }) // #endif
     },
     onBlur() {
       this.visibility = false
     },
     goLogin() {
-        uni.navigateTo({ url: '/pages/indexs/login/index'})
+      uni.navigateTo({ url: '/pages/indexs/login/index' })
     },
   }
 }
@@ -153,6 +172,10 @@ export default {
     height: 72rpx;
     line-height: 72rpx;
     border: 2rpx solid #eee;
+
+    .input {
+      flex: 1;
+    }
   }
 
   .input-box:nth-of-type(1) {
@@ -192,9 +215,9 @@ export default {
   width: 100%;
   text-align: center;
   color: #999;
-  
+
   .go-login {
-    color:  $color-primary;
+    color: $color-primary;
   }
 }
 </style>
