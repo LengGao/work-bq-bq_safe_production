@@ -29,15 +29,44 @@
 			"style": {
 				"navigationBarTitleText": "个人中心"
 			}
-		},
-		{
-			"path": "pages/search/index",
-			"style": {
-				"navigationBarTitleText": "搜索"
-			}
 		}
 	],
 	"subpackages": [
+		{
+			"root": "pages/indexs",
+			"pages": [
+				{
+					"path": "search/index",
+					"style": {
+						"navigationBarTitleText": "搜索"
+					}
+				},
+				{
+					"path": "login/index",
+					"style": {
+						"navigationBarTitleText": "安全生产网络培训平台"
+					}
+				},
+				{
+					"path": "reisgter/index",
+					"style": {
+						"navigationBarTitleText": "注册账号"
+					}
+				},
+				{
+					"path": "forget/index",
+					"style": {
+						"navigationBarTitleText": "安全生产网络培训平台"
+					}
+				},
+				{
+					"path": "clause/index",
+					"style": {
+						"navigationBarTitleText": "安全生产网络培训平台"
+					}
+				}
+			]
+		},
 		{
 			"root": "pages/studys",
 			"pages": [
@@ -237,7 +266,8 @@
 		"pages/index/index": {
 			"network": "all",
 			"packages": [
-				"__APP__"
+				"__APP__",
+				"pages/indexs"
 			] 
 		}
 	},

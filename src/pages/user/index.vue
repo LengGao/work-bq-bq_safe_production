@@ -92,9 +92,9 @@ export default {
     loginlout() {
       uni.showModal({ title: '系统提示', content: '确定要推出登录吗' })
       .then(res => {
-        console.log('res', res);
         if (res[1].confirm) {
           uni.showToast({ title: '推出成功', icon: 'success' })
+          uni.navigateTo({ url: '/pages/indexs/login/index' })
         }
       })
     },

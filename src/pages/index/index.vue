@@ -212,7 +212,7 @@ export default {
     },
     // 打开搜索页面
     onOpenSearch() {
-      uni.navigateTo({ url: '/pages/search/index' })
+      uni.navigateTo({ url: '/pages/indexs/search/index' })
     },
     // 轮播图点击事件
     onClickSwiperImg() {
