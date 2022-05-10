@@ -8,24 +8,20 @@
       <view class="course-list-container">
         <view class="course-item" v-for="(item ,index ) in courseData" :key="index">
           <view class="course-item-cover">
-            <view class="course-tag course-tag--success" v-if="item.free">免费课</view>
+            <view class="course-tag course-tag--success" v-if="item.type === 'free'">免费课</view>
             <view class="course-tag" v-else>认证课</view>
-            <image src="https://img0.baidu.com/it/u=2909438345,4163729783&fm=253&fmt=auto&app=138&f=JPEG?w=658&h=437">
-            </image>
+            <image :src="item.thumb" mode="aspectFit" />
           </view>
           <view class="course-item-content">
-            <view class="course-name">2022逆袭提分强化班—初级会计师</view>
-            <view class="course-time">12章24课时 | 共30学时</view>
+            <view class="course-name">{{ item.name }}</view>
+            <view class="course-time">{{ item.time }}</view>
             <view class="course-other">
               <view class="course-other-count">
-                <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons>
-                678人已学
+                <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons> {{ item.num }}
               </view>
-              <view v-if="item.free" class="course-other-tag">
-                免费
-              </view>
+              <view v-if="item.now === 0" class="course-other-tag"> 免费</view>
               <view v-else class="course-other-price">
-                $199 <text>$259</text>
+                ￥{{ item.now }} <text class="origin">￥{{ item.origin }}</text>
               </view>
             </view>
           </view>
@@ -40,6 +36,9 @@
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import DropdownFilter from '@/components/dropdown-filter'
 import DropdownSelect from '@/components/dropdown-select'
+import cource1 from '@/static/img/index_cource1.png'
+import cource2 from '@/static/img/index_cource2.png'
+
 export default {
   components: {
     DropdownFilter,
@@ -52,66 +51,19 @@ export default {
       categoryId: 0,
       categoryType: '',
       categoryData: [
-        {
-          name: '全部',
-          value: 0,
+        { name: '全部', value: 0, children: [{ name: '全部', value: 0 }] },
+        { name: '安监类', value: 1,
           children: [
-            {
-              name: '全部',
-              value: 0,
-            }
+            { name: '低压电工', value: 11 },
+            { name: '融化焊接', value: 12 },
+            { name: '安全管理员', value: 13 },
           ]
         },
-        {
-          name: '安监类',
-          value: 1,
+        { name: '学历类', value: 2,
           children: [
-            {
-              name: '测试1',
-              value: 2
-            },
-            {
-              name: '测试2',
-              value: 3
-            },
-            {
-              name: '测试3',
-              value: 4
-            },
-            {
-              name: '测试4',
-              value: 5
-            },
-            {
-              name: '测试5',
-              value: 6
-            },
-          ]
-        },
-        {
-          name: '学历类',
-          value: 3,
-          children: [
-            {
-              name: '测试1',
-              value: 2
-            },
-            {
-              name: '测试2',
-              value: 3
-            },
-            {
-              name: '测试3',
-              value: 4
-            },
-            {
-              name: '测试4',
-              value: 5
-            },
-            {
-              name: '测试5',
-              value: 6
-            },
+            { name: '成人高考', value: 21 },
+            { name: '开放教育', value: 22 },
+            { name: '自学考试', value: 23 },
           ]
         }
       ],
@@ -140,7 +92,7 @@ export default {
       }
       const res = await this.getCousrList(data)
       // 接口返回的当前页数据列表 (数组)
-      let curPageData = res.data.data || [];
+      let curPageData = res.data || [];
       // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
       let curPageLen = curPageData.length;
       // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
@@ -152,21 +104,14 @@ export default {
       //方法二(推荐): 后台接口有返回列表的总数据量 totalSize
       this.mescroll.endBySize(curPageLen, totalSize);
     },
-    getCousrList(data) {
-      return new Promise((resove) => {
-        uni.request({
-          url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
-          data,
-          header: {
-            token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwODY4OTY2fQ=='
-          },
-          success: (res) => {
-            resove(res.data)
-          }
-        })
-      })
-
-    },
+    getCousrList() {
+      const list = [
+        { name: '特种作业低压电工实操直播课', time: '12章24课时 | 共30学时', num: '678', now: 0, origin: 1200, type: 'free', thumb: cource1, },
+        { name: '2022逆袭提分强化班—初级会计师', time: '12章24课时 | 共30学时', num: '1022', now: '999', origin: '1200', type: 'sure', thumb: cource2 },
+        { name: '熔化焊接与热切割作业培训', time: '12章24课时 | 共30学时', num: '1022', now: '999', origin: '1200' , type: 'sure', thumb: cource2 },
+      ]
+      return Promise.resolve({ data: list })
+    }
   },
 };
 </script>
@@ -186,7 +131,7 @@ export default {
     }
   }
   &-container {
-    padding: 0 20rpx;
+    padding: 35rpx 20rpx 0;
     .course-item {
       background-color: #fff;
       border-radius: 12rpx;
@@ -202,7 +147,7 @@ export default {
           left: 0;
           top: 0;
           z-index: 1;
-          padding: 5rpx 20rpx;
+          padding: 5rpx 24rpx;
           background-color: $uni-color-primary;
           color: #fff;
           font-size: $uni-font-size-sm;
@@ -214,20 +159,24 @@ export default {
         }
         image {
           border-radius: 12rpx;
-          width: 233rpx;
-          height: 130rpx;
+          width: 228rpx;
+          height: 132rpx;
         }
       }
       &-content {
-        margin-left: 15rpx;
+        margin-left: 20rpx;
         flex: 1;
         display: flex;
         line-height: 1;
         flex-direction: column;
         justify-content: space-between;
         .course-name {
-          font-size: $uni-font-size-base;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
           color: #444444;
+          font-size: $uni-font-size-base;
         }
         .course-time {
           font-size: $uni-font-size-sm;
@@ -245,6 +194,7 @@ export default {
           }
           &-count {
             color: $uni-color-primary;
+            font-size: $uni-font-size-sm;
           }
           &-tag {
             color: #fe7e01;
@@ -254,7 +204,8 @@ export default {
           }
           &-price {
             color: #fe7e01;
-            text {
+            font-size: $uni-font-size-lg;
+            .origin {
               margin-left: 4rpx;
               text-decoration: line-through;
               color: #b1b1b1;

@@ -1,8 +1,10 @@
 <template>
   <div class="dropdown-select" @touchmove.stop.prevent>
     <div class="dropdown-select-header" @click="hanldeToggle">
+      <uni-icons custom-prefix="iconfont" class="header-icon" type="icon-yduipaibanleixingliebiao"
+                 size="36rpx" color="#199fff"></uni-icons>
       <view class="header-title">{{activeName}}</view>
-      <uni-icons custom-prefix="iconfont" class="header-icon" :class="{'header-icon--up':show}" type="icon-sanjiao1"
+      <uni-icons v-if="arrow" custom-prefix="iconfont" class="header-icon" :class="{'header-icon--up':show}" type="icon-sanjiao1"
                  size="24rpx"></uni-icons>
     </div>
     <div class="dropdown-select-mask" @click="hanldeToggle" v-if="show" @touchmove.stop.prevent></div>
@@ -12,7 +14,6 @@
         <div> {{item.name}}</div>
         <uni-icons type="checkmarkempty" v-show="item.value === value" color="#199fff" size="28rpx"></uni-icons>
       </div>
-
     </div>
   </div>
 </template>
@@ -27,6 +28,10 @@ export default {
     data: {
       type: Array,
       default: () => []
+    },
+    arrow: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -60,13 +65,17 @@ export default {
   &-header {
     position: relative;
     z-index: 100;
-    background-color: #fff;
-    height: 88rpx;
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+    height: 88rpx;
+    background-color: #fff;
     .header-title {
+      font-size: $uni-font-size-base;
+      color: #909399;
       margin-right: 16rpx;
+      margin-left: 8rpx;
     }
     .header-icon {
       transition: transform 0.3s;
@@ -102,12 +111,14 @@ export default {
     }
   }
   &-option {
-    background-color: #fff;
-    padding: 20rpx 12rpx;
-    border-bottom: 2rpx solid #eee;
     display: flex;
     justify-content: space-between;
+    padding: 20rpx 12rpx;
     align-items: center;
+    font-size: $uni-font-size-base;
+    color: #333;
+    background-color: #fff;
+    border-bottom: 2rpx solid #eee;
     &--active {
       color: $uni-color-primary;
     }

@@ -1,8 +1,10 @@
 <template>
   <div class="dropdown-filter" @touchmove.stop.prevent>
     <div class="dropdown-filter-header" @click="hanldeToggle">
+      <uni-icons custom-prefix="iconfont" class="header-icon" type="icon-fenlei"
+                 size="36rpx" color="#199fff"></uni-icons>
       <view class="header-title">{{activeRightName || defaultName}}</view>
-      <uni-icons custom-prefix="iconfont" class="header-icon" :class="{'header-icon--up':show}" type="icon-sanjiao1"
+      <uni-icons v-if="arrow" custom-prefix="iconfont" class="header-icon" :class="{'header-icon--up':show}" type="icon-sanjiao1"
                  size="24rpx"></uni-icons>
     </div>
     <div class="dropdown-filter-container" :class="{'dropdown-filter-container--popup':show}">
@@ -29,7 +31,11 @@ export default {
     },
     data: {
       type: Array,
-      default: () => []
+      default: () => ([])
+    },
+    arrow: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -68,13 +74,18 @@ export default {
   &-header {
     position: relative;
     z-index: 100;
-    background-color: #fff;
-    height: 88rpx;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 88rpx;
+    background-color: #fff;
+    font-size: $uni-font-size-base;
+    color: $uni-text-color;
     .header-title {
+      font-size: $uni-font-size-base;
+      color: #909399;
       margin-right: 16rpx;
+      margin-left: 8rpx;
     }
     .header-icon {
       transition: transform 0.3s;
@@ -106,6 +117,8 @@ export default {
       &-item {
         padding: 24rpx 12rpx;
         text-align: center;
+        font-size: $uni-font-size-base;
+        color: $uni-text-color;
         border-left: 6rpx solid #fff;
         &--active {
           background-color: #f2f6fc;
@@ -119,6 +132,8 @@ export default {
       background-color: #f2f6fc;
       &-item {
         padding: 24rpx 16rpx;
+        font-size: $uni-font-size-base;
+        color: $uni-text-color;
       }
     }
   }
