@@ -17,7 +17,7 @@
             <view class="course-time">{{ item.time }}</view>
             <view class="course-other">
               <view class="course-other-count">
-                <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons> {{ item.num }}
+                <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons> {{ item.num }} 人在学
               </view>
               <view v-if="item.now === 0" class="course-other-tag"> 免费</view>
               <view v-else class="course-other-price">
@@ -186,7 +186,7 @@ export default {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          font-size: 26rpx;
+          font-size: $uni-font-size-base;
           .icon-person {
             background-color: #dfecff;
             border-radius: 50%;
@@ -197,14 +197,14 @@ export default {
             font-size: $uni-font-size-sm;
           }
           &-tag {
-            color: #fe7e01;
-            border: 2rpx solid #fe7e01;
+            color: #f0ad4e;
+            border: 2rpx solid #f0ad4e;
             border-radius: 8rpx;
             padding: 4rpx 12rpx;
           }
           &-price {
-            color: #fe7e01;
-            font-size: $uni-font-size-lg;
+            color: #f0ad4e;
+            font-size: $uni-font-size-md;
             .origin {
               margin-left: 4rpx;
               text-decoration: line-through;

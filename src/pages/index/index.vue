@@ -63,7 +63,7 @@
               <view class="logan-card-right-center">{{ course.time }}</view>
               <view class="logan-card-right-footer">
                 <view class="audience">
-                  <uni-icons type="person" size="24rpx" />
+                  <uni-icons type="person-filled" color="#fff" class="icon-person" size="24rpx"></uni-icons> 
                   <text style="margin-left: 10rpx">{{ course.num }}人看过</text>
                 </view>
                 <view class="cost">
@@ -412,16 +412,21 @@ $padding-lr: 30rpx;
   .audience {
     font-size: $font-size-sm;
     color: $color-primary;
+    .icon-person {
+      margin-right: 8rpx;
+      background-color: #dfecff;
+      border-radius: 50%;
+    }
   }
 
   .present-price {
-    font-size: $font-size-lg;
+    font-size: $font-size-md;
     color: $color-warning;
   }
 
   .original-price {
     margin-left: 8rpx;
-    font-size: $font-size-base;
+    font-size: $font-size-sm;
     text-decoration: line-through #999;
   }
 

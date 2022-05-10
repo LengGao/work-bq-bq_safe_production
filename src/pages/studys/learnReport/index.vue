@@ -304,7 +304,7 @@ export default {
       border-top-right-radius: 12rpx;
       background: linear-gradient(to right, #11c2fa, #4087f5);
       .card-title {
-        font-size: $uni-font-size-xlg;
+        font-size: $uni-font-size-lg;
         color: #fff;
       }
       .card-icon {

@@ -183,7 +183,7 @@ export default {
       &-title {
         display: flex;
         justify-content: space-between;
-        font-size: $uni-font-size-lg;
+        font-size: $uni-font-size-md;
       }
       &-tabs {
         padding-top: 20rpx;
