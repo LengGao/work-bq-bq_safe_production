@@ -3,7 +3,7 @@
     <view class="learn-certificate-item">
       <view class="learn-certificate-item-title">课程名称</view>
       <view class="learn-certificate-item-time">获取时间：202121-221-4544</view>
-      <image @click="preiviewImg(src)" :src="src" mode="scaleToFill" />
+      <view class="learn-certificate-item-image"><image @click="preiviewImg(src)" :src="src" mode="scaleToFill" /></view>
       <view class="learn-certificate-item-save">长按保存证书</view>
     </view>
   </view>
@@ -55,6 +55,9 @@ export default {
       padding: 14rpx;
       font-size: $uni-font-size-sm;
       color: #a0a0a0;
+    }
+    &-image {
+      text-align: center;
     }
     &-save {
       text-align: center;

@@ -1,4 +1,3 @@
-import WebService from './web'
 import MiniService from './miniapp'
 import { GLOBAL } from './config'
 import { isObject } from './utils'
@@ -6,7 +5,7 @@ import { isObject } from './utils'
 const service = new MiniService()
 
 const header = {
-  token: 'eyJzdGFmZl9pZCI6MjkxLCJoZWFkX3Bob3RvIjoiaHR0cDpcL1wvZHBzeXN0ZW0ub3NzLWNuLXNoZW56aGVuLmFsaXl1bmNzLmNvbVwvbW9yZW4xNjA3NjU5MDYwXC83OTBkODRhMDE0ZTcxZDFkNDAxYWNmMDY4MmM3OWY5ZiIsInN0YWZmX25hbWUiOiJcdTY4ODFcdTUxNDkiLCJpc19zdXBlciI6MSwiZGVwYXJ0bWVudF9pZCI6MjAsImlzX2RpcmVjdG9yIjowLCJ0aW1lX291dCI6MTY1MDY4MTI0MX0='
+  token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwODY4OTY2fQ=='
 }
 
 service.setHeader(header)

@@ -244,7 +244,6 @@ $padding-lr: 30rpx;
 }
 
 .examinationcard-bar {
-  border-top: $logan-border-spacing-md;
   padding: 16rpx 30rpx;
 }
 
