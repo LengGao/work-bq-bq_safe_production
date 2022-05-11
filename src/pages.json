@@ -273,10 +273,19 @@
 	"preloadRule": {
 		"pages/index/index": {
 			"network": "all",
-			"packages": [
-				"__APP__",
-				"pages/indexs"
-			]
+			"packages": ["__APP__", "pages/indexs"]
+		},
+		"pages/study/index": {
+			"network": "all",
+			"packages": ["pages/study/s"]
+		},
+		"pages/examination/index": {
+			"network": "all",
+			"packages": ["pages/examinations"]
+		},
+		"pages/user/index": {
+			"network": "all",
+			"packages": ["pages/users"]
 		}
 	},
 	"globalStyle": {
