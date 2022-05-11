@@ -111,8 +111,7 @@ export default {
       // 推荐课程
       examinations: [
         { id: 1, name: "章节练习", desc: '这是描述文案', bgColor: '#FFFAF4', arrow: '/static/img/examination_bg_list1.png', thumb: '/static/img/examination_icon_list2.png', url: "/pages/examinations/chapterList/index" },
-        { id: 2, name: "模拟考试", desc: '这是描述文案', bgColor: '#FFF7F7', arrow: '/static/img/examination_bg_list2.png', thumb: '/static/img/examination_icon_list1.png', url: '/pages/examinations/testPaperIntroduce/index?type=1' },
-        // { id: 3, name: "自主出题", desc: '这是描述文案', thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/examination_icon_list2.png', url: '/pages/examinations/independentPaper/index' },
+        { id: 2, name: "模拟考试", desc: '这是描述文案', bgColor: '#FFF7F7', arrow: '/static/img/examination_bg_list2.png', thumb: '/static/img/examination_icon_list1.png', url: '/pages/examinations/examinationMock/index' },
       ],
       // 轮播
       swipers: [

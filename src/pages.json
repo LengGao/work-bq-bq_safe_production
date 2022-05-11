@@ -186,6 +186,13 @@
 					"style": {
 						"navigationBarTitleText": "考试记录"
 					}
+				},
+				{
+					"path": "examinationMock/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "模拟考试"
+					}
 				}
 			]
 		},

@@ -12,7 +12,6 @@
           <text>{{ rightFooter }}</text>
         </view>
       </view>
-
       <view class="card-arrow">
         <slot name="arrow">
             <uni-icons type="forward" size="32rpx" color="#E0E0E0" />

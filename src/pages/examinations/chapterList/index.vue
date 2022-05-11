@@ -1,30 +1,32 @@
 <template>
   <view class="chapter">
     <CustomHeader></CustomHeader>
-    <image class="b-img" src="../static/chapter-background2.png"  mode="aspectFit"></image>
+    <image class="b-img" src="../static/chapter-background2.png" mode="aspectFit"></image>
     <view class="chapter-box">
-      <view class="chapter-container" v-if="chapterList.length">
-        <view class="chapter-list">
-          <view class="chapter-list-item" v-for="item in chapterList" :key="item.id"
-                @click="toAnswer(item.id, item.chapter_name, item.answer_num,item.topic_num)">
-            <view class="chapter-info">
-              <view class="chapter-info-title">
-                <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx"></uni-icons>
-                <view class="title van-ellipsis">{{ item.chapter_name }}</view>
+      <scroll-view class="record-list" scroll-y @scrolltolower="onScrolltolower">
+        <view class="chapter-container" v-if="chapterList.length">
+          <view class="chapter-list">
+            <view class="chapter-list-item" v-for="item in chapterList" :key="item.id"
+                  @click="toAnswer(item.id, item.chapter_name, item.answer_num,item.topic_num)">
+              <view class="chapter-info">
+                <view class="chapter-info-title">
+                  <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx"></uni-icons>
+                  <view class="title van-ellipsis">{{ item.chapter_name }}</view>
+                </view>
+                <view class="chapter-info-progress">
+                  <view class="item" decode>总数：<text class="text">{{ item.topic_num }}</text></view>
+                  <view class="item" decode>已做：<text class="text">{{ item.answer_num }}</text></view>
+                  <view class="item" decode>正确率：<text class="text">{{ item.correct_rate }}%</text></view>
+                </view>
               </view>
-              <view class="chapter-info-progress">
-                <view class="item" decode>总数：<text class="text">{{ item.topic_num }}</text></view>
-                <view class="item" decode>已做：<text class="text">{{ item.answer_num }}</text></view>
-                <view class="item" decode>正确率：<text class="text">{{ item.correct_rate }}%</text></view>
+              <view class="arrow">
+                <uni-icons custom-prefix="iconfont" type="icon-pagenext" color="#ddd" size="28rpx"></uni-icons>
               </view>
-            </view>
-            <view class="arrow">
-              <uni-icons custom-prefix="iconfont" type="icon-pagenext" color="#ddd" size="28rpx"></uni-icons>
             </view>
           </view>
         </view>
-      </view>
-      <NoData top="40%" v-else />
+        <NoData top="40%" v-else />
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -95,9 +97,9 @@ export default {
   },
   methods: {
     toAnswer(chapterId, title, answer_num, topic_num) {
-    let url = '/pages/examinations/answer/index', query = ''
+      let url = '/pages/examinations/answer/index', query = ''
       if (!topic_num) {
-        uni.showToast({ title: '当前章节暂未配置题目', icon: 'none'})
+        uni.showToast({ title: '当前章节暂未配置题目', icon: 'none' })
         return;
       }
       if (!answer_num) {
