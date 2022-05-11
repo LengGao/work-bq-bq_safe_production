@@ -6,11 +6,7 @@
             @animationfinish="onAnimationfinish">
       <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.topic_type === 7 }"
                    v-for="(item, index) in questionList" :key="index">
-        <block v-if="
-            currentIndex === index ||
-            currentIndex - 1 === index ||
-            currentIndex + 1 === index
-          ">
+        <template v-if="currentIndex === index || currentIndex - 1 === index || currentIndex + 1 === index">
           <Single :model="model" :options="item" @change="onSingleChange" v-if="item.topic_type === 1" />
           <Multiple :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 2" />
           <Judg :model="model" :options="item" @change="onSingleChange" v-if="item.topic_type === 3" />
@@ -21,7 +17,7 @@
                 v-if="item.topic_type === 7" :ref="`case-${item.id}`"
                 :is-active="currentIndex === index && duration === 300" :type="type" @change="onCaseChange"
                 @index-change="onCaseIndexChange" />
-        </block>
+        </template>
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" :model="model" :is-end="isEnd" :is-start="isStart" :time="time"
@@ -30,6 +26,7 @@
     </AnswerBar>
   </view>
 </template>
+
 <script>
 import AnswerBar from "../components/answerBar";
 import AnswerHead from "../components/answerHead";

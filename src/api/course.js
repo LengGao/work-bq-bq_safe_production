@@ -1,6 +1,5 @@
 import reqest from '@/request/index';
 
-
 export function submitcomment(data) {
   return reqest({
     url: '/comment/submitcomment',
@@ -12,7 +11,6 @@ export function submitcomment(data) {
     }
   })
 }
-
 
 export function StaffNotice(param) {
   return request({

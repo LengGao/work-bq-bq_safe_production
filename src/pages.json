@@ -134,6 +134,7 @@
 				{
 					"path": "chapterList/index",
 					"style": {
+						"navigationStyle": "custom",
 						"navigationBarTitleText": "章节练习"
 					}
 				},
