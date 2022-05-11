@@ -189,9 +189,6 @@ export default {
   created() {
     console.log("加载了", moment({}).format());
   },
-  onReachBottom() {
-    console.log("到底了");
-  },
   methods: {
     // 点击筛选
     onOpenFilter() {
