@@ -66,11 +66,11 @@ class Service extends Interceptor {
      * @returns promise
      */
     send(config) {
-        console.log(config)
-        config.data = {
-            ...config.data,
-            question_bank_id: 14
-        }
+        // console.log(config)
+        // config.data = {
+        //     ...config.data,
+        //     question_bank_id: 14
+        // }
         return new Promise((resolve, reject) => {
             config.success = resolve
             config.fail = reject

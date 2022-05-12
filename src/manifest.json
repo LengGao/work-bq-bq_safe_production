@@ -51,6 +51,9 @@
 		}
 	},
 	"h5": {
+		"devServer": {
+
+		},
 		"optimization": {
 			"prefetch": true,
 			"preload": true
@@ -68,8 +71,7 @@
 			"minified": true,
 			"lazyCodeLoading": "requiredComponents",
 			"packNpmManually": false,
-			"packNpmRelationList": [{
-			}]
+			"packNpmRelationList": []
 		},
 		"optimization": {
 			"subPackages": true

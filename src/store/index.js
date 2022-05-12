@@ -17,8 +17,10 @@ const state = {
     },
     // 用户
     user: {
+        isLogin: false,
         userInfo: userInfo,
-        questionBankInfo: questionBankInfo
+        organizationCurrent: {},
+        questionBankInfo: questionBankInfo,
     },
     // 题库
     questionList: {
@@ -36,8 +38,12 @@ const getters = {
     userInfo: state => state.user.userInfo,
     // 用户token
     token: state => state.user.userInfo.token,
-
-
+    // 是否登录
+    isLogin: state => state.user.userInfo.isLogin,
+    // 当前机构
+    organizationCurrent: state => state.user.organizationCurrent,
+    // 获取用户所属机构
+    organizationList: state => state.user.userInfo.org_list,
     // 用户题库
     questionBankInfo: state => state.user.questionBankInfo,
     // 用户题库id
@@ -50,25 +56,34 @@ const getters = {
 const mutations = {
     // Applet
     SET_INFO(state, data) {
-        state.appInfo = data
+        state.applet.appInfo = data
     },
     // 设置applec信息
     SET_APPID(state, appid) {
-        state.appid = appid
+        state.applet.appid = appid
     },
 
-    // // 设置用户信息
+    // 设置用户信息
     SET_USER_INFO(state, data) {
-        state.userInfo = data
+        state.user.userInfo = data
+        uni.setStorageSync('userInfo', data)
+    },
+    // 设置当前机构
+    SET_ORG_CURRENT(state, data) {
+        state.user.organizationCurrent = data
+    },
+    // 设置机构列表
+    SET_ORG_LIST(state, data) {
+        state.user.organizationList = data
     },
 
     // 设置题库信息
     SET_QUESTION_BANK_INFO(state, data) {
-        state.questionBankInfo = data
+        state.user.questionBankInfo = data
     },
     // 设置题目列表 
     SET_LIST(state, list) {
-        state.list = list
+        state.questionList.list = list
     },
 }
 
@@ -85,7 +100,9 @@ const actions = {
     },
     // 设置applec信息
     setAppInfo({ commit }, data) {
-        commit(data)
+        data = data || {}
+        let userInfo =  {...state.user.userInfo, ...data}
+        commit('SET_USER_INFO', userInfo)
     },
 
     // 设置用户信息
@@ -93,7 +110,14 @@ const actions = {
         commit('SET_USER_INFO', data)
         uni.setStorage({ key: 'userInfo', data })
     },
-
+    // 设置当前机构
+    setOrgCurrent({ commit }, dsta) {
+        commit('SET_ORG_CURRENT', dsta)  
+    },
+    // 设置机构列表
+    setOrgList({ commit }, data) {
+        commit('SET_ORG_LIST', data)
+    },
     // 设置题库信息
     setQuestionBankInfo({ commit }, data) {
         commit('SET_QUESTION_BANK_INFO', data)

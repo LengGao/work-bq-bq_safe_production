@@ -36,22 +36,18 @@
 </template>
 
 <script>
+import { login } from '@/api/user'
+
 export default {
   data() {
     return {
-      username: '',
-      password: '',
+      username: '15649596365',
+      password: '111111',
       isRead: false,
       visibility: false
     }
   },
   methods: {
-    onSubmit() {
-      let param = { username: this.username, password: this.password }
-    },
-    onChecked(e) {
-      this.isRead = e.target.value.length ? true : false
-    },
     onFocus() {
       // #ifdef H5
       const originHeight = document.documentElement.clientHeight || document.body.clientHeight;
@@ -87,6 +83,18 @@ export default {
     },
     regsoter() {
       uni.navigateTo({ url: '/pages/indexs/reisgter/index' })
+    },
+    async onSubmit() {
+      let param = { username: this.username, password: this.password }
+      let res = await login(param)
+      if (res.code !== 0 ) {
+        let obj = {token: '111', mobile: '15', org_list: [{id: '1', name: '机构1'}, {id: '2', name: '机构2'}]}
+        this.$store.commit('SET_USER_INFO', obj)
+        uni.switchTab({ url: '/pages/index/index' })
+      }
+    },
+    onChecked(e) {
+      this.isRead = e.target.value.length ? true : false
     },
   }
 }

@@ -3,7 +3,7 @@
     <!-- #ifdef MP-WEIXIN -->
     <official-account @load="onbindload" @error="onbinderror" :hidden="isHidden"></official-account>
     <!-- #endif -->
-  
+
     <view class="filter">
       <view class="filter-left" @click="onOpenFilter">
         <uni-icons type="location" size="36rpx" color="#199fff" />
@@ -17,7 +17,8 @@
 
     <view class="swiper-bar">
       <swiper :interval="2000" autoplay circular disable-touch class="swiper">
-        <swiper-item v-for="swiper in swipers" :key="swiper.id" @click="onClickSwiperImg" :current-item-id="swiper.id" class="swiper-item">
+        <swiper-item v-for="swiper in swipers" :key="swiper.id" @click="onClickSwiperImg" :current-item-id="swiper.id"
+                     class="swiper-item">
           <image @click="() => previewImg(swiper.thumb)" :src="swiper.thumb" class="swiper-image" mode="aspectFit" />
         </swiper-item>
       </swiper>
@@ -52,7 +53,8 @@
         <CardRow v-for="course in courses" :key="course.id">
           <template v-slot:cardBodyLeft>
             <view class="logan-card-body-left">
-              <image @click="() => previewImg(course.thumb)" :src="course.thumb" class="logan-img-size-lg" mode="aspectFit" />
+              <image @click="() => previewImg(course.thumb)" :src="course.thumb" class="logan-img-size-lg"
+                     mode="aspectFit" />
             </view>
           </template>
           <template v-slot:cardBodyRight>
@@ -63,7 +65,7 @@
               <view class="logan-card-right-center">{{ course.time }}</view>
               <view class="logan-card-right-footer">
                 <view class="audience">
-                  <uni-icons type="person-filled" color="#fff" class="icon-person" size="24rpx"></uni-icons> 
+                  <uni-icons type="person-filled" color="#fff" class="icon-person" size="24rpx"></uni-icons>
                   <text style="margin-left: 10rpx">{{ course.num }}人看过</text>
                 </view>
                 <view class="cost">
@@ -126,6 +128,15 @@
     <uni-popup ref="popup" mask-background-color="#f8f8f8">
       <RegionChange @change="onChangeRegion" @close="onCloseFilter" :location="location" :buttons="regions" />
     </uni-popup>
+
+    <uni-popup ref="popupOrg" mask-background-color="rgba(0, 0, 0, 0.4)" :is-mask-click="false">
+      <view class="org-list">
+        <view class="org-list-item" v-for="item in organizationList" :key="item.id" @click="onChoiceOrg(item)">
+          {{ item.name }}
+        </view>
+      </view>
+    </uni-popup>
+
   </view>
 </template>
 
@@ -133,8 +144,11 @@
 import moment from "@/utils/date";
 import CardRow from "@/components/card-row/index";
 import RegionChange from './components/RegionChange'
+import LoginMixin from '@/mixins/login'
+import { mapGetters } from 'vuex'
 
 export default {
+  mixins: [LoginMixin],
   components: {
     CardRow,
     RegionChange
@@ -189,7 +203,38 @@ export default {
   created() {
     console.log("加载了", moment({}).format());
   },
+  computed: {
+    ...mapGetters(['organizationList'])
+  },
+  watch: {
+    organizationList() {
+      console.log('organizationList');
+    },
+    isLogin(val) {
+      console.log('val',val);
+      if (val) {
+        this.openPopup(this.organizationList)
+      }
+    }
+  },
   methods: {
+    // 打开机构选择
+    openPopup(list) {
+      if (list && list.length) {
+        let len = list.length
+        if (len > 1) {
+          this.$refs.popupOrg.open('bottom')
+        } else {
+          this.$store.dispatch('setOrgCurrent', list[len - 1])
+        }
+      }
+    },
+    // 选择机构
+    onChoiceOrg(item) {
+      this.$store.dispatch('setOrgCurrent', item)
+      this.$refs.popupOrg.close()
+      
+    },
     // 点击筛选
     onOpenFilter() {
       console.log(this.$refs.popup);
@@ -201,7 +246,6 @@ export default {
     },
     // 地区选择
     onChangeRegion({ index, checked }) {
-      console.log('onChangeRegion', index, checked);
       const list = this.regions
       const pre = list.findIndex(item => item.checked);
       if (pre !== -1) { this.regions[pre].checked = false }
@@ -213,34 +257,32 @@ export default {
     },
     // 轮播图点击事件
     onClickSwiperImg() {
-      uni.navigateTo({ url: '/pages/studys/courseDetail/index'} )
+      uni.navigateTo({ url: '/pages/studys/courseDetail/index' })
     },
     // 查看全部
     onClickAll(type) {
-      console.log('onClickAll');
       let path = '', query = `?type=${type}`
       switch (type) {
-        case 1: 
+        case 1:
           path = '/pages/studys/courseList/index'
-        break;
+          break;
         case 2:
           path = '/pages/studys/courseList/index'
-        break;
-        case 3: 
+          break;
+        case 3:
           path = '/pages/studys/policyList/index'
-        break;
-        case 4: 
+          break;
+        case 4:
           path = '/pages/studys/libraryList/index'
-        break;
+          break;
       }
       uni.navigateTo({ url: path + query })
     },
     // 点击安全生产课程
     onClickCource(courceType) {
       let path = '/pages/studys/courseList/index',
-          query = `?type=2&courceType=${courceType}`
-
-      uni.navigateTo({ url: path + query})
+        query = `?type=2&courceType=${courceType}`
+      uni.navigateTo({ url: path + query })
     },
     // 点击推荐课程
     onClickRecommend() {
@@ -254,23 +296,25 @@ export default {
     onClickLibrary() {
       uni.navigateTo({ url: '/pages/studys/libraryDetails/index' })
     },
-    // 数据获取
-    getData() {
-    },
     // 图片预览
     previewImg(url) {
       uni.previewImage({
         urls: [url]
       })
     },
+    // 加载成功
     onbindload(e) {
       setTimeout(() => {
         this.isHidden = true
       }, 5000)
     },
+    // 记载失败
     onbinderror(e) {
       this.isHidden = true
-    }
+    },
+    // 数据获取
+    getData() {
+    },
   }, // methods end
 };
 </script>
@@ -281,7 +325,7 @@ $padding-tb: 16rpx;
 $padding-lr: 30rpx;
 
 .index {
-  height:  100%;
+  height: 100%;
   overflow: hidden;
   overflow-y: scroll;
   padding: $padding-tb 0;
@@ -479,6 +523,22 @@ $padding-lr: 30rpx;
   border-top: $logan-border-spacing-md;
   .library-text {
     margin-left: 8rpx;
+  }
+}
+
+.org-list {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  padding-bottom: var(--window-bottom);
+
+  &-item {
+    width: 100%;
+    height: 84rpx;
+    text-align: center;
+    line-height: 84rpx;
+    font-size: $font-size-base;
+    border: 2rpx solid #eee;
   }
 }
 </style>

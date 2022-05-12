@@ -277,7 +277,7 @@
 		},
 		"pages/study/index": {
 			"network": "all",
-			"packages": ["pages/study/s"]
+			"packages": ["pages/studys"]
 		},
 		"pages/examination/index": {
 			"network": "all",

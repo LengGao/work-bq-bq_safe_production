@@ -1,4 +1,4 @@
-import Request from '@/request/index'
+import request from '@/request/index'
 
 // 获取小程序信息
 export const getVersion = (data) => {
@@ -10,12 +10,28 @@ export const getVersion = (data) => {
     })
 }
 
+// export function staffNotice(data) {
+//     return request ({
+//         url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
+//         method: 'get',
+//         data
+//     })
+// }
+
+
 export function login(data) {
-    return Request({
-        url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
-        method: 'get',
+    return request({
+        url: '/mob/v1.login/password',
+        method: 'post',
         data
     })
 }
 
+export function loginout(data) {
+    return request({
+        url: '/mob/v1.login/out',
+        method: 'post',
+        data
+    })
+}
 
