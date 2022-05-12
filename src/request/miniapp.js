@@ -1,5 +1,5 @@
 import Interceptor from './interceptor'
-import { BASE_URL, GLOBAL } from './config'
+import { BASE_URL, PREFIX, SUFFIX, GLOBAL } from './config'
 
 class Service extends Interceptor {
     constructor() {
@@ -20,8 +20,8 @@ class Service extends Interceptor {
     // 初始化配置
     __initConfig() {
         this.$config = {
-            prefix: '',
-            suffix: '',
+            prefix: PREFIX,
+            suffix: SUFFIX,
             baseUrl: BASE_URL,
             modal: false,
             toast: false,
@@ -66,11 +66,6 @@ class Service extends Interceptor {
      * @returns promise
      */
     send(config) {
-        // console.log(config)
-        // config.data = {
-        //     ...config.data,
-        //     question_bank_id: 14
-        // }
         return new Promise((resolve, reject) => {
             config.success = resolve
             config.fail = reject

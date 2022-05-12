@@ -21,7 +21,7 @@ export const getVersion = (data) => {
 
 export function login(data) {
     return request({
-        url: '/mob/v1.login/password',
+        url: 'login/password',
         method: 'post',
         data
     })
@@ -29,7 +29,7 @@ export function login(data) {
 
 export function loginout(data) {
     return request({
-        url: '/mob/v1.login/out',
+        url: 'login/out',
         method: 'post',
         data
     })
