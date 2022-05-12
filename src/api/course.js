@@ -1,4 +1,4 @@
-import reqest from '@/request/index';
+import request from '@/request/index';
 
 export function submitcomment(data) {
   return reqest({

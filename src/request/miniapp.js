@@ -20,8 +20,9 @@ class Service extends Interceptor {
     // 初始化配置
     __initConfig() {
         this.$config = {
-            prefix: PREFIX,
-            suffix: SUFFIX,
+            prefix: '/mob/v1.',
+            // prefix: '',
+            suffix: '',
             baseUrl: BASE_URL,
             modal: false,
             toast: false,

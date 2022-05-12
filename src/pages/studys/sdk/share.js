@@ -1,5 +1,5 @@
 function getWxConfig() {
-  $.ajax('/user/share/getShareConfig', {
+  $.ajax('https://store.beiqujy.com/apidata/applet/user/share/getShareConfig', {
       dataType: 'json',
       data: {
           course_id: id,

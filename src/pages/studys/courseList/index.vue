@@ -4,24 +4,28 @@
       <DropdownFilter class="picker" :data="categoryData" v-model="categoryType" @change="reloadList" />
       <DropdownSelect class="picker" :data="typeData" v-model="typeValue" @change="reloadList" />
     </view>
-    <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback">
+    <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :autoShowLoading="true">
       <view class="course-list-container">
-        <view class="course-item" v-for="(item ,index ) in courseData" :key="index">
+        <view class="course-item" v-for="item in courseData" :key="item.id">
           <view class="course-item-cover">
             <view class="course-tag course-tag--success" v-if="item.type === 'free'">免费课</view>
             <view class="course-tag" v-else>认证课</view>
-            <image :src="item.thumb" mode="aspectFit" />
+            <image :src="item.cover" mode="aspectFit" />
           </view>
           <view class="course-item-content">
-            <view class="course-name">{{ item.name }}</view>
-            <view class="course-time">{{ item.time }}</view>
+            <view class="course-name">{{ item.title }}</view>
+            <view class="course-time">
+              {{ item.chapter_count }}章
+              {{ item.learn_count }}课时
+            </view>
             <view class="course-other">
               <view class="course-other-count">
-                <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons> {{ item.num }} 人在学
+                <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons> {{ item.learn_count }} 人在学
               </view>
-              <view v-if="item.now === 0" class="course-other-tag"> 免费</view>
+              <view v-if="item.price === 0" class="course-other-tag"> 免费</view>
               <view v-else class="course-other-price">
-                ￥{{ item.now }} <text class="origin">￥{{ item.origin }}</text>
+                ￥{{ item.price }} 
+                <!-- <text class="origin">￥{{ item.origin }}</text> -->
               </view>
             </view>
           </view>
@@ -38,6 +42,9 @@ import DropdownFilter from '@/components/dropdown-filter'
 import DropdownSelect from '@/components/dropdown-select'
 import cource1 from '@/static/img/index_cource1.png'
 import cource2 from '@/static/img/index_cource2.png'
+import { 
+  courseList
+} from '@/api/course'
 
 export default {
   components: {
@@ -47,6 +54,18 @@ export default {
   mixins: [MescrollMixin], // 使用mixin
   data() {
     return {
+      // mescroll
+      page: 1,
+      pageSize: 10,
+      curPageData: [], // 当前数据
+      curPageLen: 0, // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
+      totalSize: 10, //总天数
+      totalPage: 0, // 总页数
+      hasNext: true,// 接口返回的是否有下一页 (true/false)
+
+
+      region_id: 1,
+      category_id: 0,
       categoryName: '全部分类',
       categoryId: 0,
       categoryType: '',
@@ -77,40 +96,53 @@ export default {
     };
   },
   created() {
+    this.getCousrList()
   },
   methods: {
     reloadList() {
       this.mescroll.resetUpScroll();
     },
+    async downCallback() {
+      this.mescroll.endBySize(1,1)
+    },
     async upCallback(page) {
+      console.log('pages', page);
       // const pageSize = page.size; // 页长, 默认每页10条
+      // const data = {
+      //   page: page.num,
+      //   region_id: page.size,
+      //   region_id: this.region_id,
+      //   category_id: this.category_id,
+      //   categoryType: this.categoryType,
+      //   typeValue: this.typeValue
+      // }
+      // const res = await courseList(data)
+      // // 接口返回的当前页数据列表 (数组)
+      // let curPageData = res.data || [];
+      // // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
+      // let curPageLen = curPageData.length;
+      // // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
+      // let totalSize = res.total || 30;
+      // //设置列表数据
+      // if (page.num == 1) this.courseData = []; //如果是第一页需手动置空列表
+      // this.courseData = this.courseData.concat(curPageData); //追加新数据
+      // // 请求成功,隐藏加载状态
+      // //方法二(推荐): 后台接口有返回列表的总数据量 totalSize
+      this.mescroll.endBySize(1, 1);
+    },
+    async getCousrList() {
       const data = {
-        page: page.num,
-        limit: page.size,
+        page: this.page,
+        page_size: this.pageSize,
+        region_id: this.region_id,
+        category_id: this.category_id,
         categoryType: this.categoryType,
         typeValue: this.typeValue
       }
-      const res = await this.getCousrList(data)
-      // 接口返回的当前页数据列表 (数组)
-      let curPageData = res.data || [];
-      // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
-      let curPageLen = curPageData.length;
-      // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
-      let totalSize = 30 || res.data.total;
-      //设置列表数据
-      if (page.num == 1) this.courseData = []; //如果是第一页需手动置空列表
-      this.courseData = this.courseData.concat(curPageData); //追加新数据
-      // 请求成功,隐藏加载状态
-      //方法二(推荐): 后台接口有返回列表的总数据量 totalSize
-      this.mescroll.endBySize(curPageLen, totalSize);
-    },
-    getCousrList() {
-      const list = [
-        { name: '特种作业低压电工实操直播课', time: '12章24课时 | 共30学时', num: '678', now: 0, origin: 1200, type: 'free', thumb: cource1, },
-        { name: '2022逆袭提分强化班—初级会计师', time: '12章24课时 | 共30学时', num: '1022', now: '999', origin: '1200', type: 'sure', thumb: cource2 },
-        { name: '熔化焊接与热切割作业培训', time: '12章24课时 | 共30学时', num: '1022', now: '999', origin: '1200' , type: 'sure', thumb: cource2 },
-      ]
-      return Promise.resolve({ data: list })
+      const res = await courseList(data)
+      if (res.code === 0) { 
+        this.courseData = res.data
+      }
     }
   },
 };
