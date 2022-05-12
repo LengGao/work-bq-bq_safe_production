@@ -23,27 +23,28 @@
       <button class="footer-btn">开始学习</button>
     </view>
 
-      <uni-popup ref="popup" type="center" class="popup">
-        <div class="dialog">
-          <view class="dialog-title"> 我的评价</view>
-          <view class="dialog-content">
-            <view class="rate">
-              <uni-rate :value="rateForm.star" @change="onChangeRate"  :size="32" :touchable="false" />
-              <view class="rate-content">{{ starText[rateForm.star] }}</view>
-            </view>
-            <view class="tags">
-              <view v-for="(tag, index) in tags" :key="tag.id" class="tags-btn" :class="tag.checked ? 'btn-active' : ''" @click="() => onTagSelect(index)">{{ tag.label }}</view>
-            </view>
-            <view class="remark">
-              <input v-model="rateForm.remark" placeholder="说一说听课的感受和建议吧·" class="remark-input"/>
-            </view>
+    <uni-popup ref="popup" type="center" class="popup">
+      <div class="dialog">
+        <view class="dialog-title"> 我的评价</view>
+        <view class="dialog-content">
+          <view class="rate">
+            <uni-rate :value="rateForm.star" @change="onChangeRate" :size="32" :touchable="false" />
+            <view class="rate-content">{{ starText[rateForm.star] }}</view>
           </view>
-          <view class="dialog-footer">
-            <button class="dialog-footer-btn" plain @click="onPublish" >发表评论</button>
+          <view class="tags">
+            <view v-for="(tag, index) in tags" :key="tag.id" class="tags-btn" :class="tag.checked ? 'btn-active' : ''"
+                  @click="() => onTagSelect(index)">{{ tag.label }}</view>
           </view>
-        </div>
-      </uni-popup>
-    
+          <view class="remark">
+            <input v-model="rateForm.remark" placeholder="说一说听课的感受和建议吧·" class="remark-input" />
+          </view>
+        </view>
+        <view class="dialog-footer">
+          <button class="dialog-footer-btn" plain @click="onPublish">发表评论</button>
+        </view>
+      </div>
+    </uni-popup>
+
   </view>
 </template>
 
@@ -51,6 +52,7 @@
 import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
+
 export default {
   components: {
     Details,
@@ -67,18 +69,25 @@ export default {
         tags: [],
       },
       tags: [
-        { id: 1, label: '一二三四', value: '1' , checked: false},
-        { id: 2, label: '一二三四', value: '1' , checked: false},
-        { id: 3, label: '一二三四', value: '1' , checked: false},
-        { id: 4, label: '一二三四', value: '1' , checked: false},
-        { id: 5, label: '一二三四', value: '1' , checked: false},
-        { id: 6, label: '一二三四', value: '1' , checked: false},
-        { id: 7, label: '一二三四无', value: '1', checked: false},
+        { id: 1, label: '一二三四', value: '1', checked: false },
+        { id: 2, label: '一二三四', value: '1', checked: false },
+        { id: 3, label: '一二三四', value: '1', checked: false },
+        { id: 4, label: '一二三四', value: '1', checked: false },
+        { id: 5, label: '一二三四', value: '1', checked: false },
+        { id: 6, label: '一二三四', value: '1', checked: false },
+        { id: 7, label: '一二三四无', value: '1', checked: false },
       ],
       current: 0,
       items: ['简介', '目录', '评价'],
       video: "https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4"
     }
+  },
+ beforeCreate() {
+   document.addEventListener('plusready',function() {
+      let uuid= plus.device.uuid
+      alert(plus)
+      alert(uuid)
+   },false)
   },
   methods: {
     // 分段其切换
@@ -145,7 +154,7 @@ export default {
   position: fixed;
   bottom: constant(safe-area-inset-bottom);
   bottom: env(safe-area-inset-bottom);
-  
+
   left: 0;
   width: 100%;
 
@@ -173,7 +182,6 @@ export default {
   font-size: $font-size-base;
   color: $text-color-grey;
   background-color: #fff;
-
 
   &-title {
     flex: 1 1 1;
@@ -210,7 +218,7 @@ export default {
       margin: 40rpx 0;
       padding: 30rpx 60rpx;
       height: 300rpx;
-      
+
       &-btn {
         margin: 0 10rpx;
         padding: 12rpx;
@@ -242,7 +250,7 @@ export default {
 
   &-footer {
     flex: 1 1 1;
-    
+
     .dialog-footer-btn {
       width: 70%;
       font-size: $font-size-base;

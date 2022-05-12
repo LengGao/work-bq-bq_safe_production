@@ -16,9 +16,9 @@ export function submitcomment(data) {
 export function StaffNotice(param) {
   return request({
     url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
-    data: [
+    data: {
       question_bank_id: 14
-    ],
+    },
     header: {
       token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwODY4OTY2fQ=='
     },

@@ -17,3 +17,5 @@ export const download_file_common = async (url, name = '', header = {}) => {
     GLOBAL.showToast({ title: '下载失败', icon: 'error' })
   }
 }
+
+
