@@ -48,7 +48,7 @@ const MescrollMixin = {
 			} else {
 				setTimeout(() => {
 					this.mescroll.endSuccess();
-				}, 500)
+				}, 1500)
 			}
 		},
 		// 上拉加载的回调
@@ -56,7 +56,7 @@ const MescrollMixin = {
 			// mixin默认延时500自动结束加载
 			setTimeout(() => {
 				this.mescroll.endErr();
-			}, 500)
+			}, 1500)
 		}
 	},
 	mounted() {

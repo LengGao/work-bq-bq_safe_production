@@ -78,8 +78,7 @@ export function courseList(data) {
   return request({
     url: 'course/list',
     method: 'get',
-    data,
-    loading: true
+    data
   })
 }
 

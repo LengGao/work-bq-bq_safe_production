@@ -120,7 +120,13 @@ export default {
     // 分享
     onShare() {
 
-    }
+    },
+
+    // 详情
+    getDatil() {
+
+    },
+    
   }
 }
 </script>

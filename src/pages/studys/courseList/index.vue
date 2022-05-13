@@ -1,16 +1,17 @@
 <template>
   <view class="course-list">
     <view class="course-list-header">
-      <DropdownFilter class="picker" :data="categoryData" v-model="categoryType" @change="reloadList" />
-      <DropdownSelect class="picker" :data="typeData" v-model="typeValue" @change="reloadList" />
+      <DropdownFilter class="picker" :data="categoryData" v-model="categoryValue" @change="(val) => reloadList('category', val)" />
+      <DropdownSelect class="picker" :data="typeData" v-model="typeValue" @change="(val) => reloadList('type', val)" />
     </view>
-    <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :autoShowLoading="true">
+    <view class="mescroll-box">
+    <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true" :topbar="true" :safearea="true">
       <view class="course-list-container">
         <view class="course-item" v-for="item in courseData" :key="item.id">
           <view class="course-item-cover">
-            <view class="course-tag course-tag--success" v-if="item.type === 'free'">免费课</view>
+            <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
             <view class="course-tag" v-else>认证课</view>
-            <image :src="item.cover" mode="aspectFit" />
+            <image class="course-img" :src="item.cover" mode="aspectFit" />
           </view>
           <view class="course-item-content">
             <view class="course-name">{{ item.title }}</view>
@@ -31,8 +32,8 @@
           </view>
         </view>
       </view>
-    </mescroll-body>
-
+    </mescroll-body>    
+    </view>
   </view>
 </template>
 
@@ -55,20 +56,19 @@ export default {
   data() {
     return {
       // mescroll
-      page: 1,
-      pageSize: 10,
-      curPageData: [], // 当前数据
-      curPageLen: 0, // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
-      totalSize: 10, //总天数
-      totalPage: 0, // 总页数
-      hasNext: true,// 接口返回的是否有下一页 (true/false)
-
-
+      up: {
+        page: {
+          num: 0,
+          size: 2,
+          time: 500,
+          auto: false
+        }
+      },
       region_id: 1,
       category_id: 0,
-      categoryName: '全部分类',
-      categoryId: 0,
-      categoryType: '',
+      type_id: 0,
+
+      categoryValue: '',
       categoryData: [
         { name: '全部', value: 0, children: [{ name: '全部', value: 0 }] },
         { name: '安监类', value: 1,
@@ -86,7 +86,7 @@ export default {
           ]
         }
       ],
-      typeValue: 0,
+      typeValue: '',
       typeData: [
         { name: '全部类型', value: '' },
         { name: '免费课', value: 1 },
@@ -95,60 +95,51 @@ export default {
       courseData: [],
     };
   },
-  created() {
-    this.getCousrList()
-  },
   methods: {
-    reloadList() {
-      this.mescroll.resetUpScroll();
+    reloadList(type, val) {
+      if (type === 'category') {
+        this.category_id = val
+      } else {
+        this.type_id = val
+      }
+      this.downCallback()
     },
-    async downCallback() {
-      this.mescroll.endBySize(1,1)
+    // 下拉
+    downCallback() {
+      this.mescroll.resetUpScroll(true)
     },
+    // 上拉
     async upCallback(page) {
-      console.log('pages', page);
-      // const pageSize = page.size; // 页长, 默认每页10条
-      // const data = {
-      //   page: page.num,
-      //   region_id: page.size,
-      //   region_id: this.region_id,
-      //   category_id: this.category_id,
-      //   categoryType: this.categoryType,
-      //   typeValue: this.typeValue
-      // }
-      // const res = await courseList(data)
-      // // 接口返回的当前页数据列表 (数组)
-      // let curPageData = res.data || [];
-      // // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
-      // let curPageLen = curPageData.length;
-      // // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
-      // let totalSize = res.total || 30;
-      // //设置列表数据
-      // if (page.num == 1) this.courseData = []; //如果是第一页需手动置空列表
-      // this.courseData = this.courseData.concat(curPageData); //追加新数据
-      // // 请求成功,隐藏加载状态
-      // //方法二(推荐): 后台接口有返回列表的总数据量 totalSize
-      this.mescroll.endBySize(1, 1);
-    },
-    async getCousrList() {
       const data = {
-        page: this.page,
-        page_size: this.pageSize,
+        page: page.num,
+        page_size: page.size,
         region_id: this.region_id,
         category_id: this.category_id,
         categoryType: this.categoryType,
         typeValue: this.typeValue
       }
       const res = await courseList(data)
-      if (res.code === 0) { 
-        this.courseData = res.data
-      }
-    }
+      // 接口返回的当前页数据列表 (数组)
+      let curPageData = res.data.data
+      // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
+      let curPageLen = curPageData.length;
+      // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
+      let totalSize = res.data.total;
+      //设置列表数据
+      if (page.num == 1) this.courseData = []; //如果是第一页需手动置空列表
+      this.courseData = this.courseData.concat(curPageData); //追加新数据
+      // 请求成功,隐藏加载状态 方法二(推荐): 后台接口有返回列表的总数据量 totalSize
+      this.mescroll.endBySize(curPageLen, totalSize);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+
+.mescroll-box {
+  height: 100vh;
+}
 .course-list {
   background-color: #f8f8f8;
   &-header {
@@ -173,6 +164,12 @@ export default {
       &-cover {
         position: relative;
         line-height: 0;
+
+        .course-img {
+          width: 228rpx;
+          height: 130rpx;
+        }
+
         .course-tag {
           line-height: initial;
           position: absolute;
@@ -222,7 +219,7 @@ export default {
           .icon-person {
             background-color: #dfecff;
             border-radius: 50%;
-            margin-right: 8rpx;
+            margin-right: 16rpx;
           }
           &-count {
             color: $uni-color-primary;
