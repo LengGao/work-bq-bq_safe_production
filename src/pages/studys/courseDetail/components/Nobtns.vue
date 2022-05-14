@@ -1,14 +1,27 @@
 <template>
   <view class="nobtns">
     <view class="card">
-      <view class="title"> 新《安全生产法》宣传片 </view>
-      <view class="subtitle">12章24课时  |  共30学时</view>
+      <view class="title"> {{data.title | empty }} </view>
+      <view class="subtitle">
+        {{ data.chapter_count | empty }}章
+        {{ data.lesson_count | empty }}课时  
+        <text decode>  |  共{{ timeTotal }}学时</text>
+      </view>
       <view class="fotter">
         <view class="left">
-          <uni-icons customPrefix="iconfont" type="icon-account-fill" size="48rpx" color="#199fff" />
-          <view class="staff">赵老师</view>
+          <!-- <uni-icons customPrefix="iconfont" type="icon-account-fill" size="48rpx" color="#199fff" /> -->
+          <view class="avator">
+            <image class="avator-img" :src="data.teacher.avatar" mode="aspectFill" />
+          </view>
+          <view class="staff">
+            {{ data.teacher.name }}
+            <text style="margin: 0 30rpx;">|</text>
+            <text class="staff-text"> {{ data.learn_count }}人在学</text>
+          </view>
         </view>
-        <view class="right"> 199911人在学 </view>
+        <view class="right">
+          <text class="right-text">￥{{ data.price }}</text>
+        </view>
       </view>
     </view>
   </view>
@@ -19,8 +32,17 @@ export default {
   props: {
     data: {
       type: Object,
+      required: true,
       default: () => ({})
     }
+  },
+  computed: {
+    timeTotal() {
+      return Math.imul(this.data.chapter_count, this.data.lesson_count)
+    }
+  },
+  created() {
+    console.log('this.data', this.data);
   }
 }
 </script>
@@ -60,19 +82,39 @@ $text-size: 24rpx;
       display: flex;
       align-items: center;
 
+      .avator {
+        overflow: hidden;;
+        width: 60rpx;
+        height: 60rpx;
+        border-radius: 50%;
+        &-img{
+          width: 100%;
+          height: 100%;
+        }
+      }
+
       .staff {
+        display: flex;
+        flex-direction: row;
+        margin-left: 16rpx;
         color: #777;
         font-size: $text-size;
-        margin-left: 10rpx;
+
+        &-text {
+          color: #199fff;
+          font-size: $text-size;
+        }
       }
     }
 
     .right {
       display: flex;
       align-items: center;
-      font-size: $text-size;
       margin-left: 20rpx;
-      color: #199fff;
+      &-text {
+        font-size: $title-size;
+        color: $text-color-price;
+      }
     }
   }
 }

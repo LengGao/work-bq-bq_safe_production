@@ -8,10 +8,10 @@
 
       <view class="segmented-content">
         <view v-show="current === 0" class="segmented-pane">
-          <Details />
+          <Details :info="info" :content="content" />
         </view>
         <view v-show="current === 1" class="segmented-pane">
-          <Catalogue />
+          <Catalogue v-if="course_id" :courseId="course_id" />
         </view>
         <view v-show="current === 2" class="segmented-pane">
           <Rate @openComment="onComment" />
@@ -53,6 +53,11 @@ import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
 
+import {
+  courseInfo,
+  courseGetCommentList
+} from '@/api/course'
+
 export default {
   components: {
     Details,
@@ -62,6 +67,18 @@ export default {
   data() {
     return {
       show: false,
+      region_id: 1,
+      course_id: 26,
+      up: { page: { num: 0, size: 10, time: 1000 } },
+      // 课程详情
+      courseInfo: {},
+      content: '',
+      info: {},
+      // 目录
+      chapterList: [],
+      // 评价
+      courseGetComment: [],
+
       starText: ['', '不满意', '一般', '比较满意', '满意', '非常满意'],
       rateForm: {
         star: 1,
@@ -82,12 +99,10 @@ export default {
       video: "https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4"
     }
   },
- beforeCreate() {
-   document.addEventListener('plusready',function() {
-      let uuid= plus.device.uuid
-      alert(plus)
-      alert(uuid)
-   },false)
+  onLoad(query) {
+    console.log('query', query);
+    this.getCourseInfo()
+    // this.courseGetCommentList()
   },
   methods: {
     // 分段其切换
@@ -113,20 +128,29 @@ export default {
     onTagSelect(index) {
       this.tags[index].checked = !this.tags[index].checked
     },
-    // 发表 
-    onPublish() {
-      this.onClose()
-    },
-    // 分享
-    onShare() {
 
+    // 复制课程信息
+    copy() {
+      let obj = {}, data = this.courseInfo
+      Object.keys(data).forEach(k => {
+        if (k !== 'content') { obj[k] = data[k]; }
+      })
+      this.info = obj
+      this.content = data.content 
+    },
+    // 课程简介
+    async getCourseInfo() {
+      let param = { region_id: this.region_id, course_id: this.course_id }
+      let res = await courseInfo(param)
+      this.courseInfo = res.data
+      this.copy()
     },
 
-    // 详情
-    getDatil() {
-
-    },
-    
+    // 评论列表
+    async getCourseGetCommentList() {
+      
+      let res = await courseGetCommentList()
+    }
   }
 }
 </script>

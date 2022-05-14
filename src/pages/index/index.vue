@@ -141,7 +141,6 @@
 </template>
 
 <script>
-import moment from "@/utils/date";
 import CardRow from "@/components/card-row/index";
 import RegionChange from './components/RegionChange'
 import LoginMixin from '@/mixins/login'
@@ -201,7 +200,6 @@ export default {
     };
   },
   created() {
-    console.log("加载了", moment({}).format());
   },
   computed: {
     ...mapGetters(['organizationList'])
@@ -286,7 +284,7 @@ export default {
     },
     // 点击推荐课程
     onClickRecommend() {
-      uni.navigateTo({ url: '/pages/studys/courseDetail/index' })
+      uni.navigateTo({ url: '/pages/studys/courseDetail/index?course_id=1' })
     },
     // 点击政策栏
     onClickPolicy() {

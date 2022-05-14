@@ -1,4 +1,7 @@
 import Vue from 'vue'
+import moment from '@/utils/date'
+
+const systems = uni.getSystemInfoSync()
 
 const filters = {
     phoneFormat(val) {
@@ -12,6 +15,17 @@ const filters = {
     moneyFormat(number) {
         number = (number * 1 || 0).toFixed(3).slice(0, -1)
         return `￥${number}`
+    },
+    empty(val) {
+        if (val === undefined  || val === null  || val === '') {
+           return '-'
+        }
+        return val
+    },
+    secondsFormat(val) {
+        if (systems.platform.indexOf('ios') !== -1) {
+        }
+        return val
     },
     orderStatus(status) {
         const statusMap = {
