@@ -74,8 +74,10 @@ export default {
       caseIndex: 0,
       // swiper 动画时间
       duration: 300,
+      // 考题试卷
       total: 0,
       questionList: [],
+      // 答题
       logId: "",
       userAnswerMap: {},
       // 练习的题目类型
@@ -96,9 +98,8 @@ export default {
     // 获取当前显示的题目。案例题按小题算
     getCurrentData() {
       const currentData = this.questionList[this.currentIndex];
-      if (!currentData) {
-        return {};
-      }
+      if (!currentData) return {};
+      // topic_type === 7 为案例题
       return currentData.topic_type === 7
         ? currentData.child[this.caseIndex]
         : currentData;
@@ -115,23 +116,16 @@ export default {
     this.duration = 300;
     this.setCurrentModel();
   },
-  onLoad({
-    chapterId,
-    title = "题目",
-    type = "1",
-    time = 0,
-    isExam,
-    isAnalysis,
-    isContinue,
-  }) {
+  onLoad(query) {
+    // isContinue 是否为继续做题
+    let { chapterId, title = "题目", type = "1", time = 0, isExam, isAnalysis, isContinue } = query
+
     this.type = type;
     this.time = +time;
     this.isExam = isExam;
     this.isAnalysis = isAnalysis;
-    uni.setNavigationBarTitle({
-      title,
-    });
-    this.createQuestion(chapterId, isExam, isContinue);
+    uni.setNavigationBarTitle({ title })
+    this.createQuestion(chapterId, isExam, isContinue); 
   },
   onUnload() {
     if (!["7", "8"].includes(this.type)) {
@@ -308,11 +302,8 @@ export default {
     },
     // 获取章节练习题目
     async createQuestion(chapter_id, is_exam, redo) {
-      const data = {
-        chapter_id,
-        is_exam,
-        redo,
-      };
+      const data = { chapter_id, is_exam, redo };
+
       if (this.type === "7") {
         data.is_collection = 1; // 收藏夹
       }

@@ -5,7 +5,7 @@
         <view class="score">{{ value }}</view>
         <view class="rate-all-comments">
           <view class="comments-num">36条贫家</view>
-          <uni-rate v-model="value" @change="onChange" size="48rpx" allowHalf readonly />
+          <uni-rate v-model="value" :size="24" @change="onChange" readonly />
         </view>
       </view>
       <view class="right">
@@ -21,38 +21,49 @@
       </view>
     </view>
 
-    <view class="comments" style="height: 400px">
-      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" 
-      :fixed="false" style="overflow: auto" height="400px">
-        <view class="comments-item" v-for="comment in comments" :key="comment.id">
-          <view class="comments-user">
-            <image :src="comment.user_avatar | avatorFormat" mode="aspectFit" class="avator" />
-          </view>
-          <view class="comments-content">
-            <text class="username">
-              {{ comment.user_name }}
-              <text class="status" :class="comment.status ? 'success' : 'warn'">
-                {{ comment.status ? '审核通过' : '审核中'}}
-              </text>
-            </text>
-            <text class="content-time">{{comment.create_time}}</text>
-            <text class="content">{{ comment.comment }}</text>
-          </view>
-          <view class="comments-rate">
-            <view class="rate">
+    <view class="comments">
+      <scroll-view scroll-y @scrolltolower="() => upCallback(page)" style="height: 100%">
+        <view class="comments-item" v-for="(comment, index) in comments" :key="index">
+          <view class="comments-userinfo">
+            <view class="userinfo-left">
+              <image :src="comment.user_avatar | avatorFormat" mode="aspectFit" class="avator" />
+              <view class="userinfo-left-box">
+                <text class="username">
+                  {{ comment.user_name }}
+                  <text class="status" :class="comment.status ? 'success' : 'warn'">
+                    {{ comment.status ? '审核通过' : '审核中'}}
+                  </text>
+                </text>
+                <text class="time">{{comment.create_time}}</text>
+              </view>
+            </view>
+            <view class="userinfo-right">
               <uni-rate :value="comment.star" size="36rpx" readonly />
             </view>
           </view>
-        </view>
-      </mescroll-body>
-    </view>
 
+          <view class="comments-textarea">
+            {{ comment.comment }}
+            {{ comment.comment }}
+            {{ comment.comment }}
+            {{ comment.comment }}
+            {{ comment.comment }}
+            {{ comment.comment }}
+            {{ comment.comment }}
+            {{ comment.comment }}
+            {{ comment.comment }}
+          </view>
+        </view>
+
+        <view v-if="isFinish" style="width: 100%; font-size: '24rpx'; text-align: center;"> 没有更多了</view>
+      </scroll-view>
+    </view>
   </view>
 </template>
 
 <script>
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
-import MescrollBody  from "@/uni_modules/mescroll-uni/components/mescroll-body/mescroll-body.vue"
+import MescrollBody from "@/uni_modules/mescroll-uni/components/mescroll-body/mescroll-body.vue"
 import {
   courseGetCommentList
 } from '@/api/course'
@@ -70,20 +81,9 @@ export default {
   },
   data() {
     return {
-      show: false,
-      up: {
-        page: {
-          num: 0,
-          size: 1,
-          time: 500
-        }
-      },
+      page: { num: 0, size: 1 },
+      isFinish: false,
       value: 2,
-      rateForm: {
-        tags: [],
-        star: 0,
-        remark: '',
-      },
       tags: [
         { text: '刀剑神域', num: 11 },
         { text: 'overlord', num: 10 },
@@ -94,6 +94,7 @@ export default {
     }
   },
   mounted() {
+    this.downCallback()
   },
   methods: {
     onClickComments() {
@@ -101,35 +102,46 @@ export default {
     },
     // 下拉
     downCallback() {
-      this.mescroll.resetUpScroll(true)
+      this.page.num = 0
+      this.upCallback(this.page)
     },
     // 上拉
     async upCallback(page) {
+      if (this.isFinish) return;
+      page.num++;
       const data = {
         page: page.num,
         page_size: page.size,
         course_id: this.courseId
       }
       const res = await courseGetCommentList(data)
-      if (res.code !== 0) return this.mescroll.endBySize(0, 0);
-      // 接口返回的当前页数据列表 (数组)
+      if (res.code !== 0) return page.num -= 1;
+
       let curPageData = res.data.data
-      // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
-      let curPageLen = curPageData.length;
-      // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
       let totalSize = res.data.total;
-      //设置列表数据
+      let curPageLen = curPageData.length + this.comments.length
       if (page.num == 1) this.comments = []; //如果是第一页需手动置空列表
       this.comments = this.comments.concat(curPageData); //追加新数据
-      // 请求成功,隐藏加载状态 方法二(推荐): 后台接口有返回列表的总数据量 totalSize
-      this.mescroll.endBySize(curPageLen, totalSize);
+      this.endBySize(curPageLen, totalSize);
     },
-  }
+    // 技术判断
+    endBySize(curPageLen, totalSize) {
+      if (curPageLen >= totalSize) {
+        this.isFinish = true
+      } else {
+        this.isFinish = false
+      }
+      return this.isFinish
+    }
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
+.rate {
+  height: 100%;
+}
 
 .rate-all {
   padding: 33rpx;
@@ -196,54 +208,75 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  height: 500rpx;
+  padding-bottom: var(--window-bottom);
   border-top: $logan-border-spacing-md;
 
   &-item {
     display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: flex-start;
-    padding: 24rpx 30rpx;
-    width: calc(100% - 60rpx);
-    border-top: $logan-border-spacing-md-sm;
-  }
-
-  &-user {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    flex: 1;
-  }
-
-  &-content {
-    display: flex;
     flex-direction: column;
-    margin: 0 30rpx;
-    font-size: $font-size-sm;
-    color: $text-color;
-    flex: 4;
+    padding: 30rpx;
+    width: calc(100% - 60rpx);
+    border-bottom: $logan-border-spacing-md-sm;
+  }
 
-    .content {
-      margin-top: 20rpx;
+  &-userinfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .userinfo-left {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      font-size: $font-size-sm;
+
+      .avator {
+        width: $img-size-sm;
+        height: $img-size-sm;
+        border-radius: 50%;
+      }
+    }
+
+    .userinfo-left-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-left: 20rpx;
+
+      .username {
+        font-size: $font-size-sm;
+      }
+
+      .time {
+        margin-top: 24rpx;
+        color: #aaa;
+        font-size: $font-size-sm;
+      }
+
+      .status {
+        margin-left: 20rpx;
+        font-size: $font-size-sm;
+        padding: 2rpx 6rpx 4rpx;
+      }
+
+      .success {
+        color: $color-primary;
+        border: 2rpx solid $color-primary;
+      }
+
+      .warn {
+        color: $color-error;
+        border: 2rpx solid $color-error;
+      }
     }
   }
 
-  &-rate {
-    display: flex;
-    flex-direction: columns;
-    align-items: center;
-    color: $text-color-grey;
-  }
-
-  .avator {
-    width: $img-size-sm;
-    height: $img-size-sm;
-    border-radius: 50%;
-  }
-
-  .content-time {
-    margin-top: 12rpx;
-    font-size: $font-size-sm;
+  &-textarea {
+    margin-top: 20rpx;
+    margin-left: 116rpx;
+    font-size: $font-size-base;
   }
 }
 </style>

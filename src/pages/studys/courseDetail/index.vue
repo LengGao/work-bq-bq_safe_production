@@ -1,6 +1,10 @@
 <template>
   <view class="course-detail">
-    <video :src="video" :autoplay="true" class="course-video"></video>
+    <video :src="video" :autoplay="true" class="course-video" @play="onPlay">
+      <cover-view class="course-cover" :style="isPlay ? 'display: none' : ''">
+        <cover-image :src="info.cover"></cover-image>
+      </cover-view>
+    </video>
 
     <view class="segmented-bar">
       <uni-segmented-control :current="current" :values="items" @clickItem="onChangeSegmented" styleType="text"
@@ -65,26 +69,26 @@ export default {
   },
   data() {
     return {
-      show: false,
       region_id: 1,
       course_id: 26,
+      isPlay: false,
+
+      // 上拉配置
       up: { page: { num: 0, size: 10, time: 1000 } },
       // 课程详情
-      courseInfo: {},
-      content: '',
       info: {},
+      content: '', 
+      courseInfo: {},
       // 目录
       chapterList: [],
       // 评价
       courseGetComment: [],
-      
-      tags: [],
       starText: ['', '不满意', '一般', '比较满意', '满意', '非常满意'],
       rateForm: {
         star: 0,
-        hot_word: [],
         comment: '',
       },
+
       current: 0,
       items: ['简介', '目录', '评价'],
       video: "https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4"
@@ -98,18 +102,28 @@ export default {
     this.getCourseInfo()
   },
   methods: {
+    onPlay() {
+      this.isPlay = true
+    },
     // 分段其切换
     onChangeSegmented({ currentIndex }) {
       this.current = currentIndex
     },
     // 打分
     onChangeRate(e) {
-      console.log('onChangeRate', e);
       this.rateForm.star = e.value
     },
     // 评价
     onComment() {
+      this.resetForm()
       this.$refs.popup.open()
+    },
+    resetForm() {
+      this.rateForm = { star: 0, comment: '' }
+      this.commentHotWord = this.commentHotWord.map(item => {
+        item.checked = false;
+        return item
+      })
     },
     // 关闭
     onClose() {
@@ -138,6 +152,7 @@ export default {
       if (res.code === 0) {
         uni.showToast({ icon: 'success', title: '评论失败' })
         this.$refs.rate.downCallback()
+        this.onClose()
       } else {
         uni.showToast({ icon: 'error', title: '评论失败' })
       }
@@ -172,6 +187,12 @@ export default {
 .course-video {
   width: 100%;
   height: 30vh;
+
+  &-cover {
+    width: 100%;
+    height: 100%;
+  }
+
 }
 
 ::v-deep .segmented-control {

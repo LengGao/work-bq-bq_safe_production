@@ -59,8 +59,8 @@ export default {
           num: 0,
           size: 2,
           time: 500,
-          auto: false
-        }
+        },
+        auto: false
       },
       region_id: 1,
       category_id: 0,
