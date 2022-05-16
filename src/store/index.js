@@ -1,12 +1,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { getVersion } from "@/api/user";
+import {
+    getVersion,
+    login,
+    loginout
+} from "@/api/user";
 import {
     courseCommentHotWord
 } from '@/api/course'
 
 const userInfo = uni.getStorageSync('userInfo') || {}
 const questionBankInfo = uni.getStorageSync('questionBankInfo') || {}
+const organizationCurrent = uni.getStorageSync('orgInfo')
 const version = process.env.VUE_APP_VERSION
 let appId = process.env.VUE_APP_APPID
 
@@ -20,9 +25,8 @@ const state = {
     },
     // 用户
     user: {
-        isLogin: false,
         userInfo: userInfo,
-        organizationCurrent: {},
+        organizationCurrent: organizationCurrent,
         questionBankInfo: questionBankInfo,
     },
     course: {
@@ -45,7 +49,9 @@ const getters = {
     // 用户token
     token: state => state.user.userInfo.token,
     // 是否登录
-    isLogin: state => state.user.userInfo.isLogin,
+    login_status: state => {
+        return !!state.user.userInfo.token || false
+    },
     // 当前机构
     organizationCurrent: state => state.user.organizationCurrent,
     // 获取用户所属机构
@@ -80,11 +86,12 @@ const mutations = {
     // 设置用户信息
     SET_USER_INFO(state, data) {
         state.user.userInfo = data
-        uni.setStorageSync('userInfo', data)
+        uni.setStorage({ key: 'userInfo', data })
     },
     // 设置当前机构
     SET_ORG_CURRENT(state, data) {
         state.user.organizationCurrent = data
+        uni.setStorage({ key: 'orgInfo', data: data })
     },
     // 设置机构列表
     SET_ORG_LIST(state, data) {
@@ -98,6 +105,7 @@ const mutations = {
     // 设置题库信息
     SET_QUESTION_BANK_INFO(state, data) {
         state.user.questionBankInfo = data
+        uni.setStorage({ key: 'questionBankInfo', data })
     },
     // 设置题目列表 
     SET_LIST(state, list) {
@@ -126,17 +134,29 @@ const actions = {
     // 设置用户信息
     setUserInfo({ commit }, data) {
         commit('SET_USER_INFO', data)
-        uni.setStorage({ key: 'userInfo', data })
     },
     // 设置当前机构
     setOrgCurrent({ commit }, dsta) {
-        commit('SET_ORG_CURRENT', dsta)  
+        commit('SET_ORG_CURRENT', dsta)
     },
     // 设置机构列表
     setOrgList({ commit }, data) {
         commit('SET_ORG_LIST', data)
     },
-
+    async login({ commit }, data) {
+        let res = await login(data)
+        if (res.code === 0) {
+            commit('SET_USER_INFO', res.data)
+            commit('SET_ORG_LIST', res.data.org_list)        
+        }
+        return res
+    },
+    async loginout({ commit }, data) {
+        commit('SET_USER_INFO', {})
+        commit('SET_ORG_LIST', [])
+        commit('SET_ORG_CURRENT', {})
+        return loginout()
+    },
     // 获取热评词
     async getCommentHotWord({ commit }, data) {
         let res = await courseCommentHotWord()
@@ -150,7 +170,6 @@ const actions = {
     // 设置题库信息
     setQuestionBankInfo({ commit }, data) {
         commit('SET_QUESTION_BANK_INFO', data)
-        uni.setStorage({ key: 'questionBankInfo', data })
     },
     // 设置题目列表
     setQusetionList({ commit }, list) {

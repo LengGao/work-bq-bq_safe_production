@@ -143,11 +143,9 @@
 <script>
 import CardRow from "@/components/card-row/index";
 import RegionChange from './components/RegionChange'
-import LoginMixin from '@/mixins/login'
 import { mapGetters } from 'vuex'
 
 export default {
-  mixins: [LoginMixin],
   components: {
     CardRow,
     RegionChange
@@ -202,17 +200,24 @@ export default {
   created() {
   },
   computed: {
-    ...mapGetters(['organizationList'])
+    ...mapGetters(['organizationList', 'login_status'])
   },
   watch: {
-    organizationList() {
-      console.log('organizationList');
-    },
-    isLogin(val) {
-      console.log('val',val);
-      if (val) {
-        this.openPopup(this.organizationList)
-      }
+    login_status: {
+      handler(val) {
+        console.log('newVal',val);
+        if (val) {
+          this.openPopup(this.organizationList)
+        } else {
+          // #ifdef H5
+          uni.redirectTo({ url: '/pages/indexs/login/index' })
+          // #endif
+          // #ifdef MP-WEIXIN
+          uni.redirectTo({ url: '/pages/indexs/loginAuth/index' })
+          // #endif
+        }
+      },
+      immediate: true
     }
   },
   methods: {

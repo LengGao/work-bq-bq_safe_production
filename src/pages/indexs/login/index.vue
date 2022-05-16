@@ -16,7 +16,10 @@
                        placeholderStyle="font-size: 28rpx; color: #ccc;" type="password" :inputBorder="false"
                        passwordIcon></uni-easyinput>
       </view>
-      <button class="btn-submit" :class="!isRead ? 'btn-disable' : ''" :disable="!isRead" @click="onSubmit">登录</button>
+      <button class="btn-submit" :class="!isRead ? 'btn-disable' : ''" :disable="!isRead" @click="onSubmit"
+      :loading="loading">
+        登录
+      </button>
       <view class="read">
         <checkbox-group @change="onChecked">
           <label class="label">
@@ -44,7 +47,8 @@ export default {
       username: '13535019471',
       password: '123456',
       isRead: false,
-      visibility: false
+      visibility: false,
+      loading: false,
     }
   },
   methods: {
@@ -85,16 +89,16 @@ export default {
       uni.navigateTo({ url: '/pages/indexs/reisgter/index' })
     },
     async onSubmit() {
-      let param = { mobile: this.username, password: this.password }
-      let res = await login(param)
-
+      this.loading = true
+      let params = { mobile: this.username, password: this.password }
+      let res = await this.$store.dispatch('login', params)
       if (res.code === 0) {
         uni.showToast({ icon: 'success', title: '登录成功' })
-        this.$store.commit('SET_USER_INFO', res.data)
         uni.switchTab({ url: '/pages/index/index' })
       } else {
         uni.showToast({ icon: 'none', title: `${res.message}` })
       }
+      this.loading = true
     },
     onChecked(e) {
       this.isRead = e.target.value.length ? true : false

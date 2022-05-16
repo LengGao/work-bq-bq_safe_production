@@ -23,7 +23,8 @@ export function login(data) {
     return request({
         url: 'login/password',
         method: 'post',
-        data
+        data,
+        loading: true
     })
 }
 
@@ -31,7 +32,8 @@ export function loginout(data) {
     return request({
         url: 'login/out',
         method: 'post',
-        data
+        data,
+        loading: true
     })
 }
 
