@@ -41,8 +41,8 @@ import { login } from '@/api/user'
 export default {
   data() {
     return {
-      username: '15649596365',
-      password: '111111',
+      username: '13535019471',
+      password: '123456',
       isRead: false,
       visibility: false
     }
@@ -85,12 +85,15 @@ export default {
       uni.navigateTo({ url: '/pages/indexs/reisgter/index' })
     },
     async onSubmit() {
-      let param = { username: this.username, password: this.password }
+      let param = { mobile: this.username, password: this.password }
       let res = await login(param)
-      if (res.code !== 0 ) {
-        let obj = {token: '111', mobile: '15', org_list: [{id: '1', name: '机构1'}, {id: '2', name: '机构2'}]}
-        this.$store.commit('SET_USER_INFO', obj)
+
+      if (res.code === 0) {
+        uni.showToast({ icon: 'success', title: '登录成功' })
+        this.$store.commit('SET_USER_INFO', res.data)
         uni.switchTab({ url: '/pages/index/index' })
+      } else {
+        uni.showToast({ icon: 'none', title: `${res.message}` })
       }
     },
     onChecked(e) {

@@ -231,7 +231,6 @@ export default {
     onChoiceOrg(item) {
       this.$store.dispatch('setOrgCurrent', item)
       this.$refs.popupOrg.close()
-      
     },
     // 点击筛选
     onOpenFilter() {

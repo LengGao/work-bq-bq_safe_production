@@ -90,7 +90,7 @@ export default {
       item.checked = !item.checked
       this.checkeds3.push(item)
       this.$emit('videoChange', item)
-      this.$forceUpdate()
+      // this.$forceUpdate()
     },
     updateChapterList(list, id) {
       return list.filter(item => {
@@ -107,9 +107,10 @@ export default {
         let item = list[i]
         item.checked = false
         if (item.sub && item.sub.length > 0) {
-          this.assembleData(item.sub)
+          item.sub = this.assembleData(item.sub)
         } else if (item.lesson && item.lesson.length > 0) {
-          this.assembleData(item.lesson)
+          item.lesson = this.assembleData(item.lesson)
+          console.log('lesson', item.lesson);
         }
       }
       return list

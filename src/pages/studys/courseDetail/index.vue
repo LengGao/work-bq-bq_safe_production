@@ -4,8 +4,7 @@
 
     <view class="segmented-bar">
       <uni-segmented-control :current="current" :values="items" @clickItem="onChangeSegmented" styleType="text"
-                             activeColor="#199fff" />
-
+                             activeColor="#199ff" />
       <view class="segmented-content">
         <view v-show="current === 0" class="segmented-pane">
           <Details :info="info" :content="content" />
@@ -14,7 +13,7 @@
           <Catalogue v-if="course_id" :courseId="course_id" />
         </view>
         <view v-show="current === 2" class="segmented-pane">
-          <Rate @openComment="onComment" />
+          <Rate ref="rate" :courseId="course_id" @openComment="onComment" />
         </view>
       </view>
     </view>
@@ -28,18 +27,18 @@
         <view class="dialog-title"> 我的评价</view>
         <view class="dialog-content">
           <view class="rate">
-            <uni-rate :value="rateForm.star" @change="onChangeRate" :size="32" :touchable="false" />
+            <uni-rate :value="rateForm.star" @change="onChangeRate" :size="42" :touchable="false" />
             <view class="rate-content">{{ starText[rateForm.star] }}</view>
           </view>
           <view class="tags">
-            <view v-for="(tag, index) in tags" :key="tag.id" class="tags-btn" :class="tag.checked ? 'btn-active' : ''"
+            <view v-for="(tag, index) in commentHotWord" :key="index" class="tags-btn" :class="tag.checked ? 'btn-active' : ''"
                   @click="() => onTagSelect(index)">{{ tag.label }}</view>
-          </view>
-          <view class="remark">
-            <input v-model="rateForm.remark" placeholder="说一说听课的感受和建议吧·" class="remark-input" />
           </view>
         </view>
         <view class="dialog-footer">
+          <view class="remark">
+            <input v-model="rateForm.comment" placeholder="说一说听课的感受和建议吧·" class="remark-input" />
+          </view>
           <button class="dialog-footer-btn" plain @click="onPublish">发表评论</button>
         </view>
       </div>
@@ -52,10 +51,10 @@
 import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
-
-import {
+import { mapGetters } from 'vuex'
+import { 
   courseInfo,
-  courseGetCommentList
+  courseCommentSubmit
 } from '@/api/course'
 
 export default {
@@ -78,42 +77,34 @@ export default {
       chapterList: [],
       // 评价
       courseGetComment: [],
-
+      
+      tags: [],
       starText: ['', '不满意', '一般', '比较满意', '满意', '非常满意'],
       rateForm: {
-        star: 1,
-        remark: '',
-        tags: [],
+        star: 0,
+        hot_word: [],
+        comment: '',
       },
-      tags: [
-        { id: 1, label: '一二三四', value: '1', checked: false },
-        { id: 2, label: '一二三四', value: '1', checked: false },
-        { id: 3, label: '一二三四', value: '1', checked: false },
-        { id: 4, label: '一二三四', value: '1', checked: false },
-        { id: 5, label: '一二三四', value: '1', checked: false },
-        { id: 6, label: '一二三四', value: '1', checked: false },
-        { id: 7, label: '一二三四无', value: '1', checked: false },
-      ],
       current: 0,
       items: ['简介', '目录', '评价'],
       video: "https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4"
     }
   },
+  computed: {
+    ...mapGetters(['commentHotWord'])
+  },
   onLoad(query) {
     console.log('query', query);
     this.getCourseInfo()
-    // this.courseGetCommentList()
   },
   methods: {
     // 分段其切换
     onChangeSegmented({ currentIndex }) {
       this.current = currentIndex
     },
-    // 获取数据 
-    getData() {
-    },
     // 打分
     onChangeRate(e) {
+      console.log('onChangeRate', e);
       this.rateForm.star = e.value
     },
     // 评价
@@ -126,9 +117,31 @@ export default {
     },
     // 标签
     onTagSelect(index) {
-      this.tags[index].checked = !this.tags[index].checked
+      this.commentHotWord[index].checked = !this.commentHotWord[index].checked
     },
+    // 获取标签
+    getTag(tags) {
+      return tags.filter(filterItem => filterItem.checked).map(mapItem => mapItem.label)
+    },
+    // 发表评论
+    async onPublish() {
+      let {star, comment} = this.rateForm
 
+      let params = {
+        course_id: this.course_id,
+        star: star,
+        hot_word: this.getTag(this.commentHotWord),
+        comment: comment
+      }
+            
+      let res = await courseCommentSubmit(params)
+      if (res.code === 0) {
+        uni.showToast({ icon: 'success', title: '评论失败' })
+        this.$refs.rate.downCallback()
+      } else {
+        uni.showToast({ icon: 'error', title: '评论失败' })
+      }
+    },
     // 复制课程信息
     copy() {
       let obj = {}, data = this.courseInfo
@@ -145,12 +158,6 @@ export default {
       this.courseInfo = res.data
       this.copy()
     },
-
-    // 评论列表
-    async getCourseGetCommentList() {
-      
-      let res = await courseGetCommentList()
-    }
   }
 }
 </script>
@@ -214,10 +221,10 @@ export default {
   background-color: #fff;
 
   &-title {
-    flex: 1 1 1;
     width: 100%;
     text-align: center;
-    font-size: $font-size-md;
+    font-size: $font-size-xlg;
+    font-weight: 600;
     color: #199fff;
   }
 
@@ -225,7 +232,6 @@ export default {
     flex: 2 1 0;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 
     .rate {
       display: flex;
@@ -242,15 +248,15 @@ export default {
     .tags {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: space-evenly;
       align-items: baseline;
       flex-wrap: wrap;
-      margin: 40rpx 0;
-      padding: 30rpx 60rpx;
-      height: 300rpx;
+      margin-top: 40rpx;
+      padding: 0 60rpx;
+      
 
       &-btn {
-        margin: 0 10rpx;
+        margin: 10rpx;
         padding: 12rpx;
         color: #777;
         font-size: 24rpx;
@@ -264,9 +270,11 @@ export default {
         border-color: #199fff;
       }
     }
+  }
 
+  &-footer {
     .remark {
-      margin: 30rpx auto;
+      margin: 30rpx 40rpx 30rpx 82rpx;
       width: 80%;
       height: 54rpx;
       line-height: 54rpx;
@@ -274,12 +282,9 @@ export default {
 
       &-input {
         font-size: $font-size-base;
+        color: $text-color;
       }
     }
-  }
-
-  &-footer {
-    flex: 1 1 1;
 
     .dialog-footer-btn {
       width: 70%;

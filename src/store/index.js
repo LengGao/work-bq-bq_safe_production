@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { getVersion } from "@/api/user";
+import {
+    courseCommentHotWord
+} from '@/api/course'
 
 const userInfo = uni.getStorageSync('userInfo') || {}
 const questionBankInfo = uni.getStorageSync('questionBankInfo') || {}
@@ -21,6 +24,9 @@ const state = {
         userInfo: userInfo,
         organizationCurrent: {},
         questionBankInfo: questionBankInfo,
+    },
+    course: {
+        commentHotWord: null
     },
     // 题库
     questionList: {
@@ -49,6 +55,14 @@ const getters = {
     // 用户题库id
     question_bank_id: state => state.user.questionBankInfo.question_bank_id,
 
+    // 热评词
+    commentHotWord: state => {
+        if (!state.course.commentHotWord) {
+            store.dispatch('getCommentHotWord')
+        }
+        return state.course.commentHotWord || []
+    },
+
     // 习题列表 （存收藏夹，错题集的答题卡数据）
     questionList: state => state.questionList.list
 }
@@ -75,6 +89,10 @@ const mutations = {
     // 设置机构列表
     SET_ORG_LIST(state, data) {
         state.user.organizationList = data
+    },
+
+    SET_HOT_WORD(state, data) {
+        state.course.commentHotWord = data
     },
 
     // 设置题库信息
@@ -118,6 +136,17 @@ const actions = {
     setOrgList({ commit }, data) {
         commit('SET_ORG_LIST', data)
     },
+
+    // 获取热评词
+    async getCommentHotWord({ commit }, data) {
+        let res = await courseCommentHotWord()
+        if (res.code === 0) {
+            let list = res.data.map((word, index) => {
+                return {id: index, label: word, checked: false}
+            })
+            commit('SET_HOT_WORD', list)
+        }
+    },
     // 设置题库信息
     setQuestionBankInfo({ commit }, data) {
         commit('SET_QUESTION_BANK_INFO', data)
@@ -129,7 +158,7 @@ const actions = {
     }
 }
 
-const store = new Vuex.Store({ state, getters, mutations, actions })
+var store = new Vuex.Store({ state, getters, mutations, actions })
 
 export default store
 

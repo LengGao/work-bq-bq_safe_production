@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import moment from '@/utils/date'
+import avator from '@/static/avator.png'
 
 const systems = uni.getSystemInfoSync()
 
@@ -23,9 +24,11 @@ const filters = {
         return val
     },
     secondsFormat(val) {
-        if (systems.platform.indexOf('ios') !== -1) {
-        }
+        if (systems.platform.indexOf('ios') !== -1) {}
         return val
+    },
+    avatorFormat(url) {
+        return url || avator
     },
     orderStatus(status) {
         const statusMap = {

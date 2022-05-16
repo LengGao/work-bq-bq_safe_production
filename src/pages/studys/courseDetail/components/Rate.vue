@@ -8,7 +8,6 @@
           <uni-rate v-model="value" @change="onChange" size="48rpx" allowHalf readonly />
         </view>
       </view>
-
       <view class="right">
         <button @click="onClickComments" class="comments-btn">
           <text style="font-size: 24rpx;">我要评价</text>
@@ -22,33 +21,64 @@
       </view>
     </view>
 
-    <view class="comments">
-      <view class="comments-item" v-for="comment in comments" :key="comment.id">
-        <view class="comments-user">
-          <image :src="comment.avator" mode="aspectFit" class="avator" />
-        </view>
-        <view class="comments-content">
-          <text class="username">{{ comment.name }}</text>
-          <text class="content-time">{{comment.time}}</text>
-          <text class="content">{{ comment.content }}</text>
-        </view>
-        <view class="comments-rate">
-          <view class="rate">
-            <uni-rate :value="comment.rate" @change="onChange" size="36rpx" allowHalf readonly />
+    <view class="comments" style="height: 400px">
+      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" 
+      :fixed="false" style="overflow: auto" height="400px">
+        <view class="comments-item" v-for="comment in comments" :key="comment.id">
+          <view class="comments-user">
+            <image :src="comment.user_avatar | avatorFormat" mode="aspectFit" class="avator" />
+          </view>
+          <view class="comments-content">
+            <text class="username">
+              {{ comment.user_name }}
+              <text class="status" :class="comment.status ? 'success' : 'warn'">
+                {{ comment.status ? '审核通过' : '审核中'}}
+              </text>
+            </text>
+            <text class="content-time">{{comment.create_time}}</text>
+            <text class="content">{{ comment.comment }}</text>
+          </view>
+          <view class="comments-rate">
+            <view class="rate">
+              <uni-rate :value="comment.star" size="36rpx" readonly />
+            </view>
           </view>
         </view>
-      </view>
+      </mescroll-body>
     </view>
 
   </view>
 </template>
 
 <script>
+import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import MescrollBody  from "@/uni_modules/mescroll-uni/components/mescroll-body/mescroll-body.vue"
+import {
+  courseGetCommentList
+} from '@/api/course'
+
 export default {
+  mixins: [MescrollMixin],
+  components: {
+    MescrollBody
+  },
+  props: {
+    courseId: {
+      type: [String, Number],
+      default: ''
+    }
+  },
   data() {
     return {
       show: false,
-      value: 2.5,
+      up: {
+        page: {
+          num: 0,
+          size: 1,
+          time: 500
+        }
+      },
+      value: 2,
       rateForm: {
         tags: [],
         star: 0,
@@ -60,20 +90,40 @@ export default {
         { text: '从零开始的异世界生活', num: 12 },
         { text: 'overlord', num: 10 },
       ],
-      comments: [
-        { id: 1, name: '周杰伦', content: '错哦哎呦不错哦', rate: 3, time: '1111-11-11 11::11:11', avator: 'https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' },
-        { id: 2, name: '周杰伦', content: '哎呦不错哦', rate: 1, time: '2012-11-11 11:11:11', avator: 'https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' },
-        { id: 3, name: '周杰伦', content: '哎呦不错哦', rate: 2, time: '2012-11-11 11:11:11', avator: 'https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500' }
-      ]
+      comments: []
     }
   },
+  mounted() {
+  },
   methods: {
-    onChange(e) {
-      console.log('rate发生改变:' + JSON.stringify(e))
-    },
     onClickComments() {
       this.$emit('openComment')
-    }
+    },
+    // 下拉
+    downCallback() {
+      this.mescroll.resetUpScroll(true)
+    },
+    // 上拉
+    async upCallback(page) {
+      const data = {
+        page: page.num,
+        page_size: page.size,
+        course_id: this.courseId
+      }
+      const res = await courseGetCommentList(data)
+      if (res.code !== 0) return this.mescroll.endBySize(0, 0);
+      // 接口返回的当前页数据列表 (数组)
+      let curPageData = res.data.data
+      // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
+      let curPageLen = curPageData.length;
+      // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
+      let totalSize = res.data.total;
+      //设置列表数据
+      if (page.num == 1) this.comments = []; //如果是第一页需手动置空列表
+      this.comments = this.comments.concat(curPageData); //追加新数据
+      // 请求成功,隐藏加载状态 方法二(推荐): 后台接口有返回列表的总数据量 totalSize
+      this.mescroll.endBySize(curPageLen, totalSize);
+    },
   }
 }
 </script>
@@ -119,7 +169,6 @@ export default {
     }
   }
 }
-
 
 .rate-tag {
   display: flex;
@@ -176,7 +225,7 @@ export default {
 
     .content {
       margin-top: 20rpx;
-    }  
+    }
   }
 
   &-rate {

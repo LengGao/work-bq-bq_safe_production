@@ -41,9 +41,7 @@
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import DropdownFilter from '@/components/dropdown-filter'
 import DropdownSelect from '@/components/dropdown-select'
-import cource1 from '@/static/img/index_cource1.png'
-import cource2 from '@/static/img/index_cource2.png'
-import { 
+import {
   courseList
 } from '@/api/course'
 
@@ -119,6 +117,7 @@ export default {
         typeValue: this.typeValue
       }
       const res = await courseList(data)
+      if (res.code !== 0) return this.mescroll.endBySize(0, 0);
       // 接口返回的当前页数据列表 (数组)
       let curPageData = res.data.data
       // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)

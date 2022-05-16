@@ -28,13 +28,35 @@ export function StaffNotice(param) {
 // API docs http://showdoc.beiqujy.com/web/#/44
 
 /**
- * 课程评价列表
- * @param {*} data {page: 当前分页, course_id: 课程id}
+ * 课程分类
+ * @param {*} data 
  * @returns 
  */
-export function commentList(data) {
+ export function courseCategory(data) {
   return request({
-    url: 'course/commentList',
+    url: 'course/category',
+    method: 'get',
+    data,
+  })
+}
+
+/**
+ * 课程列表
+ * @param {*} data {page: 1, page_size: 10, region_id，地区id， category_id： 分类id}
+ * @returns 
+ */
+ export function courseList(data) {
+  return request({
+    url: 'course/list',
+    method: 'get',
+    data
+  })
+}
+
+//  课程信息
+ export function courseInfo(data) {
+  return request({
+    url: 'course/info',
     method: 'get',
     data,
     loading: true
@@ -56,57 +78,33 @@ export function chapterList(data) {
 }
 
 /**
- * 课程信息
- * @param {*} data {region_id: 地区id,  course_id: 课程id}
+ * 课程评价列表
+ * @param {*} data {page: 当前分页, course_id: 课程id}
  * @returns 
  */
-export function courseInfo(data) {
+ export function commentList(data) {
   return request({
-    url: 'course/info',
+    url: 'course/commentList',
     method: 'get',
     data,
     loading: true
   })
 }
 
-/**
- * 课程列表
- * @param {*} data {page: 1, page_size: 10, region_id，地区id， category_id： 分类id}
- * @returns 
- */
-export function courseList(data) {
+// 评价热刺
+export function courseCommentHotWord() {
   return request({
-    url: 'course/list',
-    method: 'get',
-    data
+    url: 'course/commentHotWord',
+    method: 'get'
   })
 }
 
-/**
- * 课程分类
- * @param {*} data 
- * @returns 
- */
-export function courseCategory(data) {
+// 发表评论
+export function courseCommentSubmit(data) {
   return request({
-    url: 'course/category',
-    method: 'get',
-    data,
-    loading: true
-  })
-}
-
-/**
- * 评价
- * @param {*} data {course_id: 课程id, star: 频分， ccomment: 内容} 
- * @returns 
- */
-export function courseComment(data) {
-  return request({
-    url: 'course/comment',
+    url: 'course/commentSubmit',
     method: 'post',
-    data,
-    loading: true
+    data
   })
 }
 
@@ -131,7 +129,7 @@ export function courseGetCommentInfo(data) {
  */
 export function courseGetCommentList(data) {
   return request({
-    url: 'course/getCommentList',
+    url: 'course/commentList',
     method: 'get',
     data,
     loading: true
