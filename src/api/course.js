@@ -122,6 +122,20 @@ export function courseCommentSubmit(data) {
 }
 
 /**
+ * 视频凭证
+ * @param {*} data  { lesson_id: 课时}
+ * @returns 
+ */
+export function courseGetVideoAuth(data) {
+  return request({
+    url: 'course/getVideoAuth',
+    method: 'get',
+    data
+  })
+}
+
+
+/**
  * 视频播放记录
  * @param {*} data {lesson_id：课时id，start_second: 开始秒, end_second：结束秒}
  * @returns 

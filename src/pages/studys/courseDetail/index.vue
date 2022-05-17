@@ -58,7 +58,8 @@ import Rate from './components/Rate'
 import { mapGetters } from 'vuex'
 import { 
   courseInfo,
-  courseCommentSubmit
+  courseCommentSubmit,
+  courseGetVideoAuth
 } from '@/api/course'
 
 export default {
@@ -112,12 +113,16 @@ export default {
   methods: {
     // 开始学习
     onStart() {
-      
-
+    
     },
     // 更换播放视频
-    onChangeVideo(detail) {
-      console.log('onChangeVideo', detail);
+    async onChangeVideo(detailArr) {
+      let curr = detailArr[0]
+      let params = { lesson_id: curr.id }
+      let res = await courseGetVideoAuth(params)
+      if (res.code === 0) {
+        console.log('courseGetVideoAuth', res);
+      }
     },
     onPlay() {
       this.isPlay = true
@@ -188,8 +193,12 @@ export default {
       let param = { region_id: this.region_id, course_id: this.course_id }
       let res = await courseInfo(param)
       this.courseInfo = res.data
+      if (res.code === 0) {
+
+      }
       this.copy()
     },
+
   }
 }
 </script>
