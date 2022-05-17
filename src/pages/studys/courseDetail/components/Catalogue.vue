@@ -63,7 +63,7 @@
 <script>
 import Collapse from './Collapse'
 import CollapseItem from './CollapseItem'
-import { chapterList } from '@/api/course'
+import { courseChapterList } from '@/api/course'
 
 export default {
   components: {
@@ -77,20 +77,26 @@ export default {
     },
     learningLessonId: {
       type: [String, Number],
-      default: 38,
+      default: '',
     }
   },
-  computed: {
+  watch: {
+    courseId() {
+      this.getChapterList()
+    },
+    learningLessonId() {
+      if (this.learningLessonId) {
+        this.toFlushBack(this.learningLessonId, this.chapterList)
+      }
+    }
   },
   mounted() {
     this.getChapterList()
   },
   data() {
     return {
-      find: false,
-      checkeds: [], // 一级
+      checkeds: [], // 当前选择
       chapterList: [], // 目录
-      chapterCache: [], // 缓存目录
     }
   },
   methods: {
@@ -153,11 +159,13 @@ export default {
     // 章节目录
     async getChapterList() {
       let param = { course_id: this.courseId }
-      let res = await chapterList(param)
+      let res = await courseChapterList(param)
       if (res.code == 0) {
         let list = this.assembleData(res.data)
         this.chapterList = list
-        this.toFlushBack(this.learningLessonId, list)
+        if (this.learningLessonId) {
+          this.toFlushBack(this.learningLessonId, list)
+        }
       }
     },
   }, // methods end

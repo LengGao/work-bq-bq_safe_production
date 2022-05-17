@@ -68,23 +68,9 @@ export function StaffNotice(param) {
  * @param {*} data {course_id: 课程id}
  * @returns 
  */
-export function chapterList(data) {
+export function courseChapterList(data) {
   return request({
     url: 'course/chapter',
-    method: 'get',
-    data,
-    loading: true
-  })
-}
-
-/**
- * 课程评价列表
- * @param {*} data {page: 当前分页, course_id: 课程id}
- * @returns 
- */
- export function commentList(data) {
-  return request({
-    url: 'course/commentList',
     method: 'get',
     data,
     loading: true
@@ -99,40 +85,39 @@ export function courseCommentHotWord() {
   })
 }
 
+/**
+ * 课程评价列表
+ * @param {*} data {page: 当前分页, course_id: 课程id}
+ * @returns 
+ */
+ export function courseGetCommentList(data) {
+  return request({
+    url: 'course/commentList',
+    method: 'get',
+    data,
+    loading: true
+  })
+}
+
+/**
+ * 课程评价详情 评价统计
+ * @param {*} data {course_id: 课程id}
+ * @returns 
+ */
+ export function courseCommentCount(data) {
+  return request({
+    url: 'course/commentCount',
+    method: 'get',
+    data
+  })
+}
+
 // 发表评论
 export function courseCommentSubmit(data) {
   return request({
     url: 'course/commentSubmit',
     method: 'post',
     data
-  })
-}
-
-/**
- * 课程评价详情
- * @param {*} data {course_id: 课程id}
- * @returns 
- */
-export function courseGetCommentInfo(data) {
-  return request({
-    url: 'course/getCommentInfo',
-    method: 'get',
-    data,
-    loading: true
-  })
-}
-
-/**
- * 评论列表
- * @param {*} data {course_id: 课程id, page: 1, limit: 10}
- * @returns 
- */
-export function courseGetCommentList(data) {
-  return request({
-    url: 'course/commentList',
-    method: 'get',
-    data,
-    loading: true
   })
 }
 
@@ -149,48 +134,3 @@ export function courseRecordLearn(data) {
     loading: true
   })
 }
-
-/**
- * 视频播放信息
- * @param {*} data {lesson_id: 课时id}
- * @returns 
- */
-export function courseGetVideoAuth(data) {
-  return request({
-    url: 'course/getVideoAuth',
-    method: 'get',
-    data,
-    loading: true
-  })
-}
-
-/**
- * 课程详情
- * @param {*} data {course_id: 课程id} 
- * @returns 
- */
-export function courseGetCourseDetail(data) {
-  return request({
-    url: 'course/getCourseDetail',
-    method: 'get',
-    data,
-    loading: true
-  })
-}
-
-/**
- * 课程列表
- * @param {*} data 
- * @returns 
- */
-export function courseGetCourseList(data) {
-  return request({
-    url: 'course/getCourseList',
-    method: 'get',
-    data,
-    loading: true
-  })
-}
-
-
-

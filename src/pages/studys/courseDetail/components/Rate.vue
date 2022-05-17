@@ -2,10 +2,10 @@
   <view class="rate">
     <view class="rate-all">
       <view class="rate-left">
-        <view class="score">{{ value }}</view>
+        <view class="score">{{ star }}</view>
         <view class="rate-all-comments">
-          <view class="comments-num">36条贫家</view>
-          <uni-rate v-model="value" :size="24" @change="onChange" readonly />
+          <view class="comments-num">{{ rateCount }}条评论</view>
+          <uni-rate :value="star" :size="24" readonly />
         </view>
       </view>
       <view class="right">
@@ -17,16 +17,16 @@
 
     <view class="rate-tag">
       <view v-for="(tag, index) in tags" :key="index" class="tag">
-        <text class="tag-text">{{ tag.text }} ({{ tag.num }})</text>
+        <text class="tag-text">{{ tag.word }} ({{ tag.count }})</text>
       </view>
     </view>
 
     <view class="comments">
       <scroll-view scroll-y @scrolltolower="() => upCallback(page)" style="height: 100%">
-        <view class="comments-item" v-for="(comment, index) in comments" :key="index">
+        <view class="comments-item" v-for="comment in comments" :key="comment.id">
           <view class="comments-userinfo">
             <view class="userinfo-left">
-              <image :src="comment.user_avatar | avatorFormat" mode="aspectFit" class="avator" />
+              <image :src="comment.user_avatar" mode="aspectFit" class="avator" @error="(index) => avatorError(index)" />
               <view class="userinfo-left-box">
                 <text class="username">
                   {{ comment.user_name }}
@@ -54,17 +54,13 @@
 </template>
 
 <script>
-import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
-import MescrollBody from "@/uni_modules/mescroll-uni/components/mescroll-body/mescroll-body.vue"
+import avator from '@/static/avator.png'
 import {
+  courseCommentCount,
   courseGetCommentList
 } from '@/api/course'
 
 export default {
-  mixins: [MescrollMixin],
-  components: {
-    MescrollBody
-  },
   props: {
     courseId: {
       type: [String, Number],
@@ -73,22 +69,30 @@ export default {
   },
   data() {
     return {
-      page: { num: 0, size: 1 },
-      isFinish: false,
-      value: 2,
-      tags: [
-        { text: '刀剑神域', num: 11 },
-        { text: 'overlord', num: 10 },
-        { text: '从零开始的异世界生活', num: 12 },
-        { text: 'overlord', num: 10 },
-      ],
+      isFinish: false, // 是否还有跟多
+      page: { num: 0, size: 1 }, // 上拉配置
+      // 评论统计
+      star: 0,
+      rateCount: 0,
+      tags: [],
+      // 评论
       comments: []
+    }
+  },
+  watch: {
+    courseId() {
+      this.downCallback()
+      this.getCourseCommentCount()
     }
   },
   mounted() {
     this.downCallback()
+    this.getCourseCommentCount()
   },
   methods: {
+    avatorError(index) {
+      this.comments[index].user_avatar = avator
+    },
     onClickComments() {
       this.$emit('openComment')
     },
@@ -124,6 +128,15 @@ export default {
         this.isFinish = false
       }
       return this.isFinish
+    },
+    // 评论统计
+    async getCourseCommentCount() {
+      let params = { course_id: this.courseId }
+      let res = await courseCommentCount(params)
+      if (res.code === 0) {
+        this.star = res.data.score
+        this.tags = res.data.words
+      }
     }
   },
 }
@@ -191,7 +204,7 @@ export default {
 
     &-text {
       font-size: $font-size-sm;
-      color: #777;
+      color: #aaa;
     }
   }
 }

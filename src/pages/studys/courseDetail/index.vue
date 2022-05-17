@@ -6,24 +6,21 @@
       </cover-view>
     </video>
 
+    <!-- 分段器 -->
     <view class="segmented-bar">
       <uni-segmented-control :current="current" :values="items" @clickItem="onChangeSegmented" styleType="text"
                              activeColor="#199ff" />
       <view class="segmented-content">
         <view v-show="current === 0" class="segmented-pane">
-          <Details :info="info" :content="content" />
+          <Details :info="info" :content="content" @start="onStart" />
         </view>
         <view v-show="current === 1" class="segmented-pane">
-          <Catalogue v-if="course_id" :courseId="course_id" />
+          <Catalogue v-if="course_id" :courseId="course_id" :learningLessonId="learning_lesson_id" @videoChange="onChangeVideo" />
         </view>
         <view v-show="current === 2" class="segmented-pane">
           <Rate ref="rate" :courseId="course_id" @openComment="onComment" />
         </view>
       </view>
-    </view>
-
-    <view class="footer">
-      <button class="footer-btn">开始学习</button>
     </view>
 
     <uni-popup ref="popup" type="center" class="popup">
@@ -46,6 +43,9 @@
           <button class="dialog-footer-btn" plain @click="onPublish">发表评论</button>
         </view>
       </div>
+      <view class="close">
+        <uni-icons type="close" color="#fff" size="42" @click="onClose" />
+      </view>
     </uni-popup>
 
   </view>
@@ -71,6 +71,7 @@ export default {
     return {
       region_id: 1,
       course_id: 26,
+      learning_lesson_id: 38,
       isPlay: false,
 
       // 上拉配置
@@ -84,6 +85,7 @@ export default {
       // 评价
       tags: [],
       courseGetComment: [],
+
       starText: ['', '不满意', '一般', '比较满意', '满意', '非常满意'],
       rateForm: {
         star: 0,
@@ -100,7 +102,7 @@ export default {
   },
   watch: {
     commentHotWord(val) {
-      this.tags = [].slice.call(val, 0)
+      this.tags = val
     }
   },
   onLoad(query) {
@@ -108,6 +110,14 @@ export default {
     this.getCourseInfo()
   },
   methods: {
+    // 开始学习
+    onStart() {
+
+    },
+    // 更换播放视频
+    onChangeVideo(detail) {
+      console.log('onChangeVideo', detail);
+    },
     onPlay() {
       this.isPlay = true
     },
@@ -115,15 +125,16 @@ export default {
     onChangeSegmented({ currentIndex }) {
       this.current = currentIndex
     },
-    // 打分
-    onChangeRate(e) {
-      this.rateForm.star = e.value
-    },
-    // 评价
+    // 我要评价
     onComment() {
       this.resetForm()
       this.$refs.popup.open()
     },
+    // 关闭评论
+    onClose() {
+      this.$refs.popup.close()
+    },
+    // 重置评论表单
     resetForm() {
       this.rateForm = { star: 0, comment: '' }
       this.tags = this.tags.map(item => {
@@ -131,15 +142,15 @@ export default {
         return item
       })
     },
-    // 关闭
-    onClose() {
-      this.$refs.popup.close()
-    },
-    // 标签
+    // 评论热刺选择
     onTagSelect(index) {
       this.tags[index].checked = !this.tags[index].checked
     },
-    // 获取标签
+    // 评论打分
+    onChangeRate(e) {
+      this.rateForm.star = e.value
+    },
+    // 获取评论热词
     getTag(tags) {
       return tags.filter(filterItem => filterItem.checked).map(mapItem => mapItem.label)
     },
@@ -158,6 +169,7 @@ export default {
       if (res.code === 0) {
         uni.showToast({ icon: 'success', title: '评论失败' })
         this.$refs.rate.downCallback()
+        this.$refs.rate.getCourseCommentCount()
         this.onClose()
       }
     },
@@ -212,25 +224,16 @@ export default {
   line-height: calc(2 * $font-size-base);
 }
 
-.footer {
-  position: fixed;
-  bottom: constant(safe-area-inset-bottom);
-  bottom: env(safe-area-inset-bottom);
 
-  left: 0;
-  width: 100%;
-
-  &-btn {
-    width: 80%;
-    font-size: $font-size-md;
-    color: #fff;
-    border-radius: 64rpx;
-    background-color: #199fff;
-  }
-}
 
 .popup {
   background-color: $bg-color-mask;
+
+  .close {
+    margin-top: 30rpx;
+    width: 100%;
+    text-align: center;
+  }
 }
 
 .dialog {
@@ -279,11 +282,10 @@ export default {
       margin-top: 40rpx;
       padding: 0 60rpx;
       
-
       &-btn {
         margin: 10rpx;
         padding: 12rpx;
-        color: #777;
+        color: #aaa;
         font-size: 24rpx;
         text-align: center;
         border: 2rpx solid rgb(236, 236, 236);
