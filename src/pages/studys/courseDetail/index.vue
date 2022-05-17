@@ -112,6 +112,7 @@ export default {
   methods: {
     // 开始学习
     onStart() {
+      
 
     },
     // 更换播放视频
