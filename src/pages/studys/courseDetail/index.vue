@@ -35,7 +35,7 @@
             <view class="rate-content">{{ starText[rateForm.star] }}</view>
           </view>
           <view class="tags">
-            <view v-for="(tag, index) in commentHotWord" :key="index" class="tags-btn" :class="tag.checked ? 'btn-active' : ''"
+            <view v-for="(tag, index) in tags" :key="index" class="tags-btn" :class="tag.checked ? 'btn-active' : ''"
                   @click="() => onTagSelect(index)">{{ tag.label }}</view>
           </view>
         </view>
@@ -82,6 +82,7 @@ export default {
       // 目录
       chapterList: [],
       // 评价
+      tags: [],
       courseGetComment: [],
       starText: ['', '不满意', '一般', '比较满意', '满意', '非常满意'],
       rateForm: {
@@ -96,6 +97,11 @@ export default {
   },
   computed: {
     ...mapGetters(['commentHotWord'])
+  },
+  watch: {
+    commentHotWord(val) {
+      this.tags = [].slice.call(val, 0)
+    }
   },
   onLoad(query) {
     console.log('query', query);
@@ -120,7 +126,7 @@ export default {
     },
     resetForm() {
       this.rateForm = { star: 0, comment: '' }
-      this.commentHotWord = this.commentHotWord.map(item => {
+      this.tags = this.tags.map(item => {
         item.checked = false;
         return item
       })
@@ -131,7 +137,7 @@ export default {
     },
     // 标签
     onTagSelect(index) {
-      this.commentHotWord[index].checked = !this.commentHotWord[index].checked
+      this.tags[index].checked = !this.tags[index].checked
     },
     // 获取标签
     getTag(tags) {
@@ -144,7 +150,7 @@ export default {
       let params = {
         course_id: this.course_id,
         star: star,
-        hot_word: this.getTag(this.commentHotWord),
+        hot_word: this.getTag(this.tags),
         comment: comment
       }
             
@@ -153,8 +159,6 @@ export default {
         uni.showToast({ icon: 'success', title: '评论失败' })
         this.$refs.rate.downCallback()
         this.onClose()
-      } else {
-        uni.showToast({ icon: 'error', title: '评论失败' })
       }
     },
     // 复制课程信息

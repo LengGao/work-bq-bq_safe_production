@@ -74,9 +74,10 @@ const responseStact = [
     },
     response: (response) => {
       console.log('批量测试response', response);
-      // if (response.statusCode === 200) {
-      // console.log("config", service.$conf/ig);
-      // }
+      let body = response.data
+      if (body.code !== 0) {
+        uni.showToast({ icon: 'none', title: `${body.message}` })
+      }
       return response
     }
   },

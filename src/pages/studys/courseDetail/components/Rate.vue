@@ -44,14 +44,6 @@
 
           <view class="comments-textarea">
             {{ comment.comment }}
-            {{ comment.comment }}
-            {{ comment.comment }}
-            {{ comment.comment }}
-            {{ comment.comment }}
-            {{ comment.comment }}
-            {{ comment.comment }}
-            {{ comment.comment }}
-            {{ comment.comment }}
           </view>
         </view>
 
@@ -277,6 +269,7 @@ export default {
     margin-top: 20rpx;
     margin-left: 116rpx;
     font-size: $font-size-base;
+    word-break: break-all;
   }
 }
 </style>

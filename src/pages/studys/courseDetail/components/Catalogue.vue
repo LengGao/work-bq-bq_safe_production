@@ -1,39 +1,60 @@
 <template>
   <view class="catalogue">
     <collapse ref="catalogue">
-      <collapse-item v-for=" item1 in chapterList" :key="item1.id">
+      <!-- 一级 -->
+      <collapse-item v-for=" item1 in chapterList" :key="item1.id" :open="item1.checked">
         <template v-slot:title>
-          <view class="title one-title" :class="item1.checked ? 'title-active' : ''" @click="() => onClickOne(item1)">
+          <view class="title one-title" :class="item1.checked ? 'title-active' : ''">
             <view class="title-box">
               {{ item1.title }}
               <view v-if="item1.duration" class="tag">试看</view>
             </view>
-            <!-- <uni-icons type="eye" size="28rpx" /> -->
           </view>
         </template>
 
-        <collapse-item v-for="item2 in item1.sub" :key="item2.id">
-          <template v-slot:title>
-            <view class="title two-title" :class="item2.checked ? 'title-active' : ''" @click="() => onClickTwo(item2)">
-              <view class="title-box">
-                {{ item2.title }}
-                <view v-if="item2.duration" class="tag">试看</view>
+        <!-- 二级 -->
+        <view v-if="item1.nodeType === 'sub'">
+          <collapse-item v-for="item2 in item1.sub" :key="item2.id" :open="item2.checked">
+            <template v-slot:title>
+              <view class="title two-title" :class="item2.checked ? 'title-active' : ''">
+                <view class="title-box">
+                  {{ item2.title }}
+                  <view v-if="item2.duration" class="tag">试看</view>
+                </view>
               </view>
-              <!-- <uni-icons type="eye" size="28rpx" /> -->
-            </view>
-          </template>
+            </template>
 
-          <view v-for="item3 in item2.lesson" :key="item3.id" class="title three-title"
-                :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3)">
+            <!-- 三级 -->
+            <template v-if="item2.lesson && item2.lesson.length >0">
+              <view v-for="item3 in item2.lesson" :key="item3.id" class="title three-title"
+                    :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item2, item1)">
+                <view class="title-box">
+                  {{ item3.title }}
+                  <view v-if="item3.duration" class="tag">试看</view>
+                </view>
+                <text>{{ item3.duration }} 分钟</text>
+              </view>
+            </template>
+            <template v-else>
+              <view class="title three-title">
+                <view class="title-box">
+                  暂无课时
+                </view>
+              </view>
+            </template>
+          </collapse-item>
+        </view>
+
+        <view v-else>
+          <view v-for="item3 in item1.lesson" :key="item3.id" class="title three-title"
+                :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item1)">
             <view class="title-box">
               {{ item3.title }}
               <view v-if="item3.duration" class="tag">试看</view>
             </view>
             <text>{{ item3.duration }} 分钟</text>
-            <!-- <uni-icons type="eye" size="28rpx" /> -->
           </view>
-
-        </collapse-item>
+        </view>
       </collapse-item>
     </collapse>
   </view>
@@ -53,6 +74,10 @@ export default {
     courseId: {
       type: [String, Number],
       default: '',
+    },
+    learningLessonId: {
+      type: [String, Number],
+      default: 38,
     }
   },
   computed: {
@@ -62,55 +87,65 @@ export default {
   },
   data() {
     return {
-      checkeds: [],
-      checkeds2: [],
-      checkeds3: [],
-      chapterList: []
+      find: false,
+      checkeds: [], // 一级
+      chapterList: [], // 目录
+      chapterCache: [], // 缓存目录
     }
   },
   methods: {
-    onChangeCollapse(e) {
-      // this.$refs.catalogue.resize()
+    // 三级目录
+    onClickThree(item1, item2, item3) {
+      let args = [item1, item2, item3]
+      this.checkeds = this.updateChapterList(this.checkeds, args)
+      this.$emit('videoChange', args)
     },
-    onClickOne(item) {
-      this.checkeds = this.updateChapterList(this.checkeds, item.id)
-      this.checkeds2 = this.updateChapterList(this.checkeds2, item.id)
-      this.checkeds3 = this.updateChapterList(this.checkeds3, item.id)
-      item.checked = !item.checked
-      this.checkeds.push(item)
-    },
-    onClickTwo(item) {
-      this.checkeds2 = this.updateChapterList(this.checkeds2, item.id)
-      this.checkeds3 = this.updateChapterList(this.checkeds3, item.id)
-      item.checked = !item.checked
-      this.checkeds2.push(item)
-    },
-    onClickThree(item) {
-      this.checkeds3 = this.updateChapterList(this.checkeds3, item.id)
-      item.checked = !item.checked
-      this.checkeds3.push(item)
-      this.$emit('videoChange', item)
-      // this.$forceUpdate()
-    },
-    updateChapterList(list, id) {
-      return list.filter(item => {
-        if (item.id !== id) {
-          item.checked = false
-          return false
+    // 回溯
+    toFlushBack(id, list) {
+      let parent = {}
+      for (let i = 0, ii = list.length; i < ii; i++) {
+        let item = list[i], childs = item.sub || item.lesson;
+
+        if (item.id === id) {
+          item.checked = true; parent = item; this.checkeds.push(item); break;
         } else {
-          return item
+          if (childs && childs.length) parent = this.toFlushBack(id, childs);
         }
-      })
+
+        if (parent.chapter_id === item.id || parent.parent_id === item.id) {
+          item.checked = true; parent = item; this.checkeds.push(item);
+        }
+      }
+      return parent
     },
-    assembleData(list) {
+    // 更新目录
+    updateChapterList(list, args) {
+      let maxLen = Math.max(list.length, args.length)
+      // 目录可能是二级可能是三级
+      for (let i = 0; i < maxLen; i++) {
+        let item = list[i], arg = args[i]
+        if (arg) {
+          arg.checked = true
+          if (item && item.id !== arg.id) item.checked = false;
+          list[i] = arg
+        } else {
+          if (item) item.checked = false;
+          list.length = args.length
+        }
+      }
+      return list
+    },
+    // 组装数据
+    assembleData(list = []) {
       for (let i = 0, ii = list.length; i < ii; i++) {
         let item = list[i]
         item.checked = false
-        if (item.sub && item.sub.length > 0) {
+        if (item.sub && item.sub.length) {
+          item.nodeType = 'sub' // 章节类型
           item.sub = this.assembleData(item.sub)
-        } else if (item.lesson && item.lesson.length > 0) {
+        } else if (item.lesson && item.lesson.length) {
+          item.nodeType = 'lesson' // 课时类型
           item.lesson = this.assembleData(item.lesson)
-          console.log('lesson', item.lesson);
         }
       }
       return list
@@ -120,7 +155,9 @@ export default {
       let param = { course_id: this.courseId }
       let res = await chapterList(param)
       if (res.code == 0) {
-        this.chapterList = this.assembleData(res.data)
+        let list = this.assembleData(res.data)
+        this.chapterList = list
+        this.toFlushBack(this.learningLessonId, list)
       }
     },
   }, // methods end
@@ -151,8 +188,9 @@ export default {
 
 .three-title {
   margin-left: 60rpx;
-  margin-right: 60rpx;
+  margin-right: 10rpx;
   color: #777;
+  border-bottom: 2rpx solid #ebeef5;
 }
 
 .title-active {
