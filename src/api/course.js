@@ -26,6 +26,12 @@ export function StaffNotice(param) {
 }
 
 // API docs http://showdoc.beiqujy.com/web/#/44
+// <link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.9.3/skins/default/aliplayer-min.css" />
+// <script charset="utf-8" src="https://g.alicdn.com/de/prismplayer/2.9.3/aliplayer-min.js" async></script> 
+// aliplayerCss.href = 'https://g.alicdn.com/de/prismplayer/2.8.2/skins/default/aliplayer-min.css'
+// aliplayer.src = 'https://g.alicdn.com/de/prismplayer/2.8.2/aliplayer-min.js'
+{/* <link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.9.20/skins/default/aliplayer-min.css" />  //（可选）如果您的使用场景需要用到H5模式的播放器，则需引用此css文件。
+<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.9.20/aliplayer-min.js"></script>  //（必须）引入js文件。 */}
 
 /**
  * 课程分类
@@ -134,7 +140,6 @@ export function courseGetVideoAuth(data) {
   })
 }
 
-
 /**
  * 视频播放记录
  * @param {*} data {lesson_id：课时id，start_second: 开始秒, end_second：结束秒}
@@ -142,9 +147,8 @@ export function courseGetVideoAuth(data) {
  */
 export function courseRecordLearn(data) {
   return request({
-    url: 'course/recordLearn',
-    method: 'get',
+    url: 'course/learn',
+    method: 'post',
     data,
-    loading: true
   })
 }

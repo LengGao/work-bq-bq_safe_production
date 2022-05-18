@@ -51,9 +51,6 @@
 		}
 	},
 	"h5": {
-		"devServer": {
-
-		},
 		"optimization": {
 			"prefetch": true,
 			"preload": true
