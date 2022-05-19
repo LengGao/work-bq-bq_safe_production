@@ -54,9 +54,9 @@
 <script>
 import uParse from "@/components/gaoyia-parse/parse";
 import { browser } from '@/mixins/index'
-// # ifdef H5
+// #ifdef H5
 // import { share_WeixinJSBridge } from '@/utils/api'
-// # endif
+// #endif
 
 export default {
   mixins: [browser],

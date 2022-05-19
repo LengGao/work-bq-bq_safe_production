@@ -16,6 +16,7 @@ const header = {
   token: userInfo.token || '',
   'org-id': orgInfo.id || ''
 }
+// console.log('header', userInfo, orgInfo);
 
 service.setHeader(header)
 

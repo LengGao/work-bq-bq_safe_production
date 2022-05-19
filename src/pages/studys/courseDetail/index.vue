@@ -1,16 +1,25 @@
 <template>
   <view class="course-detail">
-    <!-- <video :src="video" :autoplay="false" class="course-video" @play="onPlay">
-      <cover-view class="course-cover" :style="isPlay ? 'display: none' : ''">
-        <cover-image :src="info.cover"></cover-image>
-      </cover-view>
-    </video> -->
-    <!-- # ifdef H5 -->
+    <!-- #ifdef H5 -->
     <div id="aliplayer"></div>
-    <!-- # endif -->
+    <!-- #endif -->
+    <!-- #ifdef MP-WEIXIN -->
+      <video v-if="src" class="course-video" id="course-video"
+      	:src="src" :autoplay="false" :initial-time="start_second"
+        :title="title" :poster="cover" :poster-for-crawler="cover"
+        @play="onPlay" @pause="onPause" @ended="onEnded" @timeupdate="onTimeupdate"
+        @loadedmetadata="onLoadedmetadata" @error="onError" @seekcomplete="seekcomplete"
+      >
+      <!-- :style="isPlay ? 'display: none' : ''" -->
+        <cover-view class="course-cover" >
+          <cover-image :src="info.cover"></cover-image>
+        </cover-view>
+      </video>
+    <!-- #endif -->
 
+    <!-- <web-view src="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx1f7125112b74db52&redirect_uri=https%3A%2F%2Fopen.faceid.qq.com%2Fv1%2Fapi%2FgetCode%3FbizRedirect%3Dhttps%253A%252F%252Ffaceid.qq.com%252Fapi%252Fauth%252FgetOpenidAndSaveToken%253Ftoken%253D61238B0E-5336-4705-B9EA-51C379088E92&response_type=code&scope=snsapi_base&state=&component_appid=wx9802ee81e68d6dee#wechat_redirect"> </web-view> -->
     <!-- 分段器 -->
-    <view class="segmented-bar">
+    <view class="segmented-bar"> 
       <uni-segmented-control :current="current" :values="items" @clickItem="onChangeSegmented" styleType="text"
                              activeColor="#199ff" />
       <view class="segmented-content">
@@ -78,7 +87,6 @@ export default {
       region_id: 1,
       course_id: 26,
       learning_lesson_id: 38,
-      isPlay: false,
 
       // 上拉配置
       up: { page: { num: 0, size: 10, time: 1000 } },
@@ -99,14 +107,19 @@ export default {
       current: 0,
       items: ['简介', '目录', '评价'],
 
+      // 小程序视频
+      src: '',
+      isProgress: true,
+      end_time: 0,
+      
       // h5 视频
       title: '',
       cover: '',
-      is_free: false,
+      is_free: false,   // 是否播完
+      prev_time: 0, // 记录上次时间
       start_second: 0,
       free_second: 0,
       is_forward: false, 
-      prevTime: 0, // 记录上次时间
       player: null,
       time: 1000 * 10,
       intervalId: null,
@@ -128,10 +141,15 @@ export default {
     this.getCourseGetVideoAuth({ lesson_id: this.learning_lesson_id })
   },
   destroyed() {
-    this.player && this.player.dispose();
     this.intervalId = null
+    /* #ifdef H5 */
+    this.player && this.player.dispose();
+    /* #endif */
   },
   methods: {
+    seekcomplete(e) {
+      console.log('seekcomplete', e);
+    },
     // ------------------- 视频相关 --------------------------
     // 更换播放视频
     onChangeVideo(detailArr) {
@@ -141,11 +159,103 @@ export default {
     },
     // 开始学习
     onStart() {
-
     },
+    // 加载完成
+    onLoadedmetadata() {
+      wx.createSelectorQuery().select('#course-video').context((res) => {
+          this.player = res.context;
+          this.player.play()
+      }).exec()
+    },
+    // 播放
     onPlay() {
-      this.isPlay = true
+      this.intervalSendMini()
     },
+    // 展厅
+    onPause(e) {
+      this.stopSendMini()
+    },
+    // 结束
+    onEnded(e) {
+      this.is_free = true
+      this.start_second = 0
+      this.player.seek(0)
+    },
+    // 进度更新
+    onTimeupdate({ detail }) {
+      let currentTime = detail.currentTime
+      if (this.is_forward || this.is_free) {
+        this.end_time = currentTime
+      } else {
+        if (Math.abs(currentTime - this.start_second) >= 2) {
+          this.player.seek(this.start_second)
+        } else{
+          this.start_second = currentTime
+          this.end_time = currentTime
+        }
+      }
+    },
+    onEnded(err) {
+      console.log('onEnded', err);
+    },
+    //定时发送数据
+    intervalSendMini() {
+      // 定时器开始前先请空，再开启
+      if (this.intervalId) { clearInterval(this.intervalId) }
+      this.intervalId = setInterval(() => { this.sendDataMini() }, this.time)  
+    },
+    // 暂停发送
+    stopSendMini() {
+      if (!this.intervalId) {
+        // 清空定时发送时间，发送暂停时的播放时间
+        clearInterval(this.intervalId)
+        this.intervalId = null
+        this.sendDataMini()
+      }
+    },
+    // 发送数据
+    async sendDataMini() {
+      // 由已经播放的时间减去开始播放的时间，判断是否拖动了进度条，
+      let endTime = this.end_time
+
+      let params = {
+        lesson_id: this.learning_lesson_id,
+        start_second: parseFloat(this.prev_time),
+        end_second: parseFloat(endTime)
+      }
+
+      let res = await courseRecordLearn(params)
+      if (res.code === 0) {
+        let last_second = res.data.last_second
+        let redirect_url = res.data.redirect_url
+        if (redirect_url) {
+          this.soterAuthentication(redirect_url)
+          this.player.pause()
+          this.onPause()
+        }
+      } else {
+        this.player.pause()
+        this.onPause()
+      }
+
+      this.prev_time = endTime
+    },
+    // 设置播放器
+    settingPlayer(options) {
+      this.src = 'https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4'
+    },
+    // 生物认证
+    async soterAuthentication(redirect_url) {
+      let check = await wx.checkIsSupportSoterAuthentication()
+      console.log('check', check);
+      if (check.supportMode.indexOf('facial') !== -1) {
+        wx.startSoterAuthentication({
+          requestAuthModes: ['facial'],
+          authContent: '身份验证'
+        })
+      }
+    },
+    
     //定时发送数据
     intervalSend() {
       // 定时器开始前先请空，再开启
@@ -164,25 +274,26 @@ export default {
     // 发送数据
     async sendData() {
       // 由已经播放的时间减去开始播放的时间，判断是否拖动了进度条，
-      let endTime = this.player.getCurrentTime(), startTime = this.start_second
-      const isSend = (Math.abs(endTime - startTime) <= 1.5) && startTime != endTime
-      
-      if (isSend) {
-        let params = {
-          lesson_id: this.learning_lesson_id,
-          start_second: parseFloat(this.prevTime),
-          end_second: parseFloat(endTime)
-        }
-
-        let res = await courseRecordLearn(params)
-        if (res.code === 0) {
-          let last_second = res.data.last_second
-          let redirect_url = res.data.redirect_url
-          if (redirect_url) location.href = redirect_url // 需要人脸识别
-        }
+      let endTime = this.player.getCurrentTime()
+      let params = {
+        lesson_id: this.learning_lesson_id,
+        start_second: parseFloat(this.prev_time),
+        end_second: parseFloat(endTime)
       }
-      this.prevTime = endTime
-      this.startTime = endTime // 统一时间
+
+      let res = await courseRecordLearn(params)
+      if (res.code === 0) {
+        let last_second = res.data.last_second
+        let redirect_url = res.data.redirect_url
+        if (redirect_url) {
+          location.href = redirect_url // 需要人脸识别
+          this.player.pause()
+        }
+      } else {
+        this.player.pause()
+      }
+      
+      this.prev_time = currTime
     },
     // 创建播放器
     createPlayer(options) {
@@ -192,8 +303,9 @@ export default {
         id: 'aliplayer',
         width: '100%',
         height: '200px',
-        autoplay: true,
+        autoplay: false,
         isLive: false,
+        controlBarVisibility: 'always',
         playsinline: true,
         preload: true,
         useH5Prism: true,
@@ -222,10 +334,14 @@ export default {
         playauth: options.auth_data.PlayAuth,
         cover: options.cover,
         encryptType: 0, // 当播放私有加密流时需要设置。
-      }, (player) => {     
+      }, (player) => {
+        // 准备完毕
+        player.on('ready', () => {
+          player.seek(this.start_second)
+          player.play()
+        })
         // 监听播放
         player.on('play', () =>{
-          player.seek(this.start_second)
           this.intervalSend()
         })
         // 监听暂停
@@ -244,45 +360,40 @@ export default {
          * 2，学完以后可快进
          */
         player.on('timeupdate', () => {
-          let emdTime = player.getCurrentTime()
-          if (this.is_forward) {
-            this.start_second = emdTime
-            player.seek(this.start_second)
-          } else if (this.is_free) {
-            this.start_second = emdTime
-            player.seek(this.start_second)
+          let currTime = player.getCurrentTime()
+          if (this.is_forward || this.is_free) {
+            this.end_time = currTime
           } else {
-            if (Math.abs(emdTime - this.start_second) >= 2) {
+            if (Math.abs(currTime - this.start_second) >= 2) {
               player.seek(this.start_second)
             } else {
-              this.start_second = emdTime
+              this.start_second = currTime
             }
           }
         })
       })
-      //  $(".prism-setting-quality").remove();
-      //   $(".prism-setting-audio").remove();
-      //   $(".prism-cc-btn").remove()
-      //  !options.playAuth && $('.prism-big-play-btn').remove()
-
-
-      this.player.play()
     },
     // 获取视频凭证
     async getCourseGetVideoAuth(params) {
       let res = await courseGetVideoAuth(params)
       if (res.code === 0) {
         let { video_id, auth_data, start_second, lesson_id, title, cover, is_free,
-              free_second, is_forward, 
-            } = res.data
+              free_second, is_forward } = res.data
+              
         this.title = title
+        this.cover = cover
         this.is_free = is_free
         this.free_second = free_second
         this.is_forward = is_forward
         this.start_second = start_second
         this.learning_lesson_id = lesson_id
-        this.prevTime = start_second
+        this.prev_time = start_second
+        /* #ifdef H5 */
         this.createPlayer({ video_id, auth_data, start_second, cover, is_free })
+        /* #endif */
+        /* #ifdef MP-WEIXIN */
+        this.settingPlayer({ video_id, auth_data, start_second, cover, is_free })
+        /* #endif */
       }
     },
     // ----------------------------------------------

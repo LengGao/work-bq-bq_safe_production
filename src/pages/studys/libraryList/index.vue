@@ -36,9 +36,9 @@ export default {
       // 文库资料
       librarys: [
         { id: 1, name: "name1", thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "2022-03-18 18:30" },
-        { id: 2, name: "name1", thumb: "/static/img/index_policy2.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
+        { id: 2, name: "name1", thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
         { id: 3, name: "name1", thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
-        { id: 4, name: "name1", thumb: "/static/img/index_policy2.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
+        { id: 4, name: "name1", thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
       ],
     }
   },

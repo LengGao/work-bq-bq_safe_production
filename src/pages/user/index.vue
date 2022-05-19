@@ -96,13 +96,13 @@ export default {
       let res = await this.$store.dispatch('loginout')
       if (res.code === 0) {
         uni.showToast({ title: '退出成功', icon: 'success' })
-        // # ifdef H5
+        // #ifdef H5
         uni.reLaunch({ url: '/pages/indexs/login/index' })
-        // # endif
+        // #endif
 
-        // # ifdef MP-WEIXIN
+        // #ifdef MP-WEIXIN
         uni.reLaunch({ url: '/pages/indexs/loginAuth/index' })
-        // # endif
+        // #endif
       } else {
         uni.showToast({ title: '登出失败', icon: 'error' })
       }
@@ -179,9 +179,9 @@ $page-padding: 0rpx 20rpx;
     justify-content: center;
     align-items: center;
     height: 190rpx;
-    // # ifdef H5
+    // #ifdef H5
     height: 100%;
-    // # endif
+    // #endif
   }
 
   &-image {

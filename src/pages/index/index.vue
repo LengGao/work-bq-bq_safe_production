@@ -171,13 +171,13 @@ export default {
       // 文库资料
       librarys: [
         { id: 1, name: "name1", thumb: "/static/img/index_library1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "2022-03-18 18:30" },
-        { id: 2, name: "name1", thumb: "/static/img/index_library2.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
+        { id: 2, name: "name1", thumb: "/static/img/index_library1.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
       ],
       // 政策专栏
       policys: [
         { id: 1, thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
-        { id: 2, thumb: "/static/img/index_policy2.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
-        { id: 3, thumb: "/static/img/index_policy3.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
+        { id: 2, thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
+        { id: 3, thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
       ],
       // 推荐课程
       courses: [
@@ -213,7 +213,8 @@ export default {
           uni.redirectTo({ url: '/pages/indexs/login/index' })
           // #endif
           // #ifdef MP-WEIXIN
-          uni.redirectTo({ url: '/pages/indexs/loginAuth/index' })
+          uni.redirectTo({ url: '/pages/indexs/login/index' })
+          // uni.redirectTo({ url: '/pages/indexs/loginAuth/index' })
           // #endif
         }
       },

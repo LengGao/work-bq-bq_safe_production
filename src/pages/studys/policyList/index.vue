@@ -52,9 +52,9 @@ export default {
       // 政策列表数据
       policys: [
         { id: 1, name: "name1", money: 0, oldMoney: 0, thumb: '/static/img/index_policy1.png', title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
-        { id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_policy2.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
+        { id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_policy1.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
         { id: 3, name: "name1", money: 0, oldMoney: 0, thumb: '/static/img/index_policy1.png', title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
-        { id: 4, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_policy2.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
+        { id: 4, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_policy1.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
       ],
     }
   },
