@@ -8,12 +8,8 @@
       	:src="src" :autoplay="false" :initial-time="start_second"
         :title="title" :poster="cover" :poster-for-crawler="cover"
         @play="onPlay" @pause="onPause" @ended="onEnded" @timeupdate="onTimeupdate"
-        @loadedmetadata="onLoadedmetadata" @error="onError" @seekcomplete="seekcomplete"
+        @loadedmetadata="onLoadedmetadata" @error="onError"
       >
-      <!-- :style="isPlay ? 'display: none' : ''" -->
-        <cover-view class="course-cover" >
-          <cover-image :src="info.cover"></cover-image>
-        </cover-view>
       </video>
     <!-- #endif -->
 
@@ -103,21 +99,18 @@ export default {
         star: 0,
         comment: '',
       },
-      // 分段其
+      // 分段器材
       current: 0,
       items: ['简介', '目录', '评价'],
 
-      // 小程序视频
+      // h5 视频 小程序视频
       src: '',
-      isProgress: true,
-      end_time: 0,
-      
-      // h5 视频
       title: '',
       cover: '',
       is_free: false,   // 是否播完
       prev_time: 0, // 记录上次时间
       start_second: 0,
+      end_time: 0,
       free_second: 0,
       is_forward: false, 
       player: null,
@@ -134,7 +127,8 @@ export default {
     }
   },
   onLoad(query) {
-    console.log('query', query);
+    let { course_id, region_id } = query
+    // this.course_id = course_id, region_id = region_id
     this.getCourseInfo()
   },
   mounted() {
@@ -147,9 +141,6 @@ export default {
     /* #endif */
   },
   methods: {
-    seekcomplete(e) {
-      console.log('seekcomplete', e);
-    },
     // ------------------- 视频相关 --------------------------
     // 更换播放视频
     onChangeVideo(detailArr) {
@@ -178,8 +169,11 @@ export default {
     // 结束
     onEnded(e) {
       this.is_free = true
+      this.prev_time = 0
       this.start_second = 0
+      this.end_time = 0
       this.player.seek(0)
+      this.stopSendMini()
     },
     // 进度更新
     onTimeupdate({ detail }) {
@@ -206,7 +200,7 @@ export default {
     },
     // 暂停发送
     stopSendMini() {
-      if (!this.intervalId) {
+      if (this.intervalId) {
         // 清空定时发送时间，发送暂停时的播放时间
         clearInterval(this.intervalId)
         this.intervalId = null
@@ -229,13 +223,17 @@ export default {
         let last_second = res.data.last_second
         let redirect_url = res.data.redirect_url
         if (redirect_url) {
-          this.soterAuthentication(redirect_url)
           this.player.pause()
           this.onPause()
+          uni.showToast({ icon: 'none', title: `${res.message}` })
+          setTimeout(() => {
+            this.soterAuthentication(redirect_url)
+          }, 1000)
         }
       } else {
         this.player.pause()
         this.onPause()
+        uni.showToast({ icon: 'icon', title: `${res.message}` })
       }
 
       this.prev_time = endTime
@@ -264,7 +262,7 @@ export default {
     },
     // 暂停发送
     stopSend() {
-      if (!this.intervalId) {
+      if (this.intervalId) {
         // 清空定时发送时间，发送暂停时的播放时间
         clearInterval(this.intervalId)
         this.intervalId = null
@@ -274,11 +272,11 @@ export default {
     // 发送数据
     async sendData() {
       // 由已经播放的时间减去开始播放的时间，判断是否拖动了进度条，
-      let endTime = this.player.getCurrentTime()
+      let currTime = this.player.getCurrentTime()
       let params = {
         lesson_id: this.learning_lesson_id,
         start_second: parseFloat(this.prev_time),
-        end_second: parseFloat(endTime)
+        end_second: parseFloat(currTime)
       }
 
       let res = await courseRecordLearn(params)
@@ -286,11 +284,17 @@ export default {
         let last_second = res.data.last_second
         let redirect_url = res.data.redirect_url
         if (redirect_url) {
-          location.href = redirect_url // 需要人脸识别
           this.player.pause()
+          this.stopSend()
+          uni.showToast({ icon: 'none', title: `${res.message}` })
+          setTimeout(() => {
+            location.href = redirect_url // 需要人脸识别
+          }, 1000)
         }
       } else {
         this.player.pause()
+        this.stopSend()
+        uni.showToast({ icon: 'none', title: `${res.message}` })
       }
       
       this.prev_time = currTime
@@ -305,14 +309,13 @@ export default {
         height: '200px',
         autoplay: false,
         isLive: false,
-        controlBarVisibility: 'always',
         playsinline: true,
         preload: true,
         useH5Prism: true,
         x5_type: "H5",
-        skinLayout: [
+        skinLayout: [   
           { name: "bigPlayButton", align: "blabs", x: 30, y: 80 },
-          { name: "H5Loading", align: "cc" },
+          { name: "H5Loading", align: "cc", },
           { name: "errorDisplay", align: "tlabs", x: 0, y: 0 },
           { name: "infoDisplay" },
           { name: "tooltip", align: "blabs", x: 0, y: 56 },
@@ -320,12 +323,12 @@ export default {
           {
             name: "controlBar", align: "blabs", x: 0, y: 0,
             children: [
-              { name: "progress", align: "blabs", x: 0, y: 44 },
-              { name: "playButton", align: "tl", x: 15, y: 12 },
-              { name: "timeDisplay", align: "tl", x: 10, y: 7 },
-              { name: "fullScreenButton", align: "tr", x: 10, y: 12 },
-              { name: "subtitle", align: "tr", x: 15, y: 12 },
-              { name: "volume", align: "tr", x: 5, y: 10 }
+              {name: "progress", align: "blabs", x: 0, y: 44},
+              {name: "playButton", align: "tl", x: 15, y: 12},
+              {name: "timeDisplay", align: "tl", x: 10, y: 7},
+              {name: "fullScreenButton", align: "tr", x: 10, y: 12},
+              // {name:"subtitle", align:"tr",x:15, y:12},
+              {name: "volume", align: "tr", x: 5, y: 10}
             ]
           }
         ],
@@ -351,8 +354,11 @@ export default {
         // 监听结束
         player.on('ended', () =>{
           this.is_free = true
+          this.prev_time = 0
           this.start_second = 0
-          player.seek(0)
+          this.end_time = 0
+          this.player.seek(0)
+          this.stopSend()
         })
         /**
          * 是否允许快进
@@ -455,6 +461,7 @@ export default {
       let param = { region_id: this.region_id, course_id: this.course_id }
       let res = await courseInfo(param)
       if (res.code === 0) {
+        this.learning_lesson_id = res.data.learning_lesson_id
         this.courseInfo = res.data
       }
     },

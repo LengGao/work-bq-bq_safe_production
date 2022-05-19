@@ -273,7 +273,7 @@
 	"preloadRule": {
 		"pages/index/index": {
 			"network": "all",
-			"packages": ["__APP__", "pages/indexs", "pages/studys"]
+			"packages": ["__APP__", "pages/indexs"]
 		},
 		"pages/study/index": {
 			"network": "all",

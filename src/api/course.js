@@ -149,6 +149,8 @@ export function courseRecordLearn(data) {
   return request({
     url: 'course/learn',
     method: 'post',
-    data
+    data,
+    loading: false,
+    nocatch: true
   })
 }

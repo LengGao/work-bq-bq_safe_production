@@ -6,12 +6,14 @@ export default {
     let head = document.getElementsByTagName('head')[0]
     let aliplayerCss = document.createElement('link') //创建一个link标签
     aliplayerCss.rel = 'stylesheet'
-    aliplayerCss.href = '/static/js-sdk/aliplayer.css'
+    // aliplayerCss.href = '/static/js-sdk/aliplayer.css' // 下载下来的本地样式有问题
+    aliplayerCss.href = 'https://g.alicdn.com/de/prismplayer/2.9.3/skins/default/aliplayer-min.css'
     head.appendChild(aliplayerCss)
 
     let aliplayer = document.createElement('script')
     aliplayer.type = 'text/javascript'
-    aliplayer.src = '/static/js-sdk/aliplayer.js'
+    // aliplayer.src = '/static/js-sdk/aliplayer.js'
+    aliplayer.src = 'https://g.alicdn.com/de/prismplayer/2.9.3/aliplayer-min.js'
     aliplayer.async = true
     head.appendChild(aliplayer)
     /* #endif */

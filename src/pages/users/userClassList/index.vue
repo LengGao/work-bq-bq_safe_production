@@ -40,7 +40,7 @@ export default {
           join: '2022年4月20日 16:30:30 加入班级'
         },
         { 
-          id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource2.png", 
+          id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource1.png", 
           title: "特种作业低压电工实操课", time: "12章24课时", progress: "30",
           join: '2022年4月20日 16:30:30 加入班级' 
         }

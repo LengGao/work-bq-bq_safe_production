@@ -76,7 +76,7 @@ const responseStact = [
     response: (response) => {
       console.log('批量测试response', response);
       let body = response.data
-      if (body.code !== 0) {
+      if (body.code !== 0 && !service.$config.nocatch) {
         uni.showToast({ icon: 'none', title: `${body.message}` })
       }
       return response
