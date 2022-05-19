@@ -20,7 +20,7 @@
                              activeColor="#199ff" />
       <view class="segmented-content">
         <view v-show="current === 0" class="segmented-pane">
-          <Details v-if="courseInfo.teacher" :data="courseInfo" :courseId="course_id" @start="onStart" />
+          <Details v-if="courseInfo.teacher" :info="courseInfo" :courseId="course_id" />
         </view>
         <view v-show="current === 1" class="segmented-pane">
           <Catalogue v-if="course_id" :courseId="course_id" :learningLessonId="learning_lesson_id"
@@ -144,9 +144,6 @@ export default {
       let curr = detailArr[0]
       let params = { lesson_id: curr.id }
       this.getCourseGetVideoAuth(params)
-    },
-    // 开始学习
-    onStart() {
     },
     // 加载完成
     onLoadedmetadata() {
@@ -401,7 +398,6 @@ export default {
       }
     },
     // ----------------------------------------------
-
     // 分段其切换
     onChangeSegmented({ currentIndex }) {
       this.current = currentIndex
@@ -460,6 +456,7 @@ export default {
       let res = await courseInfo(param)
       if (res.code === 0) {
         this.learning_lesson_id = res.data.learning_lesson_id
+        res.data.favorites = 0
         this.courseInfo = res.data
         this.getCourseGetVideoAuth({ lesson_id: this.learning_lesson_id })
       }

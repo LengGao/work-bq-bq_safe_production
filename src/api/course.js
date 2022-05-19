@@ -154,3 +154,18 @@ export function courseRecordLearn(data) {
     nocatch: true
   })
 }
+
+/**
+ * 课程收藏
+ * @param {*} data 
+ * @returns 
+ */
+export function courseFavorites(data) {
+  return request({
+    url: 'course/favorites',
+    method: 'post',
+    data,
+    loading: false
+  })
+}
+

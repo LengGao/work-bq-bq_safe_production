@@ -3,20 +3,22 @@
     <view class="course-info">
       <view class="header">
         <view class="header-info">
-          <view class="title"> {{data.title | empty }}</view>
+          <view class="title"> {{info.title | empty }}</view>
           <view class="subtitle">
-            {{ data.chapter_count | empty }}章
-            {{ data.lesson_count | empty }}课时
+            {{ info.chapter_count | empty }}章
+            {{ info.lesson_count | empty }}课时
             <text decode> | 共{{ timeTotal }}学时</text>
           </view>
         </view>
 
-        <view class="header-btns" v-if="isMiniapp">
-          <button class="btn-kefu" @click="onContact" open-type="contact" plain>
-            <uni-icons custom-prefix="iconfont" type="icon-kefu" size="36rpx" />
-            <text class="btn-text">咨询</text>
+        <view class="header-btns">
+          <button class="btn-kefu" @click="courseFavorites" plain>
+            <uni-icons v-if="info.favorites" custom-prefix="iconfont" type="icon-shoucangfill" size="36rpx"
+                       color="#199fff" />
+            <uni-icons v-else custom-prefix="iconfont" type="icon-shoucang2" size="36rpx" color="#ccc" />
+            <text class="btn-text">{{ info.favorites ? '取消收藏' : '收藏'}} </text>
           </button>
-          <button class="btn-share" @click="onShare" open-type="share" plain>
+          <button class="btn-share" v-if="isMiniapp" @click="onShare" open-type="share" plain>
             <uni-icons custom-prefix="iconfont" type="icon-fenxiang" size="36rpx" />
             <text class="btn-text">分享</text>
           </button>
@@ -27,22 +29,22 @@
       <view class="fotter">
         <view class="left">
           <view class="avator">
-            <image class="avator-img" :src="data.teacher.avatar" mode="aspectFill" />
+            <image class="avator-img" :src="info.teacher.avatar" mode="aspectFill" />
           </view>
           <view class="staff">
-            {{ data.teacher.name | empty }}
+            {{ info.teacher.name | empty }}
             <text style="margin: 0 30rpx;">|</text>
-            <text class="staff-text"> {{ data.learn_count || 0 }}人在学</text>
+            <text class="staff-text"> {{ info.learn_count || 0 }}人在学</text>
           </view>
         </view>
         <view class="right">
-          <text class="right-text">￥{{ data.price || 0 }}</text>
+          <text class="right-text">￥{{ info.price || 0 }}</text>
         </view>
       </view>
     </view>
 
     <view class="course-rich">
-      <u-parse v-if="data.content" class="content" :content="data.content" />
+      <u-parse v-if="info.content" class="content" :content="info.content" />
     </view>
 
     <view class="footer">
@@ -54,9 +56,11 @@
 <script>
 import uParse from "@/components/gaoyia-parse/parse";
 import { browser } from '@/mixins/index'
+import { courseFavorites } from '@/api/course'
 // #ifdef H5
 // import { share_WeixinJSBridge } from '@/utils/api'
 // #endif
+
 
 export default {
   mixins: [browser],
@@ -64,7 +68,7 @@ export default {
     uParse
   },
   props: {
-    data: {
+    info: {
       type: Object,
       default: () => ({})
     },
@@ -73,17 +77,13 @@ export default {
       default: ''
     }
   },
-  data() {
-    return {
-      value: 3,
-    }
-  },
   mounted() {
     // this.onShare()
+    console.log(this.info.favorites);
   },
   computed: {
     timeTotal() {
-      return Math.imul(this.data.chapter_count, this.data.lesson_count)
+      return Math.imul(this.info.chapter_count, this.info.lesson_count)
     }
   },
   methods: {
@@ -94,11 +94,21 @@ export default {
     async onShare(e) {
       if (!this.isMiniapp) {
         let params = { course_id: this.courseId, url: location.href }
-        share_WeixinJSBridge( 'https://store.beiqujy.com/apidata/applet/user/share/getShareConfig', params )
+        share_WeixinJSBridge('https://store.beiqujy.com/apidata/applet/user/share/getShareConfig', params)
       }
     },
     // 咨询
-    async onContact(e) {
+    async courseFavorites(e) {
+      let params = { course_id: this.courseId }
+      let res = await courseFavorites(params)
+      if (res.code === 0) {
+        if (res.data.status) {
+          uni.showToast({ title: '取消收藏陈功', icon: 'success' })
+        } else {
+          uni.showToast({ title: '收藏陈功', icon: 'success' })
+        }
+        this.info.favorites = res.data.status
+      }
     },
   }
 }
@@ -204,7 +214,7 @@ export default {
 
         &-text {
           color: #199fff;
-          font-size: 24rpx;
+          font-size: 18rpx;
         }
       }
     }
