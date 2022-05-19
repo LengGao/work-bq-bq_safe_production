@@ -84,8 +84,8 @@ export default {
     courseId() {
       this.getChapterList()
     },
-    learningLessonId(val) {
-      if (this.learningLessonId) {
+    learningLessonId(val, oldval) {
+      if (val !== oldval) {
         this.toFlushBack(this.learningLessonId, this.chapterList)
       }
     }

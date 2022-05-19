@@ -82,7 +82,7 @@ export default {
     return {
       region_id: 1,
       course_id: 26,
-      learning_lesson_id: 38,
+      learning_lesson_id: '',
 
       // 上拉配置
       up: { page: { num: 0, size: 10, time: 1000 } },
@@ -130,9 +130,6 @@ export default {
     let { course_id, region_id } = query
     // this.course_id = course_id, region_id = region_id
     this.getCourseInfo()
-  },
-  mounted() {
-    this.getCourseGetVideoAuth({ lesson_id: this.learning_lesson_id })
   },
   destroyed() {
     this.intervalId = null
@@ -307,6 +304,7 @@ export default {
         id: 'aliplayer',
         width: '100%',
         height: '200px',
+        controlBarVisibility: 'click',
         autoplay: false,
         isLive: false,
         playsinline: true,
@@ -463,6 +461,7 @@ export default {
       if (res.code === 0) {
         this.learning_lesson_id = res.data.learning_lesson_id
         this.courseInfo = res.data
+        this.getCourseGetVideoAuth({ lesson_id: this.learning_lesson_id })
       }
     },
   }
