@@ -222,3 +222,11 @@ export const getFavoritesList = (data) => {
   })
 }
 
+
+
+export function classTest() {
+  return requset({
+    url: 'practiceStart',
+    
+  })
+}
