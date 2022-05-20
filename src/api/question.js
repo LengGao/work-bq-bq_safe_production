@@ -222,11 +222,27 @@ export const getFavoritesList = (data) => {
   })
 }
 
-
-
-export function classTest() {
+// 随堂测试题目
+export function practiceStart(data) {
   return requset({
-    url: 'practiceStart',
-    
+    url: 'course/practiceStart',
+    method: 'get',
+    data   
+  })
+}
+// 随堂测试 提交答案  
+export function practiceAnswer(data) {
+  return requset({
+    url: 'course/practiceAnswer',
+    method: 'get',
+    data   
+  })
+}
+// 随堂测试 答题解析
+export function practiceAnalyse(data) {
+  return requset({
+    url: 'course/practiceAnalyse',
+    method: 'get',
+    data   
   })
 }

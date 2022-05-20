@@ -21,8 +21,8 @@
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" :model="model" :is-end="isEnd" :is-start="isStart" :time="time"
-               :isCollection="!!getCurrentData.is_collection" @submit-paper="toTestResoult" @card="toCard"
-               @next="handleNext" @prev="handlePrev" @collect="setCollection" @timeup="onTimeUp">
+               :isCollection="!!getCurrentData.is_collection" @submit-paper="toTestResoult" 
+               @next="handleNext" @prev="handlePrev" >
     </AnswerBar>
   </view>
 </template>
@@ -42,7 +42,6 @@ import {
   createPractice,
   submitAnswer,
   settlement,
-  setCollection,
   createMockExam,
   createRealTopic,
   createIndependent,
@@ -50,6 +49,10 @@ import {
   createChallenge,
   getUserTopicRecord,
   submitWrongQuestion,
+
+  practiceStart,
+  practiceAnswer,
+  practiceAnalyse,
 } from "@/api/question";
 // import { mapActions } from "vuex";
 export default {
@@ -119,6 +122,7 @@ export default {
   onLoad(query) {
     // isContinue 是否为继续做题
     let { chapterId = 27, title = "测试题目", type = "1", time = 0, isExam = 1, isAnalysis, isContinue } = query
+    let {lesson_id } = query
     
     this.type = type;
     this.time = +time;
@@ -182,18 +186,6 @@ export default {
         }
       }
     },
-    onTimeUp() {
-      this.model === "2" && uni.showModal({
-        title: '提示',
-        showCancel: false,
-        content: '考试时间到，系统自动交卷',
-        success: ({ confirm }) => {
-          if (confirm) {
-            this.toTestResoult();
-          }
-        }
-      });
-    },
     // 提交其他题型答案
     submitOtherAnswer() {
       return new Promise(async (resolve) => {
@@ -213,6 +205,7 @@ export default {
         resolve();
       });
     },
+    // --------------------------------- 题目选择事件
     // 案例题里的index
     onCaseIndexChange(index) {
       this.caseIndex = index;
@@ -242,9 +235,8 @@ export default {
       !this.isEnd &&
         this.currentIndex++;
     },
-    onAnimationfinish({ detail }) {
-      this.submitOtherAnswer();
-    },
+
+    // --------------------- swiper
     onSwiperChange({ detail }) {
       const { current } = detail;
       this.currentIndex = current;
@@ -266,19 +258,8 @@ export default {
         });
       }
     },
-    // 题目收藏
-    async setCollection() {
-      const { id: topic_id, is_collection } = this.getCurrentData;
-      const data = {
-        topic_id,
-        is_collection: +!is_collection,
-      };
-      const res = await setCollection(data);
-      this.getCurrentData.is_collection = data.is_collection;
-      uni.showToast({
-        title: res.message,
-        icon: 'none'
-      });
+    onAnimationfinish({ detail }) {
+      this.submitOtherAnswer();
     },
     // 结算成绩
     async settlement() {
@@ -350,20 +331,6 @@ export default {
           url: `/pages/examinations/testResults/index?logId=${this.logId}`,
         });
       }, 500);
-    },
-    toCard() {
-      this.submitOtherAnswer();
-      this.duration = 0;
-      this.$nextTick(() => {
-        let isRequest = 1;
-        // 收藏夹错题集的答题卡不用请求
-        if (["7", "8"].includes(this.type)) {
-          isRequest = 0;
-        }
-        uni.navigateTo({
-          url: `/pages/examinations/answerSheet/index?logId=${this.logId}&model=${this.model}&isRequest=${isRequest}`,
-        });
-      });
     },
   },
 };
