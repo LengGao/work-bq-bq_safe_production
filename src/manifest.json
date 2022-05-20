@@ -51,6 +51,7 @@
 		}
 	},
 	"h5": {
+		"publicPath": "./",
 		"optimization": {
 			"prefetch": true,
 			"preload": true
