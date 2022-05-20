@@ -131,6 +131,7 @@
 
     <uni-popup ref="popup-org" mask-background-color="rgba(0, 0, 0, 0.4)" :is-mask-click="false">
       <view class="org-list">
+        <view class="org-list-title">请选择要进入的机构</view>
         <view class="org-list-item" v-for="item in organizationList" :key="item.id" @click="onChoiceOrg(item)">
           {{ item.name }}
         </view>
@@ -523,6 +524,16 @@ $padding-lr: 30rpx;
   flex-direction: column;
   background-color: #fff;
   padding-bottom: var(--window-bottom);
+
+  &-title {
+    width: 100%;
+    height: 84rpx;
+    text-align: center;
+    line-height: 84rpx;
+    font-size: $font-size-base;
+    color: $color-primary;
+    border: 2rpx solid #eee;
+  }
 
   &-item {
     width: 100%;
