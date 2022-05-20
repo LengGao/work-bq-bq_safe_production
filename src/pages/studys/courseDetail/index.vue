@@ -2,6 +2,9 @@
   <view class="course-detail">
     <!-- #ifdef H5 -->
     <div id="aliplayer"></div>
+    <video v-if="videoPlaceholder && videoCover" :controls="false" :show-center-play-btn="false" style="width: 100%">
+      <cover-image :src="videoCover"></cover-image>
+    </video>
     <!-- #endif -->
     <!-- #ifdef MP-WEIXIN -->
       <video v-if="src" class="course-video" id="course-video"
@@ -96,13 +99,15 @@ export default {
       // 评价
       starText: ['', '不满意', '一般', '比较满意', '满意', '非常满意'],
       rateForm: {
-        star: 0,
+        star: 1,
         comment: '',
       },
       // 分段器材
       current: 0,
       items: ['简介', '目录', '评价'],
 
+      videoPlaceholder: false,
+      videoCover: '',
       // h5 视频 小程序视频
       src: '',
       title: '',
@@ -395,6 +400,10 @@ export default {
         /* #ifdef MP-WEIXIN */
         this.settingPlayer({ video_id, auth_data, start_second, cover, is_free })
         /* #endif */
+        this.videoPlaceholder = false
+      } else {
+        this.videoPlaceholder = true
+        uni.showToast({title: `${res.message}`, icon: 'none' })
       }
     },
     // ----------------------------------------------
@@ -458,7 +467,8 @@ export default {
         this.learning_lesson_id = res.data.learning_lesson_id
         res.data.favorites = 0
         this.courseInfo = res.data
-        this.getCourseGetVideoAuth({ lesson_id: this.learning_lesson_id })
+        this.videoCover = res.data.cover
+        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: res.data.learning_lesson_id })
       }
     },
   }

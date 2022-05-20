@@ -2,23 +2,14 @@ import MiniService from './miniapp'
 import { GLOBAL } from './config'
 import { isObject } from './utils'
 
-
 const service = new MiniService()
-const userInfo = uni.getStorageSync('userInfo') || {}
-const orgInfo = uni.getStorageSync('orgInfo') || {}
 
-const header = {
-  // 'org-id': 3,
-  // Qin
-  // token: 'eyJvcmdhbml6YXRpb25faWQiOjM0NiwiYXV0b2dyYXBoIjoiTitqOEpEZThUWVJkb0hhYXV6WDRCQlljSlNaRmM1eU5CeTdjeGszdW5mbjdYVytZazd0SUxIdGIzYUt0NWNMRWVFaFFtdXdxRnZpUjNuK0lScXZpUmFCYitmZndUSEtYRmVTY2lCajBSc0U9IiwicHJpdmF0ZV9rZXkiOiIyODQ4MTUxNTQxNTEwNzE4IiwidWlkIjo0NTkwMCwib3JpZ2luYWxfdXNlcl9rZXkiOiIyODQ4MTUxNTQxNTEwNzE4In0=',
-  // Xie
-  // token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzYWZldHkiLCJhdWQiOiIxNzIuMTYuMjM3LjkwIiwiaWF0IjoxNjUyNjgyOTU0LCJleHAiOjE2NTI3NjkzNTQsImRhdGEiOiJrRTBIOTY3KzArcDRLMml6OERHcDVhOUtyN3ErNjJuc3VIVFhFdkZwTHJRPSJ9.wNEaQrcGNLmcX5gGBugTLKVpf2x-C0SpZ6X4l2lowTA'
-  token: userInfo.token || '',
-  'org-id': orgInfo.id || ''
+const userInfo = uni.getStorageSync('userInfo')
+const orgInfo = uni.getStorageSync('orgInfo')
+
+if (userInfo || orgInfo) {
+  service.setHeader({ token: userInfo.token, 'org-id': orgInfo.id })
 }
-// console.log('header', userInfo, orgInfo);
-
-service.setHeader(header)
 
 // 交互配置
 const interactiveMap = {
@@ -86,5 +77,7 @@ const responseStact = [
 
 service.use(responseStact)
 
+
+export { service }
 
 export default service.request.bind(service)

@@ -6,18 +6,18 @@
         <uni-icons customPrefix="iconfont" type="icon-user-filling" size="36rpx" color="#ccc"
                    style="margin-left: 10rpx" />
         <uni-easyinput class="input" v-model="username" placeholder="请输入手机号码" @focus="onFocus" @blur="onBlur"
-                      placeholderStyle="font-size: 28rpx; color: #ccc;" type="number"
-                       :inputBorder="false" :clearable="false">
+                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false"
+                       :clearable="false">
         </uni-easyinput>
       </view>
       <view class="input-box">
         <uni-icons customPrefix="iconfont" type="icon-mima" size="36rpx" color="#ccc" style="margin-left: 10rpx" />
         <uni-easyinput class="input" v-model="password" placeholder="请输入登录密码" @focus="onFocus" @blur="onBlur"
-                      placeholderStyle="font-size: 28rpx; color: #ccc;" type="password"
-                       :inputBorder="false" passwordIcon></uni-easyinput>
+                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="password" :inputBorder="false"
+                       passwordIcon></uni-easyinput>
       </view>
-      <button class="btn-submit" :class="!isRead ? 'btn-disable' : ''" :disable="!isRead" @click="onSubmit"
-              :loading="loading">
+      <button class="btn-submit" :class="!isRead ? 'btn-disable' : ''" @click="onSubmit" :loading="loading"
+              :disable="!isRead">
         登录
       </button>
       <view class="read">
@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import { login } from '@/api/user'
 
 export default {
   data() {
@@ -49,6 +48,12 @@ export default {
       isRead: false,
       visibility: false,
       loading: false,
+    }
+  },
+  onReady() {
+    let isLogin = uni.getStorageSync('userInfo') || {}
+    if (isLogin.token) {
+      uni.switchTab({ url: '/pages/index/index' })
     }
   },
   methods: {

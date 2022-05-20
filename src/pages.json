@@ -7,6 +7,12 @@
 	},
 	"pages": [
 		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "安全生产网络培训平台"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "安培课堂"
@@ -39,12 +45,6 @@
 					"path": "search/index",
 					"style": {
 						"navigationBarTitleText": "搜索"
-					}
-				},
-				{
-					"path": "login/index",
-					"style": {
-						"navigationBarTitleText": "安全生产网络培训平台"
 					}
 				},
 				{
@@ -271,9 +271,13 @@
 		]
 	},
 	"preloadRule": {
+		"pages/login/index": {
+			"network": "all",
+			"packages": ["__APP__", "pages/users"]
+		},
 		"pages/index/index": {
 			"network": "all",
-			"packages": ["__APP__", "pages/indexs", "pages/studys"]
+			"packages": ["pages/indexs", "pages/studys"]
 		},
 		"pages/study/index": {
 			"network": "all",

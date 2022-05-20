@@ -94,18 +94,10 @@ export default {
       let modal = await uni.showModal({ title: '系统提示', content: '确定要推出登录吗' })
       if (!modal[1].confirm) return;
       let res = await this.$store.dispatch('loginout')
-      if (res.code === 0) {
+      // if (res.code === 0) {
         uni.showToast({ title: '退出成功', icon: 'success' })
-        // #ifdef H5
-        uni.reLaunch({ url: '/pages/indexs/login/index' })
-        // #endif
-
-        // #ifdef MP-WEIXIN
-        uni.reLaunch({ url: '/pages/indexs/loginAuth/index' })
-        // #endif
-      } else {
-        uni.showToast({ title: '登出失败', icon: 'error' })
-      }
+        uni.reLaunch({ url: '/pages/login/index' })
+      // }
     }
 
   },

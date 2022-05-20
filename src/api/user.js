@@ -10,15 +10,6 @@ export const getVersion = (data) => {
     })
 }
 
-// export function staffNotice(data) {
-//     return request ({
-//         url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
-//         method: 'get',
-//         data
-//     })
-// }
-
-
 export function login(data) {
     return request({
         url: 'login/password',

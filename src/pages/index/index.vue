@@ -129,7 +129,7 @@
       <RegionChange @change="onChangeRegion" @close="onCloseFilter" :location="location" :buttons="regions" />
     </uni-popup>
 
-    <uni-popup ref="popupOrg" mask-background-color="rgba(0, 0, 0, 0.4)" :is-mask-click="false">
+    <uni-popup ref="popup-org" mask-background-color="rgba(0, 0, 0, 0.4)" :is-mask-click="false">
       <view class="org-list">
         <view class="org-list-item" v-for="item in organizationList" :key="item.id" @click="onChoiceOrg(item)">
           {{ item.name }}
@@ -200,25 +200,15 @@ export default {
   created() {
   },
   computed: {
-    ...mapGetters(['organizationList', 'login_status'])
+    ...mapGetters(['organizationList'])
   },
-  watch: {
-    login_status: {
-      handler(val) {
-        console.log('newVal',val);
-        if (val) {
-          this.openPopup(this.organizationList)
-        } else {
-          // #ifdef H5
-          uni.redirectTo({ url: '/pages/indexs/login/index' })
-          // #endif
-          // #ifdef MP-WEIXIN
-          uni.redirectTo({ url: '/pages/indexs/login/index' })
-          // uni.redirectTo({ url: '/pages/indexs/loginAuth/index' })
-          // #endif
-        }
-      },
-      immediate: true
+  onReady() {
+    let orgInfo = uni.getStorageSync('orgInfo')
+    let userInfo = uni.getStorageSync('userInfo')
+    if (userInfo.token) {
+      if (!orgInfo.id) this.openPopup(this.organizationList);
+    } else {
+        uni.redirectTo({ url: '/pages/login/index' })
     }
   },
   methods: {
@@ -227,7 +217,7 @@ export default {
       if (list && list.length) {
         let len = list.length
         if (len > 1) {
-          this.$refs.popupOrg.open('bottom')
+          this.$refs['popup-org'].open('bottom')
         } else {
           this.$store.dispatch('setOrgCurrent', list[len - 1])
         }
@@ -236,11 +226,10 @@ export default {
     // 选择机构
     onChoiceOrg(item) {
       this.$store.dispatch('setOrgCurrent', item)
-      this.$refs.popupOrg.close()
+      this.$refs['popup-org'].close()
     },
     // 点击筛选
     onOpenFilter() {
-      console.log(this.$refs.popup);
       this.$refs.popup.open('top')
     },
     // 关闭筛选

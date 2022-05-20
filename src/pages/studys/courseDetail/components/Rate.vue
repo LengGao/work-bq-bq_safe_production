@@ -38,7 +38,7 @@
               </view>
             </view>
             <view class="userinfo-right">
-              <uni-rate :value="comment.star" size="36rpx" readonly />
+              <uni-rate :value="comment.star" size="24" readonly />
             </view>
           </view>
 

@@ -139,7 +139,7 @@ export default {
       this.visibility = false
     },
     goLogin() {
-      uni.navigateTo({ url: '/pages/indexs/login/index' })
+      uni.navigateTo({ url: '/pages/login/index' })
     },
   }
 }

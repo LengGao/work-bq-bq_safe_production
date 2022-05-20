@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { service } from '@/request/index'
 import {
     getVersion,
     login,
@@ -11,9 +12,23 @@ import {
 
 const userInfo = uni.getStorageSync('userInfo') || {}
 const questionBankInfo = uni.getStorageSync('questionBankInfo') || {}
-const organizationCurrent = uni.getStorageSync('orgInfo')
+const organizationCurrent = uni.getStorageSync('orgInfo') || {}
 const version = process.env.VUE_APP_VERSION
 let appId = process.env.VUE_APP_APPID
+
+
+// console.log('mapGetters', store);
+// const header = {
+//   // 'org-id': 3,
+//   // Qin
+//   // token: 'eyJvcmdhbml6YXRpb25faWQiOjM0NiwiYXV0b2dyYXBoIjoiTitqOEpEZThUWVJkb0hhYXV6WDRCQlljSlNaRmM1eU5CeTdjeGszdW5mbjdYVytZazd0SUxIdGIzYUt0NWNMRWVFaFFtdXdxRnZpUjNuK0lScXZpUmFCYitmZndUSEtYRmVTY2lCajBSc0U9IiwicHJpdmF0ZV9rZXkiOiIyODQ4MTUxNTQxNTEwNzE4IiwidWlkIjo0NTkwMCwib3JpZ2luYWxfdXNlcl9rZXkiOiIyODQ4MTUxNTQxNTEwNzE4In0=',
+//   // Xie
+//   // token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzYWZldHkiLCJhdWQiOiIxNzIuMTYuMjM3LjkwIiwiaWF0IjoxNjUyNjgyOTU0LCJleHAiOjE2NTI3NjkzNTQsImRhdGEiOiJrRTBIOTY3KzArcDRLMml6OERHcDVhOUtyN3ErNjJuc3VIVFhFdkZwTHJRPSJ9.wNEaQrcGNLmcX5gGBugTLKVpf2x-C0SpZ6X4l2lowTA'
+//   // token: userInfo.token || '',
+//   // 'org-id': orgInfo.id || ''
+//   token: store.getters.token,
+//   'org-id': store.getters.organizationCurrent.id
+// }
 
 Vue.use(Vuex)
 
@@ -26,6 +41,7 @@ const state = {
     // 用户
     user: {
         userInfo: userInfo,
+        login_status: false,
         organizationCurrent: organizationCurrent,
         questionBankInfo: questionBankInfo,
     },
@@ -49,9 +65,7 @@ const getters = {
     // 用户token
     token: state => state.user.userInfo.token,
     // 是否登录
-    login_status: state => {
-        return !!state.user.userInfo.token || false
-    },
+    login_status: state => state.user.login_status,
     // 当前机构
     organizationCurrent: state => state.user.organizationCurrent,
     // 获取用户所属机构
@@ -86,12 +100,15 @@ const mutations = {
     // 设置用户信息
     SET_USER_INFO(state, data) {
         state.user.userInfo = data
-        uni.setStorage({ key: 'userInfo', data })
+        uni.setStorageSync('userInfo', data)
+    },
+    SET_LOGIN_STATUS(state, data) {
+        state.user.login_status = data
     },
     // 设置当前机构
     SET_ORG_CURRENT(state, data) {
         state.user.organizationCurrent = data
-        uni.setStorage({ key: 'orgInfo', data: data })
+        uni.setStorageSync('orgInfo', data)
     },
     // 设置机构列表
     SET_ORG_LIST(state, data) {
@@ -105,7 +122,7 @@ const mutations = {
     // 设置题库信息
     SET_QUESTION_BANK_INFO(state, data) {
         state.user.questionBankInfo = data
-        uni.setStorage({ key: 'questionBankInfo', data })
+        uni.setStorage({ key: 'questionBankInfo', data: data })
     },
     // 设置题目列表 
     SET_LIST(state, list) {
@@ -138,6 +155,8 @@ const actions = {
     // 设置当前机构
     setOrgCurrent({ commit }, dsta) {
         commit('SET_ORG_CURRENT', dsta)
+        let userInfo = state.user.userInfo, orgInfo = state.user.organizationCurrent
+        service.setHeader({ token: userInfo.token || '',  'org-id': orgInfo.id || '' })
     },
     // 设置机构列表
     setOrgList({ commit }, data) {
@@ -146,15 +165,22 @@ const actions = {
     async login({ commit }, data) {
         let res = await login(data)
         if (res.code === 0) {
+            commit('SET_LOGIN_STATUS', true)
             commit('SET_USER_INFO', res.data)
-            commit('SET_ORG_LIST', res.data.org_list)        
+            commit('SET_ORG_LIST', res.data.org_list)
+            let userInfo = state.user.userInfo, orgInfo = state.user.organizationCurrent
+            service.setHeader({ token: userInfo.token || '',  'org-id': orgInfo.id || '' })
         }
         return res
     },
     async loginout({ commit }, data) {
-        commit('SET_USER_INFO', {})
-        commit('SET_ORG_LIST', [])
-        commit('SET_ORG_CURRENT', {})
+        let keys = ['userInfo', 'orgInfo', 'questionBankInfo']
+        commit('SET_LOGIN_STATUS', false)
+        
+        keys.forEach(key => {
+            uni.removeStorage({ key: key})
+        })
+        
         return loginout()
     },
     // 获取热评词

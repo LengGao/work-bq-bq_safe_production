@@ -16,7 +16,7 @@
             <uni-icons v-if="info.favorites" custom-prefix="iconfont" type="icon-shoucangfill" size="36rpx"
                        color="#199fff" />
             <uni-icons v-else custom-prefix="iconfont" type="icon-shoucang2" size="36rpx" color="#ccc" />
-            <text class="btn-text">{{ info.favorites ? '取消收藏' : '收藏'}} </text>
+            <text class="btn-text">{{ info.favorites ? '取消' : '收藏'}} </text>
           </button>
           <button class="btn-share" v-if="isMiniapp" @click="onShare" open-type="share" plain>
             <uni-icons custom-prefix="iconfont" type="icon-fenxiang" size="36rpx" />

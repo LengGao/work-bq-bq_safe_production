@@ -8,10 +8,10 @@ export default {
     let userInfo = uni.getStorageSync('userInfo')
     if (!userInfo.token) {
       // #ifdef H5
-      uni.redirectTo({ url: '/pages/indexs/login/index' })
-      // #endif
+      uni.redirectTo({ url: '/pages/login/index' })
+      // #endifE
       // #ifdef MP-WEIXIN
-      uni.redirectTo({ url: '/pages/indexs/loginAuth/index' })
+      uni.redirectTo({ url: '/pages/loginAuth/index' })
       // #endif
     } else {
       this.isLogin = true
