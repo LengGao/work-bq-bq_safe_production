@@ -32,7 +32,7 @@
 </template>
 <script>
 export default {
-  name: "answerBar",
+  name: "answerBar", // 答题下方的状态栏
   props: {
     isCollection: {
       type: Boolean,

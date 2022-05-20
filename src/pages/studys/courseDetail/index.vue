@@ -161,7 +161,7 @@ export default {
         let confirm = res[1].confirm
         if (confirm) {
           this.$store.commit('SET_EXAMINATION', true)
-          uni.navigateTo({url: url + query})
+          // uni.navigateTo({url: url + query})
         }
       })
     },

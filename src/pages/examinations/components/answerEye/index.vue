@@ -13,7 +13,7 @@
 </template>
 <script>
 export default {
-  name: "answerEye",
+  name: "answerEye", // 查看答案
   data() {
     return {
       active: false,

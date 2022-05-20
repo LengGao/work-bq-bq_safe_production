@@ -6,7 +6,7 @@
 </template>
 <script>
 export default {
-  name: "answerHead",
+  name: "answerHead", // 题目标题
   props: {
     type: {
       type: [String, Number],
