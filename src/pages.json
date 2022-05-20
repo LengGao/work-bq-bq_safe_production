@@ -132,6 +132,12 @@
 			"root": "pages/examinations",
 			"pages": [
 				{
+					"path": "classTest/index",
+					"style": {
+						"navigationBarTitleText": "随堂练习"
+					}
+				},
+				{
 					"path": "chapterList/index",
 					"style": {
 						"navigationStyle": "custom",

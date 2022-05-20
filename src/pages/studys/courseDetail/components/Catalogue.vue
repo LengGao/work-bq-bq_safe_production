@@ -75,7 +75,7 @@ export default {
       type: [String, Number],
       default: '',
     },
-    learningLessonId: {
+    lessonId: {
       type: [String, Number],
       default: '',
     }
@@ -84,9 +84,9 @@ export default {
     courseId() {
       this.getChapterList()
     },
-    learningLessonId(val, oldval) {
+    lessonId(val, oldval) {
       if (val !== oldval) {
-        this.toFlushBack(this.learningLessonId, this.chapterList)
+        this.toFlushBack(this.lessonId, this.chapterList)
       }
     }
   },
@@ -163,8 +163,8 @@ export default {
       if (res.code == 0) {
         let list = this.assembleData(res.data)
         this.chapterList = list
-        if (this.learningLessonId) {
-          this.toFlushBack(this.learningLessonId, list)
+        if (this.lessonId) {
+          this.toFlushBack(this.lessonId, list)
         }
       }
     },

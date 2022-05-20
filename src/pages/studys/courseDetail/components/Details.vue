@@ -18,10 +18,10 @@
             <uni-icons v-else custom-prefix="iconfont" type="icon-shoucang2" size="36rpx" color="#ccc" />
             <text class="btn-text">{{ info.favorites ? '取消' : '收藏'}} </text>
           </button>
-          <button class="btn-share" v-if="isMiniapp" @click="onShare" open-type="share" plain>
+          <!-- <button class="btn-share" v-if="isMiniapp" @click="onShare" open-type="share" plain>
             <uni-icons custom-prefix="iconfont" type="icon-fenxiang" size="36rpx" />
             <text class="btn-text">分享</text>
-          </button>
+          </button> -->
         </view>
 
       </view>
@@ -47,9 +47,9 @@
       <u-parse v-if="info.content" class="content" :content="info.content" />
     </view>
 
-    <view class="footer">
+    <!-- <view class="footer">
       <button class="footer-btn" @click="onClick">开始学习</button>
-    </view>
+    </view> -->
   </view>
 </template>
 
@@ -78,8 +78,6 @@ export default {
     }
   },
   mounted() {
-    // this.onShare()
-    console.log(this.info.favorites);
   },
   computed: {
     timeTotal() {
@@ -107,7 +105,8 @@ export default {
         } else {
           uni.showToast({ title: '收藏陈功', icon: 'success' })
         }
-        this.info.favorites = res.data.status
+        console.log('res.data.status', );
+        this.info.favorites = !!res.data.status
       }
     },
   }

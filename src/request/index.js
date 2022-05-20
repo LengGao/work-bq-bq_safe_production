@@ -69,6 +69,8 @@ const responseStact = [
       let body = response.data
       if (body.code !== 0 && !service.$config.nocatch) {
         uni.showToast({ icon: 'none', title: `${body.message}` })
+      } else if (body.code === 1000) {
+        // service.request(service.$config)
       }
       return response
     }

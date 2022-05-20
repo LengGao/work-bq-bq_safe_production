@@ -41,12 +41,13 @@ const state = {
     // 用户
     user: {
         userInfo: userInfo,
-        login_status: false,
         organizationCurrent: organizationCurrent,
         questionBankInfo: questionBankInfo,
+        login_status: false,
+        is_examination: false
     },
     course: {
-        commentHotWord: null
+        commentHotWord: []
     },
     // 题库
     questionList: {
@@ -77,10 +78,10 @@ const getters = {
 
     // 热评词
     commentHotWord: state => {
-        if (!state.course.commentHotWord) {
+        if (!state.course.commentHotWord.length) {
             store.dispatch('getCommentHotWord')
         }
-        return state.course.commentHotWord || []
+        return state.course.commentHotWord
     },
 
     // 习题列表 （存收藏夹，错题集的答题卡数据）
@@ -102,8 +103,13 @@ const mutations = {
         state.user.userInfo = data
         uni.setStorageSync('userInfo', data)
     },
+    // 用户登录状态
     SET_LOGIN_STATUS(state, data) {
         state.user.login_status = data
+    },
+    // 用户考试状态
+    SET_EXAMINATION(state, data) {
+        state.user.is_examination = data
     },
     // 设置当前机构
     SET_ORG_CURRENT(state, data) {

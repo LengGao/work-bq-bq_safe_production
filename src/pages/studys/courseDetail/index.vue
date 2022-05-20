@@ -16,17 +16,16 @@
       </video>
     <!-- #endif -->
 
-    <!-- <web-view src="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx1f7125112b74db52&redirect_uri=https%3A%2F%2Fopen.faceid.qq.com%2Fv1%2Fapi%2FgetCode%3FbizRedirect%3Dhttps%253A%252F%252Ffaceid.qq.com%252Fapi%252Fauth%252FgetOpenidAndSaveToken%253Ftoken%253D61238B0E-5336-4705-B9EA-51C379088E92&response_type=code&scope=snsapi_base&state=&component_appid=wx9802ee81e68d6dee#wechat_redirect"> </web-view> -->
     <!-- 分段器 -->
     <view class="segmented-bar"> 
       <uni-segmented-control :current="current" :values="items" @clickItem="onChangeSegmented" styleType="text"
-                             activeColor="#199ff" />
+                             activeColor="#199fff" />
       <view class="segmented-content">
         <view v-show="current === 0" class="segmented-pane">
           <Details v-if="courseInfo.teacher" :info="courseInfo" :courseId="course_id" />
         </view>
         <view v-show="current === 1" class="segmented-pane">
-          <Catalogue v-if="course_id" :courseId="course_id" :learningLessonId="learning_lesson_id"
+          <Catalogue v-if="course_id" :courseId="course_id" :lessonId="lesson_id"
                      @videoChange="onChangeVideo" />
         </view>
         <view v-show="current === 2" class="segmented-pane">
@@ -83,9 +82,11 @@ export default {
   },
   data() {
     return {
-      region_id: 1,
-      course_id: 26,
-      learning_lesson_id: '',
+      region_id: 3,
+      course_id: 27,
+      // region_id: 1,
+      // course_id: 26,
+      lesson_id: '',
 
       // 上拉配置
       up: { page: { num: 0, size: 10, time: 1000 } },
@@ -144,10 +145,30 @@ export default {
   },
   methods: {
     // ------------------- 视频相关 --------------------------
+    // 随堂测试
+    showModal() {
+      let url =  `/pages/examinations/classTest/index`,
+      query = `?lesson_id=${this.lesson_id}`      
+      uni.showModal({
+        title: '提示',
+        content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
+        cancelText: '取消',
+        cancelColor: '#199fff',
+        confirmText: '开始考试',
+        confirmColor: '#199fff',
+      }).then(res => {
+        console.log('confirm',res);
+        let confirm = res[1].confirm
+        if (confirm) {
+          this.$store.commit('SET_EXAMINATION', true)
+          uni.navigateTo({url: url + query})
+        }
+      })
+    },
     // 更换播放视频
     onChangeVideo(detailArr) {
       let curr = detailArr[0]
-      let params = { lesson_id: curr.id }
+      let params = {region_id: this.region_id, lesson_id: curr.id }
       this.getCourseGetVideoAuth(params)
     },
     // 加载完成
@@ -167,12 +188,13 @@ export default {
     },
     // 结束
     onEnded(e) {
+      this.stopSendMini()
       this.is_free = true
       this.prev_time = 0
       this.start_second = 0
       this.end_time = 0
       this.player.seek(0)
-      this.stopSendMini()
+      this.showModal()
     },
     // 进度更新
     onTimeupdate({ detail }) {
@@ -212,7 +234,7 @@ export default {
       let endTime = this.end_time
 
       let params = {
-        lesson_id: this.learning_lesson_id,
+        lesson_id: this.lesson_id,
         start_second: parseFloat(this.prev_time),
         end_second: parseFloat(endTime)
       }
@@ -273,14 +295,15 @@ export default {
       // 由已经播放的时间减去开始播放的时间，判断是否拖动了进度条，
       let currTime = this.player.getCurrentTime()
       let params = {
-        lesson_id: this.learning_lesson_id,
+        lesson_id: this.lesson_id,
         start_second: parseFloat(this.prev_time),
         end_second: parseFloat(currTime)
       }
 
       let res = await courseRecordLearn(params)
+
       if (res.code === 0) {
-        let last_second = res.data.last_second
+        // let last_second = res.data.start_second
         let redirect_url = res.data.redirect_url
         if (redirect_url) {
           this.player.pause()
@@ -290,6 +313,14 @@ export default {
             location.href = redirect_url // 需要人脸识别
           }, 1000)
         }
+      } else if (res.code === 2201) {
+        // 有章节没看完
+        uni.showToast({title: `${res.message}`, icon: 'none' , duration: 2000})
+        this.player.pause()
+        this.stopSend()
+        this.lesson_id = res.data.lesson_id
+        let params = {region_id: this.region_id, lesson_id: res.data.lesson_id }
+        this.getCourseGetVideoAuth(params)
       } else {
         this.player.pause()
         this.stopSend()
@@ -353,12 +384,13 @@ export default {
         })
         // 监听结束
         player.on('ended', () =>{
+          this.stopSend()
           this.is_free = true
           this.prev_time = 0
           this.start_second = 0
           this.end_time = 0
           this.player.seek(0)
-          this.stopSend()
+          this.showModal()
         })
         /**
          * 是否允许快进
@@ -382,17 +414,17 @@ export default {
     // 获取视频凭证
     async getCourseGetVideoAuth(params) {
       let res = await courseGetVideoAuth(params)
-      if (res.code === 0) {
-        let { video_id, auth_data, start_second, lesson_id, title, cover, is_free,
-              free_second, is_forward } = res.data
-              
+      let code = res.code
+      let { video_id, auth_data, start_second, lesson_id, title, cover, is_free,
+            free_second, is_forward } = res.data
+
+      if (code === 0) {
         this.title = title
         this.cover = cover
         this.is_free = is_free
         this.free_second = free_second
         this.is_forward = is_forward
         this.start_second = start_second
-        this.learning_lesson_id = lesson_id
         this.prev_time = start_second
         /* #ifdef H5 */
         this.createPlayer({ video_id, auth_data, start_second, cover, is_free })
@@ -401,7 +433,12 @@ export default {
         this.settingPlayer({ video_id, auth_data, start_second, cover, is_free })
         /* #endif */
         this.videoPlaceholder = false
+      } else if (code === 2001) {
+        // 没购买
+        this.videoPlaceholder = true
+        uni.showToast({title: `${res.message}`, icon: 'none' })
       } else {
+        // 其他异常
         this.videoPlaceholder = true
         uni.showToast({title: `${res.message}`, icon: 'none' })
       }
@@ -464,8 +501,7 @@ export default {
       let param = { region_id: this.region_id, course_id: this.course_id }
       let res = await courseInfo(param)
       if (res.code === 0) {
-        this.learning_lesson_id = res.data.learning_lesson_id
-        res.data.favorites = 0
+        this.lesson_id = res.data.learning_lesson_id        
         this.courseInfo = res.data
         this.videoCover = res.data.cover
         this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: res.data.learning_lesson_id })
