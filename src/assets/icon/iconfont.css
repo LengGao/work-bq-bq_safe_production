@@ -1,6 +1,7 @@
 @font-face {
   font-family: 'iconfont';  /* Project id 3328807 */
-  src: url('https//at.alicdn.com/t/font_3328807_7c0imq3f9vd.ttf?t=1653040591130') format('truetype');
+  src: url('@/static/iconfont.woff') format('woff'),
+       url('@/static/iconfont.ttf') format('truetype');
 }
 
 .iconfont {
