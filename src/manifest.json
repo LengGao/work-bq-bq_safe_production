@@ -51,7 +51,7 @@
 		}
 	},
 	"h5": {
-		"publickPath": "./",
+		"publickPath": "./static",
 		"optimization": {
 			"prefetch": true,
 			"preload": true
