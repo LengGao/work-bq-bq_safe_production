@@ -234,7 +234,7 @@ export function practiceStart(data) {
 export function practiceAnswer(data) {
   return requset({
     url: 'course/practiceAnswer',
-    method: 'get',
+    method: 'POST',
     data   
   })
 }

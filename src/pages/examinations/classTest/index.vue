@@ -16,8 +16,8 @@
         </template>
       </swiper-item>
     </swiper>
-    <ClassTestAnswerBar class="bar" :model="model" :is-end="isEnd" :is-start="isStart"
-              @submit-paper="toTestResoult" @next="handleNext" @prev="handlePrev" >
+    <ClassTestAnswerBar class="bar" :is-end="isEnd" :is-start="isStart"
+              @submit-paper="submitAnswer" @next="handleNext" @prev="handlePrev" >
     </ClassTestAnswerBar>
   </view>
 </template>
@@ -30,7 +30,7 @@ import Judg from "../components/judg";
 import Indefinite from "../components/indefinite";
 import Completion from "../components/completion";
 import Short from "../components/short";
-import ClassTestAnswerBar from "../components/ClassTestAnswerBar"
+import ClassTestAnswerBar from "../components2/ClassTestAnswerBar"
 
 import {
   practiceStart,
@@ -65,7 +65,7 @@ export default {
       questionList: [],
       // 答题
       logId: "",
-      userAnswerMap: {},
+      userAnswerList: [],
       // 练习的题目类型
       type: 1, // 1:章节练习，2：模拟考试 ...
       // 是否结算
@@ -108,44 +108,17 @@ export default {
     this.createQuestion(lesson_id); 
   },
   onUnload() {
-    if (!["7", "8"].includes(this.type)) {
-      this.submitOtherAnswer().then(() => {
-        this.settlement();
-      });
-    }
+    this.submitAnswer()
   },
   methods: {
-    // 提交其他题型答案
-    submitOtherAnswer() {
-      return new Promise(async (resolve) => {
-        if (this.type === "7" || this.hasSettlement) {
-          // 收藏夹，结算过 不用提交答案
-          return resolve();
-        }
-        for (const id in this.userAnswerMap) {
-          if (Array.isArray(this.userAnswerMap[id])) {
-            this.userAnswerMap[id].length &&
-              (await this.submitAnswer(id, this.userAnswerMap[id]));
-          } else {
-            this.userAnswerMap[id] &&
-              (await this.submitAnswer(id, this.userAnswerMap[id]));
-          }
-        }
-        resolve();
-      });
-    },
-    // --------------------------------- 题目选择事件
+    // ------------------ 题目选择事件
     // 单选跟判断题答案提交
     onSingleChange(answer) {
-      console.log('answer', answer);
-      if (!answer instanceof Array) {
-        answer = [answer]
-      }
-      this.submitAnswer(answer);
+      this.cacheAnswer(answer);
     },
     // 收集其他题型答案
     onOtherChange(answer, id) {
-      this.userAnswerMap[id] = answer;
+      this.userAnswerList[id] = answer;
       this.questionList[this.currentIndex].userAnswer = answer;
     },
     handlePrev() {
@@ -155,7 +128,7 @@ export default {
       !this.isEnd && this.currentIndex++;
     },
 
-    // --------------------- swiper
+    // ----------------- swiper
     onSwiperChange({ detail }) {
       const { current } = detail;
       this.currentIndex = current;
@@ -164,36 +137,41 @@ export default {
     },
     onSwiperBoundary() {
       if (this.isStart) {
-        uni.showToast({
-          icon: "none",
-          title: "已经是第一题了",
-        });
+        uni.showToast({ icon: "none", title: "已经是第一题了"});
         return
       }
-      if (this.isEnd) {
-        uni.showToast({
-          icon: "none",
-          title: "已经是最后一题了",
-        });
+      if (this.isEnd) { 
+        uni.showToast({ icon: "none", title: "已经是最后一题了" });
       }
     },
     onAnimationfinish({ detail }) {
-      this.submitOtherAnswer();
+      // console.log('onAnimationfinish', detail);
     },
-    // 结算成绩
-    async settlement() {
-      const data = {
-        log_id: this.logId,
-      };
-      await settlement(data);
+    // 缓存答案
+    cacheAnswer(answer) {
+      console.log('answer',answer);
+      let list = this.userAnswerList
+      let index = list.findIndex(item => item.question_id ===  answer.question_id)
+      if (index !== -1) {
+        this.userAnswerList[index] = answer 
+      } else {
+        this.userAnswerList.push(answer)
+      }
     },
-    // 每做一提 提交答案
-    async submitAnswer(answer) {
-      const data = { practice_id: this.practice_id, answer};
-      // 错题集答案提交用 submitWrongQuestion
+    // 提交答案
+    async submitAnswer() {
+      let data = {practice_id: this.practice_id, answer: this.userAnswerList}
+      data = JSON.parse(JSON.stringify(data))
+      console.log('this.userAnswerList', data );
       const res = await practiceAnswer(data);
-      // 已提交的重置掉
-      this.userAnswerMap[topic_id] && (this.userAnswerMap[topic_id] = null);
+      if (res.code === 0) {
+        uni.showToast({ title: '提交成功', icon: 'success' })
+        this.duration = 0;
+        this.hasSettlement = true;
+        setTimeout(() => {
+          uni.navigateTo({url: `/pages/examinations/testResults/index?logId=${this.logId}`});
+        }, 500);
+      }
     },
     // 获取章节练习题目
     async createQuestion(lesson_id) {
@@ -204,15 +182,6 @@ export default {
         this.questionList = res.data.question
         this.total = res.data.question.length
       }
-    },
-    // 结果页
-    toTestResoult() {
-      this.submitOtherAnswer();
-      this.duration = 0;
-      this.hasSettlement = true;
-      setTimeout(() => {
-        uni.navigateTo({url: `/pages/examinations/testResults/index?logId=${this.logId}`});
-      }, 500);
     },
   },
 };
