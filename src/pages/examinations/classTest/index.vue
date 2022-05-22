@@ -13,17 +13,13 @@
           <Indefinite :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 4" />
           <Completion :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 5" />
           <Short :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 6" />
-          <Case :model="model" :options="item" :serial-number="currentIndex + 1" :log-id="logId"
-                v-if="item.topic_type === 7" :ref="`case-${item.id}`"
-                :is-active="currentIndex === index && duration === 300" :type="type" @change="onCaseChange"
-                @index-change="onCaseIndexChange" />
         </template>
       </swiper-item>
     </swiper>
-    <AnswerBar class="bar" :model="model" :is-end="isEnd" :is-start="isStart" :time="time"
+    <!-- <AnswerBar class="bar" :model="model" :is-end="isEnd" :is-start="isStart" :time="time"
                :isCollection="!!getCurrentData.is_collection" @submit-paper="toTestResoult" 
                @next="handleNext" @prev="handlePrev" >
-    </AnswerBar>
+    </AnswerBar> -->
   </view>
 </template>
 
@@ -36,20 +32,8 @@ import Judg from "../components/judg";
 import Indefinite from "../components/indefinite";
 import Completion from "../components/completion";
 import Short from "../components/short";
-import Case from "../components/case";
 
 import {
-  createPractice,
-  submitAnswer,
-  settlement,
-  createMockExam,
-  createRealTopic,
-  createIndependent,
-  createDailyClock,
-  createChallenge,
-  getUserTopicRecord,
-  submitWrongQuestion,
-
   practiceStart,
   practiceAnswer,
   practiceAnalyse,
@@ -65,12 +49,12 @@ export default {
     Judg,
     Indefinite,
     Completion,
-    Short,
-    Case,
+    Short
   },
 
   data() {
     return {
+      lesson_id: '',
       // 当前的swiper 索引
       currentIndex: 0,
       // 案例题的swiper 索引
@@ -117,19 +101,13 @@ export default {
   },
   onShow() {
     this.duration = 300;
-    this.setCurrentModel();
   },
   onLoad(query) {
     // isContinue 是否为继续做题
-    let { chapterId = 27, title = "测试题目", type = "1", time = 0, isExam = 1, isAnalysis, isContinue } = query
-    let {lesson_id } = query
-    
-    this.type = type;
-    this.time = +time;
-    this.isExam = isExam;
-    this.isAnalysis = isAnalysis;
+    let { lesson_id = 60, title = "测试提" } = query
+    this.lesson_id = lesson_id
     uni.setNavigationBarTitle({ title })
-    this.createQuestion(chapterId, isExam, isContinue); 
+    this.createQuestion(lesson_id); 
   },
   onUnload() {
     if (!["7", "8"].includes(this.type)) {
@@ -139,53 +117,6 @@ export default {
     }
   },
   methods: {
-    // ...mapActions(["setQusetionList"]),
-    setCurrentModel() {
-      // model 1:刷题模式，2：考试模式 3：解析模式
-      if (this.type === "1") {
-        this.model = "1";
-      }
-      if (this.type === "2") {
-        this.model = "2";
-        if (this.hasSettlement) {
-          this.model = "3";
-        }
-      }
-      if (this.type === "3") {
-        if (this.isExam === "1") {
-          this.model = "2";
-          if (this.hasSettlement) {
-            this.model = "3";
-          }
-        } else {
-          this.model = "1";
-        }
-      }
-      if (this.type === "4") {
-        this.model = "2";
-        if (this.hasSettlement) {
-          this.model = "3";
-        }
-      }
-      if (this.type === "5") {
-        this.model = "1";
-      }
-      if (this.type === "6") {
-        this.model = "1";
-      }
-      if (this.type === "7") {
-        this.model = "1";
-        if (this.isAnalysis === "1") {
-          this.model = "3";
-        }
-      }
-      if (this.type === "8") {
-        this.model = "1";
-        if (this.isAnalysis === "1") {
-          this.model = "3";
-        }
-      }
-    },
     // 提交其他题型答案
     submitOtherAnswer() {
       return new Promise(async (resolve) => {
@@ -206,14 +137,6 @@ export default {
       });
     },
     // --------------------------------- 题目选择事件
-    // 案例题里的index
-    onCaseIndexChange(index) {
-      this.caseIndex = index;
-    },
-    // 案例题的用户答案
-    onCaseChange(index, answer) {
-      this.questionList[this.currentIndex].child[index].userAnswer = answer;
-    },
     // 收集其他题型答案
     onOtherChange(answer, id) {
       this.userAnswerMap[id] = answer;
@@ -282,45 +205,16 @@ export default {
       this.userAnswerMap[topic_id] && (this.userAnswerMap[topic_id] = null);
     },
     // 获取章节练习题目
-    async createQuestion(chapter_id, is_exam, redo) {
-      const data = { chapter_id, is_exam, redo };
-
-      if (this.type === "7") {
-        data.is_collection = 1; // 收藏夹
-      }
-      if (this.type === "8") {
-        data.is_collection = 0; // 错题集
-      }
-      const api = {
-        1: createPractice,
-        2: createMockExam,
-        3: createRealTopic,
-        4: createIndependent,
-        5: createDailyClock,
-        6: createChallenge,
-        7: getUserTopicRecord,
-        8: getUserTopicRecord,
-      };
-      const res = await api[this.type](data);
+    async createQuestion(lesson_id) {
+      const data = { lesson_id };
+      const res = await practiceStart(data);
+      console.log('res', res);
       const topic_list = res.data.topic_list;
-      const topic_id = res.data.topic_id || "";
-      const qusetionType = [1, 2, 3, 4, 5, 6, 7];
-      qusetionType.forEach((type) => {
+      
+      // const qusetionType = [1, 2, 3, 4, 5, 6, 7];
+      // qusetionType.forEach((type) => {
         this.questionList = this.questionList.concat(topic_list[type] || []);
-      });
-      // 继续上一次
-      topic_id &&
-        this.questionList.forEach((item, index) => {
-          if (item.id === topic_id) {
-            this.currentIndex = index;
-          }
-        });
-      this.total = res.data.total;
-      this.logId = res.data.log_id;
-      // 收藏夹错题集的答题卡数据
-      if (["7", "8"].includes(this.type)) {
-        // this.setQusetionList(topic_list);
-      }
+      // });
     },
     toTestResoult() {
       this.submitOtherAnswer();

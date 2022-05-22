@@ -11,9 +11,9 @@
           <view class="course-item-cover">
             <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
             <view class="course-tag" v-else>认证课</view>
-            <image class="course-img" :src="item.cover" mode="aspectFit" />
+            <image class="course-img" :src="item.cover" mode="aspectFit"  @click="() => previewImg(item.cover)"/>
           </view>
-          <view class="course-item-content">
+          <view class="course-item-content" @click="() => toDetails(item)">
             <view class="course-name">{{ item.title }}</view>
             <view class="course-time">
               {{ item.chapter_count }}章
@@ -26,7 +26,6 @@
               <view v-if="item.price === 0" class="course-other-tag"> 免费</view>
               <view v-else class="course-other-price">
                 ￥{{ item.price }} 
-                <!-- <text class="origin">￥{{ item.origin }}</text> -->
               </view>
             </view>
           </view>
@@ -57,7 +56,7 @@ export default {
       up: {
         page: {
           num: 0,
-          size: 2,
+          size: 20,
           time: 500,
         },
         auto: false
@@ -94,6 +93,16 @@ export default {
     };
   },
   methods: {
+    toDetails(item) {
+      let url = `/pages/studys/courseDetail/index`,
+          query = `?course_id = ${item.id}`
+      uni.navigateTo({ url: url + query })
+    },
+    previewImg(url) {
+      uni.previewImage({
+        urls: [url]
+      })
+    },
     reloadList(type, val) {
       if (type === 'category') {
         this.category_id = val

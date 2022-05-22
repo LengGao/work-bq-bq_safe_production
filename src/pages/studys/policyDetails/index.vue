@@ -47,10 +47,10 @@ export default {
   methods: {
     // 获取数据
    async getData() {
-      const res = await getAnnouncementInfo({ id: 717 }) 
-        if (res.code == 0) {
-          this.nodes = res.data
-        }
+      // const res = await getAnnouncementInfo({ id: 717 }) 
+      //   if (res.code == 0) {
+      //     this.nodes = res.data
+      //   }
     }
   }
 }

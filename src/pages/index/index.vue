@@ -7,7 +7,7 @@
     <view class="filter">
       <view class="filter-left" @click="onOpenFilter">
         <uni-icons type="location" size="36rpx" color="#199fff" />
-        <text class="location">广东地区</text>
+        <text class="location">{{ currLocation.region }}</text>
         <uni-icons type="bottom" size="32rpx" />
       </view>
       <view class="filter-right">
@@ -126,7 +126,7 @@
     </view>
 
     <uni-popup ref="popup" mask-background-color="#f8f8f8">
-      <RegionChange @change="onChangeRegion" @close="onCloseFilter" :location="location" :buttons="regions" />
+      <RegionChange @change="onChangeRegion" @close="onCloseFilter" :location="currLocation" :buttons="regions" />
     </uni-popup>
 
     <uni-popup ref="popup-org" mask-background-color="rgba(0, 0, 0, 0.4)" :is-mask-click="false">
@@ -145,6 +145,10 @@
 import CardRow from "@/components/card-row/index";
 import RegionChange from './components/RegionChange'
 import { mapGetters } from 'vuex'
+import {
+  systemRegion
+} from  '@/api/index'
+
 
 export default {
   components: {
@@ -155,20 +159,9 @@ export default {
     return {
       isHidden: false,
       showRegionChange: false,
-      // 当前地理位置信息
-      location: {
-        address: '安全生产网络培训平台'
-      },
       // 地区数据
-      regions: [
-        { id: 1, title: '关东关东', checked: false },
-        { id: 2, title: '关西', checked: false },
-        { id: 3, title: '山西', checked: false },
-        { id: 4, title: '赵家域', checked: false },
-        { id: 5, title: '368旅', checked: false },
-        { id: 6, title: '太原', checked: false },
-        { id: 7, title: '平安县', checked: false },
-      ],
+      currLocation: {},
+      regions: [],
       // 文库资料
       librarys: [
         { id: 1, name: "name1", thumb: "/static/img/index_library1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "2022-03-18 18:30" },
@@ -198,6 +191,9 @@ export default {
       ],
     };
   },
+  onLoad() {
+    this.getSystemRegion()
+  },
   created() {
   },
   computed: {
@@ -211,6 +207,7 @@ export default {
     } else {
         uni.redirectTo({ url: '/pages/login/index' })
     }
+    // uni.navigateTo({ url: '/pages/examinations/classTest/index' })
   },
   methods: {
     // 打开机构选择
@@ -238,11 +235,9 @@ export default {
       this.$refs.popup.close()
     },
     // 地区选择
-    onChangeRegion({ index, checked }) {
-      const list = this.regions
-      const pre = list.findIndex(item => item.checked);
-      if (pre !== -1) { this.regions[pre].checked = false }
-      this.regions[index].checked = checked
+    onChangeRegion(detail) {
+      this.currLocation = detail
+      this.$store.commit('SET_REGION', detail)
     },
     // 打开搜索页面
     onOpenSearch() {
@@ -308,6 +303,21 @@ export default {
     // 数据获取
     getData() {
     },
+
+    async getSystemRegion() {
+      let res = await systemRegion()
+      if (res.code === 0) {
+        let regions = res.data.map(item => { item.checked = false; return item; })
+        this.regions = regions
+        if (this.$store.getters.region.id) {
+          this.currLocation = this.$store.getters.region
+        } else {
+          let currLocation = regions[0]
+          this.currLocation = currLocation
+          this.$store.commit('SET_REGION', currLocation)
+        }
+      }
+    }
   }, // methods end
 };
 </script>

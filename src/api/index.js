@@ -11,3 +11,14 @@ export function getAnnouncementInfo(data) {
     loading: true
   })
 }
+
+
+
+// 获取地区配置
+export function systemRegion(data) {
+  return request({
+    url: 'index/systemRegion',
+    method: 'get',
+    data
+  })
+}

@@ -222,7 +222,7 @@ export const getFavoritesList = (data) => {
   })
 }
 
-// 随堂测试题目
+// 随堂测试 题目
 export function practiceStart(data) {
   return requset({
     url: 'course/practiceStart',

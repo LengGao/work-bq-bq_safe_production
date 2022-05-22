@@ -2,6 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { service } from '@/request/index'
 import {
+    systemRegion
+} from '@/api/index'
+import {
     getVersion,
     login,
     loginout
@@ -13,6 +16,7 @@ import {
 const userInfo = uni.getStorageSync('userInfo') || {}
 const questionBankInfo = uni.getStorageSync('questionBankInfo') || {}
 const organizationCurrent = uni.getStorageSync('orgInfo') || {}
+const region = uni.getStorageSync('region') || {}
 const version = process.env.VUE_APP_VERSION
 let appId = process.env.VUE_APP_APPID
 
@@ -40,6 +44,7 @@ const state = {
     },
     // 用户
     user: {
+        region: region,
         userInfo: userInfo,
         organizationCurrent: organizationCurrent,
         questionBankInfo: questionBankInfo,
@@ -65,6 +70,8 @@ const getters = {
     userInfo: state => state.user.userInfo,
     // 用户token
     token: state => state.user.userInfo.token,
+    // 用户地区
+    region: state => state.user.region,
     // 是否登录
     login_status: state => state.user.login_status,
     // 当前机构
@@ -102,6 +109,11 @@ const mutations = {
     SET_USER_INFO(state, data) {
         state.user.userInfo = data
         uni.setStorageSync('userInfo', data)
+    },
+    // 设置用户地区
+    SET_REGION(state, data) {
+        state.user.region = data
+        uni.setStorageSync('region', data)
     },
     // 用户登录状态
     SET_LOGIN_STATUS(state, data) {
@@ -180,7 +192,7 @@ const actions = {
         return res
     },
     async loginout({ commit }, data) {
-        let keys = ['userInfo', 'orgInfo', 'questionBankInfo']
+        let keys = ['userInfo', 'orgInfo', ,'region', 'questionBankInfo']
         commit('SET_LOGIN_STATUS', false)
         
         keys.forEach(key => {
