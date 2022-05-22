@@ -10,11 +10,11 @@
     <div class="dropdown-filter-container" :class="{'dropdown-filter-container--popup':show}">
       <div class="container-left">
         <div class="container-left-item" @click="handleLeftClick(index)"
-             :class="{'container-left-item--active':activeLeftIndex === index}" v-for="(item,index) in data"
+             :class="{'container-left-item--active':activeLeftIndex === index}" v-for="(item,index) in list"
              :key="item.value">{{item.name}}</div>
       </div>
       <div class="container-right">
-        <div class="container-right-item" @click="handleRightClick(item)" v-for="item in data[activeLeftIndex].children"
+        <div class="container-right-item" @click="handleRightClick(item)" v-for="item in list[activeLeftIndex].children"
              :key="item.value">{{item.name}}
         </div>
       </div>
@@ -29,28 +29,64 @@ export default {
       type: [Number, String],
       default: ''
     },
-    data: {
+    nodeList: {
       type: Array,
       default: () => ([])
     },
     arrow: {
       type: Boolean,
       default: false
+    },
+    nameKey: {
+      type: String,
+      default: 'title'
+    },
+    valueKey: {
+      type: String,
+      default: 'id'
+    },
+    childrenKey: {
+      type: String,
+      default: 'sub'
     }
   },
   data() {
     return {
       show: false,
       activeLeftIndex: 0,
-      activeRightName: ''
+      activeRightName: '',
+      list: []
     }
   },
   computed: {
     defaultName() {
-      return this.data[0].children[0].name
+      return '全部'
     }
   },
+  created() {
+    this.normalizeData(this.nodeList)
+  },
   methods: {
+    normalizeData(list) {
+      let nameKey = this.nameKey,  valueKey = this.valueKey, childrenKey = this.childrenKey
+
+      const normalize = (data) => {
+        let stack = []
+        for (let i = 0, ii = data.length; i < ii; i++) {
+          let item = data[i], _item = {}
+          _item.name = item[nameKey]
+          _item.value = item[valueKey]
+          if (item[childrenKey]) {
+            _item.children = normalize(item[childrenKey])
+          } else {
+            _item.children = []
+          }
+          stack[i] = _item
+        }
+        return stack
+      }
+      this.list =  normalize(list)
+    },
     handleRightClick(item) {
       this.activeRightName = item.name
       this.$emit('input', item.value)

@@ -1,37 +1,40 @@
 <template>
   <view class="course-list">
     <view class="course-list-header">
-      <DropdownFilter class="picker" :data="categoryData" v-model="categoryValue" @change="(val) => reloadList('category', val)" />
-      <DropdownSelect class="picker" :data="typeData" v-model="typeValue" @change="(val) => reloadList('type', val)" />
+      <DropdownFilter class="picker" v-if="categoryData.length" :nodeList="categoryData" v-model="category_id"
+                      @change="(val) => reloadList('category', val)" />
+      <DropdownSelect class="picker" :data="typeData" v-model="type_id" @change="(val) => reloadList('type', val)" />
     </view>
     <view class="mescroll-box">
-    <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true" :topbar="true" :safearea="true">
-      <view class="course-list-container">
-        <view class="course-item" v-for="item in courseData" :key="item.id">
-          <view class="course-item-cover">
-            <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
-            <view class="course-tag" v-else>认证课</view>
-            <image class="course-img" :src="item.cover" mode="aspectFit"  @click="() => previewImg(item.cover)"/>
-          </view>
-          <view class="course-item-content" @click="() => toDetails(item)">
-            <view class="course-name">{{ item.title }}</view>
-            <view class="course-time">
-              {{ item.chapter_count }}章
-              {{ item.learn_count }}课时
+      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
+                     :topbar="true" :safearea="true">
+        <view class="course-list-container">
+          <view class="course-item" v-for="item in courseData" :key="item.id">
+            <view class="course-item-cover">
+              <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
+              <view class="course-tag" v-else>认证课</view>
+              <image class="course-img" :src="item.cover" mode="aspectFit" @click="() => previewImg(item.cover)" />
             </view>
-            <view class="course-other">
-              <view class="course-other-count">
-                <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons> {{ item.learn_count }} 人在学
+            <view class="course-item-content" @click="() => toDetails(item.id)">
+              <view class="course-name">{{ item.title }}</view>
+              <view class="course-time">
+                {{ item.chapter_count }}章
+                {{ item.learn_count }}课时
               </view>
-              <view v-if="item.price === 0" class="course-other-tag"> 免费</view>
-              <view v-else class="course-other-price">
-                ￥{{ item.price }} 
+              <view class="course-other">
+                <view class="course-other-count">
+                  <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons>
+                  {{ item.learn_count }} 人在学
+                </view>
+                <view v-if="item.price === 0" class="course-other-tag"> 免费</view>
+                <view v-else class="course-other-price">
+                  ￥{{ item.price }}
+                </view>
               </view>
             </view>
           </view>
         </view>
-      </view>
-    </mescroll-body>    
+      </mescroll-body>
     </view>
   </view>
 </template>
@@ -41,6 +44,7 @@ import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/me
 import DropdownFilter from '@/components/dropdown-filter'
 import DropdownSelect from '@/components/dropdown-select'
 import {
+  courseCategory,
   courseList
 } from '@/api/course'
 
@@ -59,43 +63,32 @@ export default {
           size: 20,
           time: 500,
         },
-        auto: false
       },
-      region_id: 1,
-      category_id: 0,
-      type_id: 0,
 
-      categoryValue: '',
-      categoryData: [
-        { name: '全部', value: 0, children: [{ name: '全部', value: 0 }] },
-        { name: '安监类', value: 1,
-          children: [
-            { name: '低压电工', value: 11 },
-            { name: '融化焊接', value: 12 },
-            { name: '安全管理员', value: 13 },
-          ]
-        },
-        { name: '学历类', value: 2,
-          children: [
-            { name: '成人高考', value: 21 },
-            { name: '开放教育', value: 22 },
-            { name: '自学考试', value: 23 },
-          ]
-        }
-      ],
-      typeValue: '',
-      typeData: [
-        { name: '全部类型', value: '' },
-        { name: '免费课', value: 1 },
-        { name: '认证课', value: 2 },
-      ],
+      region_id: 0,
       courseData: [],
+      
+      // 分类
+      category_id: 0, // 0 全部
+      categoryData: [],
+
+      // 类型
+      type_id: -1, // -1 全部
+      typeData: [
+        { name: '全部类型', value: -1 },
+        { name: '免费课', value: 0 },
+        { name: '认证课', value: 1 },
+      ],
     };
   },
+  onLoad() {
+    this.region_id = this.$store.getters.region.id
+    this.courseCategory()
+  },
   methods: {
-    toDetails(item) {
+    toDetails(id) {
       let url = `/pages/studys/courseDetail/index`,
-          query = `?course_id = ${item.id}`
+        query = `?course_id=${id}`
       uni.navigateTo({ url: url + query })
     },
     previewImg(url) {
@@ -122,8 +115,7 @@ export default {
         page_size: page.size,
         region_id: this.region_id,
         category_id: this.category_id,
-        categoryType: this.categoryType,
-        typeValue: this.typeValue
+        price_type: this.type_id
       }
       const res = await courseList(data)
       if (res.code !== 0) return this.mescroll.endBySize(0, 0);
@@ -139,12 +131,18 @@ export default {
       // 请求成功,隐藏加载状态 方法二(推荐): 后台接口有返回列表的总数据量 totalSize
       this.mescroll.endBySize(curPageLen, totalSize);
     },
+    // 分类
+    async courseCategory() {
+      let res = await courseCategory()
+      if (res.code === 0) {
+        this.categoryData = res.data
+      }
+    }
   },
 };
 </script>
 
 <style lang="scss" scoped>
-
 .mescroll-box {
   height: 100vh;
 }

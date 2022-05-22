@@ -52,7 +52,8 @@ const state = {
         is_examination: false
     },
     course: {
-        commentHotWord: []
+        commentHotWord: [],
+        categoryList: []
     },
     // 题库
     questionList: {
@@ -90,6 +91,8 @@ const getters = {
         }
         return state.course.commentHotWord
     },
+    // 课程分类
+    categoryList: state => state.course.categoryList,
 
     // 习题列表 （存收藏夹，错题集的答题卡数据）
     questionList: state => state.questionList.list
@@ -133,8 +136,13 @@ const mutations = {
         state.user.organizationList = data
     },
 
+    // 设置课程评价词
     SET_HOT_WORD(state, data) {
         state.course.commentHotWord = data
+    },
+    // 设置课程分类
+    SET_CATEGORY(state, data) {
+        state.course.categoryList = data
     },
 
     // 设置题库信息
@@ -211,6 +219,13 @@ const actions = {
             commit('SET_HOT_WORD', list)
         }
     },
+    async getCategoryList() {
+        let res = await getCategoryList()
+        if (res.code === 0) {
+            commit('SET_CATEGORY', res.data)
+        }
+    },
+
     // 设置题库信息
     setQuestionBankInfo({ commit }, data) {
         commit('SET_QUESTION_BANK_INFO', data)

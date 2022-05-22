@@ -25,7 +25,7 @@
           <Details v-if="courseInfo.teacher" :info="courseInfo" :courseId="course_id" />
         </view>
         <view v-show="current === 1" class="segmented-pane">
-          <Catalogue v-if="course_id" :courseId="course_id" :lessonId="lesson_id"
+          <Catalogue v-if="course_id && lesson_id" :courseId="course_id" :lessonId="lesson_id"
                      @videoChange="onChangeVideo" />
         </view>
         <view v-show="current === 2" class="segmented-pane">
@@ -82,11 +82,9 @@ export default {
   },
   data() {
     return {
-      region_id: 3,
-      course_id: 27,
-      // region_id: 1,
-      // course_id: 26,
-      lesson_id: '',
+      region_id: 0,
+      course_id: 0,
+      lesson_id: 0,
 
       // 上拉配置
       up: { page: { num: 0, size: 10, time: 1000 } },
@@ -133,12 +131,17 @@ export default {
     }
   },
   onLoad(query) {
-    let { course_id, region_id } = query
-    // this.course_id = course_id, region_id = region_id
+    let { course_id } = query
+    this.course_id = course_id
+    this.region_id = this.$store.getters.region.id
     this.getCourseInfo()
   },
   destroyed() {
-    this.intervalId = null
+    if (this.intervalId) {
+      clearInterval(this.intervalId) 
+      this.intervalId = null
+    } 
+    
     /* #ifdef H5 */
     this.player && this.player.dispose();
     /* #endif */
@@ -169,6 +172,7 @@ export default {
     onChangeVideo(detailArr) {
       let curr = detailArr[0]
       let params = {region_id: this.region_id, lesson_id: curr.id }
+      this.lesson_id = curr.id
       this.getCourseGetVideoAuth(params)
     },
     // 加载完成

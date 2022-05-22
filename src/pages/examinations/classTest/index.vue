@@ -7,54 +7,53 @@
       <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.topic_type === 7 }"
                    v-for="(item, index) in questionList" :key="index">
         <template v-if="currentIndex === index || currentIndex - 1 === index || currentIndex + 1 === index">
-          <Single :model="model" :options="item" @change="onSingleChange" v-if="item.topic_type === 1" />
-          <Multiple :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 2" />
-          <Judg :model="model" :options="item" @change="onSingleChange" v-if="item.topic_type === 3" />
-          <Indefinite :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 4" />
-          <Completion :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 5" />
-          <Short :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 6" />
+          <Single :options="item" @change="onSingleChange" v-if="item.question_type === 1" />
+          <Multiple  :options="item" @change="onOtherChange" v-if="item.question_type === 2" />
+          <Judg :options="item" @change="onSingleChange" v-if="item.question_type === 3" />
+          <Indefinite :options="item" @change="onOtherChange" v-if="item.question_type === 4" />
+          <Completion :options="item" @change="onOtherChange" v-if="item.question_type === 5" />
+          <Short :options="item" @change="onOtherChange" v-if="item.question_type === 6" />
         </template>
       </swiper-item>
     </swiper>
-    <!-- <AnswerBar class="bar" :model="model" :is-end="isEnd" :is-start="isStart" :time="time"
-               :isCollection="!!getCurrentData.is_collection" @submit-paper="toTestResoult" 
-               @next="handleNext" @prev="handlePrev" >
-    </AnswerBar> -->
+    <ClassTestAnswerBar class="bar" :model="model" :is-end="isEnd" :is-start="isStart"
+              @submit-paper="toTestResoult" @next="handleNext" @prev="handlePrev" >
+    </ClassTestAnswerBar>
   </view>
 </template>
 
 <script>
-import AnswerBar from "../components/answerBar";
 import AnswerHead from "../components/answerHead";
-import Single from "../components/single";
+import Single from "../components2/single";
 import Multiple from "../components/multiple";
 import Judg from "../components/judg";
 import Indefinite from "../components/indefinite";
 import Completion from "../components/completion";
 import Short from "../components/short";
+import ClassTestAnswerBar from "../components/ClassTestAnswerBar"
 
 import {
   practiceStart,
   practiceAnswer,
   practiceAnalyse,
 } from "@/api/question";
-// import { mapActions } from "vuex";
+
 export default {
   name: "answer",
   components: {
     AnswerHead,
-    AnswerBar,
     Single,
     Multiple,
     Judg,
     Indefinite,
     Completion,
-    Short
+    Short,
+    ClassTestAnswerBar,
   },
 
   data() {
     return {
-      lesson_id: '',
+      lesson_id: 60,
       // 当前的swiper 索引
       currentIndex: 0,
       // 案例题的swiper 索引
@@ -73,8 +72,6 @@ export default {
       hasSettlement: false,
       // 答题模式
       model: "1",
-      // 倒计时时间
-      time: 0,
       // 收藏夹&错题集 是否是解析模式
       isAnalysis: 0,
       // 历年真题是否是考试模式
@@ -104,7 +101,8 @@ export default {
   },
   onLoad(query) {
     // isContinue 是否为继续做题
-    let { lesson_id = 60, title = "测试提" } = query
+    // let { lesson_id = 60, title = "测试提" } = query
+    let lesson_id = 60, title = '测试提'
     this.lesson_id = lesson_id
     uni.setNavigationBarTitle({ title })
     this.createQuestion(lesson_id); 
@@ -137,26 +135,24 @@ export default {
       });
     },
     // --------------------------------- 题目选择事件
+    // 单选跟判断题答案提交
+    onSingleChange(answer) {
+      console.log('answer', answer);
+      if (!answer instanceof Array) {
+        answer = [answer]
+      }
+      this.submitAnswer(answer);
+    },
     // 收集其他题型答案
     onOtherChange(answer, id) {
       this.userAnswerMap[id] = answer;
       this.questionList[this.currentIndex].userAnswer = answer;
     },
-    // 单选跟判断题答案提交
-    onSingleChange(answer, id) {
-      // 收藏夹不用提交答案
-      if (this.type !== "7") {
-        this.submitAnswer(id, [answer]);
-      }
-      this.questionList[this.currentIndex].userAnswer = answer;
-      this.model === "2" && this.handleNext();
-    },
     handlePrev() {
       !this.isStart && this.currentIndex--;
     },
     handleNext() {
-      !this.isEnd &&
-        this.currentIndex++;
+      !this.isEnd && this.currentIndex++;
     },
 
     // --------------------- swiper
@@ -191,16 +187,11 @@ export default {
       };
       await settlement(data);
     },
-    // 提交答案
-    async submitAnswer(topic_id, answer) {
-      const data = {
-        log_id: this.logId,
-        topic_id,
-        answer,
-      };
+    // 每做一提 提交答案
+    async submitAnswer(answer) {
+      const data = { practice_id: this.practice_id, answer};
       // 错题集答案提交用 submitWrongQuestion
-      const api = this.type === "8" ? submitWrongQuestion : submitAnswer;
-      await api(data);
+      const res = await practiceAnswer(data);
       // 已提交的重置掉
       this.userAnswerMap[topic_id] && (this.userAnswerMap[topic_id] = null);
     },
@@ -208,27 +199,25 @@ export default {
     async createQuestion(lesson_id) {
       const data = { lesson_id };
       const res = await practiceStart(data);
-      console.log('res', res);
-      const topic_list = res.data.topic_list;
-      
-      // const qusetionType = [1, 2, 3, 4, 5, 6, 7];
-      // qusetionType.forEach((type) => {
-        this.questionList = this.questionList.concat(topic_list[type] || []);
-      // });
+      if (res.code === 0) {
+        this.practice_id = res.data.practice_id
+        this.questionList = res.data.question
+        this.total = res.data.question.length
+      }
     },
+    // 结果页
     toTestResoult() {
       this.submitOtherAnswer();
       this.duration = 0;
       this.hasSettlement = true;
       setTimeout(() => {
-        uni.navigateTo({
-          url: `/pages/examinations/testResults/index?logId=${this.logId}`,
-        });
+        uni.navigateTo({url: `/pages/examinations/testResults/index?logId=${this.logId}`});
       }, 500);
     },
   },
 };
 </script>
+
 <style lang="scss" scoped>
 .answer {
   height: 100%;
