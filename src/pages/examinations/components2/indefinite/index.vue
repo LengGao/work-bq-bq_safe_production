@@ -1,73 +1,44 @@
 <template>
-  <div class="indefinite">
+  <div class="multiple">
     <view class="quetion-content">
-      <u-parse :content="options.topic_description" />
+      <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" multiple v-model="checkedAnswer" :correct-answer="correctAnswer">
-    </Select>
-    <AnswerEye @change="handleEyeChange" v-if="model === '1'" />
-    <AnswerAnalysis v-if="correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                    :desc="options.topic_analysis" />
+    <Select :options="options.option" multiple :value="checkedAnswer" @change="onChangeOpt" />    
+
   </div>
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerAnalysis from "../answerAnalysis";
 import Select from "../select";
-import AnswerEye from "../answerEye";
 
 export default {
   name: "indefinite",
   components: {
-    AnswerAnalysis,
     Select,
-    AnswerEye,
     uParse,
   },
   props: {
     options: {
       type: Object,
       default: () => ({
+        title: "",
         option: [],
-        topic_description: "",
       }),
-    },
-    model: {
-      type: String,
-      default: "1",
-    },
+    }
   },
   data() {
     return {
-      correctAnswer: "",
-      checkedAnswer: this.options.userAnswer || [],
-      userAnswerText: "",
+      checkedAnswer: []
     };
   },
-  watch: {
-    checkedAnswer(val) {
-      this.$emit("change", val, this.options.id);
-    },
-    model(val) {
-      if (val === "3") {
-        this.handleEyeChange(true);
-      }
-    },
-  },
-  created() {
-    if (this.model === "3") {
-      this.handleEyeChange(true);
-    }
-  },
   methods: {
-    handleEyeChange(val) {
-      if (val) {
-        this.correctAnswer = this.options.topic_answer;
-        this.userAnswerText = this.checkedAnswer.toString(",");
-      } else {
-        this.correctAnswer = "";
+    onChangeOpt(answer) {
+      if (!(answer instanceof Array)) {
+        answer = [answer]
       }
-    },
+      let data = { id: this.options.id, question_id: this.options.question_id, answer: answer }
+      this.$emit("change", data);
+    }
   },
 };
 </script>

@@ -1,36 +1,48 @@
 <template>
   <view class="answer">
-    <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].topic_type" :total="total"
+    <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex"
             @animationfinish="onAnimationfinish">
-      <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.topic_type === 7 }"
+      <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.question_type === 7 }"
                    v-for="(item, index) in questionList" :key="index">
         <template v-if="currentIndex === index || currentIndex - 1 === index || currentIndex + 1 === index">
-          <Single :options="item" @change="onSingleChange" v-if="item.question_type === 1" />
-          <Multiple  :options="item" @change="onOtherChange" v-if="item.question_type === 2" />
-          <Judg :options="item" @change="onSingleChange" v-if="item.question_type === 3" />
-          <Indefinite :options="item" @change="onOtherChange" v-if="item.question_type === 4" />
-          <Completion :options="item" @change="onOtherChange" v-if="item.question_type === 5" />
-          <Short :options="item" @change="onOtherChange" v-if="item.question_type === 6" />
+          <Single :options="item" :userAnswer="userAnswerList[currentIndex]" @change="onSingleChange"
+                  v-if="item.question_type === 1" />
+          <Multiple :options="item" :userAnswer="userAnswerList[currentIndex]" @change="onSingleChange"
+                    v-if="item.question_type === 2" />
+          <Judg :options="item" :userAnswer="userAnswerList[currentIndex]" @change="onSingleChange"
+                v-if="item.question_type === 3" />
+          <Indefinite :options="item" :userAnswer="userAnswerList[currentIndex]" @change="onOtherChange"
+                      v-if="item.question_type === 4" />
+          <Completion :options="item" :userAnswer="userAnswerList[currentIndex]" @change="onOtherChange"
+                      v-if="item.question_type === 5" />
+          <Short :options="item" :userAnswer="userAnswerList[currentIndex]" @change="onOtherChange"
+                 v-if="item.question_type === 6" />
         </template>
       </swiper-item>
     </swiper>
-    <ClassTestAnswerBar class="bar" :is-end="isEnd" :is-start="isStart"
-              @submit-paper="submitAnswer" @next="handleNext" @prev="handlePrev" >
+    <ClassTestAnswerBar class="bar" :is-end="isEnd" :is-start="isStart" @submit-paper="submitAnswer" @next="handleNext"
+                        @prev="handlePrev">
     </ClassTestAnswerBar>
   </view>
 </template>
 
 <script>
-import AnswerHead from "../components/answerHead";
+import AnswerHead from "../components2/answerHead";
 import Single from "../components2/single";
-import Multiple from "../components/multiple";
-import Judg from "../components/judg";
-import Indefinite from "../components/indefinite";
-import Completion from "../components/completion";
-import Short from "../components/short";
+import Multiple from "../components2/multiple";
+import Judg from "../components2/judg";
+import Indefinite from "../components2/indefinite";
+import Completion from "../components2/completion";
+import Short from "../components2/short";
 import ClassTestAnswerBar from "../components2/ClassTestAnswerBar"
+
+/**
+ * 1，题目显示
+ * 2，切换控制
+ * 3，答案保留
+ */
 
 import {
   practiceStart,
@@ -55,42 +67,23 @@ export default {
     return {
       lesson_id: 60,
       // 当前的swiper 索引
+      prevIndex: 0,
+      nextIndex: 0,
       currentIndex: 0,
-      // 案例题的swiper 索引
-      caseIndex: 0,
       // swiper 动画时间
       duration: 300,
       // 考题试卷
       total: 0,
       questionList: [],
       // 答题
-      logId: "",
+      answer: [],
       userAnswerList: [],
-      // 练习的题目类型
-      type: 1, // 1:章节练习，2：模拟考试 ...
-      // 是否结算
-      hasSettlement: false,
-      // 答题模式
-      model: "1",
-      // 收藏夹&错题集 是否是解析模式
-      isAnalysis: 0,
-      // 历年真题是否是考试模式
-      isExam: 0,
     };
   },
   computed: {
-    // 获取当前显示的题目。案例题按小题算
-    getCurrentData() {
-      const currentData = this.questionList[this.currentIndex];
-      if (!currentData) return {};
-      // topic_type === 7 为案例题
-      return currentData.topic_type === 7
-        ? currentData.child[this.caseIndex]
-        : currentData;
-    },
     // 是否最后一题
     isEnd() {
-      return !!this.total && this.currentIndex >= this.total - 1
+      return this.currentIndex >= this.total < -1
     },
     isStart() {
       return this.currentIndex <= 0
@@ -105,72 +98,87 @@ export default {
     let lesson_id = 60, title = '测试提'
     this.lesson_id = lesson_id
     uni.setNavigationBarTitle({ title })
-    this.createQuestion(lesson_id); 
-  },
-  onUnload() {
-    this.submitAnswer()
+    this.createQuestion(lesson_id);
   },
   methods: {
     // ------------------ 题目选择事件
-    // 单选跟判断题答案提交
+    // 收集选择题回答
     onSingleChange(answer) {
-      this.cacheAnswer(answer);
+      this.answer = answer
+      this.cacheAnswer(answer)
     },
-    // 收集其他题型答案
-    onOtherChange(answer, id) {
-      this.userAnswerList[id] = answer;
-      this.questionList[this.currentIndex].userAnswer = answer;
+    // 收集填空题回答
+    onOtherChange(answer) {
+      this.answer = answer
+      this.cacheAnswer(answer)
     },
+    // 上一题
     handlePrev() {
       !this.isStart && this.currentIndex--;
     },
+    // 下一题
     handleNext() {
       !this.isEnd && this.currentIndex++;
     },
-
-    // ----------------- swiper
+    // ------------------ swiper start
     onSwiperChange({ detail }) {
-      const { current } = detail;
-      this.currentIndex = current;
-      this.caseIndex = 0;
-      this.onSwiperBoundary();
+
+      // // 不能留空
+      // if (this.answer.length) {
+      //   // 正常操作
+      //   console.log('detail', detail, this.currentIndex);
+      //   this.submitAnswer()
+      // } else if (this.userAnswerList[detail.current]) {
+      //   // 答完题目后切换
+
+      // } else {
+      //   // 未答题 禁止切换
+      //   uni.showToast({ title: '考试不能留空', icon: 'none' })
+      // }
     },
-    onSwiperBoundary() {
-      if (this.isStart) {
-        uni.showToast({ icon: "none", title: "已经是第一题了"});
-        return
-      }
-      if (this.isEnd) { 
-        uni.showToast({ icon: "none", title: "已经是最后一题了" });
-      }
-    },
+
     onAnimationfinish({ detail }) {
-      // console.log('onAnimationfinish', detail);
-    },
-    // 缓存答案
-    cacheAnswer(answer) {
-      console.log('answer',answer);
-      let list = this.userAnswerList
-      let index = list.findIndex(item => item.question_id ===  answer.question_id)
-      if (index !== -1) {
-        this.userAnswerList[index] = answer 
+      if (this.prevIndex === -1 || this.nextIndex === this.total) {
+        this.checkSwiperIndex()
       } else {
-        this.userAnswerList.push(answer)
+        this.prevIndex = detail.current - 1
+        this.nextIndex = detail.current + 1
       }
+    },
+
+    checkSwiperIndex() {
+      if (this.isStart) {
+        uni.showToast({ icon: "none", title: "已经是第一题了" });
+        return false
+      } else if (this.isEnd) {
+        uni.showToast({ icon: "none", title: "已经是最后一题了" });
+        return false
+      } else {
+        return true
+      }
+    },
+    // ------------------ swiper end
+    // 缓存答案  先不删 防止又要改回来
+    cacheAnswer(answer) {
+      console.log('cacheAnswer', answer);
+      // let index = this.userAnswerList.findIndex(item => item.question_id === answer.question_id)
+      // if (index !== -1) {
+      //   this.userAnswerList[index] = answer
+      // } else {
+      //   this.userAnswerList.push(answer)
+      // }
     },
     // 提交答案
     async submitAnswer() {
-      let data = {practice_id: this.practice_id, answer: this.userAnswerList}
-      data = JSON.parse(JSON.stringify(data))
-      console.log('this.userAnswerList', data );
+      let data = { practice_id: this.practice_id, answer: this.answer }
       const res = await practiceAnswer(data);
       if (res.code === 0) {
         uni.showToast({ title: '提交成功', icon: 'success' })
         this.duration = 0;
-        this.hasSettlement = true;
         setTimeout(() => {
-          uni.navigateTo({url: `/pages/examinations/testResults/index?logId=${this.logId}`});
+          uni.navigateTo({ url: `/pages/examinations/testResults/index?logId=${this.logId}` });
         }, 500);
+        this.answer = []
       }
     },
     // 获取章节练习题目

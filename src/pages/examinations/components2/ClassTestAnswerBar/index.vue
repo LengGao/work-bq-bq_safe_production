@@ -4,11 +4,11 @@
       <uni-icons custom-prefix="iconfont" :color="isStart?'#ddd':''" type="icon-fanhui" size="28rpx"></uni-icons>
       <view class="bar-text">上一题</view>
     </view>
-    <view class="answer-bar-item" @click="onSubmitPaper">
+    <view class="answer-bar-item" v-if="isEnd" @click="onSubmitPaper">
       <uni-icons custom-prefix="iconfont" type="icon-jiaojuan" size="28rpx"></uni-icons>
       <view class="bar-text">交卷</view>
     </view>
-    <view class="answer-bar-item" :class="{'answer-bar-item--disabled':isEnd}" @click="onClickNext">
+    <view v-else class="answer-bar-item" :class="{'answer-bar-item--disabled':isEnd}" @click="onClickNext">
       <uni-icons custom-prefix="iconfont" :color="isEnd?'#ddd':''" type="icon-xiayige-01" size="28rpx"></uni-icons>
       <view class="bar-text">下一题</view>
     </view>

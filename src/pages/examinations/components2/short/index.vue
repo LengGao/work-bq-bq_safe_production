@@ -1,18 +1,18 @@
 <template>
   <div class="short">
     <view class="quetion-content">
-      <u-parse :content="options.topic_description" />
+      <u-parse :content="options.title" />
     </view>
-    <textarea :disabled="!!correctAnswer" class="text" @input="onInput" v-model="value" placeholder="请输入" />
-    <AnswerEye @change="handleEyeChange" v-if="model === '1'" />
-    <AnswerAnalysis short v-if="correctAnswer" :desc="correctAnswer" />
+    <textarea class="text" placeholder="请输入" :value="checkedAnswer" @blur="onInput" />
   </div>
 </template>
+
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
 import AnswerAnalysis from "../answerAnalysis";
 import Select from "../select";
 import AnswerEye from "../answerEye";
+
 export default {
   name: "short",
   components: {
@@ -25,51 +25,31 @@ export default {
     options: {
       type: Object,
       default: () => ({
+        title: '',
         option: [],
-        topic_description: "",
       }),
-    },
-    model: {
-      type: String,
-      default: "1",
     },
   },
   data() {
     return {
       correctAnswer: "",
-      value: this.options.userAnswer || "",
+      checkedAnswer: '',
     };
   },
-  watch: {
-    model(val) {
-      if (val === "3") {
-        this.handleEyeChange(true);
-      }
-    },
-  },
-  created() {
-    if (this.model === "3") {
-      this.handleEyeChange(true);
-    }
-  },
   methods: {
-    onInput() {
-      this.$emit("change", [this.value], this.options.id);
-    },
-    handleEyeChange(val) {
-      if (val) {
-        this.correctAnswer = this.options.topic_answer;
-      } else {
-        this.correctAnswer = "";
-      }
+    onInput({ detail }) {
+      let data = {id: options.id, question_id: options.question_id, answer: [detail.value]}
+      this.$emit("change", data)
     },
   },
 };
 </script>
+
 <style lang="scss" scoped>
 .quetion-content {
   margin-bottom: 20rpx;
 }
+
 .text {
   width: 100%;
   box-sizing: border-box;

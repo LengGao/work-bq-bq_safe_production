@@ -1,22 +1,24 @@
 <template>
   <view class="select">
-    <i-option @change="onOptionChange" v-for="(item, index) in options" :key="item.id" 
+    <s-option @change="onOptionChange" v-for="(item, index) in options" :key="item.id" 
       :value="item.id" :status="status(item.id)">
       <template v-slot:label>
         <text v-if="optionsType === 'select'"> {{ selectLabel[index] }}</text>
         <text v-else> {{ index }}</text>
       </template>
       <u-parse :content="item.content" />
-    </i-option>
+    </s-option>
   </view>
 </template>
+
 <script>
-import IOption from "../option";
+import SOption from "../soption";
 import uParse from "@/components/gaoyia-parse/parse.vue";
+
 export default {
   name: "ISelect",
   components: {
-    IOption,
+    SOption,
     uParse,
   },
   props: {
@@ -59,7 +61,7 @@ export default {
     // 状态更新
     status(value) {
       if (this.multiple) {
-        return this.checkedAnswer.includes(val) ? 'active' : ''
+        return this.checkedAnswer.includes(value) ? 'active' : ''
       } else {
         return value === this.checkedAnswer ? 'active' : ''
       }

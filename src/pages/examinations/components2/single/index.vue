@@ -33,10 +33,7 @@ export default {
   },
   methods: {
     onChangeOpt(answer) {
-      if (!(answer instanceof Array)) {
-        answer = [answer]
-      }
-      let data = { id: this.options.id, question_id: this.options.question_id, answer: answer }
+      let data = { id: this.options.id, question_id: this.options.question_id, answer: [answer] }
       this.$emit("change", data);
     }
   }

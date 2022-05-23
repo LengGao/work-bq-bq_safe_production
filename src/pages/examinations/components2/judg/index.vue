@@ -1,22 +1,18 @@
 <template>
   <div class="judg">
     <view class="quetion-content">
-      <u-parse :content="options.topic_description" />
+      <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer">
-    </Select>
-    <AnswerAnalysis v-if="correctAnswer" :user-answer="checkedAnswer" :correct-answer="correctAnswer"
-                    :desc="options.topic_analysis" />
+    <Select :options="options.option" :value="checkedAnswer" @change="onChangeOpt" />
   </div>
 </template>
 <script>
-import AnswerAnalysis from "../answerAnalysis";
 import Select from "../select";
 import uParse from "@/components/gaoyia-parse/parse.vue";
+
 export default {
   name: "Judg",
   components: {
-    AnswerAnalysis,
     Select,
     uParse,
   },
@@ -24,42 +20,23 @@ export default {
     options: {
       type: Object,
       default: () => ({
+        title: "",
         option: [],
-        topic_description: "",
       }),
-    },
-    model: {
-      type: String,
-      default: "1",
     },
   },
   data() {
     return {
       correctAnswer: "",
-      checkedAnswer: this.options.userAnswer || "",
+      checkedAnswer: ""
     };
   },
-  watch: {
-    checkedAnswer(val) {
-      if (this.model === "1") {
-        this.correctAnswer = this.options.topic_answer;
-      }
-      this.$emit("change", val, this.options.id);
-    },
-    model() {
-      if (this.model === "3") {
-        this.correctAnswer = this.options.topic_answer;
-      }
-    },
-  },
-  created() {
-    if (this.options.userAnswer && this.model === "1") {
-      this.correctAnswer = this.options.topic_answer;
+  methods: {
+    onChangeOpt(answer) {
+      let data = { id: this.options.id, question_id: this.options.question_id, answer: [answer] }
+      this.$emit("change", data);
     }
-    if (this.model === "3") {
-      this.correctAnswer = this.options.topic_answer;
-    }
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>
