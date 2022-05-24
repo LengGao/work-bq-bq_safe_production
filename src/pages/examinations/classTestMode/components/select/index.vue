@@ -38,24 +38,18 @@ export default {
       type: String,
       default: 'select'
     },
+    // 题目正确答案
+    currectAnswer: {
+      type: [Array, String, Number],
+      default: "",
+    },
   },
   data() {
     return {
       // 选中的答案
       checkedAnswer: this.value,
-      selectLabel: ['A', 'B', 'C', 'D']
+      selectLabel: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
     };
-  },
-  watch: {
-    checkedAnswer(newValue, oldValue) {
-      if (this.multiple) {
-        this.$emit("change", newValue);
-        return;
-      }
-      if (newValue !== oldValue) {
-        this.$emit("change", newValue);
-      }
-    },
   },
   methods: {
     // 状态更新
@@ -82,8 +76,10 @@ export default {
     onOptionChange(val) {
       if (this.multiple) {
         this.multipleChoice(val)
-      } else {
+        this.$emit("change", this.checkedAnswer);
+      } else{
         this.simgleChoice(val)
+        this.$emit("change", this.checkedAnswer);
       }
     },
   },

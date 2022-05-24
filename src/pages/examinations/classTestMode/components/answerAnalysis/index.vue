@@ -19,6 +19,7 @@
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
+
 export default {
   name: "circular", // 章节练习的答案解析
   components: {

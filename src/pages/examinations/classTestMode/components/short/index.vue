@@ -1,25 +1,26 @@
 <template>
-  <div class="short">
+  <view class="short">
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
     <textarea class="text" placeholder="请输入" :value="checkedAnswer" @blur="onInput" />
-  </div>
+
+    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
+                :desc="options.topic_analysis" />
+  </view>
 </template>
 
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerAnalysis from "../answerAnalysis";
-import Select from "../select";
-import AnswerEye from "../answerEye";
+import Select from "../select/index";
+import AnswerAnalysis from "../answerAnalysis/index";
 
 export default {
   name: "short",
   components: {
-    AnswerAnalysis,
     Select,
-    AnswerEye,
     uParse,
+    AnswerAnalysis
   },
   props: {
     options: {
@@ -29,6 +30,14 @@ export default {
         option: [],
       }),
     },
+    analysis: {
+      type: Boolean,
+      default: false
+    },
+    userAnswer: {
+      type: Object,
+      default: () => ({})
+    }
   },
   data() {
     return {
@@ -36,9 +45,15 @@ export default {
       checkedAnswer: '',
     };
   },
+  created() {
+    if (this.userAnswer && this.userAnswer.answer) {
+      this.checkedAnswer = this.userAnswer.answer
+    }
+  },
   methods: {
     onInput({ detail }) {
-      let data = {id: options.id, question_id: options.question_id, answer: [detail.value]}
+      console.log("textarea", detail);
+      let data = {id: this.options.id, question_id: this.options.question_id, answer: [detail.value]}
       this.$emit("change", data)
     },
   },

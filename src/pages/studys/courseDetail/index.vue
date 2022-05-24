@@ -150,7 +150,7 @@ export default {
     // ------------------- 视频相关 --------------------------
     // 随堂测试
     showModal() {
-      let url =  `/pages/examinations/classTest/index`,
+      let url =  `/pages/examinations/classTestMode/answer/index`,
       query = `?lesson_id=${this.lesson_id}`      
       uni.showModal({
         title: '提示',

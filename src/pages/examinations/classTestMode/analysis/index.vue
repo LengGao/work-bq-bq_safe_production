@@ -51,7 +51,7 @@ import {
 } from "@/api/question";
 
 export default {
-  name: "answer",
+  name: "analysis",
   components: {
     AnswerHead,
     Single,
@@ -170,13 +170,15 @@ export default {
     },
     // 提交答案
     async submitAnswer() {
+      let url = `/pages/examinations/classTestMode/result/index`
+      // let query = 
       let data = { practice_id: this.practice_id, answer: this.answer }
       const res = await practiceAnswer(data);
       if (res.code === 0) {
         uni.showToast({ title: '提交成功', icon: 'success' })
         this.duration = 0;
         setTimeout(() => {
-          uni.navigateTo({ url: `/pages/examinations/testResults/index?logId=${this.logId}` });
+          uni.navigateTo({ url: `/testResults/index?logId=${this.logId}` });
         }, 500);
         this.answer = []
       }
