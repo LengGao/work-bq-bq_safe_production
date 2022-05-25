@@ -32,12 +32,6 @@
         </uni-list-item>
       </uni-list>
     </view>
-
-    <!-- <view class="footer">
-      <button @click="loginlout" class="btn-loginout" hover-class="button-hover">
-        退出登录
-      </button>
-    </view> -->
   </view>
 </template>
 
