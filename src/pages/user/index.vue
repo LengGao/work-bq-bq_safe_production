@@ -67,6 +67,9 @@ export default {
   computed: {
     ...mapGetters(['userInfo', 'organizationCurrent'])
   },
+  onLoad() {
+    console.log('onLoad');
+  },
   onShow() {
     if (this.userInfo.token) {
       this.isLogin = true
@@ -83,7 +86,6 @@ export default {
       this.listIndex = detail;
     },
     onClickGrid(url, blank) {
-      console.log(url);
       if (blank === 'switchTab') {
         uni.switchTab({ url: url })
       } else {
@@ -100,7 +102,12 @@ export default {
       let res = await this.$store.dispatch('loginout')
       if (res.code === 0) {
         uni.showToast({ title: '退出成功', icon: 'success' })
-        uni.reLaunch({ url: '/pages/login/index' })
+        /* #ifdef H5 */
+        location.reload()
+        /* #endif */
+        /* #ifdef MP-WEIXIN */
+        this.onLoad()
+        /* #endif */
       }
     }
 

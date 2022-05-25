@@ -208,11 +208,8 @@ const actions = {
     async loginout({ commit }, data) {
         let keys = ['userInfo', 'orgInfo', ,'region', 'questionBankInfo']
         commit('SET_LOGIN_STATUS', false)
-        
-        keys.forEach(key => {
-            uni.removeStorage({ key: key})
-        })
-        
+        keys.forEach(key => { uni.removeStorage({ key: key}) })
+
         return loginout()
     },
     // 获取热评词

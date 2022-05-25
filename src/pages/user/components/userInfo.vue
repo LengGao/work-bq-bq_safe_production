@@ -45,7 +45,13 @@ export default {
       Avator
     }
   },
-  mounted() {
+  watch: {
+    info(val) {
+      console.log('info', val);
+    },
+    orgInfo(val) {
+      console.log("orgInfo", val);
+    }
   },
   methods: {
     // 图片预览

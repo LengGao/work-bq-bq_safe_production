@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import {systemConfig} from "@/api/index";
+import { systemConfig } from "@/api/index";
 import logImag from "@/static/logo.png"
 
 export default {

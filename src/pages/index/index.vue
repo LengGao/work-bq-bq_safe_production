@@ -204,17 +204,25 @@ export default {
     let userInfo = uni.getStorageSync('userInfo')
     if (userInfo.token) {
       if (!orgInfo.id) this.openPopup(this.organizationList);
-    } else {
-        uni.redirectTo({ url: '/pages/login/index' })
     }
-    // uni.navigateTo({ url: '/pages/examinations/classTest/index' })
+  },
+  onShow() {
+    if (this.$refs['popup-org']) {
+      let orgInfo = uni.getStorageSync('orgInfo')
+      let userInfo = uni.getStorageSync('userInfo')
+      if (userInfo.token) {
+        if (!orgInfo.id) {
+          this.openPopup(this.organizationList);
+        }
+      }
+    }
   },
   methods: {
-    // 打开机构选择
     openPopup(list) {
       if (list && list.length) {
         let len = list.length
         if (len > 1) {
+          uni.hideTabBar()
           this.$refs['popup-org'].open('bottom')
         } else {
           this.$store.dispatch('setOrgCurrent', list[len - 1])
@@ -225,6 +233,7 @@ export default {
     onChoiceOrg(item) {
       this.$store.dispatch('setOrgCurrent', item)
       this.$refs['popup-org'].close()
+      uni.showTabBar()
     },
     // 点击筛选
     onOpenFilter() {
@@ -533,7 +542,8 @@ $padding-lr: 30rpx;
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  padding-bottom: var(--window-bottom);
+  // padding-bottom: var(--window-bottom);
+  z-index: 999;
 
   &-title {
     width: 100%;
