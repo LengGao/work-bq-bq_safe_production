@@ -95,7 +95,6 @@ export default {
     this.duration = 300;
   },
   onLoad(query) {
-    // isContinue 是否为继续做题
     // let { lesson_id = 60, title = "测试提" } = query
     let lesson_id = 60, title = '随堂练习'
     this.lesson_id = lesson_id
@@ -103,7 +102,7 @@ export default {
     this.createQuestion(lesson_id);
   },
   methods: {
-    // ------------------ 题目选择事件
+
     checkInputAnswer(val) {
       if (val !== undefined && val !== '' && val !== null) {
         return true
@@ -111,7 +110,7 @@ export default {
         return false
       }
     },
-    // 收集选择题回答
+    
     onSingleChange(answer) {
       this.answer = answer
       let flag = false
@@ -135,7 +134,7 @@ export default {
 
     },
 
-    // 收集填空题回答
+    
     onInputChange(answer) {
       this.answer = answer
       let flag = false
@@ -154,7 +153,7 @@ export default {
         this.disableTouch = true
       }
     },
-    // 上一题
+    
     handlePrev() {      
       if (!this.isStart) {
         if (this.disableTouch) {
@@ -164,7 +163,7 @@ export default {
         }
       }
     },
-    // 下一题
+    
     handleNext() {
       if (!this.isEnd) {
         if (this.disableTouch) {
@@ -213,13 +212,13 @@ export default {
     getAnswer(question_id) {
       return this.userAnswerMap[question_id] || {}
     },
-    // 缓存答案  先不删 防止又要改回来
+    
     cacheAnswer(answer) {
       console.log('answer',answer);
       this.userAnswerMap[answer.question_id] = answer
       this.submitPaper()
     },
-    // 交卷
+
     submitPaper() {
       if (!this.disableTouch) {
         this.submitAnswer()
@@ -227,7 +226,7 @@ export default {
         uni.showToast({ title: '考试不能留空', icon: 'none' })
       }
     },
-    // 提交答案
+
     async submitAnswer() {
       let data = { practice_id: this.practice_id, answer: this.userAnswerMap }
       // const res = await practiceAnswer(data);

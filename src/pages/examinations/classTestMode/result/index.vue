@@ -29,9 +29,12 @@
 
     <view class="footer">
       <button class="footer-first" plain @click="onAnalysis">查看解析</button>
-      <view class="footer-second">
-        <button class="footer-second-btn" @click="onAnalysis">查看解析</button>
-        <button class="footer-second-btn" @click="onAnalysis">查看解析</button>
+      <view class="footer-second" v-if="pass">
+        <button class="footer-second-btn" @click="onNext">继续学习</button>
+      </view>
+      <view class="footer-second" v-else>
+        <button class="footer-second-btn" @click="() => onRestart('study')">再看一次</button>
+        <button class="footer-second-btn" @click="() => onRestart('examination')">再考一次</button>
       </view>
     </view>
 
@@ -67,9 +70,8 @@ export default {
   },
   methods: {
     onAnalysis() {
-      let data = { practice_id: this.practice_id}
       let url = `/pages/examinations/classTestMode/analysis/index`
-      let query = `?lesson_id=${this.lesson_id}`
+      let query = `?practice_id=${this.practice_id}&grader=${this.grader}`
       uni.navigateTo({ url: url + query})
     },
     onNext() {
@@ -79,10 +81,17 @@ export default {
       let query = `?lesson_id=${this.lesson_id}`
       uni.navigateTo({ url: url + query})  
     },
-    onRestart() {
-      let url = `/pages/examinations/classTestMode/answer/index`
-      let query = `?lesson_id=${this.lesson_id}`
-      uni.navigateTo({ url: url + query})
+    onRestart(type) {
+      let url = ''
+      let query = ''
+      if (type === 'study') {
+        url = `/pages/studys/courseDetail/index`
+        query = `?lesson_id=${this.lesson_id}`
+      } else {
+        url = `/pages/examinations/classTestMode/answer/index`
+        query = `?lesson_id=${this.lesson_id}`
+      }
+        uni.navigateTo({ url: url + query})
     },
     async getData() {
       let data = { practice_id: this.practice_id }
@@ -132,8 +141,7 @@ export default {
 
   &-row-two {
     margin: 24rpx auto 0;
-    letter-spacing: 3rpx;
-    // width: 540rpx;
+    letter-spacing: 3rpx;    
     font-size: 36rpx;
     color: #999;
   }
@@ -199,8 +207,8 @@ export default {
       border: 2rpx solid $color-primary;
     }
 
-    &-btn:first-child {
-      margin-right: 20rpx;
+    &-btn:nth-of-type(2) {
+      margin-left: 20rpx;
     }
   }
 }

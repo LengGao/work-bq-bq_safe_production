@@ -205,6 +205,12 @@
 					"style": {
 						"navigationBarTitleText": "随堂考试"
 					}
+				},
+				{
+					"path": "classTestMode/analysis/index",
+					"style": {
+						"navigationBarTitleText": "随堂考试"
+					}
 				}
 			]
 		},

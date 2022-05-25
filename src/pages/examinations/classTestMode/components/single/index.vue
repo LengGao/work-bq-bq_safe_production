@@ -5,8 +5,8 @@
     </view>
     <Select :options="options.option" :value="checkedAnswer" :correct-answer="currectAnswer" @change="onChangeOpt" />
     
-    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                :desc="options.topic_analysis" />
+    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="options.answer" :correct-answer="currectAnswer"
+                :desc="options.analyse" />
   </view>
 </template>
 
@@ -50,6 +50,9 @@ export default {
     if (this.userAnswer && this.userAnswer.answer) {
       this.checkedAnswer = this.userAnswer.answer[0]
     }
+    if (analysis) {
+      this.currectAnswer()
+    }
   },
   methods: {
     onChangeOpt(answer) {
@@ -57,6 +60,11 @@ export default {
       let data = { id: this.options.id, question_id: this.options.question_id, answer: [answer] }
       this.$emit("change", data);
     }
+  },
+  correctAnswer() {
+    this.currectAnswer = this.options.option.filter(item => {
+      return item.is_right
+    })
   }
 };
 </script>
