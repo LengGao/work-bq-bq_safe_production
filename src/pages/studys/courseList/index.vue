@@ -104,11 +104,9 @@ export default {
       }
       this.downCallback()
     },
-    // 下拉
     downCallback() {
       this.mescroll.resetUpScroll(true)
     },
-    // 上拉
     async upCallback(page) {
       const data = {
         page: page.num,
@@ -119,16 +117,11 @@ export default {
       }
       const res = await courseList(data)
       if (res.code !== 0) return this.mescroll.endBySize(0, 0);
-      // 接口返回的当前页数据列表 (数组)
-      let curPageData = res.data.data
-      // 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
+      let curPageData = res.data.data;
       let curPageLen = curPageData.length;
-      // 接口返回的总页数 (如列表有26个数据,每页10条,共3页; 则totalPage=3)
       let totalSize = res.data.total;
-      //设置列表数据
-      if (page.num == 1) this.courseData = []; //如果是第一页需手动置空列表
-      this.courseData = this.courseData.concat(curPageData); //追加新数据
-      // 请求成功,隐藏加载状态 方法二(推荐): 后台接口有返回列表的总数据量 totalSize
+      if (page.num == 1) this.courseData = []; 
+      this.courseData = this.courseData.concat(curPageData);
       this.mescroll.endBySize(curPageLen, totalSize);
     },
     // 分类

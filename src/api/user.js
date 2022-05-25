@@ -28,3 +28,10 @@ export function loginout(data) {
     })
 }
 
+export function userCourseList(data) {
+    return request({
+        url: 'user/courseList',
+        method: 'get',
+        data
+    })
+}

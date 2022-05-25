@@ -1,7 +1,7 @@
 <template>
   <view class="login">
     <view class="form">
-      <image src="@/static/logo.png" class="header-logo" mode="aspectFit" />
+      <image :src="logImag" class="header-logo" mode="aspectFit" />
       <view class="input-box">
         <uni-icons customPrefix="iconfont" type="icon-user-filling" size="36rpx" color="#ccc"
                    style="margin-left: 10rpx" />
@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import {systemConfig} from "@/api/index";
+import logImag from "@/static/logo.png"
 
 export default {
   data() {
@@ -48,7 +50,11 @@ export default {
       isRead: false,
       visibility: false,
       loading: false,
+      logImag: logImag
     }
+  },
+  onLoad() {
+    this.getSystemConfig()
   },
   onReady() {
     let isLogin = uni.getStorageSync('userInfo') || {}
@@ -108,6 +114,14 @@ export default {
     onChecked(e) {
       this.isRead = e.target.value.length ? true : false
     },
+    async getSystemConfig() {
+      // const res = await systemConfig()
+      // if (res.code === 0) {
+      //   if (res.data.site_logo) {
+      //     this.logImag = res.data.site_logo
+      //   }
+      // }
+    }
   }
 }
 </script>

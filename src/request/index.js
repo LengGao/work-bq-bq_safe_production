@@ -11,6 +11,7 @@ if (userInfo || orgInfo) {
   service.setHeader({ token: userInfo.token, 'org-id': orgInfo.id })
 }
 
+
 // 交互配置
 const interactiveMap = {
   loading: { open: GLOBAL.showLoading, close: GLOBAL.hideLoading, option: { title: '加载中' } },
@@ -69,8 +70,17 @@ const responseStact = [
       let body = response.data
       if (body.code !== 0 && !service.$config.nocatch) {
         uni.showToast({ icon: 'none', title: `${body.message}` })
+        
       } else if (body.code === 1000) {
-        // service.request(service.$config)
+        let cache = JSON.parse(JSON.stringify(service.$config))
+        service.request({ url: 'login/renewal', method: 'get' })
+        .then(res => {
+          console.log("cache", res, cache);
+          if (res.code === 0) {
+            service.request(cache)
+          }
+        })
+
       }
       return response
     }
