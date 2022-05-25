@@ -1,0 +1,76 @@
+<template>
+  <view class="short">
+    <view class="quetion-content">
+      <u-parse :content="options.title" />
+    </view>
+    <textarea class="text" placeholder="请输入" :value="checkedAnswer" @blur="onInput" />
+
+    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
+                :desc="options.topic_analysis" />
+  </view>
+</template>
+
+<script>
+import uParse from "@/components/gaoyia-parse/parse.vue";
+import Select from "../select/index";
+import AnswerAnalysis from "../answerAnalysis/index";
+
+export default {
+  name: "short",
+  components: {
+    Select,
+    uParse,
+    AnswerAnalysis
+  },
+  props: {
+    options: {
+      type: Object,
+      default: () => ({
+        title: '',
+        option: [],
+      }),
+    },
+    analysis: {
+      type: Boolean,
+      default: false
+    },
+    userAnswer: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  data() {
+    return {
+      correctAnswer: "",
+      checkedAnswer: '',
+    };
+  },
+  created() {
+    if (this.userAnswer && this.userAnswer.answer) {
+      this.checkedAnswer = this.userAnswer.answer
+    }
+  },
+  methods: {
+    onInput({ detail }) {
+      console.log("textarea", detail);
+      let data = {id: this.options.id, question_id: this.options.question_id, answer: [detail.value]}
+      this.$emit("change", data)
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.quetion-content {
+  margin-bottom: 20rpx;
+}
+
+.text {
+  width: 100%;
+  box-sizing: border-box;
+  border: $uni-border;
+  padding: 24rpx;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
+}
+</style>
