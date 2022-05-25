@@ -53,7 +53,8 @@ const state = {
     },
     course: {
         commentHotWord: [],
-        categoryList: []
+        categoryList: [],
+        priceTypeList: []
     },
     // 题库
     questionList: {
@@ -93,6 +94,8 @@ const getters = {
     },
     // 课程分类
     categoryList: state => state.course.categoryList,
+    
+    priceTypeList: state => state.course.priceTypeList,
 
     // 习题列表 （存收藏夹，错题集的答题卡数据）
     questionList: state => state.questionList.list
@@ -135,7 +138,6 @@ const mutations = {
     SET_ORG_LIST(state, data) {
         state.user.organizationList = data
     },
-
     // 设置课程评价词
     SET_HOT_WORD(state, data) {
         state.course.commentHotWord = data
@@ -144,7 +146,9 @@ const mutations = {
     SET_CATEGORY(state, data) {
         state.course.categoryList = data
     },
-
+    SET_PRICETYPE(state, data) {
+        state.course.priceTypeList = data
+    },
     // 设置题库信息
     SET_QUESTION_BANK_INFO(state, data) {
         state.user.questionBankInfo = data
@@ -184,10 +188,12 @@ const actions = {
         let userInfo = state.user.userInfo, orgInfo = state.user.organizationCurrent
         service.setHeader({ token: userInfo.token || '',  'org-id': orgInfo.id || '' })
     },
+
     // 设置机构列表
     setOrgList({ commit }, data) {
         commit('SET_ORG_LIST', data)
     },
+
     async login({ commit }, data) {
         let res = await login(data)
         if (res.code === 0) {
@@ -225,12 +231,15 @@ const actions = {
             commit('SET_CATEGORY', res.data)
         }
     },
-
-    // 设置题库信息
+    async getPriceTypeList() {
+        let res = await coursePriceType()
+        if (res.code === 0) {
+            commit('SET_PRICETYPE', res.data)
+        }
+    },
     setQuestionBankInfo({ commit }, data) {
         commit('SET_QUESTION_BANK_INFO', data)
-    },
-    // 设置题目列表
+    },    
     setQusetionList({ commit }, list) {
         commit('SET_LIST', list)
     }

@@ -3,7 +3,8 @@
     <view class="course-list-header">
       <DropdownFilter class="picker" v-if="categoryData.length" :nodeList="categoryData" v-model="category_id"
                       @change="(val) => reloadList('category', val)" />
-      <DropdownSelect class="picker" :data="typeData" v-model="type_id" @change="(val) => reloadList('type', val)" />
+      <DropdownSelect class="picker" v-if="typeData.length" :nodeList="typeData" v-model="type_id"
+                      @change="(val) => reloadList('type', val)" />
     </view>
     <view class="mescroll-box">
       <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
@@ -45,7 +46,8 @@ import DropdownFilter from '@/components/dropdown-filter'
 import DropdownSelect from '@/components/dropdown-select'
 import {
   courseCategory,
-  courseList
+  courseList,
+  coursePriceType,
 } from '@/api/course'
 
 export default {
@@ -67,23 +69,20 @@ export default {
 
       region_id: 0,
       courseData: [],
-      
+
       // 分类
       category_id: 0, // 0 全部
       categoryData: [],
 
       // 类型
       type_id: -1, // -1 全部
-      typeData: [
-        { name: '全部类型', value: -1 },
-        { name: '免费课', value: 0 },
-        { name: '认证课', value: 1 },
-      ],
+      typeData: [],
     };
   },
   onLoad() {
     this.region_id = this.$store.getters.region.id
     this.courseCategory()
+    this.coursePriceType()
   },
   methods: {
     toDetails(id) {
@@ -120,7 +119,7 @@ export default {
       let curPageData = res.data.data;
       let curPageLen = curPageData.length;
       let totalSize = res.data.total;
-      if (page.num == 1) this.courseData = []; 
+      if (page.num == 1) this.courseData = [];
       this.courseData = this.courseData.concat(curPageData);
       this.mescroll.endBySize(curPageLen, totalSize);
     },
@@ -129,6 +128,12 @@ export default {
       let res = await courseCategory()
       if (res.code === 0) {
         this.categoryData = res.data
+      }
+    },
+    async coursePriceType() {
+      let res = await coursePriceType()
+      if (res.code === 0) {
+        this.typeData = res.data
       }
     }
   },

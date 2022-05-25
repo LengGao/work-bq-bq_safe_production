@@ -10,7 +10,7 @@
     <div class="dropdown-select-mask" @click="hanldeToggle" v-if="show" @touchmove.stop.prevent></div>
     <div class="dropdown-select-container" :class="{'dropdown-select-container--popup':show}">
       <div class="dropdown-select-option" @click="handleClick(item.value)"
-           :class="{'dropdown-select-option--active':item.value === value}" v-for="item in data" :key="item.value">
+           :class="{'dropdown-select-option--active':item.value === value}" v-for="item in list" :key="item.value">
         <div> {{item.name}}</div>
         <uni-icons type="checkmarkempty" v-show="item.value === value" color="#199fff" size="28rpx"></uni-icons>
       </div>
@@ -25,24 +25,44 @@ export default {
       type: [Number, String],
       default: ''
     },
-    data: {
+    nodeList: {
       type: Array,
       default: () => []
     },
     arrow: {
       type: Boolean,
       default: false
+    },
+    nameKey: {
+      type: String,
+      default: 'name'
+    },
+    valueKey: {
+      type: String,
+      default: 'id'
+    },
+    childrenKey: {
+      type: String,
+      default: 'sub'
     }
   },
   data() {
     return {
       show: false,
+      list: []
     }
+  },
+  created() {
+    this.normalizeData(this.nodeList)
   },
   computed: {
     activeName() {
-      const targetData = this.data.filter(item => item.value === this.value).concat(this.data[0])
-      return targetData[0].name
+      if (this.list.length) {
+        const targetData = this.list.filter(item => item.value === this.value)
+        return targetData[0].name
+      } else {
+        return '全部'
+      }
     }
   },
   methods: {
@@ -53,6 +73,9 @@ export default {
     },
     hanldeToggle() {
       this.show = !this.show
+    },
+    normalizeData(list) {
+      this.list = list.map(item => ({name: item[this.nameKey], value: item[this.valueKey]}))
     }
   }
 }
