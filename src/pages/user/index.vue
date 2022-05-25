@@ -2,10 +2,11 @@
   <view class="user">
     <view class="user-header">
       <view class="user-card">
-        <UserInfo :info="user" />
+        <UserInfo :info="userInfo" :orgInfo="organizationCurrent" :isLogin="isLogin" @login="login" />
         <view class="card-setting">
-          <uni-icons customPrefix="iconfont" type="icon-xiaoxi" color="#fff" size="42rpx" />
-          <uni-icons customPrefix="iconfont" type="icon-shezhi1" color="#fff" size="42rpx" class="card-setting-icon" />
+          <!-- <uni-icons customPrefix="iconfont" type="icon-xiaoxi" color="#fff" size="42rpx" /> -->
+          <uni-icons customPrefix="iconfont" type="icon-tuichu" color="#fff" size="40rpx" class="card-setting-icon"
+                     @click="loginlout" />
         </view>
       </view>
     </view>
@@ -32,17 +33,17 @@
       </uni-list>
     </view>
 
-    <view class="footer">
+    <!-- <view class="footer">
       <button @click="loginlout" class="btn-loginout" hover-class="button-hover">
         退出登录
       </button>
-    </view>
+    </view> -->
   </view>
 </template>
 
 <script>
 import UserInfo from "./components/userInfo";
-import { loginout } from '@/api/user'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -51,12 +52,6 @@ export default {
   data() {
     return {
       loading: false,
-      user: {
-        name: "周杰伦",
-        phone: "156****9914",
-        avator: "https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500",
-        days: 7
-      },
       gridIndex: 0,
       // 宫格数据
       grids: [
@@ -72,7 +67,18 @@ export default {
         { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list3.png", title: "关于我们", url: "/pages/users/aboutUs/index" },
         { id: 4, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list4.png", title: "联系客服", url: "/pages/users/contactService/index" },
       ],
+      isLogin: false,
     };
+  },
+  computed: {
+    ...mapGetters(['userInfo', 'organizationCurrent'])
+  },
+  onShow() {
+    if (this.userInfo.token) {
+      this.isLogin = true
+    } else {
+      this.isLogin = false
+    }
   },
   methods: {
     onChangeGrid({ detail }) {
@@ -90,14 +96,18 @@ export default {
         uni.navigateTo({ url: url })
       }
     },
+    login() {
+      uni.navigateTo({ url: '/pages/login/index' })
+    },
     async loginlout() {
+      if (!this.isLogin) return false;
       let modal = await uni.showModal({ title: '系统提示', content: '确定要推出登录吗' })
       if (!modal[1].confirm) return;
       let res = await this.$store.dispatch('loginout')
-      // if (res.code === 0) {
+      if (res.code === 0) {
         uni.showToast({ title: '退出成功', icon: 'success' })
         uni.reLaunch({ url: '/pages/login/index' })
-      // }
+      }
     }
 
   },
@@ -137,10 +147,6 @@ $page-padding: 0rpx 20rpx;
     align-items: center;
     margin-right: 20rpx;
     text-align: right;
-
-    &-icon {
-      margin-left: 40rpx;
-    }
   }
 }
 

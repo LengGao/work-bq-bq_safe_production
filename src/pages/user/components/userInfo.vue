@@ -1,23 +1,42 @@
 <template>
   <view class="user-info" :class="customClass" :style="customStyle">
     <view class="avator">
-      <image class="avator" :src="info.avator || Avator" mode="aspectFit" @click="() => previewImg(info.avator)" />
+      <image class="avator" :src="info.avatar_url || Avator" mode="aspectFit" @click="() => previewImg(info.avator)" />
     </view>
-    <view class="infos">
+    <view class="infos" v-if="isLogin">
       <view class="user">
-        <text class="name"> {{ info.name }} </text>
-        <text class="phone"> {{ info.phone }} </text>
+        <text class="name"> {{ info.real_name || '--' }} </text>
+        <text class="phone"> {{ info.mobile || '--'}} </text>
       </view>
-      <view class="days">加入东培学堂 {{ info.days }} 天</view>
+      <view v-if="orgInfo.name" class="days">所属机构：{{ orgInfo.name }}</view>
+      <view v-else class="days">加入东培学堂 {{ info.org_join_day }} 天</view>
+    </view>
+
+    <view v-else>
+      <view class="nologin" @click="onLogin">
+        未登录
+      </view>
     </view>
   </view>
 </template>
 
 <script>
-import Avator from "@/static/logo.png";
+import Avator from "@/static/img/user_avator.png";
+
 export default {
   props: {
-    info: { type: Object, default: {} },
+    info: { 
+      type: Object, 
+      default: () => ({})
+    },
+    orgInfo: {
+      type: Object, 
+      default: () => ({})
+    },
+    isLogin: {
+      type: Boolean,
+      default: false
+    },
     customStyle: { default: '' },
     customClass: { default: '' },
   },
@@ -32,6 +51,9 @@ export default {
     // 图片预览
     previewImg(url) {
         uni.previewImage({ urls: [url] })
+    },
+    onLogin() {
+      this.$emit('login')
     }
   }
 }
@@ -62,7 +84,7 @@ $height: 100rpx;
   align-items: flex-start;
   font-size: $font-size-base;
   height: $height;
-  margin-left: 20rpx;
+  margin-left: 40rpx;
 }
 
 .user {
@@ -82,6 +104,13 @@ $height: 100rpx;
 }
 
 .days {
+  color: $text-color-inverse;
+}
+
+.nologin {
+  font-size: $font-size-md;
+  height: $height;
+  margin-left: 40rpx;
   color: $text-color-inverse;
 }
 </style>

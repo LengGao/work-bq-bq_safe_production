@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import avator from '@/static/avator.png'
+import avator from "@/static/img/user_avator.png";
 import {
   courseCommentCount,
   courseGetCommentList

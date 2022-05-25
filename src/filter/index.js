@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import moment from '@/utils/date'
-import avator from '@/static/avator.png'
+import avator from '@/static/img/user_avator.png'
 
 const systems = uni.getSystemInfoSync()
 
