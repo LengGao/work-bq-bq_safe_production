@@ -1,6 +1,6 @@
 <template>
   <view class="no-data" :style="{ top }">
-    <image class="img" src="../../static/no-data.png"></image>
+    <image class="img" src="@/static/no-data.png"></image>
     <view class="text">
       <slot>暂无数据</slot>
     </view>

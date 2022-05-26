@@ -12,7 +12,7 @@
     </view>
 
     <view class="grids">
-      <uni-grid :column="3" :showBorder="false" @change="onChangeGrid" class="grid">
+      <uni-grid :column="3" :showBorder="false" class="grid">
         <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item" style="height: inherit;">
           <view class="grid-box" @click="() => onClickGrid(grid.url, grid.blank)">
             <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
@@ -47,18 +47,15 @@ export default {
     return {
       loading: false,
       gridIndex: 0,
-      // 宫格数据
       grids: [
         { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird1.png", title: "我的课程", url: "/pages/users/userCourceList/index", blank: 'navigateTo' },
         { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird2.png", title: "我的题库", url: "/pages/examination/index", blank: 'switchTab' },
         { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird3.png", title: "我的班级", url: "/pages/users/userClassList/index", blank: 'navigateTo' },
-        // { id: 4, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird4.png", title: "我的问答", url: "" }
       ],
       listIndex: 0,
       links: [
         { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list1.png", title: "课程收藏", url: "/pages/examinations/favorites/index" },
         { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list2.png", title: "意见反馈", url: "/pages/users/feedback/index" },
-        { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list3.png", title: "关于我们", url: "/pages/users/aboutUs/index" },
         { id: 4, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list4.png", title: "联系客服", url: "/pages/users/contactService/index" },
       ],
       isLogin: false,
@@ -68,7 +65,8 @@ export default {
     ...mapGetters(['userInfo', 'organizationCurrent'])
   },
   onLoad() {
-    console.log('onLoad');
+    console.log('onLoad');    
+    console.log(getCurrentPages());
   },
   onShow() {
     if (this.userInfo.token) {
@@ -78,9 +76,6 @@ export default {
     }
   },
   methods: {
-    onChangeGrid({ detail }) {
-      console.log("gridIndex", this.gridIndex, detail);
-    },
     onClickList(detail) {
       console.log("listIndex", detail);
       this.listIndex = detail;
@@ -102,15 +97,14 @@ export default {
       let res = await this.$store.dispatch('loginout')
       if (res.code === 0) {
         uni.showToast({ title: '退出成功', icon: 'success' })
-        /* #ifdef H5 */
-        location.reload()
-        /* #endif */
-        /* #ifdef MP-WEIXIN */
-        this.onLoad()
-        /* #endif */
       }
+      /* #ifdef H5 */
+      location.reload()
+      /* #endif */
+      /* #ifdef MP-WEIXIN */
+      this.onLoad()
+      /* #endif */
     }
-
   },
 };
 </script>

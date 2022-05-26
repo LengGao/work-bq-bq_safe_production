@@ -17,7 +17,7 @@
 
     <view class="swiper-bar">
       <swiper :interval="2000" autoplay circular disable-touch class="swiper">
-        <swiper-item v-for="swiper in swipers" :key="swiper.id" @click="onClickSwiperImg" :current-item-id="swiper.id"
+        <swiper-item v-for="swiper in swipers" :key="swiper.id" @click="() => onClickSwiperImg(swiper)" :current-item-id="swiper.id"
                      class="swiper-item">
           <image @click="() => previewImg(swiper.thumb)" :src="swiper.thumb" class="swiper-image" mode="aspectFit" />
         </swiper-item>
@@ -186,8 +186,8 @@ export default {
       ],
       // 轮播
       swipers: [
-        { id: 1, thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/index_swiper.png', url: "" },
-        { id: 2, thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/index_swiper.png', url: "" }
+        { id: 26, thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/index_swiper.png', url: "" },
+        { id: 27, thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/index_swiper.png', url: "" }
       ],
     };
   },
@@ -216,7 +216,6 @@ export default {
         }
       }
     }
-    this.reloadData()
   },
   methods: {
     openPopup(list) {
@@ -255,8 +254,10 @@ export default {
       uni.navigateTo({ url: '/pages/indexs/search/index' })
     },
     // 轮播图点击事件
-    onClickSwiperImg() {
-      uni.navigateTo({ url: '/pages/studys/courseDetail/index' })
+    onClickSwiperImg(swiper) {
+      let url = '/pages/studys/courseDetail/index'
+      let query = `?course_id=${swiper.id}`
+      uni.navigateTo({ url: url + query })
     },
     // 查看全部
     onClickAll(type) {
@@ -492,7 +493,7 @@ $padding-lr: 30rpx;
     position: relative;
     bottom: 8rpx;
     font-size: 24rpx;
-    font-weight: normal;
+    font-weight: 700;
   }
 }
 

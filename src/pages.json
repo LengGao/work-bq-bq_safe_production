@@ -107,7 +107,7 @@
 					}
 				},
 				{
-					"path": "learnCertificate/index",
+					"path": "certificateList/index",
 					"style": {
 						"navigationBarTitleText": "学习凭证"
 					}

@@ -69,13 +69,11 @@ export default {
   },
   data() {
     return {
-      isFinish: false, // 是否还有跟多
-      page: { num: 0, size: 1 }, // 上拉配置
-      // 评论统计
+      isFinish: false,
+      page: { num: 0, size: 1 },
       star: 0,
       rateCount: 0,
       tags: [],
-      // 评论
       comments: []
     }
   },
@@ -116,8 +114,8 @@ export default {
       let curPageData = res.data.data
       let totalSize = res.data.total;
       let curPageLen = curPageData.length + this.comments.length
-      if (page.num == 1) this.comments = []; //如果是第一页需手动置空列表
-      this.comments = this.comments.concat(curPageData); //追加新数据
+      if (page.num == 1) this.comments = [];
+      this.comments = this.comments.concat(curPageData);
       this.endBySize(curPageLen, totalSize);
     },
     // 技术判断

@@ -37,15 +37,16 @@
         </view>
       </view>
 
-      <view class="courses-list" style="height: 500rpx;">
-        <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="onDown" @up="onUp" :fixed="false">
+      <view class="courses-list">
+      <scroll-view scroll-y @scrolltolower="() => upCallback(page)" style="height: 1000rpx">
           <CardRow v-for="course in courses" :key="course.id" :leftImage="course.thumb" :rightTop="course.title"
-                  :rightFooter="course.time" @clickRight="onClickCource" @previewImg="previewImg">
+                   :rightFooter="course.time" @clickRight="() => onClickCource(course.id)" @previewImg="previewImg">
             <template v-slot:rightFooterIcon>
               <uni-tag type="primary" class="tag" :class="course.type" :text="course.tag" inverted />
             </template>
           </CardRow>
-        </mescroll-body>
+         <view v-if="isFinish" style="width: 100%; font-size: '24rpx'; text-align: center;"> 没有更多了</view>
+      </scroll-view>
       </view>
     </view>
   </view>
@@ -56,50 +57,80 @@ import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 
 export default {
+  mixins: [MescrollMixin],
   components: {
     CardRow,
   },
-  mixins: [MescrollMixin],
   data() {
     return {
+      isFinish: false,
+      page: { num: 0, size: 1 },
+
       titleBg: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/study_swiper.png',
       dataIcon: '/static/img/study_iicon_data.png',
       voucherIcon: '/static/img/study_icon_voucher.png',
 
       // 推荐课程
       courses: [
-        { id: 1, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "已完成", prpress: 800, type: 'tag-one' },
-        { id: 2, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 100, type: 'tag-two' },
-        { id: 3, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 0, type: 'tag-three' }
+        { id: 26, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "已完成", prpress: 800, type: 'tag-one' },
+        { id: 27, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 100, type: 'tag-two' },
+        { id: 28, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 0, type: 'tag-three' }
       ],
     };
+  },
+  mounted() {
+    this.downCallback()
   },
   methods: {
     toLearn(val) {
       if (val === 1) {
         uni.navigateTo({ url: '/pages/studys/learnData/index' })
       } else {
-        uni.navigateTo({ url: '/pages/studys/learnCertificate/index' })
+        uni.navigateTo({ url: '/pages/studys/certificateList/index' })
       }
     },
-    // 全部课程
     onClickAll() {
-      let path = '/pages/courseList/index', query = `?type=${2}`
-      uni.navigateTo({ url: path + query })
+      let path = '/pages/studys/courseList/index'
+      uni.navigateTo({ url: path })
     },
-    // 课程详情
-    onClickCource() {
-      uni.navigateTo({ url: '/pages/studys/courseDetail/index' })
+    onClickCource(id) {
+      let url = '/pages/studys/courseDetail/index'
+      let query = `?course_id=${id}`
+      uni.navigateTo({ url: url + query })
     },
     // 下拉
-    onDown() {
-      console.log("到底了");
-      this.mescroll.endBySize(1, 1)
+    downCallback() {
+      this.page.num = 0
+      this.upCallback(this.page)
     },
     // 上拉
-    onUp() {
-      console.log("到底了");
-      this.mescroll.endBySize(1, 1)
+    async upCallback(page) {
+      console.log('upCallback', page);
+      // if (this.isFinish) return;
+      // page.num++;
+      // const data = {
+      //   page: page.num,
+      //   page_size: page.size,
+      //   course_id: this.courseId
+      // }
+      // const res = await courseGetCommentList(data)
+      // if (res.code !== 0) return page.num -= 1;
+
+      // let curPageData = res.data.data
+      // let totalSize = res.data.total;
+      // let curPageLen = curPageData.length + this.comments.length
+      // if (page.num == 1) this.comments = [];
+      // this.comments = this.comments.concat(curPageData);
+      // this.endBySize(curPageLen, totalSize);
+    },
+    // 技术判断
+    endBySize(curPageLen, totalSize) {
+      // if (curPageLen >= totalSize) {
+      //   this.isFinish = true
+      // } else {
+      //   this.isFinish = false
+      // }
+      // return this.isFinish
     },
     // 图片预览
     previewImg(url) {
@@ -191,12 +222,12 @@ $padding: 16rpx 30rpx;
 .course-bar {
   padding: 24rpx 0;
   border-top: $logan-border-spacing-md;
-  
+
   .tag {
     position: relative;
     bottom: 8rpx;
     font-size: 24rpx;
-    font-weight: normal;
+    font-weight: 700;
   }
 
   .tag-one {

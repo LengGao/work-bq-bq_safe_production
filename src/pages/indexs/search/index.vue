@@ -28,11 +28,11 @@
         <CardRow v-for="course in cources" :key="course.id">
           <template v-slot:cardBodyLeft>
             <view class="logan-card-body-left">
-              <image class="logan-img-size-lg" :src="course.thumb" mode="aspectFit" />
+              <image class="logan-img-size-lg" :src="course.thumb" @click="() => previewImg(course.thumb)" mode="aspectFit" />
             </view>
           </template>
           <template v-slot:cardBodyRight>
-            <view class="logan-card-body-right">
+            <view class="logan-card-body-right" @click="() => onCourse(course.id)">
               <view class="logan-card-right-top">
                 <text>{{ course.title }}</text>
               </view>
@@ -88,8 +88,8 @@ export default {
     // 点击搜索历史
     onCLickHistory() {
       this.cources = [
-        { id: 1, name: "name1", money: 0, oldMoney: 0, thumb: "/static/img/index_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
-        { id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource2.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
+        { id: 26, name: "name1", money: 0, oldMoney: 0, thumb: "/static/img/index_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
+        { id: 27, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource1.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
       ]
       this.showRecond = false
     },
@@ -100,14 +100,21 @@ export default {
     // 点击热门搜索
     onCLickHot() {
       this.cources = [
-        { id: 1, name: "name1", money: 0, oldMoney: 0, thumb: "../../static/logo.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
-        { id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "../../static/logo.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
+        { id: 26, name: "name1", money: 0, oldMoney: 0, thumb: "/static/img/index_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
+        { id: 27, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource1.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
       ]
       this.showRecond = false
     },
+    previewImg(url) {
+      uni.previewImage({
+        urls: [url]
+      })
+    },
     // 点击课程
-    onCourse() {
-
+    onCourse(id) {
+      let url = '/pages/studys/courseDetail/index'
+      let query = `?course_id=${id}`
+      uni.navigateTo({ url: url + query })
     },
     // 搜索
     onSearch(e) {

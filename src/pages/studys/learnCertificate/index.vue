@@ -26,8 +26,8 @@ export default {
     return {
       courseData: [],
       certificateData: [
-        { id: 1, name: '2022年复工复产线上培训', time: '2022-04-20 21:00:00', thumb: src },
-        { id: 2, name: '2021年安全管理员线上培训', time: '2022-04-20 21:00:00', thumb: src }
+        { id: 1, name: '2022年复工复产线上培训', time: '2022-04-20 21:00:00', thumb: '/pages/studys/static/learnCertificate.png' },
+        { id: 2, name: '2021年安全管理员线上培训', time: '2022-04-20 21:00:00', thumb: '/pages/studys/static/learnCertificate.png' }
       ]
     }
   },

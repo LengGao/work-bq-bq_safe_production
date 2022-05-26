@@ -2,18 +2,10 @@
   <view class="examination">
     <view class="logan-list-head">
       <view class="logan-list-head-left" @click="onCandidates">
-        <text>低压电工作业题库</text>
+        <text>{{ activeQuestionBank }}</text>
         <uni-icons type="bottom" size="32rpx" />
       </view>
     </view>
-
-    <!-- <view class="head-swiper">
-      <swiper @change="onChangeSwiper" :autoplay="false" circular disable-touch class="swiper">
-        <swiper-item v-for="swiper in swipers" :key="swiper.id" :current-item-id="swiper.id">
-            <image :src="swiper.thumb" class="swiper-image" mode="aspectFit" />
-        </swiper-item>
-      </swiper>
-    </view> -->
 
     <view class="report">
         <view class="report-top">
@@ -41,7 +33,7 @@
             <text class="text-person">2650人正在学习</text>
           </view>
           <view class="report-bottom-right">
-            <button class="report-bottom-btn">今日未学习</button>
+            <button class="report-bottom-btn" @click="goStudy">今日未学习</button>
           </view>
         </view>
     </view>
@@ -73,7 +65,7 @@
     <uni-popup ref="popupRef" type="bottom">
       <view class="popup-box">
       <uni-list>
-        <uni-list-item v-for="item in candidates" :key="item.value" @click="onClickItem" clickable>
+        <uni-list-item v-for="(item, index) in candidates" :key="index" @click="() => onClickItem(index)" clickable>
           <template v-slot:body>
             <view class="list-item-body-test">{{ item.name }}</view>
           </template>
@@ -93,11 +85,11 @@ export default {
   data() {
     return {
       // 组合框
-      currentCandidates: '',
+      currentCandidates: 0,
       candidates: [
-        { name: '低压电工作业题库', value: 1 },
-        { name: '低压电工作业题库', value: 2 },
-        { name: '低压电工作业题库', value: 3 }, 
+        { name: '低压电工作业题库1', value: 1 },
+        { name: '低压电工作业题库2', value: 2 },
+        { name: '低压电工作业题库3', value: 3 }, 
       ],
       // 宫格数据
       gridIndex: 0,
@@ -106,7 +98,6 @@ export default {
         { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird2.png", title: "错题集", url: "/pages/examinations/wrongQuestion/index" },
         { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird3.png", title: "学习报告", url: "/pages/studys/learnReport/index" },
         { id: 4, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird4.png", title: "考试记录", url: "/pages/examinations/examinationRecord/index" },
-        // { id: 5, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird5.png", title: "题目答疑", url: "" }
       ],
       // 推荐课程
       examinations: [
@@ -119,22 +110,23 @@ export default {
       ],
     };
   },
-
+  computed: {
+    activeQuestionBank() {
+      return this.candidates[this.currentCandidates].name 
+    }
+  },
   methods: {
     to(url) {
       uni.navigateTo({url})
     },
-    // 滑动选择事件
-    onChangeSwiper() {
-
+    goStudy() {
+      uni.navigateTo({url: '/pages/examinations/chapterList/index'})
     },
     onCandidates(e) {
       this.$refs.popupRef.open()
-      console.log('onCandidates', e);
-    },
-    // 
-    onClickItem(e) {
-      console.log('e',e);
+    },  
+    onClickItem(index) {
+      this.currentCandidates = index
       this.$refs.popupRef.close()
     }
   },
