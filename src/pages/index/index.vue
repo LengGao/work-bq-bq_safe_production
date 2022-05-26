@@ -58,7 +58,7 @@
             </view>
           </template>
           <template v-slot:cardBodyRight>
-            <view class="logan-card-body-right" @click="() => onClickRecommend()">
+            <view class="logan-card-body-right" @click="() => onClickRecommend(course.id)">
               <view class="logan-card-right-top">
                 <text>{{ course.title }}</text>
               </view>
@@ -175,8 +175,8 @@ export default {
       ],
       // 推荐课程
       courses: [
-        { id: 1, name: "name1", money: 0, oldMoney: 0, thumb: '/static/img/index_cource1.png', title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
-        { id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource1.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
+        { id: 26, name: "name1", money: 0, oldMoney: 0, thumb: '/static/img/index_cource1.png', title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
+        { id: 27, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource1.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
       ],
       // 业务板块
       businesses: [
@@ -216,6 +216,7 @@ export default {
         }
       }
     }
+    this.reloadData()
   },
   methods: {
     openPopup(list) {
@@ -231,6 +232,7 @@ export default {
     },
     // 选择机构
     onChoiceOrg(item) {
+      uni.showToast({ title: `欢迎进入${item.name}`, icon: 'none'})
       this.$store.dispatch('setOrgCurrent', item)
       this.$refs['popup-org'].close()
       uni.showTabBar()
@@ -282,8 +284,8 @@ export default {
       uni.navigateTo({ url: path + query })
     },
     // 点击推荐课程
-    onClickRecommend() {
-      uni.navigateTo({ url: '/pages/studys/courseDetail/index?course_id=1' })
+    onClickRecommend(id) {
+      uni.navigateTo({ url: `/pages/studys/courseDetail/index?course_id=${id}` })
     },
     // 点击政策栏
     onClickPolicy() {
@@ -313,6 +315,9 @@ export default {
     getData() {
     },
 
+    reloadData() {
+
+    },
     async getSystemRegion() {
       let res = await systemRegion()
       if (res.code === 0) {
