@@ -47,7 +47,7 @@
           </view>
         </view>
 
-        <view v-if="isFinish" style="width: 100%; font-size: '24rpx'; text-align: center;"> 没有更多了</view>
+        <view v-if="isFinish" style="width: 100%; font-size: '24rpx'; text-align: center;">评论加载完成</view>
       </scroll-view>
     </view>
   </view>
@@ -65,7 +65,8 @@ export default {
     courseId: {
       type: [String, Number],
       default: ''
-    }
+    },
+    
   },
   data() {
     return {

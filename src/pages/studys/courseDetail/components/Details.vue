@@ -107,6 +107,8 @@ export default {
         }
         console.log('res.data.status', );
         this.info.favorites = !!res.data.status
+      } else {
+        uni.showToast({ title: `${res.message}`, icon: 'none'})
       }
     },
   }

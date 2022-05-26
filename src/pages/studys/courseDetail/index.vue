@@ -1,23 +1,19 @@
 <template>
   <view class="course-detail">
     <!-- #ifdef H5 -->
-    <div id="aliplayer"></div>
-    <video v-if="videoPlaceholder && videoCover" :controls="false" :show-center-play-btn="false" style="width: 100%">
-      <cover-image :src="videoCover"></cover-image>
-    </video>
+    <view id="aliplayer">
+    <img v-if="!player" :src="courseInfo.cover" mode="aspectFit" class="course-cover" />
+    </view>
     <!-- #endif -->
     <!-- #ifdef MP-WEIXIN -->
-      <video v-if="src" class="course-video" id="course-video"
-      	:src="src" :autoplay="false" :initial-time="start_second"
-        :title="title" :poster="cover" :poster-for-crawler="cover"
-        @play="onPlay" @pause="onPause" @ended="onEnded" @timeupdate="onTimeupdate"
-        @loadedmetadata="onLoadedmetadata" @error="onError"
-      >
-      </video>
+    <video v-if="src" class="course-video" id="course-video" :src="src" :autoplay="false" :initial-time="start_second"
+           :title="title" :poster="cover" :poster-for-crawler="cover" @play="onPlay" @pause="onPause" @ended="onEnded"
+           @timeupdate="onTimeupdate" @loadedmetadata="onLoadedmetadata" @error="onError">
+    </video>
     <!-- #endif -->
 
     <!-- 分段器 -->
-    <view class="segmented-bar"> 
+    <view class="segmented-bar">
       <uni-segmented-control :current="current" :values="items" @clickItem="onChangeSegmented" styleType="text"
                              activeColor="#199fff" />
       <view class="segmented-content">
@@ -71,7 +67,8 @@ import {
   courseInfo,
   courseCommentSubmit,
   courseGetVideoAuth,
-  courseRecordLearn
+  courseRecordLearn,
+  courseCommentHotWord,
 } from '@/api/course'
 
 export default {
@@ -94,7 +91,6 @@ export default {
       chapterList: [],
       // 评价
       tags: [],
-      courseGetComment: [],
       // 评价
       starText: ['', '不满意', '一般', '比较满意', '满意', '非常满意'],
       rateForm: {
@@ -105,81 +101,80 @@ export default {
       current: 0,
       items: ['简介', '目录', '评价'],
 
-      videoPlaceholder: false,
-      videoCover: '',
       // h5 视频 小程序视频
       src: '',
       title: '',
       cover: '',
-      is_free: false,   // 是否播完
       prev_time: 0, // 记录上次时间
       start_second: 0,
       end_time: 0,
       free_second: 0,
-      is_forward: false, 
-      player: null,
+      duration: 0,
       time: 1000 * 10,
       intervalId: null,
+      is_free: false,   // 是否播完
+      is_forward: false,
+      player: null,
+      disableChange: false,
     }
   },
   computed: {
-    ...mapGetters(['commentHotWord'])
+  
   },
   watch: {
-    commentHotWord(val) {
-      this.tags = val
-    }
+
   },
   onLoad(query) {
     let { course_id } = query
     this.course_id = course_id
     this.region_id = this.$store.getters.region.id
     this.getCourseInfo()
+    this.getCommentHotWord()
   },
-  destroyed() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId) 
-      this.intervalId = null
-    } 
-    
+  mounted() {
+    let _this = this
+    document.addEventListener('visibilitychange', function (state) {
+      _this.pausePlay()
+    })
+  },
+  onUnload() {
+    console.log('onUnload(');
+    clearInterval(this.intervalId)
+    this.intervalId = null
     /* #ifdef H5 */
-    this.player && this.player.dispose();
+    if (this.player) this.player.dispose();
     /* #endif */
   },
   methods: {
-    // ------------------- 视频相关 --------------------------
     // 随堂测试
     showModal() {
-      let url =  `/pages/examinations/classTestMode/answer/index`,
-      query = `?lesson_id=${this.lesson_id}`      
-      uni.showModal({
-        title: '提示',
-        content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
-        cancelText: '取消',
-        cancelColor: '#199fff',
-        confirmText: '开始考试',
-        confirmColor: '#199fff',
-      }).then(res => {
-        console.log('confirm',res);
-        let confirm = res[1].confirm
-        if (confirm) {
-          this.$store.commit('SET_EXAMINATION', true)
-          uni.navigateTo({url: url + query})
-        }
-      })
-    },
-    // 更换播放视频
-    onChangeVideo(detailArr) {
-      let curr = detailArr[0]
-      let params = {region_id: this.region_id, lesson_id: curr.id }
-      this.lesson_id = curr.id
-      this.getCourseGetVideoAuth(params)
+      let url = `/pages/examinations/classTestMode/answer/index`,
+        query = `?lesson_id=${this.lesson_id}`
+      if (this.free_second && Math.abs(this.free_second, this.start_second) <= 2) {
+        this.stopSend()
+      } else {
+        uni.showModal({
+          title: '提示',
+          content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
+          cancelText: '取消',
+          cancelColor: '#199fff',
+          confirmText: '开始考试',
+          confirmColor: '#199fff',
+        }).then(res => {
+          let confirm = res[1].confirm
+          if (confirm) {
+            this.$store.commit('SET_EXAMINATION', true)
+            uni.navigateTo({ url: url + query })
+          }
+        })
+      }
+
     },
     // 加载完成
     onLoadedmetadata() {
       wx.createSelectorQuery().select('#course-video').context((res) => {
-          this.player = res.context;
-          this.player.play()
+        this.player = res.context;
+        this.player.play()
       }).exec()
     },
     // 播放
@@ -208,7 +203,7 @@ export default {
       } else {
         if (Math.abs(currentTime - this.start_second) >= 2) {
           this.player.seek(this.start_second)
-        } else{
+        } else {
           this.start_second = currentTime
           this.end_time = currentTime
         }
@@ -221,7 +216,7 @@ export default {
     intervalSendMini() {
       // 定时器开始前先请空，再开启
       if (this.intervalId) { clearInterval(this.intervalId) }
-      this.intervalId = setInterval(() => { this.sendDataMini() }, this.time)  
+      this.intervalId = setInterval(() => { this.sendDataMini() }, this.time)
     },
     // 暂停发送
     stopSendMini() {
@@ -278,176 +273,7 @@ export default {
         })
       }
     },
-    
-    //定时发送数据
-    intervalSend() {
-      // 定时器开始前先请空，再开启
-      if (this.intervalId) { clearInterval(this.intervalId) }
-      this.intervalId = setInterval(() => { this.sendData() }, this.time)  
-    },
-    // 暂停发送
-    stopSend() {
-      if (this.intervalId) {
-        // 清空定时发送时间，发送暂停时的播放时间
-        clearInterval(this.intervalId)
-        this.intervalId = null
-        this.sendData()
-      }
-    },
-    // 发送数据
-    async sendData() {
-      // 由已经播放的时间减去开始播放的时间，判断是否拖动了进度条，
-      let currTime = this.player.getCurrentTime()
-      let params = {
-        lesson_id: this.lesson_id,
-        start_second: parseFloat(this.prev_time),
-        end_second: parseFloat(currTime)
-      }
 
-      let res = await courseRecordLearn(params)
-
-      if (res.code === 0) {
-        // let last_second = res.data.start_second
-        let redirect_url = res.data.redirect_url
-        if (redirect_url) {
-          this.player.pause()
-          this.stopSend()
-          uni.showToast({ icon: 'none', title: `${res.message}` })
-          setTimeout(() => {
-            location.href = redirect_url // 需要人脸识别
-          }, 1000)
-        }
-      } else if (res.code === 2201) {
-        // 有章节没看完
-        uni.showToast({title: `${res.message}`, icon: 'none' , duration: 2000})
-        this.player.pause()
-        this.stopSend()
-        this.lesson_id = res.data.lesson_id
-        let params = {region_id: this.region_id, lesson_id: res.data.lesson_id }
-        this.getCourseGetVideoAuth(params)
-      } else {
-        this.player.pause()
-        this.stopSend()
-        uni.showToast({ icon: 'none', title: `${res.message}` })
-      }
-      
-      this.prev_time = currTime
-    },
-    // 创建播放器
-    createPlayer(options) {
-      //有的话就先销毁
-      this.player && this.player.dispose();
-      this.player = new Aliplayer({
-        id: 'aliplayer',
-        width: '100%',
-        height: '200px',
-        controlBarVisibility: 'click',
-        autoplay: false,
-        isLive: false,
-        playsinline: true,
-        preload: true,
-        useH5Prism: true,
-        x5_type: "H5",
-        skinLayout: [   
-          { name: "bigPlayButton", align: "blabs", x: 30, y: 80 },
-          { name: "H5Loading", align: "cc", },
-          { name: "errorDisplay", align: "tlabs", x: 0, y: 0 },
-          { name: "infoDisplay" },
-          { name: "tooltip", align: "blabs", x: 0, y: 56 },
-          { name: "thumbnail" },
-          {
-            name: "controlBar", align: "blabs", x: 0, y: 0,
-            children: [
-              {name: "progress", align: "blabs", x: 0, y: 44},
-              {name: "playButton", align: "tl", x: 15, y: 12},
-              {name: "timeDisplay", align: "tl", x: 10, y: 7},
-              {name: "fullScreenButton", align: "tr", x: 10, y: 12},
-              // {name:"subtitle", align:"tr",x:15, y:12},
-              {name: "volume", align: "tr", x: 5, y: 10}
-            ]
-          }
-        ],
-        //播放方式二：点播用户推荐
-        vid: options.video_id,
-        playauth: options.auth_data.PlayAuth,
-        cover: options.cover,
-        encryptType: 0, // 当播放私有加密流时需要设置。
-      }, (player) => {
-        // 准备完毕
-        player.on('ready', () => {
-          player.seek(this.start_second)
-          player.play()
-        })
-        // 监听播放
-        player.on('play', () =>{
-          this.intervalSend()
-        })
-        // 监听暂停
-        player.on('pause', () => {
-          this.stopSend()
-        })
-        // 监听结束
-        player.on('ended', () =>{
-          this.stopSend()
-          this.is_free = true
-          this.prev_time = 0
-          this.start_second = 0
-          this.end_time = 0
-          this.player.seek(0)
-          this.showModal()
-        })
-        /**
-         * 是否允许快进
-         * 1，本省可快进的
-         * 2，学完以后可快进
-         */
-        player.on('timeupdate', () => {
-          let currTime = player.getCurrentTime()
-          if (this.is_forward || this.is_free) {
-            this.end_time = currTime
-          } else {
-            if (Math.abs(currTime - this.start_second) >= 2) {
-              player.seek(this.start_second)
-            } else {
-              this.start_second = currTime
-            }
-          }
-        })
-      })
-    },
-    // 获取视频凭证
-    async getCourseGetVideoAuth(params) {
-      let res = await courseGetVideoAuth(params)
-      let code = res.code
-      let { video_id, auth_data, start_second, lesson_id, title, cover, is_free,
-            free_second, is_forward } = res.data
-
-      if (code === 0) {
-        this.title = title
-        this.cover = cover
-        this.is_free = is_free
-        this.free_second = free_second
-        this.is_forward = is_forward
-        this.start_second = start_second
-        this.prev_time = start_second
-        /* #ifdef H5 */
-        this.createPlayer({ video_id, auth_data, start_second, cover, is_free })
-        /* #endif */
-        /* #ifdef MP-WEIXIN */
-        this.settingPlayer({ video_id, auth_data, start_second, cover, is_free })
-        /* #endif */
-        this.videoPlaceholder = false
-      } else if (code === 2001) {
-        // 没购买
-        this.videoPlaceholder = true
-        uni.showToast({title: `${res.message}`, icon: 'none' })
-      } else {
-        // 其他异常
-        this.videoPlaceholder = true
-        uni.showToast({title: `${res.message}`, icon: 'none' })
-      }
-    },
-    // ----------------------------------------------
     // 分段其切换
     onChangeSegmented({ currentIndex }) {
       this.current = currentIndex
@@ -477,27 +303,26 @@ export default {
     onChangeRate(e) {
       this.rateForm.star = e.value
     },
-    // 获取评论热词
-    getTag(tags) {
-      return tags.filter(filterItem => filterItem.checked).map(mapItem => mapItem.label)
-    },
+
     // 发表评论
     async onPublish() {
       let { star, comment } = this.rateForm
-
+      let hot_word = this.tags.filter(filterItem => filterItem.checked).map(mapItem => mapItem.label)
       let params = {
         course_id: this.course_id,
         star: star,
-        hot_word: this.getTag(this.tags),
+        hot_word: hot_word,
         comment: comment
       }
 
       let res = await courseCommentSubmit(params)
       if (res.code === 0) {
-        uni.showToast({ icon: 'success', title: '评论失败' })
-        this.$refs.rate.downCallback()
-        this.$refs.rate.getCourseCommentCount()
+        uni.showToast({ icon: 'success', title: '评论陈功' })
+        this.$refs['rate'].downCallback()
+        this.$refs['rate'].getCourseCommentCount()
         this.onClose()
+      } else {
+        uni.showToast({ title: `${res.message}`, icon: 'none'})
       }
     },
     // 课程简介
@@ -505,10 +330,200 @@ export default {
       let param = { region_id: this.region_id, course_id: this.course_id }
       let res = await courseInfo(param)
       if (res.code === 0) {
-        this.lesson_id = res.data.learning_lesson_id        
+        this.lesson_id = res.data.learning_lesson_id
         this.courseInfo = res.data
         this.videoCover = res.data.cover
         this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: res.data.learning_lesson_id })
+      }
+    },
+
+    async getCommentHotWord() {
+      let res = await courseCommentHotWord()
+      if (res.code === 0) {
+        let list = res.data.map((word, index) => ({ id: index, label: word, checked: false }))
+        this.tags = list
+      }
+    },
+
+    // 更换播放视频
+    onChangeVideo(detailArr) {
+      let curr = detailArr[0]
+      let params = { region_id: this.region_id, lesson_id: curr.id }
+      this.lesson_id = curr.id
+      this.getCourseGetVideoAuth(params)
+    },
+
+    //定时发送数据
+    intervalSend() {
+      // 定时器开始前先请空，再开启
+      if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
+
+      this.intervalId = setInterval(() => {
+        let start_second = this.start_second
+        let end_time = this.player.getCurrentTime()
+        let lesson_id = this.lesson_id
+        this.sendData(lesson_id, start_second, end_time)
+      }, this.time)
+    },
+    stopSend() {
+      clearInterval(this.intervalId)
+      this.intervalId = null
+      this.getRecond()
+    },
+    pausePlay() {
+      this.player.pause()
+      clearInterval(this.intervalId)
+      this.intervalId = null
+    },
+    resetProgress() {
+      this.start_second = 0
+      this.prev_time = 0
+      this.end_time = 0
+      this.intervalId = null
+    },
+    endedCallback() {
+      this.is_free = true
+      this.getRecond()
+    },
+    getRecond() {
+      let start_second = this.start_second
+      let end_time = this.player.getCurrentTime()
+      let lesson_id = this.lesson_id
+      this.sendData(lesson_id, start_second, end_time)
+    },
+
+    // 创建播放器
+    createPlayer(options) {
+      if (this.player) this.player.dispose();
+
+      this.player = new Aliplayer({
+        id: 'aliplayer',
+        width: '100%',
+        height: '200px',
+        controlBarVisibility: 'click',
+        autoplay: false,
+        isLive: false,
+        playsinline: true,
+        preload: true,
+        useH5Prism: true,
+        x5_type: "H5",
+        skinLayout: [
+          { name: "bigPlayButton", align: "blabs", x: 30, y: 80 },
+          { name: "H5Loading", align: "cc", },
+          { name: "errorDisplay", align: "tlabs", x: 0, y: 0 },
+          { name: "infoDisplay" },
+          { name: "tooltip", align: "blabs", x: 0, y: 56 },
+          { name: "thumbnail" },
+          {
+            name: "controlBar", align: "blabs", x: 0, y: 0,
+            children: [
+              { name: "progress", align: "blabs", x: 0, y: 44 },
+              { name: "playButton", align: "tl", x: 15, y: 12 },
+              { name: "timeDisplay", align: "tl", x: 10, y: 7 },
+              { name: "fullScreenButton", align: "tr", x: 10, y: 12 },
+              { name: "volume", align: "tr", x: 5, y: 10 }
+            ]
+          }
+        ],
+        vid: options.video_id,
+        playauth: options.auth_data.PlayAuth,
+        cover: options.cover,
+        duration: options.duration,
+        encryptType: 0
+      }, (player) => {
+        player.on('ready', () => {
+          player.setPreviewTime(options.free_second)
+          player.seek(this.start_second)
+          player.play()
+        })
+        player.on('play', () => {
+          this.intervalSend()
+        })
+        player.on('pause', () => {
+          console.log('pause');
+          this.stopSend()
+        })
+        player.on('ended', (e) => {
+          console.log("ended", e);
+          this.showModal()
+          this.endedCallback()
+          this.resetProgress()
+          this.player.seek(0)
+        })
+        player.on('timeupdate', () => {
+          let currTime = player.getCurrentTime()
+          if (this.is_forward || this.is_free) {
+            this.start_second = currTime
+          } else {
+            if (Math.abs(currTime - this.start_second) >= 2) {
+              player.seek(this.start_second)
+            } else {
+              this.start_second = currTime
+            }
+          }
+        })
+        player.on('error', () => {
+          this.pausePlay()
+        })
+      })
+    },
+    // 发送数据
+    async sendData(lesson_id, start_second, end_second) {
+      let params = { lesson_id, start_second, end_second }
+      let res = await courseRecordLearn(params)
+      if (res.code === 0) {
+
+        let redirect_url = res.data.redirect_url
+        if (redirect_url) {
+          location.href = redirect_url
+        }
+      } else if (res.code === 2201) {
+        // 有章节没看完
+        // this.pausePlay()
+        uni.showToast({ title: `${res.message}`, icon: 'none', duration: 2000 })
+        // this.lesson_id = res.data.lesson_id
+        // let params = { region_id: this.region_id, lesson_id: res.data.lesson_id }
+        // this.getCourseGetVideoAuth(params)
+      } else {
+        // this.pausePlay()
+        uni.showToast({ icon: 'none', title: `${res.message}` })
+      }
+
+      this.prev_time = end_second
+    },
+
+    // 获取视频凭证
+    async getCourseGetVideoAuth(params) {
+      let res = await courseGetVideoAuth(params)
+      let code = res.code
+      let { video_id, auth_data, start_second, duration, lesson_id, title, cover,
+        free_second, is_forward, is_free} = res.data
+
+      if (code === 0) {
+        this.title = title
+        this.cover = cover
+        this.is_free = is_free
+        this.is_forward = is_forward
+        this.free_second = free_second
+        this.start_second = start_second
+        this.prev_time = start_second
+        this.duration = duration
+        /* #ifdef H5 */
+        this.createPlayer({ video_id, auth_data, start_second: 0, cover, free_second, duration })
+        /* #endif */
+        /* #ifdef MP-WEIXIN */
+        this.settingPlayer({ video_id, auth_data, start_second, cover, free_second, duration })
+        /* #endif */
+      } else if (code === 2001) {
+        // 没购买
+        this.pausePlay()
+        this.player.setCover(this.courseInfo.cover)
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
+      } else {
+        // 其他异常
+        this.pausePlay()
+        this.player.setCover(this.courseInfo.cover)
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
     },
   }
@@ -519,7 +534,14 @@ export default {
 @import "@/styles/logan.scss";
 
 .course-detail {
+  overflow: hidden;
+  width: 100%;
   padding-bottom: 100rpx;
+}
+
+.course-cover {
+  width: 100%;
+  height: 400rpx;
 }
 
 .course-video {

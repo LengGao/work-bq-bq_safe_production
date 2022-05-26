@@ -66,20 +66,21 @@ const responseStact = [
       return config
     },
     response: (response) => {
-      console.log('批量测试response', response);
+      // console.log('批量测试response', response);
       let body = response.data
       if (body.code !== 0 && !service.$config.nocatch) {
         uni.showToast({ icon: 'none', title: `${body.message}` })
         
-      } else if (body.code === 1000) {
+      } else if (body.code === 1009) {
         let cache = JSON.parse(JSON.stringify(service.$config))
-        service.request({ url: 'login/renewal', method: 'get' })
-        .then(res => {
-          console.log("cache", res, cache);
-          if (res.code === 0) {
-            service.request(cache)
-          }
-        })
+        console.log("cache", 'res', cache);
+        uni.navigateTo({ url: '/pages/login/index'})
+        // service.request({ url: 'login/renewal', method: 'get' })
+        // .then(res => {
+        //   if (res.code === 0) {
+        //     service.request(cache)
+        //   }
+        // })
 
       }
       return response
