@@ -32,7 +32,6 @@ export default {
       default: "",
     },
   },
-  computed: {},
   data() {
     return {
       checkedValue: this.value,
@@ -40,8 +39,11 @@ export default {
   },
   methods: {
     handleClick() {
-      this.$emit("change", this.checkedValue);
+      if (!this.analysis) {
+        this.$emit("change", this.checkedValue); 
+      }
     },
+    
   },
 };
 </script>

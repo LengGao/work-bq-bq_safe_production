@@ -3,10 +3,9 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" :value="checkedAnswer" :correct-answer="currectAnswer" @change="onChangeOpt" />
-    
-    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="options.answer" :correct-answer="currectAnswer"
-                :desc="options.analyse" />
+    <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" :analysis="analysis" @change="onChangeOpt" />
+
+    <AnswerAnalysis v-if="analysis && options.option.length" :question="options"/>
   </view>
 </template>
 
@@ -29,20 +28,20 @@ export default {
       default: () => ({
         option: [],
         title: "",
-      }),
-      analysis: {
-        type: Boolean,
-        default: false
-      },
-      userAnswer: {
-        type: Object,
-        default: () => ({})
-      }
+      })
     },
+    analysis: {
+      type: Boolean,
+      default: false
+    },
+    userAnswer: {
+      type: Object,
+      default: () => ({})
+    }
   },
   data() {
     return {
-      currectAnswer: '', // 保存已选择过的答案
+      correctAnswer: '', // 保存已选择过的答案
       checkedAnswer: '', // 选中的答案
     };
   },
@@ -50,22 +49,18 @@ export default {
     if (this.userAnswer && this.userAnswer.answer) {
       this.checkedAnswer = this.userAnswer.answer[0]
     }
-    if (analysis) {
-      this.currectAnswer()
+    if (this.analysis) {
+      this.correctAnswer = this.options.right
+      this.checkedAnswer = this.options.answer
     }
   },
   methods: {
     onChangeOpt(answer) {
-      this.currectAnswer = answer
+      this.correctAnswer = answer
       let data = { id: this.options.id, question_id: this.options.question_id, answer: [answer] }
       this.$emit("change", data);
-    }
+    },
   },
-  correctAnswer() {
-    this.currectAnswer = this.options.option.filter(item => {
-      return item.is_right
-    })
-  }
 };
 </script>
 <style lang="scss" scoped>

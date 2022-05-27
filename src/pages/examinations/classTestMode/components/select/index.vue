@@ -39,9 +39,13 @@ export default {
       default: 'select'
     },
     // 题目正确答案
-    currectAnswer: {
+    correctAnswer: {
       type: [Array, String, Number],
       default: "",
+    },
+    analysis: {
+      type: Boolean,
+      default: false
     },
   },
   data() {
@@ -54,10 +58,14 @@ export default {
   methods: {
     // 状态更新
     status(value) {
-      if (this.multiple) {
-        return this.checkedAnswer.includes(value) ? 'active' : ''
+      if (this.analysis) {
+        return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'             
       } else {
-        return value === this.checkedAnswer ? 'active' : ''
+        if (this.multiple) {
+          return this.checkedAnswer.includes(value) ? 'active' : ''
+        } else {
+          return value === this.checkedAnswer ? 'active' : ''
+        }
       }
     },
     // 多选
@@ -74,6 +82,7 @@ export default {
     },
     // 单选 多选
     onOptionChange(val) {
+      if (this.analysis) return;
       if (this.multiple) {
         this.multipleChoice(val)
         this.$emit("change", this.checkedAnswer);

@@ -17,9 +17,9 @@
 
     <view class="main">
       <view class="gird">
-        <view class="box" v-for="(item, index) in data" :key="index" :class="item.right ? 'success' : 'error'">
+        <view class="box" v-for="(item, index) in list" :key="index" :class="item ? 'success' : 'error'">
           {{ index + 1 }}
-          <uni-icons v-if="item.is_right" custom-prefix="iconfont" type="icon-zhengquetishitianchong"  
+          <uni-icons v-if="item" custom-prefix="iconfont" type="icon-zhengquetishitianchong"  
           color="#49D204" size="36rpx" style="position: absolute; right: -4rpx; bottom: -8rpx;" />
           <uni-icons v-else custom-prefix="iconfont" type="icon-cuowutishitianchong" 
           color="#F76510" size="36rpx" style="position: absolute; right: -4rpx; bottom: -8rpx;" />
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { practiceAnalyse } from "@/api/question";
+import { practiceSubmit } from "@/api/question";
 
 export default {
   name: 'result',
@@ -52,26 +52,23 @@ export default {
       victoryText: '恭喜您，成功通过本次考试！',
       defeatText: '很遗憾，您并没有通过本次考试！',
       grader: 0,
-      data: {},
+      pass: false,
+      list: [],
       practice_id: '',
+      lesson_id: '',
+      next_lesson_id: '',
     }
-  },
-  computed: {
-    pass() {
-      return this.grader >= 80 ? true :false 
-    },
-  },
+  },  
   onLoad(options) {
-    let { practice_id, lesson_id, grader } = options
+    let { practice_id, lesson_id } = options
     this.practice_id = practice_id
     this.lesson_id = lesson_id
-    this.grader = grader
     this.getData()
   },
   methods: {
     onAnalysis() {
       let url = `/pages/examinations/classTestMode/analysis/index`
-      let query = `?practice_id=${this.practice_id}&grader=${this.grader}`
+      let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&next_lesson_id=${this.next_lesson_id}&pass=${this.pass}`
       uni.navigateTo({ url: url + query})
     },
     onNext() {
@@ -91,14 +88,16 @@ export default {
         url = `/pages/examinations/classTestMode/answer/index`
         query = `?lesson_id=${this.lesson_id}`
       }
-        uni.navigateTo({ url: url + query})
+      uni.navigateTo({ url: url + query})
     },
     async getData() {
       let data = { practice_id: this.practice_id }
-      let res = await practiceAnalyse(data)
+      let res = await practiceSubmit(data)
       if (res.code === 0) {
-        this.data = res.data.question
-        this.data = this.data.concat(res.data.question)
+        this.list = res.data.answer
+        this.grader = res.data.score
+        this.pass = res.data.pass
+        this.next_lesson_id = res.data.next_lesson_id
       }
     }
   }

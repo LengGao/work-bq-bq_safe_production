@@ -4,7 +4,8 @@
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex"
             @animationfinish="onAnimationfinish">
-      <swiper-item class="swiper-item" v-for="(item, index) in questionList" :key="index">
+      <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.question_type === 7 }"
+                   @touchmove="oonTouchmove" v-for="(item, index) in questionList" :key="index">
         <template v-if="currentIndex === index || currentIndex - 1 === index || currentIndex + 1 === index">
         <Single :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 1" />
         <Multiple :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 2" />
@@ -31,6 +32,12 @@ import Completion from "../components/completion/index.vue";
 import Short from "../components/short/index.vue";
 import answerBar from "../components/answerBar/index.vue"
 
+/**
+ * 1，题目显示
+ * 2，切换控制
+ * 3，答案保留
+ */
+
 import {
   practiceAnalyse,
 } from "@/api/question";
@@ -49,20 +56,21 @@ export default {
   },
   data() {
     return {
-      practice_id: '',
-      lesson_id: '',
-      next_lesson_id: '',
-      pass: false,
-      analysis: true,
+      lesson_id: 60,
       // 当前的swiper 索引
       prevIndex: -1,
       nextIndex: 1,
       currentIndex: 0,
+      disableTouch: true,
       // swiper 动画时间
       duration: 300,
       // 考题试卷
       total: 0,
       questionList: [],
+      // 答题
+      answer: {},
+      userAnswerMap: {},
+      analysis: true
     };
   },
   computed: {    
@@ -77,43 +85,48 @@ export default {
     this.duration = 300;
   },
   onLoad(query) {
-    let { practice_id, lesson_id, next_lesson_id, pass } = query
-    this.practice_id = practice_id
-    this.lesson_id = lesson_id
-    this.next_lesson_id = next_lesson_id
-    this.pass = pass
+    // isContinue 是否为继续做题
+    let { practice_id, grader, } = query
+    this.practice_id = 600 || practice_id
+    this.grader = grader || 80
     this.createQuestion();
   },
   methods: {
     // 上一题
     handlePrev() {
       if (!this.isStart) {
-        this.currentIndex = this.currentIndex - 1
+        if (this.disableTouch) {
+          uni.showToast({ title: '答案不能留空', icon: 'none' })
+        } else {
+          this.currentIndex = this.currentIndex - 1
+        }
       }
     },
     // 下一题
     handleNext() {
       if (!this.isEnd) {
-        this.currentIndex = this.currentIndex + 1
+        if (this.disableTouch) {
+          uni.showToast({ title: '答案不能留空', icon: 'none' })
+        } else {
+          this.currentIndex = this.currentIndex + 1
+        }
       }
     },
 
     onSwiperChange({ detail }) {
       this.currentIndex = detail.current
-      this.prevIndex = detail.current - 1
-      this.nextIndex = detail.current + 1
     },
 
     onAnimationfinish({ detail }) {
-    },
-
-    submitPaper() {
-      console.log(getCurrentPages());
-      if (this.pass) {
-
-      } else {
-        
-      }
+      let currIndex = detail.current
+      //  if (this.prevIndex === 0 && this.prevIndex === currIndex) {
+      //   uni.showToast({ icon: "none", title: "已经是第一题了" });
+      // } else if (this.nextIndex === this.total - 1 && this.nextIndex === currIndex) {
+      //   uni.showToast({ icon: "none", title: "已经是最后一题了" });
+      // } else {
+      this.prevIndex = currIndex
+      this.nextIndex = currIndex
+      // }
     },
 
     // 获取章节练习题目

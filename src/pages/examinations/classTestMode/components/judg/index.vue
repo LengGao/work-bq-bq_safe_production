@@ -4,10 +4,10 @@
       <u-parse :content="options.title" />
     </view>
 
-    <Select :options="options.option" :value="checkedAnswer" :currect-answer="currectAnswer" @change="onChangeOpt" />    
+    <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" :analysis="analysis" @change="onChangeOpt" />
 
-    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                :desc="options.topic_analysis" />
+
+    <AnswerAnalysis v-if="analysis && options.option.length" :question="options"/>
   </view>
 </template>
 
@@ -42,18 +42,22 @@ export default {
   },
   data() {
     return {
-      currectAnswer: "",
+      correctAnswer: "",
       checkedAnswer: ""
     };
   },
-  created() {
+  mounted() {
     if (this.userAnswer && this.userAnswer.answer) {
       this.checkedAnswer = this.userAnswer.answer[0]
+    }
+    if (this.analysis) {
+      this.correctAnswer = this.options.right
+      this.checkedAnswer = this.options.answer
     }
   },
   methods: {
     onChangeOpt(answer) {
-      this.currectAnswer = answer
+      this.correctAnswer = answer
       let data = { id: this.options.id, question_id: this.options.question_id, answer: [answer] }
       this.$emit("change", data);
     }

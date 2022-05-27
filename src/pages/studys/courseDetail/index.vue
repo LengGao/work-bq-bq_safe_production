@@ -146,30 +146,6 @@ export default {
     /* #endif */
   },
   methods: {
-    // 随堂测试
-    showModal() {
-      let url = `/pages/examinations/classTestMode/answer/index`,
-        query = `?lesson_id=${this.lesson_id}`
-      if (this.free_second && Math.abs(this.free_second, this.start_second) <= 2) {
-        this.stopSend()
-      } else {
-        uni.showModal({
-          title: '提示',
-          content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
-          cancelText: '取消',
-          cancelColor: '#199fff',
-          confirmText: '开始考试',
-          confirmColor: '#199fff',
-        }).then(res => {
-          let confirm = res[1].confirm
-          if (confirm) {
-            this.$store.commit('SET_EXAMINATION', true)
-            uni.navigateTo({ url: url + query })
-          }
-        })
-      }
-
-    },
     // 加载完成
     onLoadedmetadata() {
       wx.createSelectorQuery().select('#course-video').context((res) => {
@@ -353,6 +329,33 @@ export default {
       this.getCourseGetVideoAuth(params)
     },
 
+    // 随堂测试
+    showModal() {
+      let url = `/pages/examinations/classTestMode/answer/index`,
+        query = `?lesson_id=${this.lesson_id}`
+      if (this.free_second && Math.abs(this.free_second, this.start_second) <= 2) {
+        this.is_free = false
+        uni.showToast({ title: `试看结束，请购买该课程`, icon: 'none'})
+      } else {
+        this.is_free = true
+        uni.showModal({
+          title: '提示',
+          content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
+          showCancel: true,
+          cancelText: '取消',
+          confirmText: '开始考试',
+          cancelColor: '#199fff',
+          confirmColor: '#199fff',
+          success: (res) => {
+            if (res.confirm) {
+              this.$store.commit('SET_EXAMINATION', true)
+              uni.navigateTo({ url: url + query })
+            }
+          }
+        })
+      }      
+    },
+
     //定时发送数据
     intervalSend() {
       // 定时器开始前先请空，再开启
@@ -382,8 +385,9 @@ export default {
       this.intervalId = null
     },
     endedCallback() {
-      this.is_free = true
-      this.getRecond()
+      this.stopSend()
+      this.showModal()
+      this.resetProgress()
     },
     getRecond() {
       let start_second = this.start_second
@@ -445,9 +449,7 @@ export default {
         })
         player.on('ended', (e) => {
           console.log("ended", e);
-          this.showModal()
           this.endedCallback()
-          this.resetProgress()
           this.player.seek(0)
         })
         player.on('timeupdate', () => {
@@ -479,13 +481,10 @@ export default {
         }
       } else if (res.code === 2201) {
         // 有章节没看完
-        // this.pausePlay()
+        this.pausePlay()
         uni.showToast({ title: `${res.message}`, icon: 'none', duration: 2000 })
-        // this.lesson_id = res.data.lesson_id
-        // let params = { region_id: this.region_id, lesson_id: res.data.lesson_id }
-        // this.getCourseGetVideoAuth(params)
       } else {
-        // this.pausePlay()
+        this.pausePlay()
         uni.showToast({ icon: 'none', title: `${res.message}` })
       }
 

@@ -3,23 +3,21 @@
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex"
-            :disable-touch="disableTouch" 
-            @animationfinish="onAnimationfinish">
+            :disable-touch="disableTouch" @animationfinish="onAnimationfinish">
       <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.question_type === 7 }"
-                  @touchmove="oonTouchmove"
-                   v-for="(item, index) in questionList" :key="index">
+                   @touchmove="oonTouchmove" v-for="(item, index) in questionList" :key="index">
         <!-- <template v-if="currentIndex === index || currentIndex - 1 === index || currentIndex + 1 === index"> -->
-        <Single :options="item" :userAnswer="getAnswer(item.question_id)" @change="onSingleChange"
+        <Single :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
                 v-if="item.question_type === 1" />
-        <Multiple :options="item" :userAnswer="getAnswer(item.question_id)" @change="onSingleChange"
+        <Multiple :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
                   v-if="item.question_type === 2" />
-        <Judg :options="item" :userAnswer="getAnswer(item.question_id)" @change="onSingleChange"
+        <Judg :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
               v-if="item.question_type === 3" />
-        <Indefinite :options="item" :userAnswer="getAnswer(item.question_id)" @change="onSingleChange"
+        <Indefinite :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
                     v-if="item.question_type === 4" />
-        <Completion :options="item" :userAnswer="getAnswer(item.question_id)" @change="onInputChange"
+        <Completion :options="item" :userAnswer="getCurrAnswer(index)" @change="onInputChange"
                     v-if="item.question_type === 5" />
-        <Short :options="item" :userAnswer="getAnswer(item.question_id)" @change="onInputChange"
+        <Short :options="item" :userAnswer="getCurrAnswer(index)" @change="onInputChange"
                v-if="item.question_type === 6" />
         <!-- </template> -->
       </swiper-item>
@@ -40,16 +38,9 @@ import Completion from "../components/completion/index.vue";
 import Short from "../components/short/index.vue";
 import answerBar from "../components/answerBar/index.vue"
 
-/**
- * 1，题目显示
- * 2，切换控制
- * 3，答案保留
- */
-
 import {
   practiceStart,
   practiceAnswer,
-  practiceAnalyse,
 } from "@/api/question";
 
 export default {
@@ -69,8 +60,8 @@ export default {
       lesson_id: 60,
       // 当前的swiper 索引
       prevIndex: -1,
-      nextIndex: 1,
       currentIndex: 0,
+      nextIndex: 1,
       disableTouch: true,
       // swiper 动画时间
       duration: 300,
@@ -90,6 +81,9 @@ export default {
     isStart() {
       return this.currentIndex <= 0
     },
+    isRight() {
+      return this.currentIndex > this.prevIndex
+    }
   },
   onShow() {
     this.duration = 300;
@@ -99,27 +93,21 @@ export default {
     let lesson_id = 60, title = '随堂练习'
     this.lesson_id = lesson_id
     uni.setNavigationBarTitle({ title })
-    this.createQuestion(lesson_id);
+    this.createQuestion();
   },
   methods: {
-
     checkInputAnswer(val) {
-      if (val !== undefined && val !== '' && val !== null) {
-        return true
-      } else {
-        return false
-      }
+      return val !== undefined && val !== '' && val !== null
     },
-    
+
     onSingleChange(answer) {
-      this.answer = answer
+      console.log('onSingleChange', answer);
       let flag = false
+      this.answer = answer
       if (Array.isArray(answer.answer)) {
         flag = answer.answer.some(val => {
           return val !== undefined && val !== '' && val !== null
         })
-      } else {
-        flag = this.checkInputAnswer(answer.answer)
       }
       if (flag) {
         this.cacheAnswer(answer)
@@ -134,10 +122,10 @@ export default {
 
     },
 
-    
+
     onInputChange(answer) {
-      this.answer = answer
       let flag = false
+      this.answer = answer
       if (Array.isArray(answer.answer)) {
         flag = answer.answer.some(val => {
           return val !== undefined && val !== '' && val !== null
@@ -153,96 +141,97 @@ export default {
         this.disableTouch = true
       }
     },
-    
-    handlePrev() {      
+
+    handlePrev() {
       if (!this.isStart) {
         if (this.disableTouch) {
           uni.showToast({ title: '答案不能留空', icon: 'none' })
         } else {
+          this.prevIndex = this.currentIndex
           this.currentIndex = this.currentIndex - 1
         }
       }
     },
-    
+
     handleNext() {
       if (!this.isEnd) {
         if (this.disableTouch) {
           uni.showToast({ title: '答案不能留空', icon: 'none' })
         } else {
+          this.prevIndex = this.currentIndex
           this.currentIndex = this.currentIndex + 1
         }
       }
     },
-    // ------------------ swiper start
-    oonTouchmove() {
-    },
+
     onSwiperChange({ detail }) {
-      this.currentIndex = detail.current
-      let qid = this.questionList[this.currentIndex].question_id
-      let answer = this.userAnswerMap[qid]
-      let hasAnswer = answer ? true : false
-      console.log(
-        'onSwiperChange',
-        detail,
-        qid,
-        answer,
-        this.questionList,
-        this.currentIndex,
-        this.userAnswerMap
-        );
-      if (hasAnswer) {
+      if (detail.source === 'touch') {
+        this.prevIndex = this.currentIndex
+        this.currentIndex = detail.current
+      }
+      let prevAnswer = this.getCurrAnswer(this.prevIndex)
+      let currAnswer = this.getCurrAnswer(this.currentIndex)
+      console.log(this.isRight, prevAnswer, currAnswer, this.prevIndex, this.currentIndex, detail);
+      if (this.isRight && prevAnswer) {
+        this.disableTouch = false
+        this.submitAnswer(prevAnswer)
+      } else if (currAnswer) {
         this.disableTouch = false
       } else {
         this.disableTouch = true
       }
     },
 
-    onAnimationfinish({ detail }) {
-      let currIndex = detail.current
-      //  if (this.prevIndex === 0 && this.prevIndex === currIndex) {
-      //   uni.showToast({ icon: "none", title: "已经是第一题了" });
-      // } else if (this.nextIndex === this.total - 1 && this.nextIndex === currIndex) {
-      //   uni.showToast({ icon: "none", title: "已经是最后一题了" });
-      // } else {
-        this.prevIndex = currIndex
-        this.nextIndex = currIndex
-      // }
-    },
-    // ------------------ swiper end
-    getAnswer(question_id) {
-      return this.userAnswerMap[question_id] || {}
-    },
-    
-    cacheAnswer(answer) {
-      console.log('answer',answer);
-      this.userAnswerMap[answer.question_id] = answer
-      this.submitPaper()
+    oonTouchmove() {
     },
 
-    submitPaper() {
+    onAnimationfinish({ detail }) {
+      console.log('detail', detail);
+    },
+
+    getCurrAnswer(index) {
+      let key = this.questionList[index].question_id
+      return this.userAnswerMap[key]
+    },
+
+    cacheAnswer(answer) {
+      console.log('cacheAnswer', answer);
+      let key = answer.question_id
+      this.userAnswerMap[key] = answer
+    },
+
+    async submitPaper() {
       if (!this.disableTouch) {
-        this.submitAnswer()
+        let index = this.currentIndex
+        let key = this.questionList[index].question_id
+        let currAnswer = this.userAnswerMap[key]
+        let data = { practice_id: this.practice_id, question_id: key, answer: currAnswer.answer }
+        const res = await practiceAnswer(data);
+        if (res.code === 0) {
+          let url = `/pages/examinations/classTestMode/result/index`
+          let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&grade=${80}`
+          setTimeout(() => {
+            uni.navigateTo({ url: url + query });
+          }, 800);
+          this.disableTouch = false
+        }
       } else {
         uni.showToast({ title: '考试不能留空', icon: 'none' })
       }
     },
 
-    async submitAnswer() {
-      let data = { practice_id: this.practice_id, answer: this.userAnswerMap }
-      // const res = await practiceAnswer(data);
-      // if (res.code === 0) {
-        uni.showToast({ title: '提交成功', icon: 'success' })
+    async submitAnswer(prevAnswer) {
+      let data = { practice_id: this.practice_id, question_id: prevAnswer.question_id, answer: prevAnswer.answer }
+      const res = await practiceAnswer(data);
+      if (res.code === 0) {
         this.duration = 0;
-        setTimeout(() => {
-          let url = `/pages/examinations/classTestMode/result/index`
-          let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&grade=${80}`
-          uni.navigateTo({ url: url + query });
-        }, 500);
-      // }
+        this.disableTouch = true
+      }
+
     },
     // 获取章节练习题目
-    async createQuestion(lesson_id) {
-      const data = { lesson_id };
+    async createQuestion() {
+      const data = { lesson_id: this.lesson_id };
       const res = await practiceStart(data);
       if (res.code === 0) {
         this.practice_id = res.data.practice_id

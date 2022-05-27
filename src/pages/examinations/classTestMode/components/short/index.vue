@@ -4,9 +4,8 @@
       <u-parse :content="options.title" />
     </view>
     <textarea class="text" placeholder="请输入" :value="checkedAnswer" @blur="onInput" />
-
-    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                :desc="options.topic_analysis" />
+    
+    <AnswerAnalysis v-if="analysis && options.option.length" :question="options"/>
   </view>
 </template>
 
@@ -45,9 +44,13 @@ export default {
       checkedAnswer: '',
     };
   },
-  created() {
+  mounted() {
     if (this.userAnswer && this.userAnswer.answer) {
       this.checkedAnswer = this.userAnswer.answer
+    }
+    if (this.analysis) {
+      this.correctAnswer = this.options.right
+      this.checkedAnswer = this.options.answer
     }
   },
   methods: {
