@@ -6,17 +6,17 @@
             @animationfinish="onAnimationfinish">
       <swiper-item class="swiper-item" v-for="(item, index) in questionList" :key="index">
         <template v-if="currentIndex === index || currentIndex - 1 === index || currentIndex + 1 === index">
-        <Single :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 1" />
-        <Multiple :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 2" />
-        <Judg :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 3" />
-        <Indefinite :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 4" />
-        <Completion :options="item" :analysis="analysis" @change="onInputChange" v-if="item.question_type === 5" />
-        <Short :options="item" :analysis="analysis" @change="onInputChange" v-if="item.question_type === 6" />
+          <Single :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 1" />
+          <Multiple :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 2" />
+          <Judg :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 3" />
+          <Indefinite :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 4" />
+          <Completion :options="item" :analysis="analysis" @change="onInputChange" v-if="item.question_type === 5" />
+          <Short :options="item" :analysis="analysis" @change="onInputChange" v-if="item.question_type === 6" />
         </template>
       </swiper-item>
     </swiper>
-    <answerBar class="bar" :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @next="handleNext"
-               @prev="handlePrev">
+    <answerBar class="bar" :is-end="isEnd" :is-start="isStart" :pass="pass" :analysis="analysis" @submit-paper="submitPaper"
+               @next="handleNext" @prev="handlePrev">
     </answerBar>
   </view>
 </template>
@@ -65,7 +65,7 @@ export default {
       questionList: [],
     };
   },
-  computed: {    
+  computed: {
     isEnd() {
       return this.currentIndex >= this.total - 1
     },
@@ -81,7 +81,7 @@ export default {
     this.practice_id = practice_id
     this.lesson_id = lesson_id
     this.next_lesson_id = next_lesson_id
-    this.pass = pass
+    this.pass = !!pass
     this.createQuestion();
   },
   methods: {
@@ -108,11 +108,15 @@ export default {
     },
 
     submitPaper() {
-      console.log(getCurrentPages());
       if (this.pass) {
-
+        let course_id = uni.getStorageInfoSync('course_id')
+        let url = '/pages/studys/courseDetail/index'
+        let query = `?course_id=${course_id}&lesson_id=${this.next_lesson_id}`
+        uni.redirectTo({ url: url + query })
       } else {
-        
+        let url = `/pages/examinations/classTestMode/answer/index`
+        let qquery = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}`
+        uni.redirectTo({ url: url + query })
       }
     },
 

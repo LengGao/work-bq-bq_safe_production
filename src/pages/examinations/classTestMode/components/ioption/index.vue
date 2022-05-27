@@ -1,5 +1,5 @@
 <template>
-  <view class="option" :class="status ? `option--${status}` : ''" @click="handleClick">
+  <view class="option" :class="status ? `option--${status}` : ''">
     <view class="option-label">
       <uni-icons custom-prefix="iconfont" v-if="status === 'success'" color="#fff" type="icon-duigou" size="28rpx">
       </uni-icons>
@@ -39,9 +39,6 @@ export default {
     };
   },
   methods: {
-    handleClick() {
-      this.$emit("change", this.checkedValue);
-    },
   },
 };
 </script>

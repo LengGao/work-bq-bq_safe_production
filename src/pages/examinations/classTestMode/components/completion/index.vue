@@ -3,7 +3,7 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <i-option v-for="(item, index) in checkedAnswer" :key="index" :label="index + 1 + ''">
+    <i-option v-for="(item, index) in checkedAnswer" :key="index" :label="index + 1 + ''" :status="status(item.value)">
       <input type="text" v-model="item.value" placeholder="请输入" @input="onInput" />
     </i-option>
     <AnswerAnalysis v-if="analysis && options.option.length" :question="options"/>
@@ -62,11 +62,17 @@ export default {
   },
   methods: {
     onInput() {
+      if (this.analysis) return;
       let answer = this.checkedAnswer.map(item => item.value)
       this.correctAnswer = answer
       let data = {id: this.options.id, question_id: this.options.question_id, answer: answer}
       this.$emit("change", data)
-    }
+    },
+    status(value) {
+      if (this.analysis) {
+        return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'             
+      }
+    },
   },
 };
 </script>

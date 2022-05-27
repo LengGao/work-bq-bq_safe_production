@@ -6,7 +6,8 @@
     </view>
     <view class="answer-bar-item" v-if="isEnd" @click="onSubmitPaper">
       <uni-icons custom-prefix="iconfont" type="icon-jiaojuan" size="28rpx"></uni-icons>
-      <view class="bar-text">交卷</view>
+      <view class="bar-text" v-if="analysis"> {{ pass ? '继续学习' :'再考一次' }}</view>
+      <view class="bar-text" v-else>交卷</view>
     </view>
     <view v-else class="answer-bar-item" :class="{'answer-bar-item--disabled':isEnd}" @click="onClickNext">
       <uni-icons custom-prefix="iconfont" :color="isEnd?'#ddd':''" type="icon-xiayige-01" size="28rpx"></uni-icons>
@@ -34,9 +35,13 @@ export default {
       type: Number,
       default: 0,
     },
-    model: {
-      type: String,
-      default: "1",
+    analysis: {
+      type: Boolean,
+      default: false,
+    },
+    pass: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

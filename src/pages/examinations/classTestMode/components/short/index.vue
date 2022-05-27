@@ -3,7 +3,7 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <textarea class="text" placeholder="请输入" :value="checkedAnswer" @blur="onInput" />
+    <textarea class="text" placeholder="请输入" :value="checkedAnswer" @input="onInput" />
     
     <AnswerAnalysis v-if="analysis && options.option.length" :question="options"/>
   </view>
@@ -50,12 +50,12 @@ export default {
     }
     if (this.analysis) {
       this.correctAnswer = this.options.right
-      this.checkedAnswer = this.options.answer
+      this.checkedAnswer = this.options.answer[0]
     }
   },
   methods: {
     onInput({ detail }) {
-      console.log("textarea", detail);
+      if (this.analysis) return;
       let data = {id: this.options.id, question_id: this.options.question_id, answer: [detail.value]}
       this.$emit("change", data)
     },

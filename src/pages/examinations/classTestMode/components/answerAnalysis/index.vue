@@ -1,7 +1,12 @@
 <template>
   <view class="answer-analysis">
     <view v-if="isShort">
-
+      <view class="title">参考答案</view>
+      <view class="content">
+        <view class="correct-answer">
+          <view>正确答案：{{ correctAnswerText }}</view>
+        </view>
+      </view>
     </view>
     <view v-else>
       <view class="title">参考答案</view>
@@ -67,10 +72,10 @@ export default {
     };
   },
   mounted() {
-    let userAnswer = this.question.answer, right = this.question.right, options = this.question.option, type = this.question.question_type
-    console.log(type, this.question);
+    let userAnswer = this.question.answer, right = this.question.right, options = this.question.option, type = this.question.question_type    
     if (type === 6) {
       this.isShort = true
+      this.correctAnswerText = options[0].content
     } else if (type === 5) {
       let { userAnswerText, correctAnswerText } = this.inputTypeParse(userAnswer, options, right)
       this.userAnswerText = userAnswerText

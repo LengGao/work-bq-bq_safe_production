@@ -89,10 +89,9 @@ export default {
     this.duration = 300;
   },
   onLoad(query) {
-    // let { lesson_id = 60, title = "测试提" } = query
-    let lesson_id = 60, title = '随堂练习'
+    let { lesson_id } = query
+    if (!lesson_id) { uni.showToast({ title: '课时id错误', icon: 'none' }) }
     this.lesson_id = lesson_id
-    uni.setNavigationBarTitle({ title })
     this.createQuestion();
   },
   methods: {

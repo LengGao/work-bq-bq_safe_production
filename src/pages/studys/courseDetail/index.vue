@@ -125,9 +125,11 @@ export default {
 
   },
   onLoad(query) {
-    let { course_id } = query
+    let { course_id, lesson_id = 0 } = query
     this.course_id = course_id
+    this.lesson_id = lesson_id
     this.region_id = this.$store.getters.region.id
+    uni.setStorageSync('course_id', course_id)
     this.getCourseInfo()
     this.getCommentHotWord()
   },
@@ -309,7 +311,8 @@ export default {
         this.lesson_id = res.data.learning_lesson_id
         this.courseInfo = res.data
         this.videoCover = res.data.cover
-        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: res.data.learning_lesson_id })
+        let lesson_id = this.lesson_id || res.data.learning_lesson_id
+        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: lesson_id })
       }
     },
 
@@ -395,7 +398,10 @@ export default {
       let lesson_id = this.lesson_id
       this.sendData(lesson_id, start_second, end_time)
     },
-
+    subtraction(a, b) {
+      
+    },
+    
     // 创建播放器
     createPlayer(options) {
       if (this.player) this.player.dispose();
@@ -457,7 +463,7 @@ export default {
           if (this.is_forward || this.is_free) {
             this.start_second = currTime
           } else {
-            if (Math.abs(currTime - this.start_second) >= 2) {
+            if (currTime - this.start_second >= 2) {
               player.seek(this.start_second)
             } else {
               this.start_second = currTime
@@ -490,7 +496,6 @@ export default {
 
       this.prev_time = end_second
     },
-
     // 获取视频凭证
     async getCourseGetVideoAuth(params) {
       let res = await courseGetVideoAuth(params)
