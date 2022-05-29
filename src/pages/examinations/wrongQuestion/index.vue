@@ -1,57 +1,54 @@
 <template>
   <view class="wrong-question">
-    <uni-notice-bar show-icon text="答对一次后自动移除错题 " />
-    <mescroll-body class="wrong-question-list" ref="mescrollRef" @init="mescrollInit" @down="downCallback"
-                   :down="downOption" :up="upOption" @up="upCallback">
-      <view class="wrong-question-list-item" v-for="item in list" :key="item.id">
-        <view class="title">{{ item.chapter_name }}（{{ item.topic_num }}）</view>
-        <view class="actions">
-          <view class="btn-primary plain" @click="toAnswer(1, item.id, item.chapter_name)">背题</view>
-          <view class="btn-primary" @click="toAnswer(0, item.id, item.chapter_name)">重练</view>
-        </view>
+    <!-- <uni-notice-bar show-icon text="答对一次后自动移除错题 " /> -->
+    <view class="wrong-question-list-item" v-for="item in list" :key="item.id">
+      <view class="title">{{ item.title }}（{{ item.num }}）</view>
+      <view class="actions">
+        <view class="btn-primary plain" @click="toAnswer(1, item.id, item.title)">背题</view>
+        <view class="btn-primary" @click="toAnswer(0, item.id, item.title)">重练</view>
       </view>
-    </mescroll-body>
+    </view>
   </view>
 
 </template>
+
 <script>
-import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
-import { getFavoritesList } from "@/api/question";
+import { wrongChapterList, restartPractice } from "@/api/question";
+
 export default {
-  mixins: [MescrollMixin], // 使用mixin
   name: "wrongQuestion",
   data() {
     return {
       list: [],
-    };
+    }
   },
   onShow() {
-    this.reloadList()
+    this.wrongChapterList()
   },
   methods: {
-    /*若希望重新加载列表,只需调用此方法即可(内部会自动page.num=1,再主动触发up.callback)*/
-    reloadList() {
-      this.mescroll.resetUpScroll();
-    },
-    async upCallback(page) {
-      const data = {
-        is_collection: 0,
-        page: page.num,
-        limit: page.size
-      };
-      const res = await getFavoritesList(data)
-      const curPageData = res.data.list || [];
-      const curPageLen = curPageData.length;
-      const total = res.data.total
-      if (page.num == 1) this.list = []; //如果是第一页需手动置空列表
-      this.list = this.list.concat(curPageData); //追加新数据
-      this.mescroll.endBySize(curPageLen, total);
-    },
     toAnswer(isAnalysis, chapterId, title) {
-      uni.navigateTo({
-        url: `/pages/answer/index?title=${title}&type=8&isAnalysis=${isAnalysis}&chapterId=${chapterId}`,
-      });
+      let url = ``
+      let query = `?chapterId=${chapterId}&title=${title}`
+      if (isAnalysis) {
+        url = `/pages/examinations/wrongMode/analysis/index`
+        uni.navigateTo({ url: url + query })
+      } else {
+        url = `/pages/examinations/wrongMode/answer/index`
+        let questionBankInfo = this.$store.getters.questionBankInfo
+        let params = { chapterId: chapterId, question_bank_id: questionBankInfo.id }
+        restartPractice(params).then(res => {
+          if (res.code === 0) uni.navigateTo({ url: url + query });
+        })
+      }
     },
+    async wrongChapterList() {
+      let questionBankInfo = this.$store.getters.questionBankInfo
+      let params = { question_bank_id: questionBankInfo.id }
+      let res = await wrongChapterList(params)
+      if (res.code === 0) {
+        this.list = res.data
+      }
+    }
   },
 };
 </script>

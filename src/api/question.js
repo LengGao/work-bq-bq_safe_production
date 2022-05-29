@@ -92,7 +92,7 @@ export function getCustomExamInfo(data) {
 export function wrongChapterList(data) {
   return requset({
     url: 'question/wrongChapterList',
-    method: 'get',
+    method: 'post',
     data   
   })
 }
