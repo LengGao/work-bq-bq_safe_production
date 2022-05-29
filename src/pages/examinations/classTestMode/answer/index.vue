@@ -6,7 +6,6 @@
             :disable-touch="disableTouch" @animationfinish="onAnimationfinish">
       <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.question_type === 7 }"
                    @touchmove="oonTouchmove" v-for="(item, index) in questionList" :key="index">
-        <!-- <template v-if="currentIndex === index || currentIndex - 1 === index || currentIndex + 1 === index"> -->
         <Single :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
                 v-if="item.question_type === 1" />
         <Multiple :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
@@ -19,7 +18,6 @@
                     v-if="item.question_type === 5" />
         <Short :options="item" :userAnswer="getCurrAnswer(index)" @change="onInputChange"
                v-if="item.question_type === 6" />
-        <!-- </template> -->
       </swiper-item>
     </swiper>
     <answerBar class="bar" :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @next="handleNext"
@@ -57,24 +55,20 @@ export default {
   },
   data() {
     return {
-      lesson_id: 60,
-      // 当前的swiper 索引
+      lesson_id: 0,
+      course_id: 0,
       prevIndex: -1,
       currentIndex: 0,
       nextIndex: 1,
       disableTouch: true,
-      // swiper 动画时间
       duration: 300,
-      // 考题试卷
       total: 0,
       questionList: [],
-      // 答题
       answer: {},
       userAnswerMap: {},
     };
   },
   computed: {
-    // 是否最后一题
     isEnd() {
       return this.currentIndex >= this.total - 1
     },
@@ -89,8 +83,8 @@ export default {
     this.duration = 300;
   },
   onLoad(query) {
-    let { lesson_id } = query
-    if (!lesson_id) { uni.showToast({ title: '课时id错误', icon: 'none' }) }
+    let { course_id, lesson_id } = query
+    this.course_id = course_id
     this.lesson_id = lesson_id
     this.createQuestion();
   },
@@ -116,11 +110,6 @@ export default {
         this.disableTouch = true
       }
     },
-
-    onMultipleChange() {
-
-    },
-
 
     onInputChange(answer) {
       let flag = false
@@ -170,7 +159,7 @@ export default {
       }
       let prevAnswer = this.getCurrAnswer(this.prevIndex)
       let currAnswer = this.getCurrAnswer(this.currentIndex)
-      console.log(this.isRight, prevAnswer, currAnswer, this.prevIndex, this.currentIndex, detail);
+      // console.log(this.isRight, prevAnswer, currAnswer, this.prevIndex, this.currentIndex, detail);
       if (this.isRight && prevAnswer) {
         this.disableTouch = false
         this.submitAnswer(prevAnswer)
@@ -182,10 +171,11 @@ export default {
     },
 
     oonTouchmove() {
+      // console.log('detail', detail);
     },
 
     onAnimationfinish({ detail }) {
-      console.log('detail', detail);
+      // console.log('detail', detail);
     },
 
     getCurrAnswer(index) {
@@ -208,7 +198,7 @@ export default {
         const res = await practiceAnswer(data);
         if (res.code === 0) {
           let url = `/pages/examinations/classTestMode/result/index`
-          let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&grade=${80}`
+          let query = `?practice_id=${this.practice_id}&course_id=${this.course_id}&lesson_id=${this.lesson_id}`
           setTimeout(() => {
             uni.navigateTo({ url: url + query });
           }, 800);
@@ -227,7 +217,7 @@ export default {
         this.disableTouch = true
       }
     },
-    // 获取章节练习题目
+    
     async createQuestion() {
       const data = { lesson_id: this.lesson_id };
       const res = await practiceStart(data);

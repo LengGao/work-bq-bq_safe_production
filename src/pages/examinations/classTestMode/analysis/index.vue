@@ -52,6 +52,7 @@ export default {
       practice_id: '',
       lesson_id: '',
       next_lesson_id: '',
+      course_id: '',
       pass: false,
       analysis: true,
       // 当前的swiper 索引
@@ -77,9 +78,10 @@ export default {
     this.duration = 300;
   },
   onLoad(query) {
-    let { practice_id, lesson_id, next_lesson_id, pass } = query
+    let { practice_id, lesson_id, next_lesson_id, pass, course_id } = query
     this.practice_id = practice_id
     this.lesson_id = lesson_id
+    this.course_id = course_id
     this.next_lesson_id = next_lesson_id
     this.pass = !!pass
     this.createQuestion();
@@ -109,13 +111,13 @@ export default {
 
     submitPaper() {
       if (this.pass) {
-        let course_id = uni.getStorageInfoSync('course_id')
+        let course_id = this.course_id
         let url = '/pages/studys/courseDetail/index'
         let query = `?course_id=${course_id}&lesson_id=${this.next_lesson_id}`
         uni.redirectTo({ url: url + query })
       } else {
         let url = `/pages/examinations/classTestMode/answer/index`
-        let qquery = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}`
+        let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${course_id}`
         uni.redirectTo({ url: url + query })
       }
     },

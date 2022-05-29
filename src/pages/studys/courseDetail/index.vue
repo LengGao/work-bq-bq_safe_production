@@ -336,7 +336,7 @@ export default {
     // 随堂测试
     showModal() {
       let url = `/pages/examinations/classTestMode/answer/index`,
-        query = `?lesson_id=${this.lesson_id}`
+        query = `?course_id=${this.course_id}&lesson_id=${this.lesson_id}`
       if (this.free_second && Math.abs(this.free_second, this.start_second) <= 2) {
         this.is_free = false
         uni.showToast({ title: `试看结束，请购买该课程`, icon: 'none'})

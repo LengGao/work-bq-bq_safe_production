@@ -56,37 +56,37 @@ export default {
       list: [],
       practice_id: '',
       lesson_id: '',
+      course_id: '',
       next_lesson_id: '',
     }
   },  
   onLoad(options) {
-    let { practice_id, lesson_id } = options
+    let { practice_id, lesson_id, course_id } = options
     this.practice_id = practice_id
     this.lesson_id = lesson_id
+    this.course_id = course_id
     this.getData()
   },
   methods: {
     onAnalysis() {
       let url = `/pages/examinations/classTestMode/analysis/index`
-      let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&next_lesson_id=${this.next_lesson_id}&pass=${this.pass}`
+      let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&next_lesson_id=${this.next_lesson_id}$course_id=${course_id}&pass=${this.pass}`
       uni.navigateTo({ url: url + query})
     },
     onNext() {
-      let pages = getCurrentPages()
-      console.log("pages",pages);
       let url = `/pages/studys/courseDetail/index`
-      let query = `?lesson_id=${this.lesson_id}`
-      uni.navigateTo({ url: url + query})  
+      let query = `?lesson_id=${this.next_lesson_id}&course_id=${course_id}`
+      uni.navigateTo({ url: url + query })
     },
     onRestart(type) {
       let url = ''
       let query = ''
       if (type === 'study') {
         url = `/pages/studys/courseDetail/index`
-        query = `?lesson_id=${this.lesson_id}`
+        query = `?lesson_id=${this.lesson_id}&course_id=${course_id}`
       } else {
         url = `/pages/examinations/classTestMode/answer/index`
-        query = `?lesson_id=${this.lesson_id}`
+        query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${course_id}`
       }
       uni.navigateTo({ url: url + query})
     },
