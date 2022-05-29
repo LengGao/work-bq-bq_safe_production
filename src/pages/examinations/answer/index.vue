@@ -138,6 +138,7 @@ export default {
     // ...mapActions(["setQusetionList"]),
     setCurrentModel() {
       // model 1:刷题模式，2：考试模式 3：解析模式
+      // 1 章节练习 type 7 收藏加 8 错题集
       if (this.type === "1") {
         this.model = "1";
       }

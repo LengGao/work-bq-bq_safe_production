@@ -105,10 +105,11 @@ export default {
       src: '',
       title: '',
       cover: '',
-      prev_time: 0, // 记录上次时间
-      start_second: 0,
-      end_time: 0,
-      free_second: 0,
+      prev_time: 0,   // 上次时间
+      start_second: 0, // 当前时间
+      end_time: 0,    // 截止时间
+      free_second: 0, // 
+      finish_second: 0,
       duration: 0,
       time: 1000 * 10,
       intervalId: null,
@@ -137,10 +138,10 @@ export default {
     let _this = this
     document.addEventListener('visibilitychange', function (state) {
       _this.pausePlay()
+      this.seekSendData()
     })
   },
   onUnload() {
-    console.log('onUnload(');
     clearInterval(this.intervalId)
     this.intervalId = null
     /* #ifdef H5 */
@@ -176,8 +177,8 @@ export default {
     // 进度更新
     onTimeupdate({ detail }) {
       let currentTime = detail.currentTime
-      if (this.is_forward || this.is_free) {
-        this.end_time = currentTime
+      if (this.is_forward || this.is_free || this.start_second < this.finish_second) {
+        this.start_second = currentTime
       } else {
         if (Math.abs(currentTime - this.start_second) >= 2) {
           this.player.seek(this.start_second)
@@ -359,25 +360,29 @@ export default {
       }      
     },
 
-    //定时发送数据
-    intervalSend() {
-      // 定时器开始前先请空，再开启
+    playSendData() {
       if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
-
       this.intervalId = setInterval(() => {
-        let start_second = this.start_second
+        let start_second = this.prev_time
         let end_time = this.player.getCurrentTime()
         let lesson_id = this.lesson_id
         this.sendData(lesson_id, start_second, end_time)
       }, this.time)
     },
+    seekSendData() {
+      let start_second = this.player.getCurrentTime()
+      let end_time = this.player.getCurrentTime()
+      let lesson_id = this.lesson_id
+      this.sendData(lesson_id, start_second, end_time)
+    },
     stopSend() {
       clearInterval(this.intervalId)
       this.intervalId = null
-      this.getRecond()
+      let end_time = this.player.getCurrentTime()
+      this.sendData(this.lesson_id, end_time, end_time)
     },
     pausePlay() {
-      this.player.pause()
+      if (this.player) this.player.pause();
       clearInterval(this.intervalId)
       this.intervalId = null
     },
@@ -385,21 +390,17 @@ export default {
       this.start_second = 0
       this.prev_time = 0
       this.end_time = 0
-      this.intervalId = null
     },
     endedCallback() {
       this.stopSend()
       this.showModal()
       this.resetProgress()
     },
-    getRecond() {
-      let start_second = this.start_second
+    errSendData() {
+      let start_second = this.prev_time
       let end_time = this.player.getCurrentTime()
       let lesson_id = this.lesson_id
       this.sendData(lesson_id, start_second, end_time)
-    },
-    subtraction(a, b) {
-      
     },
     
     // 创建播放器
@@ -442,36 +443,47 @@ export default {
         encryptType: 0
       }, (player) => {
         player.on('ready', () => {
-          player.setPreviewTime(options.free_second)
+          if (options.free_second) player.setPreviewTime(options.free_second);
           player.seek(this.start_second)
           player.play()
         })
         player.on('play', () => {
-          this.intervalSend()
+          this.playSendData()
         })
         player.on('pause', () => {
           console.log('pause');
           this.stopSend()
         })
-        player.on('ended', (e) => {
-          console.log("ended", e);
+        player.on('ended', () => {
+          console.log("ended");
           this.endedCallback()
           this.player.seek(0)
         })
         player.on('timeupdate', () => {
           let currTime = player.getCurrentTime()
-          if (this.is_forward || this.is_free) {
+          let distance = currTime - this.start_second
+          if (this.is_forward || this.is_free || this.start_second < this.finish_secon) {
             this.start_second = currTime
+            if (Math.abs(distance) >= 2) this.sendData(this.lesson_id, currTime, currTime);
           } else {
-            if (currTime - this.start_second >= 2) {
+            console.log("distance", distance);
+            if (distance >= 2) {
               player.seek(this.start_second)
+            } else if (Math.abs(distance) >= 2) {
+              this.start_second = currTime
+              this.sendData(this.lesson_id, currTime, currTime)              
             } else {
               this.start_second = currTime
             }
           }
         })
+        player.on('completeSeek', (e) => {
+          console.log('completeSeek');
+          this.seekSendData()
+        })
         player.on('error', () => {
           this.pausePlay()
+          this.seekSendData()
         })
       })
     },
@@ -480,7 +492,6 @@ export default {
       let params = { lesson_id, start_second, end_second }
       let res = await courseRecordLearn(params)
       if (res.code === 0) {
-
         let redirect_url = res.data.redirect_url
         if (redirect_url) {
           location.href = redirect_url
@@ -488,10 +499,13 @@ export default {
       } else if (res.code === 2201) {
         // 有章节没看完
         this.pausePlay()
+        this.resetProgress()
+        this.lesson_id = res.data.lesson_id
+        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: res.data.lesson_id })
         uni.showToast({ title: `${res.message}`, icon: 'none', duration: 2000 })
       } else {
         this.pausePlay()
-        uni.showToast({ icon: 'none', title: `${res.message}` })
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
 
       this.prev_time = end_second
@@ -499,30 +513,25 @@ export default {
     // 获取视频凭证
     async getCourseGetVideoAuth(params) {
       let res = await courseGetVideoAuth(params)
-      let code = res.code
       let { video_id, auth_data, start_second, duration, lesson_id, title, cover,
-        free_second, is_forward, is_free} = res.data
+        free_second, finish_second, is_forward, is_free} = res.data
 
-      if (code === 0) {
+      if (res.code === 0) {
         this.title = title
         this.cover = cover
         this.is_free = is_free
         this.is_forward = is_forward
-        this.free_second = free_second
-        this.start_second = start_second
-        this.prev_time = start_second
-        this.duration = duration
+        this.free_second = +free_second
+        this.finish_second = +finish_second
+        this.start_second = +start_second
+        this.prev_time = +start_second
+        this.duration = +duration
         /* #ifdef H5 */
-        this.createPlayer({ video_id, auth_data, start_second: 0, cover, free_second, duration })
+        this.createPlayer({ video_id, auth_data, start_second, cover, free_second, duration })
         /* #endif */
         /* #ifdef MP-WEIXIN */
         this.settingPlayer({ video_id, auth_data, start_second, cover, free_second, duration })
         /* #endif */
-      } else if (code === 2001) {
-        // 没购买
-        this.pausePlay()
-        this.player.setCover(this.courseInfo.cover)
-        uni.showToast({ title: `${res.message}`, icon: 'none' })
       } else {
         // 其他异常
         this.pausePlay()

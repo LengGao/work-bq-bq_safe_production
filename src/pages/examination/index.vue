@@ -65,9 +65,10 @@
     <uni-popup ref="popupRef" type="bottom">
       <view class="popup-box">
       <uni-list>
+        <view class="list-item-body-title">请选择题库</view>
         <uni-list-item v-for="(item, index) in candidates" :key="index" @click="() => onClickItem(index)" clickable>
           <template v-slot:body>
-            <view class="list-item-body-test">{{ item.name }}</view>
+            <view class="list-item-body-test">{{ item.title }}</view>
           </template>
         </uni-list-item>
       </uni-list>
@@ -78,6 +79,8 @@
 
 <script>
 import ExaminationCard from './components/ExaminationCard'
+import { getQuestionBankList } from '@/api/question'
+
 export default {
   components: {
     ExaminationCard
@@ -108,12 +111,21 @@ export default {
       swipers: [
         { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination-swiper.png", url: "" }
       ],
+      isReady: false,
     };
   },
   computed: {
     activeQuestionBank() {
-      return this.candidates[this.currentCandidates].name 
+      return this.candidates[this.currentCandidates].title || '请选择题库'
     }
+  },
+  onLoad() {
+    this.getQuestionBankList()
+  },
+  onReady() {
+    this.$refs.popupRef.open()
+  },
+  onShow() {
   },
   methods: {
     to(url) {
@@ -127,7 +139,17 @@ export default {
     },  
     onClickItem(index) {
       this.currentCandidates = index
+      let questionInfo = this.candidates[index]
+      this.$store.dispatch('setQuestionBankInfo', questionInfo)
       this.$refs.popupRef.close()
+    },
+    async getQuestionBankList() {
+      let res = await getQuestionBankList()
+      if (res.code === 0) {
+        this.candidates = res.data
+        let questionInfo = res.data[0]
+        this.$store.dispatch('setQuestionBankInfo', questionInfo)
+      }
     }
   },
 };
@@ -293,8 +315,19 @@ $padding-lr: 30rpx;
   margin-bottom: calc(var(--window-bottom) + env(safe-area-inset-bottom));
 }
 
+.list-item-body-title {
+  width: 100%;
+  height: 84rpx;
+  text-align: center;
+  line-height: 84rpx;
+  font-size: $font-size-base;
+  color: $color-primary;
+  border: 2rpx solid #eee;
+}
+
 .list-item-body-test {
   width: 100%;
+  font-size: 28rpx;
   text-align: center;
 }
 

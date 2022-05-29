@@ -127,7 +127,10 @@ export default {
     async courseCategory() {
       let res = await courseCategory()
       if (res.code === 0) {
-        this.categoryData = res.data
+        let list = res.data
+        list.shift()
+        list.unshift({id: -1, title: "全部", sub: []})
+        this.categoryData = list
       }
     },
     async coursePriceType() {

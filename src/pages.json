@@ -139,6 +139,12 @@
 					}
 				},
 				{
+					"path": "practiceMode/answer/index",
+					"style": {
+						"navigationBarTitleText": "章节练习"
+					}
+				},
+				{
 					"path": "answer/index",
 					"style": {
 						"navigationBarTitleText": "答题"
@@ -194,6 +200,7 @@
 						"navigationBarTitleText": "模拟考试"
 					}
 				},
+
 				{
 					"path": "classTestMode/answer/index",
 					"style": {

@@ -16,6 +16,14 @@ export default {
     aliplayer.src = 'https://g.alicdn.com/de/prismplayer/2.9.3/aliplayer-min.js'
     aliplayer.async = true
     head.appendChild(aliplayer)
+
+    uni.navigateBack = (details = 0) => {      
+      if (details) {
+        history.go( 0 - details )
+      } else {
+        history.back() 
+      }
+    }
     /* #endif */
 
   },

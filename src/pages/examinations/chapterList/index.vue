@@ -7,15 +7,15 @@
         <view class="chapter-container" v-if="chapterList.length">
           <view class="chapter-list">
             <view class="chapter-list-item" v-for="item in chapterList" :key="item.id"
-                  @click="toAnswer(item.id, item.chapter_name, item.answer_num,item.topic_num)">
+                  @click="toAnswer(item.id, item.title, item.question_bank_id, item.last_question_id, item.question_count )">
               <view class="chapter-info">
                 <view class="chapter-info-title">
                   <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx"></uni-icons>
-                  <view class="title van-ellipsis">{{ item.chapter_name }}</view>
+                  <view class="title van-ellipsis">{{ item.title }}</view>
                 </view>
                 <view class="chapter-info-progress">
-                  <view class="item" decode>总数：<text class="text">{{ item.topic_num }}</text></view>
-                  <view class="item" decode>已做：<text class="text">{{ item.answer_num }}</text></view>
+                  <view class="item" decode>总数：<text class="text">{{ item.question_count }}</text></view>
+                  <view class="item" decode>已做：<text class="text">{{ item.did_num }}</text></view>
                   <view class="item" decode>正确率：<text class="text">{{ item.correct_rate }}%</text></view>
                 </view>
               </view>
@@ -33,7 +33,7 @@
 <script>
 import NoData from "@/components/noData";
 import CustomHeader from '@/components/custom-header'
-import { getChapterList } from "@/api/question";
+import { getChapterList, restartPractice } from "@/api/question";
 
 export default {
   name: "chapter",
@@ -43,45 +43,16 @@ export default {
   },
   data() {
     return {
-      chapterList: [
-        {
-          id: 1,
-          chapter_name: "第1章 信息化知识", // 章节名称
-          topic_num: 100, // 题目总数
-          answer_num: 40, // 已答题目数量
-          chapters_progress: 0, // 章节进度数值
-          completion_rate: 0, // 章节进度
-          answer_total_num: 0, // 总答题数
-          correct_rate: 80 // 正确率
-        },
-        {
-          id: 2,
-          chapter_name: "第二章 低压电工练习二", // 章节名称
-          topic_num: 90, // 题目总数
-          answer_num: 38, // 已答题目数量
-          chapters_progress: 0, // 章节进度数值
-          completion_rate: 0, // 章节进度
-          answer_total_num: 0, // 总答题数
-          correct_rate: 75 // 正确率
-        },
-        {
-          id: 3,
-          chapter_name: "第三章 低压电工练习三", // 章节名称
-          topic_num: 100, // 题目总数
-          answer_num: 40, // 已答题目数量
-          chapters_progress: 0, // 章节进度数值
-          completion_rate: 0, // 章节进度
-          answer_total_num: 0, // 总答题数
-          correct_rate: 80 // 正确率
-        },
-      ],
-      statisticalData: {
-        completion_rate: 0, // 章节进度
-        answer_total_num: 0, // 总答题数
-        correct_rate: 0, // 正确率
-      },
+      chapterList: [],
+      question_bank_id: '',
+      question_id: '',
+      last_question_id: 0,
       isOnload: false,
     };
+  },
+  onLoad() {
+    this.getChapterList();
+    this.isOnload = true;
   },
   onShow() {
     if (!this.isOnload) {
@@ -91,39 +62,42 @@ export default {
     }
     this.isOnload = false;
   },
-  onLoad() {
-    this.getChapterList();
-    this.isOnload = true;
-  },
   methods: {
-    toAnswer(chapterId, title, answer_num, topic_num) {
-      let url = '/pages/examinations/answer/index', query = ''
-      if (!topic_num) {
+    toAnswer(chapterId, title, question_bank_id, last_question_id, question_count) {
+      let url = '/pages/examinations/practiceMode/answer/index', query = ''
+      if (!question_count) {
         uni.showToast({ title: '当前章节暂未配置题目', icon: 'none' })
         return;
       }
-      if (!answer_num) {
-        query = `?chapterId=${chapterId}&title=${title}&type=1&isContinue=0`
-        uni.navigateTo({ url: url + query });
-        return;
-      }
+
       uni.showModal({
         title: '提示',
         content: '检测到您有做题记录',
         cancelText: '重新开始',
         confirmText: '继续上次',
         success: function (res) {
-          let isContinue = 1 // 1继续上次 2重新开始
-          if (res.cancel) { isContinue = 0 }
-          query = `?chapterId=${chapterId}&title=${title}&type=1&isContinue=${isContinue}`
-          uni.navigateTo({ url: url + query });
+          if (res.cancel) {
+            query = `?chapterId=${chapterId}&question_bank_id=${question_bank_id}&title=${title}`
+            restartPractice({ question_bank_id, chapter_id: chapterId }).then(res => {
+              if (res.code === 0) uni.navigateTo({ url: url + query });
+            })
+          } else {
+            query = `?chapterId=${chapterId}&question_bank_id=${question_bank_id}&title=${title}`
+            uni.navigateTo({ url: url + query });
+          }
         }
       })
     },
+
     async getChapterList() {
-      // const res = await getChapterList();
-      // this.chapterList = res.data.list || [];
-      // this.statisticalData = res.data.data || {};
+      let questionBankInfo = this.$store.getters.questionBankInfo
+      let params = { question_bank_id: questionBankInfo.id }
+
+      const res = await getChapterList(params);
+      if (res.code === 0) {
+        this.question_bank_id = params.question_bank_id
+        this.chapterList = res.data
+      }
     },
   },
 };

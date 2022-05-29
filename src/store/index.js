@@ -14,8 +14,8 @@ import {
 } from '@/api/course'
 
 const userInfo = uni.getStorageSync('userInfo') || {}
-const questionBankInfo = uni.getStorageSync('questionBankInfo') || {}
 const organizationCurrent = uni.getStorageSync('orgInfo') || {}
+const questionBankInfo = uni.getStorageSync('questionBankInfo') || {}
 const region = uni.getStorageSync('region') || {}
 const version = process.env.VUE_APP_VERSION
 let appId = process.env.VUE_APP_APPID

@@ -1,20 +1,27 @@
 <template>
   <div class="dropdown-filter" @touchmove.stop.prevent>
     <div class="dropdown-filter-header" @click="hanldeToggle">
-      <uni-icons custom-prefix="iconfont" class="header-icon" type="icon-fenlei"
-                 size="36rpx" color="#199fff"></uni-icons>
+      <uni-icons custom-prefix="iconfont" class="header-icon" type="icon-fenlei" size="36rpx" color="#199fff">
+      </uni-icons>
       <view class="header-title">{{activeRightName || defaultName}}</view>
-      <uni-icons v-if="arrow" custom-prefix="iconfont" class="header-icon" :class="{'header-icon--up':show}" type="icon-sanjiao1"
-                 size="24rpx"></uni-icons>
+      <uni-icons v-if="arrow" custom-prefix="iconfont" class="header-icon" :class="{'header-icon--up':show}"
+                 type="icon-sanjiao1" size="24rpx"></uni-icons>
     </div>
     <div class="dropdown-filter-container" :class="{'dropdown-filter-container--popup':show}">
       <div class="container-left">
         <div class="container-left-item" @click="handleLeftClick(index)"
              :class="{'container-left-item--active':activeLeftIndex === index}" v-for="(item,index) in list"
-             :key="item.value">{{item.name}}</div>
+             :key="item.value">{{item.name}}
+        </div>
+      </div>
+      <div class="container-center">
+        <div class="container-center-item" @click="handleCenterClick(indexCenter)" v-for="(item, indexCenter) in listCenter"
+            :class="{'container-left-item--active': activeCenterIndex === indexCenter}"
+             :key="item.value">{{item.name}}
+        </div>
       </div>
       <div class="container-right">
-        <div class="container-right-item" @click="handleRightClick(item)" v-for="item in list[activeLeftIndex].children"
+        <div class="container-right-item" @click="handleRightClick(item)" v-for="(item) in listRight"
              :key="item.value">{{item.name}}
         </div>
       </div>
@@ -54,8 +61,11 @@ export default {
     return {
       show: false,
       activeLeftIndex: 0,
+      activeCenterIndex: 0,
       activeRightName: '',
-      list: []
+      list: [],
+      listCenter: [],
+      listRight: [],
     }
   },
   computed: {
@@ -68,7 +78,7 @@ export default {
   },
   methods: {
     normalizeData(list) {
-      let nameKey = this.nameKey,  valueKey = this.valueKey, childrenKey = this.childrenKey
+      let nameKey = this.nameKey, valueKey = this.valueKey, childrenKey = this.childrenKey
 
       const normalize = (data) => {
         let stack = []
@@ -85,7 +95,7 @@ export default {
         }
         return stack
       }
-      this.list =  normalize(list)
+      this.list = normalize(list)
     },
     handleRightClick(item) {
       this.activeRightName = item.name
@@ -93,8 +103,22 @@ export default {
       this.$emit('change', item.value)
       this.hanldeToggle()
     },
+    handleCenterClick(index) {
+      this.activeCenterIndex = index
+      this.listRight = this.listCenter[this.activeCenterIndex].children
+    },
     handleLeftClick(index) {
       this.activeLeftIndex = index
+      this.listCenter = this.list[this.activeLeftIndex].children
+      this.activeCenterIndex = 0
+      this.listRight = []
+      let item = this.list[this.activeLeftIndex]
+      if (item.value === -1) {
+        this.$emit('input', item.value)
+        this.$emit('change', item.value)
+        this.activeRightName = item.name
+        this.hanldeToggle()
+      }
     },
     hanldeToggle() {
       this.show = !this.show
@@ -138,7 +162,7 @@ export default {
     height: 100%;
     z-index: 2;
     transition: opacity 300ms ease 0ms, transform 300ms ease 0ms,
-    transform 300ms ease 0ms;
+      transform 300ms ease 0ms;
     transform: translateY(-120%);
     background-color: #fff;
     opacity: 0;
@@ -161,6 +185,20 @@ export default {
           color: $uni-color-primary;
           border-color: $uni-color-primary;
         }
+      }
+    }
+    .container-center {
+      flex: 1;
+      background-color: #fcfcfc;
+      &-item {
+        padding: 24rpx 16rpx;
+        font-size: $uni-font-size-base;
+        color: $uni-text-color;
+      }
+      &--active {
+        background-color: #f2f6fc;
+        color: $uni-color-primary;
+        border-color: $uni-color-primary;
       }
     }
     .container-right {

@@ -11,10 +11,10 @@
                 v-if="item.question_type === 1" />
         <Multiple :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
                   v-if="item.question_type === 2" />
-        <Judg :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
-              v-if="item.question_type === 3" />
         <Indefinite :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
-                    v-if="item.question_type === 4" />
+                    v-if="item.question_type === 3" />
+        <Judg :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
+              v-if="item.question_type === 4" />
         <Completion :options="item" :userAnswer="getCurrAnswer(index)" @change="onInputChange"
                     v-if="item.question_type === 5" />
         <Short :options="item" :userAnswer="getCurrAnswer(index)" @change="onInputChange"
@@ -226,7 +226,6 @@ export default {
         this.duration = 0;
         this.disableTouch = true
       }
-
     },
     // 获取章节练习题目
     async createQuestion() {

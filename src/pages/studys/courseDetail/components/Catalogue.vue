@@ -7,7 +7,7 @@
           <view class="title one-title" :class="item1.checked ? 'title-active' : ''">
             <view class="title-box">
               {{ item1.title }}
-              <view v-if="item1.duration" class="tag">试看</view>
+              <view v-if="item1.is_try" class="tag">试看</view>
             </view>
           </view>
         </template>
@@ -19,7 +19,7 @@
               <view class="title two-title" :class="item2.checked ? 'title-active' : ''">
                 <view class="title-box">
                   {{ item2.title }}
-                  <view v-if="item2.duration" class="tag">试看</view>
+                  <view v-if="item2.is_try" class="tag">试看</view>
                 </view>
               </view>
             </template>
@@ -30,9 +30,9 @@
                     :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item2, item1)">
                 <view class="title-box">
                   {{ item3.title }}
-                  <view v-if="item3.duration" class="tag">试看</view>
+                  <view v-if="item3.is_try" class="tag">试看</view>
                 </view>
-                <text>{{ item3.duration }} 分钟</text>
+                <text>{{ item3.duration }}</text>
               </view>
             </template>
             <template v-else>
@@ -50,9 +50,9 @@
                 :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item1)">
             <view class="title-box">
               {{ item3.title }}
-              <view v-if="item3.duration" class="tag">试看</view>
+              <view v-if="item3.is_try" class="tag">试看</view>
             </view>
-            <text>{{ item3.duration }} 分钟</text>
+            <text>{{ item3.duration }}</text>
           </view>
         </view>
       </collapse-item>
@@ -87,6 +87,7 @@ export default {
     lessonId(val, oldval) {
       console.log("lessonId", val, oldval);
       if (val) {
+        this.resetChapterList()
         this.toFlushBack(this.lessonId, this.chapterList)
       }
     }
@@ -107,6 +108,9 @@ export default {
       this.checkeds = this.updateChapterList(this.checkeds, args)
       this.$emit('videoChange', args)
     },
+    resetChapterList() {
+
+    },
     // 回溯
     toFlushBack(id, list) {
       let parent = {}
@@ -116,6 +120,7 @@ export default {
         if (item.id === id) {
           item.checked = true; parent = item; this.checkeds.push(item); break;
         } else {
+          item.checked = false
           if (childs && childs.length) parent = this.toFlushBack(id, childs);
         }
 
