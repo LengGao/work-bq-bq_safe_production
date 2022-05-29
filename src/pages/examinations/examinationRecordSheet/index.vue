@@ -23,12 +23,12 @@
   </view>
 </template>
 <script>
-import Header from "./components/header.vue";
-import Footer from "./components/footer.vue";
 import Title from "../components/title";
+import Header from "../components/header/index";
+import Footer from "../components/footer/index";
 import Circular from "../components/circular";
 import { getQuestionBoard } from "@/api/question";
-// import { mapGetters } from "vuex";
+
 export default {
   name: "examinationRecordSheet",
   components: {
