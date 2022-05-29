@@ -1,20 +1,19 @@
 <template>
-  <mescroll-body class="favorites" ref="mescrollRef" @init="mescrollInit" @down="downCallback" :down="downOption"
-                 :up="upOption" @up="upCallback">
+  <view class="favorites">
     <view class="favorites-list-item" v-for="item in list" :key="item.id">
-      <view class="title">{{ item.chapter_name }}（{{ item.topic_num }}）</view>
+      <view class="title">{{ item.title }}（{{ item.num }}）</view>
       <view class="actions">
-        <view class="btn-primary plain" @click="toAnswer(1, item.id, item.chapter_name)">背题</view>
-        <view class="btn-primary" @click="toAnswer(0, item.id, item.chapter_name)">重练</view>
+        <view class="btn-primary plain" @click="toAnswer(1, item.id, item.title)">背题</view>
+        <view class="btn-primary" @click="toAnswer(0, item.id, item.title)">重练</view>
       </view>
     </view>
-  </mescroll-body>
+  </view>
 </template>
 <script>
-import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
-import { getFavoritesList } from "@/api/question";
+
+import { collectChapterList, restartPractice } from "@/api/question";
 export default {
-  mixins: [MescrollMixin], // 使用mixin
+
   name: "favorites",
   data() {
     return {
@@ -22,32 +21,32 @@ export default {
     };
   },
   onShow() {
-    this.reloadList()
+    this.collectChapterList()
   },
   methods: {
-    /*若希望重新加载列表,只需调用此方法即可(内部会自动page.num=1,再主动触发up.callback)*/
-    reloadList() {
-      this.mescroll && this.mescroll.resetUpScroll();
-    },
-    async upCallback(page) {
-      const data = {
-        is_collection: 1,
-        page: page.num,
-        limit: page.size
-      };
-      const res = await getFavoritesList(data)
-      const curPageData = res.data.list || [];
-      const curPageLen = curPageData.length;
-      const total = res.data.total
-      if (page.num == 1) this.list = []; //如果是第一页需手动置空列表
-      this.list = this.list.concat(curPageData); //追加新数据
-      this.mescroll.endBySize(curPageLen, total);
-    },
     toAnswer(isAnalysis, chapterId, title) {
-      uni.navigateTo({
-        url: `/pages/examinations/answer/index?title=${title}&type=7&isAnalysis=${isAnalysis}&chapterId=${chapterId}`,
-      });
+      let url = ``
+      let query = `?chapterId=${chapterId}&title=${title}`
+      if (isAnalysis) {
+        url = `/pages/examinations/wrongMode/analysis/index`
+        uni.navigateTo({ url: url + query })
+      } else {
+        url = `/pages/examinations/wrongMode/answer/index`
+        let questionBankInfo = this.$store.getters.questionBankInfo
+        let params = { chapter_id: chapterId, question_bank_id: questionBankInfo.id }
+        restartPractice(params).then(res => {
+          if (res.code === 0) uni.navigateTo({ url: url + query });
+        })
+      }
     },
+    async collectChapterList() {
+      let questionBankInfo = this.$store.getters.questionBankInfo
+      let params = { question_bank_id: questionBankInfo.id }
+      let res = await collectChapterList(params)
+      if (res.code === 0) {
+        this.list = res.data
+      }
+    }
   },
 };
 </script>

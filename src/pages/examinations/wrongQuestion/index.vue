@@ -35,7 +35,7 @@ export default {
       } else {
         url = `/pages/examinations/wrongMode/answer/index`
         let questionBankInfo = this.$store.getters.questionBankInfo
-        let params = { chapterId: chapterId, question_bank_id: questionBankInfo.id }
+        let params = { chapter_id: chapterId, question_bank_id: questionBankInfo.id }
         restartPractice(params).then(res => {
           if (res.code === 0) uni.navigateTo({ url: url + query });
         })

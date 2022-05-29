@@ -97,13 +97,13 @@ export function wrongChapterList(data) {
   })
 }
 
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
+export function collectChapterList(data) {
+  return requset({
+    url: 'question/collectChapterList',
+    method: 'post',
+    data   
+  })
+}
 // export function practiceAnalyse(data) {
 //   return requset({
 //     url: 'course/practiceAnalyse',
