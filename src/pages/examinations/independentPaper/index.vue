@@ -9,31 +9,35 @@
     </view>
     <image class="b-img" src="../static/autonomy-background.png"></image>
     <scroll-view scroll-y class="independent-paper-content" @scrolltolower="onScrolltolower">
-      <view class="question-list" v-if="list.length">
-        <view class="question-list-item" v-for="item in list" :key="item.id" @click="toConfig(item.id)">
-          <view class="question-info">
-            <view class="question-info-title">
-              <uni-icons custom-prefix="iconfont" type="icon-linianzhenti" size="28rpx">
-              </uni-icons>
-              <view class="title van-ellipsis">{{ item.chapter_name }}</view>
+        <view class="independent-container" v-if="list.length">
+          <view class="independent-list">
+            <view class="independent-list-item" v-for="item in list" :key="item.id"
+                  @click="toConfig(item.id)">
+              <view class="independent-info">
+                <view class="independent-info-title">
+                  <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx"></uni-icons>
+                  <view class="title van-ellipsis">{{ item.title }}</view>
+                </view>
+                <view class="independent-info-progress">
+                  <view class="item" decode>题数：<text class="text">{{ item.question_num }}</text></view>
+                  <view class="item" decode>考试次数：<text class="text">{{ item.used_num }}</text></view>
+                  <view class="item" decode>最高得分：<text class="text">{{ item.score }}%</text></view>
+                </view>
+              </view>
+              <view class="arrow">
+                <uni-icons custom-prefix="iconfont" type="icon-pagenext" color="#ddd" size="28rpx"></uni-icons>
+              </view>
             </view>
-            <view class="question-info-date">
-              <text class="date">{{ item.create_time }}</text>
-              <text><text class="number">{{ item.people_num }}</text>人做过</text>
-            </view>
-          </view>
-          <view>
-            <uni-icons custom-prefix="iconfont" type="icon-pagenext" color="#ddd" size="28rpx"></uni-icons>
           </view>
         </view>
-      </view>
       <NoData top="35%" v-else />
     </scroll-view>
   </view>
 </template>
 <script>
 import NoData from "@/components/noData";
-import { getRealTestPapers } from "@/api/question";
+import { customExamList } from "@/api/question";
+
 export default {
   name: "independentPaper",
   components: {
@@ -62,27 +66,19 @@ export default {
     goBack() {
       uni.navigateBack()
     },
-    toConfig(chapterId) {
+    toConfig(exam_id) {
       uni.navigateTo({
-        url: `/pages/examinations/testPaperIntroduce/index?type=2&chapterId=${chapterId}`,
+        url: `/pages/examinations/testPaperIntroduce/index?exam_id=${exam_id}`,
       });
     },
     onScrolltolower() {
-      if (this.list.length < this.total) {
-        this.page++;
-        this.getRealTestPapers();
-      }
     },
     async getRealTestPapers() {
-      const data = {
-        page: this.page,
-      };
-      const res = await getRealTestPapers(data);
-      if (this.page === 1) {
-        this.list = res.data.list;
-        this.total = res.data.total;
-      } else {
-        this.list = this.list.concat(res.data.list);
+      let questionBankInfo = this.$store.getters.questionBankInfo
+      let params = { question_bank_id: questionBankInfo.id }
+      const res = await customExamList(params);
+      if (res.code === 0) {
+        this.list = res.data
       }
     },
   },
@@ -125,41 +121,50 @@ export default {
     border-radius: 16rpx;
     background-color: #fff;
   }
-  .question-list {
+
+  .independent-container {
+    padding: 30rpx 50rpx;
+  }
+
+  .independent-list {
     border-radius: 16rpx;
-    padding: 20rpx 30rpx;
+    padding: 40rpx 0 20rpx;
+    background-color: #fff;
     &-item {
-      border-bottom: 1rpx solid #f5f5f5;
       display: flex;
-      align-items: center;
+      flex-direction: row;
       justify-content: space-between;
+      align-items: center;
       padding: 20rpx 0;
+      border-bottom: 1rpx solid #f5f5f5;
       &:active {
         opacity: 0.8;
       }
-      .question-info {
-        overflow: hidden;
+      .independent-info {
         &-title {
-          color: #666;
           display: flex;
           align-items: center;
+          color: #666;
           .title {
-            margin-left: 20rpx;
+            margin-left: 26rpx;
           }
         }
-        &-date {
+        &-progress {
           display: flex;
+          flex-direction: row;
+          justify-content: space-between;
           align-items: center;
-          color: #cccccc;
-          font-size: 24rpx;
-          .date {
-            margin-left: 54rpx;
-            margin-right: 20rpx;
-          }
-          .number {
+          margin: 24rpx 0 0 34rpx;
+          width: 500rpx;
+          color: #888888;
+          font-size: $uni-font-size-base;
+          .text {
             color: $uni-color-primary;
           }
         }
+      }
+      .arrow {
+        text-align: center;
       }
     }
   }

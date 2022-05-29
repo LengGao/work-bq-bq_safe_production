@@ -114,7 +114,7 @@ export default {
         let course_id = this.course_id
         let url = '/pages/studys/courseDetail/index'
         let query = `?course_id=${course_id}&lesson_id=${this.next_lesson_id}`
-        uni.redirectTo({ url: url + query })
+        uni.reLaunch({ url: url + query })
       } else {
         let url = `/pages/examinations/classTestMode/answer/index`
         let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${course_id}`

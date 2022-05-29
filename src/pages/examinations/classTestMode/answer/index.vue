@@ -200,7 +200,7 @@ export default {
           let url = `/pages/examinations/classTestMode/result/index`
           let query = `?practice_id=${this.practice_id}&course_id=${this.course_id}&lesson_id=${this.lesson_id}`
           setTimeout(() => {
-            uni.navigateTo({ url: url + query });
+            uni.redirectTo({ url: url + query });
           }, 800);
           this.disableTouch = false
         }
@@ -213,7 +213,7 @@ export default {
       let data = { practice_id: this.practice_id, question_id: prevAnswer.question_id, answer: prevAnswer.answer }
       const res = await practiceAnswer(data);
       if (res.code === 0) {
-        this.duration = 0;
+        // this.duration = 0;
         this.disableTouch = true
       }
     },

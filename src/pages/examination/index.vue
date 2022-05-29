@@ -123,7 +123,10 @@ export default {
     this.getQuestionBankList()
   },
   onReady() {
-    this.$refs.popupRef.open()
+    let questionInfo = uni.getStorageSync('questionInfo')
+    if (!questionInfo || !questionInfo.id) {
+      this.$refs.popupRef.open()
+    }
   },
   onShow() {
   },

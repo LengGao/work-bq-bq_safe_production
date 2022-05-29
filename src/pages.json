@@ -145,6 +145,19 @@
 					}
 				},
 				{
+					"path": "independentPaper/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "自主出题"
+					}
+				},
+				{
+					"path": "testPaperIntroduce/index",
+					"style": {
+						"navigationBarTitleText": "试卷简介"
+					}
+				},
+				{
 					"path": "answer/index",
 					"style": {
 						"navigationBarTitleText": "答题"
@@ -157,22 +170,9 @@
 					}
 				},
 				{
-					"path": "testPaperIntroduce/index",
-					"style": {
-						"navigationBarTitleText": "试卷简介"
-					}
-				},
-				{
 					"path": "testResults/index",
 					"style": {
 						"navigationBarTitleText": "考试结果"
-					}
-				},
-				{
-					"path": "independentPaper/index",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "自主出题"
 					}
 				},
 				{

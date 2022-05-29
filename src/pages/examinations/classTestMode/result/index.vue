@@ -71,24 +71,25 @@ export default {
     onAnalysis() {
       let url = `/pages/examinations/classTestMode/analysis/index`
       let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&next_lesson_id=${this.next_lesson_id}$course_id=${course_id}&pass=${this.pass}`
-      uni.navigateTo({ url: url + query})
+      uni.redirectTo({ url: url + query})
     },
     onNext() {
       let url = `/pages/studys/courseDetail/index`
       let query = `?lesson_id=${this.next_lesson_id}&course_id=${course_id}`
-      uni.navigateTo({ url: url + query })
+      uni.reLaunch({ url: url + query })
     },
     onRestart(type) {
       let url = ''
       let query = ''
       if (type === 'study') {
         url = `/pages/studys/courseDetail/index`
-        query = `?lesson_id=${this.lesson_id}&course_id=${course_id}`
+        query = `?lesson_id=${this.lesson_id}&course_id=${this.course_id}`
+        uni.reLaunch({ url: url + query })
       } else {
         url = `/pages/examinations/classTestMode/answer/index`
         query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${course_id}`
+        uni.redirectTo({ url: url + query})
       }
-      uni.navigateTo({ url: url + query})
     },
     async getData() {
       let data = { practice_id: this.practice_id }
