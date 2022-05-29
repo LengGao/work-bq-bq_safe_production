@@ -89,13 +89,14 @@ export function getCustomExamInfo(data) {
   })
 }
 
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
+export function wrongChapterList(data) {
+  return requset({
+    url: 'question/wrongChapterList',
+    method: 'get',
+    data   
+  })
+}
+
 // export function practiceAnalyse(data) {
 //   return requset({
 //     url: 'course/practiceAnalyse',
