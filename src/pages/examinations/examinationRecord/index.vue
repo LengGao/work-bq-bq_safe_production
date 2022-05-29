@@ -2,34 +2,35 @@
   <view class="examination-record">
     <image class="b-img" src="../static/mock-background.png"></image>
     <view class="examination-record-content">
-      <scroll-view class="record-list" scroll-y @scrolltolower="onScrolltolower">
-        <view class="record-title">模拟考试历史记录</view>
-        <block v-if="list.length">
+      <!-- <scroll-view class="record-list" scroll-y @scrolltolower="onScrolltolower"> -->
+        <template v-if="list.length">
           <view class="record-list-item" v-for="item in list" :key="item.id">
-            <view class="record-info">
+            <view class="record-info" @click="() => toAnswer(item.id)">
               <view class="record-info-title">
-                <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx">
-                </uni-icons>
+                <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx" />
                 <view class="title van-ellipsis">{{ item.title }}</view>
               </view>
               <view class="record-info-date">
                 <text class="date">{{ item.create_time }}</text>
-                <text>得分：<text class="number">{{ item.mark }}</text></text>
+                <text class="num">题目数量：{{ item.total_question_num }}</text>
+                <text>得分：<text class="number">{{ item.score }}</text></text>
               </view>
             </view>
             <view>
               <uni-icons custom-prefix="iconfont" type="icon-pagenext" color="#ddd" size="28rpx"></uni-icons>
             </view>
           </view>
-        </block>
+        </template>
         <NoData top="35%" v-else>暂无考试记录</NoData>
-      </scroll-view>
+      <!-- </scroll-view> -->
     </view>
   </view>
 </template>
+
 <script>
 import NoData from "@/components/noData";
-import { getMockExamHistory } from "@/api/question";
+import { mockExamList } from "@/api/question";
+
 export default {
   name: "examinationRecord",
   components: {
@@ -46,22 +47,31 @@ export default {
     this.getMockExamHistory();
   },
   methods: {
-    onScrolltolower() {
-      if (this.list.length < this.total) {
-        this.page++;
-        this.getMockExamHistory();
-      }
+    toAnswer(id, title) {
+      let url = `/pages/examinations/examinationRecordSheet/index`
+      let query = `?exam_log_id=${id}&title=${title}`
+      uni.navigateTo({ url: url + query })
     },
     async getMockExamHistory() {
-      const data = {
-        page: this.page,
-      };
-      const res = await getMockExamHistory(data);
-      if (this.page === 1) {
-        this.list = res.data.list;
-        this.total = res.data.total;
-      } else {
-        this.list = this.list.concat(res.data.list);
+      let questionBankInfo = this.$store.getters.questionBankInfo
+      const data = {question_bank_id: questionBankInfo.id};
+      const res = await mockExamList(data);
+      if (res.code === 0) {
+        newFunction();
+        this.list = res.data
+      }
+      
+
+      function newFunction() {
+        res.data=[
+          {
+            "id": 22,
+            "title": "测试添加1",
+            "create_time": "2022-05-25 15:52:15",
+            "total_question_num": 9,
+            "score": "0.0"
+          }
+        ];
       }
     },
   },
@@ -103,6 +113,7 @@ export default {
       margin: 0 30rpx;
       border-bottom: 1rpx solid #f5f5f5;
       display: flex;
+      flex-direction: row;
       align-items: center;
       justify-content: space-between;
       padding: 20rpx 0;
@@ -112,21 +123,25 @@ export default {
       .record-info {
         overflow: hidden;
         &-title {
+          align-items: center;
           color: #666;
           display: flex;
-          align-items: center;
           .title {
             margin-left: 20rpx;
           }
         }
         &-date {
-          display: flex;
+          margin-top: 24rpx;
           align-items: center;
           color: #cccccc;
           font-size: 24rpx;
           .date {
-            margin-left: 54rpx;
+            margin-left: 46rpx;
             margin-right: 20rpx;
+          }
+          .num {
+            margin-left: 20rpx;
+            margin-right: 40rpx;
           }
           .number {
             color: $uni-color-primary;

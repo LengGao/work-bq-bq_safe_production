@@ -177,6 +177,12 @@
 					}
 				},
 				{
+					"path": "examinationRecordSheet/index",
+					"style": {
+						"navigationBarTitleText": "考试记录答题卡"
+					}
+				},
+				{
 					"path": "testPaperIntroduce/index",
 					"style": {
 						"navigationBarTitleText": "试卷简介"

@@ -104,13 +104,15 @@ export function collectChapterList(data) {
     data   
   })
 }
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
+
+export function mockExamList(data) {
+  return requset({
+    url: 'question/mockExamList',
+    method: 'post',
+    data   
+  })
+}
+
 // export function practiceAnalyse(data) {
 //   return requset({
 //     url: 'course/practiceAnalyse',
