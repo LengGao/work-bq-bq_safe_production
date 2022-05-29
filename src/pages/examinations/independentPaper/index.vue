@@ -68,7 +68,7 @@ export default {
     },
     toConfig(exam_id) {
       uni.navigateTo({
-        url: `/pages/examinations/testPaperIntroduce/index?exam_id=${exam_id}`,
+        url: `/pages/examinations/testPaperIntroduce/index?exam_id=${exam_id}$source=0`,
       });
     },
     onScrolltolower() {

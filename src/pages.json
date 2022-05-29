@@ -152,27 +152,10 @@
 					}
 				},
 				{
-					"path": "testPaperIntroduce/index",
+					"path": "examinationMock/index",
 					"style": {
-						"navigationBarTitleText": "试卷简介"
-					}
-				},
-				{
-					"path": "answer/index",
-					"style": {
-						"navigationBarTitleText": "答题"
-					}
-				},
-				{
-					"path": "answerSheet/index",
-					"style": {
-						"navigationBarTitleText": "答题卡"
-					}
-				},
-				{
-					"path": "testResults/index",
-					"style": {
-						"navigationBarTitleText": "考试结果"
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "模拟考试"
 					}
 				},
 				{
@@ -194,10 +177,27 @@
 					}
 				},
 				{
-					"path": "examinationMock/index",
+					"path": "testPaperIntroduce/index",
 					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "模拟考试"
+						"navigationBarTitleText": "试卷简介"
+					}
+				},
+				{
+					"path": "answer/index",
+					"style": {
+						"navigationBarTitleText": "答题"
+					}
+				},
+				{
+					"path": "answerSheet/index",
+					"style": {
+						"navigationBarTitleText": "答题卡"
+					}
+				},
+				{
+					"path": "testResults/index",
+					"style": {
+						"navigationBarTitleText": "考试结果"
 					}
 				},
 

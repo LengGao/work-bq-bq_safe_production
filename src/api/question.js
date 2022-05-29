@@ -76,19 +76,19 @@ export function getQuestionDetail(data) {
 export function customExamList(data) {
   return requset({
     url: 'question/customExamList',
-    method: 'POST',
+    method: 'post',
     data   
   })
 }
 
+export function getCustomExamInfo(data) {
+  return requset({
+    url: 'question/getCustomExamInfo',
+    method: 'post',
+    data   
+  })
+}
 
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
 // export function practiceAnalyse(data) {
 //   return requset({
 //     url: 'course/practiceAnalyse',

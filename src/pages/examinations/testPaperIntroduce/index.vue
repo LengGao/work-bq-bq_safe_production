@@ -4,14 +4,13 @@
       <image class="b-img" src="../static/introduce-background.png"></image>
       <view class="test-paper-name">{{ configData.title || "" }}</view>
       <view class="desc">
-        <text class="iconfont">&#xe602;</text>
         <text class="desc-title">考试时长：</text>
         <text class="desc-value">{{ configData.duration || 0 }}分钟</text>
       </view>
       <view class="desc">
         <text class="iconfont">&#xe6aa;</text>
         <text class="desc-title">考试总分：</text>
-        <text class="desc-value">{{ configData.score || 0 }}分</text>
+        <text class="desc-value">{{ configData.total_score || 0 }}分</text>
       </view>
       <view class="desc">
         <text class="iconfont">&#xe6e5;</text>
@@ -23,32 +22,23 @@
         <text class="desc-title">题型分布：</text>
       </view>
       <view class="question-type">
-        <view v-for="(item, index) in configData.list" :key="index">{{
-          item
-        }}</view>
+        <view v-for="(item, index) in configData.question_type_info" :key="index">
+          <text>{{ questionTypes[item.question_type] }}题</text>
+          <text>{{ item.question_num }}题，</text>
+          <text>一题{{ item.score }}分</text>
+
+        </view>
       </view>
     </view>
     <view class="btns">
-      <block v-if="type === '1'">
-        <view class="btn-primary" @click="toTestAnswer">开始考试</view>
-      </block>
-
-      <block v-if="type === '2'">
-        <view class="btn-primary plain" @click="toOverYearAnswer">刷题模式</view>
-        <view class="btn-primary" @click="toOverYearTestAnswer">考试模式</view>
-      </block>
-      <block v-if="type === '3'">
-        <view class="btn-primary" @click="toAutonomyTestAnswer">开始考试</view>
-      </block>
+      <view class="btn-primary" @click="toAnswer">开始考试</view>
     </view>
   </div>
 </template>
+
 <script>
-import {
-  testExamConfig,
-  getOverYearConfig,
-  getIndependentConfig,
-} from "@/api/question";
+import { getCustomExamInfo } from "@/api/question";
+
 export default {
   name: "testPaperIntroduce",
   data() {
@@ -56,54 +46,33 @@ export default {
       configData: {
         list: [],
       },
-      type: "",
-      chapterId: "",
+      exam_id: '',
+      source: 0,
+      questionTypes: ['', '单选', '多选', '不定项', '判断', '填空', '简答', '案例'],
     };
   },
-  onLoad({ type, chapterId }) {
-    this.type = type;
-    this.chapterId = chapterId;
-    this.getConfig(chapterId);
+  onLoad({ exam_id, source }) {
+    this.exam_id = exam_id
+    this.source = source
+    this.getConfig();
   },
   methods: {
-    toAutonomyTestAnswer() {
-      uni.navigateTo({
-        url: `/pages/examinations/answer/index?type=4&title=${this.configData.title
-          }&chapterId=${this.chapterId}&time=${this.configData.duration * 60
-          }`,
-      });
+    toAnswer() {
+      if (!!this.source) {
+        uni.redirectTo({ url: `/pages/examinations/examinationMode/answer/index?exam_id${this.exam_id}` })
+      } else {
+        uni.redirectTo({ url: `/pages/examinations/examinationMode/answer/index?exam_id${this.exam_id}` })
+      }
     },
-    toOverYearAnswer() {
-      uni.navigateTo({
-        url: `/pages/examinations/answer/index?type=3&isExam=0&chapterId=${this.chapterId
-          }&title=${this.configData.title}&time=${this.configData.duration * 60
-          }`,
-      });
-    },
-    toOverYearTestAnswer() {
-      uni.navigateTo({
-        url: `/pages/examinations/answer/index?type=3&isExam=1&chapterId=${this.chapterId
-          }&title=${this.configData.title}&time=${this.configData.duration * 60
-          }`,
-      });
-    },
-    toTestAnswer() {
-      uni.navigateTo({
-        url: `/pages/examinations/answer/index?type=2&title=${this.configData.title}&time=${this.configData.duration * 60
-          }`,
-      });
-    },
-    async getConfig(chapter_id) {
-      const data = {
-        chapter_id,
-      };
-      const api = {
-        1: testExamConfig, // 模拟考试
-        2: getOverYearConfig, // 历年真题
-        3: getIndependentConfig, // 历年真题
-      };
-      const res = await api[this.type](data);
-      this.configData = res.data;
+    
+    async getConfig() {
+      let questionBankInfo = this.$store.getters.questionBankInfo
+      let params = { exam_id: this.exam_id, question_bank_id: questionBankInfo.id }
+
+      const res = await getCustomExamInfo(params)
+      if (res.code === 0) {
+        this.configData = res.data
+      }
     },
   },
 };

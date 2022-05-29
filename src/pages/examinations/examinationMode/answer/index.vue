@@ -100,6 +100,8 @@ export default {
     this.lesson_id = lesson_id
     uni.setNavigationBarTitle({ title })
     this.createQuestion(lesson_id);
+    // exam_id${this.exam_id} 
+    // 有 exam_id  则为自主 没有 则为模拟 需要通过接口拿到
   },
   methods: {
 
