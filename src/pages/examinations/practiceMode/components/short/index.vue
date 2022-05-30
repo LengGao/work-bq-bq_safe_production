@@ -37,20 +37,12 @@ export default {
   data() {
     return {
       correctAnswer: "",
-      value: this.options.userAnswer || "",
+      value: this.userAnswer || "",
     };
   },
   watch: {
-    model(val) {
-      if (val === "3") {
-        this.handleEyeChange(true);
-      }
-    },
   },
   created() {
-    if (this.model === "3") {
-      this.handleEyeChange(true);
-    }
   },
   methods: {
     onInput() {
@@ -58,7 +50,7 @@ export default {
     },
     handleEyeChange(val) {
       if (val) {
-        this.correctAnswer = this.options.topic_answer;
+        this.correctAnswer = this.options.true_answer;
       } else {
         this.correctAnswer = "";
       }

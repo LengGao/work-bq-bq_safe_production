@@ -6,8 +6,8 @@
     <IOption v-for="(item, index) in inputItem" :key="index" :label="index + 1 + ''" :status="item.status">
       <input type="text" :disabled="!!correctAnswer" v-model="item.value" placeholder="请输入" @blur="handlBlur" />
     </IOption>
-    <AnswerEye @change="handleEyeChange" v-if="model === '1'" />
-    <AnswerAnalysis v-if="correctAnswer" :correct-answer="correctAnswer" :desc="options.topic_analysis" />
+    <AnswerEye @change="handleEyeChange" />
+    <AnswerAnalysis v-if="correctAnswer" :correct-answer="correctAnswer" :desc="options.analyse" />
   </div>
 </template>
 <script>
@@ -15,7 +15,7 @@ import uParse from "@/components/gaoyia-parse/parse.vue";
 import AnswerAnalysis from "../answerAnalysis";
 import Select from "../select";
 import AnswerEye from "../answerEye";
-import IOption from "../option";
+import IOption from "../ioption";
 export default {
   name: "completion",
   components: {
@@ -33,9 +33,9 @@ export default {
         title: "",
       }),
     },
-    model: {
-      type: String,
-      default: "1",
+    userAnswer: {
+      type: [Array, String, Number],
+      default: "",
     },
   },
   data() {
@@ -77,21 +77,13 @@ export default {
         });
       }
     },
-    model(val) {
-      if (val === "3") {
-        this.handleEyeChange(true);
-      }
-    },
   },
   created() {
     this.inputItem = this.options.option.map((item, index) => ({
       ...item,
-      value: (this.options.userAnswer && this.options.userAnswer[index]) || "",
+      value: (this.userAnswer && this.userAnswer[index]) || "",
       status: "",
     }));
-    if (this.model === "3") {
-      this.handleEyeChange(true);
-    }
   },
   methods: {
     handlBlur() {

@@ -6,7 +6,7 @@
     <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer">
     </Select>
     <AnswerAnalysis v-if="correctAnswer" :user-answer="checkedAnswer" :correct-answer="correctAnswer"
-                    :desc="options.topic_analysis" />
+                    :desc="options.analyse" />
   </div>
 </template>
 <script>
@@ -36,28 +36,19 @@ export default {
   data() {
     return {
       correctAnswer: "",
-      checkedAnswer: this.options.userAnswer || "",
+      checkedAnswer: this.userAnswer || "",
     };
   },
   watch: {
     checkedAnswer(val) {
-      if (this.model === "1") {
-        this.correctAnswer = this.options.topic_answer;
-      }
-      this.$emit("change", val, this.options.id);
-    },
-    model() {
-      if (this.model === "3") {
-        this.correctAnswer = this.options.topic_answer;
-      }
+      this.correctAnswer = this.options.true_answer;
+      let data = { id: this.options.id, answer: [val] }
+      this.$emit("change", data);
     },
   },
   created() {
-    if (this.options.userAnswer && this.model === "1") {
-      this.correctAnswer = this.options.topic_answer;
-    }
-    if (this.model === "3") {
-      this.correctAnswer = this.options.topic_answer;
+    if (this.options.userAnswer) {
+      this.correctAnswer = this.options.true_answer;
     }
   },
 };

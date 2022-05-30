@@ -6,13 +6,13 @@
             @animationfinish="onAnimationfinish">
       <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.topic_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
-          <Single :options="question " :userAnswer="answer" @change="onSingleChange" v-if="question.question_type === 1" />
-          <!-- <Multiple :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 2" />
-          <Judg :model="model" :options="item" @change="onSingleChange" v-if="item.topic_type === 3" />
-          <Indefinite :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 4" />
-          <Completion :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 5" />
-          <Short :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 6" />
-          <Case :model="model" :options="item" :serial-number="currentIndex + 1" :log-id="logId"
+        <Single :options="question" :userAnswer="userAnswer" @change="onSingleChange" v-if="question.question_type === 1" />
+        <Multiple :options="item" :userAnswer="answer" @change="onSingleChange" v-if="item.question_type === 2" />
+        <Indefinite :options="item" :userAnswer="userAnswer" @change="onSingleChange" v-if="item.question_type === 3" />
+        <Judg :options="item" :userAnswer="userAnswer" @change="onSingleChange" v-if="item.question_type === 4" />
+        <Completion :options="item" :userAnswer="userAnswer" @change="onOtherChange" v-if="item.question_type === 5" />
+        <Short :options="item" :userAnswer="userAnswer" @change="onOtherChange" v-if="item.question_type === 6" />
+        <!-- <Case :options="item" :serial-number="currentIndex + 1" :log-id="logId"
                 v-if="item.topic_type === 7" :ref="`case-${item.id}`"
                 :is-active="currentIndex === index && duration === 300" :type="type" @change="onCaseChange"
                 @index-change="onCaseIndexChange" /> -->
@@ -61,15 +61,15 @@ export default {
       prevIndex: -1,
       currentIndex: 0,
       nextIndex: 1,
-      disableTouch: true,
       duration: 300,
 
       model: '1',
       chapter_id: 0,
       last_question_id: 0,
       question_bank_id: 0,
-      question: {},
       answer: {},
+      question: {},
+      userAnswer: '',
       total: 0,
       questionList: [],
       answerSheet: {},
@@ -92,14 +92,12 @@ export default {
   },
   watch: {
     currentIndex(val) {
-      console.log('val', val);
       let question_id = this.answerSheetArr[val].id
       this.getQuestionDetail(question_id)
       this.getAnswerDetail(question_id)
     }
   },
   onShow() {
-    this.duration = 300;
   },
   onLoad(query) {
     let { chapterId, question_bank_id, question_id, title = "章节练习" } = query
@@ -110,69 +108,43 @@ export default {
     this.getPracticeAnswerSheet()
   },
   methods: {
-    checkInputAnswer(val) {
-      return val !== undefined && val !== '' && val !== null
+    checkInputAnswer(answer) {
+      let res = false
+      if (Array.isArray(answer)) {
+        res = answer.some(val => val !== undefined && val !== '' && val !== null)
+      } else if (answer !== undefined && answer !== '' && answer !== null) {
+        res = true
+      }
+      return res
     },
 
     onSingleChange(answer) {
-      console.log('onSingleChange', answer);
       let flag = false
-      this.answer = answer
-      if (Array.isArray(answer.answer)) {
-        flag = answer.answer.some(val => {
-          return val !== undefined && val !== '' && val !== null
-        })
-      }
+      flag = this.checkInputAnswer(answer.answer)
       if (flag) {
         this.cacheAnswer(answer)
-      } else {
-        uni.showToast({ title: '答案不能留空', icon: 'none' })
       }
     },
-
-    onMultipleChange() {
-
-    },
-
 
     onInputChange(answer) {
       let flag = false
-      this.answer = answer
-      if (Array.isArray(answer.answer)) {
-        flag = answer.answer.some(val => {
-          return val !== undefined && val !== '' && val !== null
-        })
-      } else {
-        flag = this.checkInputAnswer(answer.answer)
-      }
+      flag = this.checkInputAnswer(answer.answer)
       if (flag) {
         this.cacheAnswer(answer)
-        this.disableTouch = false
-      } else {
-        uni.showToast({ title: '答案不能留空', icon: 'none' })
-        this.disableTouch = true
       }
     },
 
     handlePrev() {
       if (!this.isStart) {
-        if (this.disableTouch) {
-          uni.showToast({ title: '答案不能留空', icon: 'none' })
-        } else {
-          this.prevIndex = this.currentIndex
-          this.currentIndex = this.currentIndex - 1
-        }
+        this.prevIndex = this.currentIndex
+        this.currentIndex = this.currentIndex - 1
       }
     },
 
     handleNext() {
       if (!this.isEnd) {
-        if (this.disableTouch) {
-          uni.showToast({ title: '答案不能留空', icon: 'none' })
-        } else {
-          this.prevIndex = this.currentIndex
-          this.currentIndex = this.currentIndex + 1
-        }
+        this.prevIndex = this.currentIndex
+        this.currentIndex = this.currentIndex + 1
       }
     },
 
@@ -181,28 +153,26 @@ export default {
         this.prevIndex = this.currentIndex
         this.currentIndex = detail.current
       }
-      let prevAnswer = this.getCurrAnswer(this.prevIndex)
-      let currAnswer = this.getCurrAnswer(this.currentIndex)
-      console.log(this.isRight, prevAnswer, currAnswer, this.prevIndex, this.currentIndex, detail);
-      if (this.isRight && prevAnswer) {
-        this.disableTouch = false
-        this.submitAnswer(prevAnswer)
-      } else if (currAnswer) {
-        this.disableTouch = false
-      } else {
-        this.disableTouch = true
-      }
+      // let prevAnswer = this.getCurrAnswer(this.prevIndex)
+      // let currAnswer = this.getCurrAnswer(this.currentIndex)      
+      // if (this.isRight && prevAnswer) {
+      //   this.submitAnswer(prevAnswer)
+      // }
     },
 
     oonTouchmove() {
     },
 
     onAnimationfinish({ detail }) {
-      console.log('detail', detail);
+      // if (detail.current <= 0) {
+      //   uni.showToast({ title: '已经是第一题了', icon: 'none' })
+      // } else if (detail.current >= thiotal -1) {
+      //   uni.showToast({ title: '已经是最后一题了', icon: 'none' })
+      // }
     },
 
     getCurrAnswer(index) {
-      let key = this.questionList[index].question_id
+      let key = this.questionList[index].id
       return this.userAnswerMap[key]
     },
 
@@ -213,36 +183,27 @@ export default {
     },
 
     async submitPaper() {
-      if (!this.disableTouch) {
-        let index = this.currentIndex
-        let key = this.questionList[index].question_id
-        let currAnswer = this.userAnswerMap[key]
-        let data = { practice_id: this.practice_id, question_id: key, answer: currAnswer.answer }
-        const res = await practiceAnswer(data);
-        if (res.code === 0) {
-          let url = `/pages/examinations/classTestMode/result/index`
-          let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&grade=${80}`
-          setTimeout(() => {
-            uni.navigateTo({ url: url + query });
-          }, 800);
-          this.disableTouch = false
-        }
-      } else {
-        uni.showToast({ title: '考试不能留空', icon: 'none' })
+      let index = this.currentIndex
+      let key = this.questionList[index].question_id
+      let currAnswer = this.userAnswerMap[key]
+      let data = { practice_id: this.practice_id, question_id: key, answer: currAnswer.answer }
+      const res = await practiceAnswer(data);
+      if (res.code === 0) {
+        let url = `/pages/examinations/classTestMode/result/index`
+        let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&grade=${80}`
+        setTimeout(() => {
+          uni.navigateTo({ url: url + query });
+        }, 800);
       }
     },
 
     async submitAnswer(prevAnswer) {
       let data = { practice_id: this.practice_id, question_id: prevAnswer.question_id, answer: prevAnswer.answer }
       const res = await practiceAnswer(data);
-      if (res.code === 0) {
-        this.duration = 0;
-        this.disableTouch = true
-      }
     },
 
     getAnswerDetail(question_id) {
-      this.answer = this.userAnswerMap[question_id]
+      this.userAnswer = this.userAnswerMap[question_id].amswer
     },
 
     async getQuestionDetail(question_id) {
@@ -253,7 +214,7 @@ export default {
         this.question = res.data
       }
     },
-    
+
     async getPracticeAnswerSheet() {
       let params = { question_bank_id: this.question_bank_id, chapter_id: this.chapter_id }
       let res = await getPracticeAnswerSheet(params)
@@ -261,7 +222,7 @@ export default {
         let lastId = res.data.last_question_id
         let arr = res.data.arr
         if (!lastId) {
-          lastId =  arr[0].id
+          lastId = arr[0].id
         }
         this.last_question_id = lastId
         this.answerSheetArr = arr
@@ -270,9 +231,10 @@ export default {
         this.getQuestionDetail(lastId)
       }
     },
-  },
-};
+  }
+}
 </script>
+
 <style lang="scss" scoped>
 .answer {
   height: 100%;

@@ -7,7 +7,7 @@
   </view>
 </template>
 <script>
-import SOption from "../option";
+import SOption from "../soption";
 import uParse from "@/components/gaoyia-parse/parse.vue";
 export default {
   name: "ISelect",

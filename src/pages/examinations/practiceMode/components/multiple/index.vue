@@ -40,29 +40,22 @@ export default {
   data() {
     return {
       correctAnswer: "",
-      checkedAnswer: this.options.userAnswer || [],
+      checkedAnswer: this.userAnswer || [],
       userAnswerText: "",
     };
   },
   watch: {
     checkedAnswer(val) {
-      this.$emit("change", val, this.options.id);
-    },
-    model(val) {
-      if (val === "3") {
-        this.handleEyeChange(true);
-      }
+      let data = { id: this.options.id, answer: [val] }
+      this.$emit("change", data);
     },
   },
   created() {
-    if (this.model === "3") {
-      this.handleEyeChange(true);
-    }
   },
   methods: {
     handleEyeChange(val) {
       if (val) {
-        this.correctAnswer = this.options.topic_answer;
+        this.correctAnswer = this.options.true_answer;
         this.userAnswerText = this.checkedAnswer.toString(",");
       } else {
         this.correctAnswer = "";

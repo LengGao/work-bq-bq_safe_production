@@ -5,9 +5,9 @@
     </view>
     <Select :options="options.option" multiple v-model="checkedAnswer" :correct-answer="correctAnswer">
     </Select>
-    <AnswerEye @change="handleEyeChange" v-if="model === '1'" />
+    <AnswerEye @change="handleEyeChange"/>
     <AnswerAnalysis v-if="correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                    :desc="options.topic_analysis" />
+                    :desc="options.analyse" />
   </div>
 </template>
 <script>
@@ -32,37 +32,31 @@ export default {
         title: "",
       }),
     },
-    model: {
-      type: String,
-      default: "1",
+    userAnswer: {
+      type: [Array, String, Number],
+      default: "",
     },
   },
   data() {
     return {
       correctAnswer: "",
-      checkedAnswer: this.options.userAnswer || [],
+      checkedAnswer: this.userAnswer || [],
       userAnswerText: "",
     };
   },
   watch: {
     checkedAnswer(val) {
-      this.$emit("change", val, this.options.id);
-    },
-    model(val) {
-      if (val === "3") {
-        this.handleEyeChange(true);
-      }
+      this.correctAnswer = this.options.true_answer;
+      let data = { id: this.options.id, answer: [val] }
+      this.$emit("change", data);
     },
   },
   created() {
-    if (this.model === "3") {
-      this.handleEyeChange(true);
-    }
   },
   methods: {
     handleEyeChange(val) {
       if (val) {
-        this.correctAnswer = this.options.topic_answer;
+        this.correctAnswer = this.options.true_answer;
         this.userAnswerText = this.checkedAnswer.toString(",");
       } else {
         this.correctAnswer = "";

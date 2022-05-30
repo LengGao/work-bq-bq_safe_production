@@ -3,8 +3,7 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer">
-    </Select>
+    <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer"></Select>
     <AnswerAnalysis v-if="correctAnswer" :user-answer="checkedAnswer" :correct-answer="correctAnswer"
                     :desc="options.analyse" />
   </div>
@@ -37,14 +36,15 @@ export default {
   },
   data() {
     return {
-      correctAnswer: "",
-      checkedAnswer: userAnswer || "",
+      correctAnswer: '',
+      checkedAnswer: this.userAnswer || '',
     };
   },
   watch: {
     checkedAnswer(val) {
       this.correctAnswer = this.options.true_answer;
-      this.$emit("change", val, this.options.id);
+      let data = { id: this.options.id, answer: [val] }
+      this.$emit("change", data);
     },
   },
   created() {

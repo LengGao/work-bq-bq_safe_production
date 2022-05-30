@@ -120,10 +120,6 @@ export default {
     this.getQuestionBankList()
   },
   onReady() {
-    let questionInfo = uni.getStorageSync('questionBankInfo')
-    if (questionInfo && questionInfo.id) {
-      this.questionInfoId = questionInfo.id
-    }
   },
   onShow() {
   },
@@ -152,6 +148,7 @@ export default {
       if (res.code === 0) {
         this.candidates = res.data
         let questionInfo = res.data[0] || {}
+        if (questionInfo.id) this.questionInfoId = questionInfo.id
         this.$store.dispatch('setQuestionBankInfo', questionInfo)
       }
     }

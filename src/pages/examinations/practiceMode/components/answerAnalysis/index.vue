@@ -26,11 +26,11 @@ export default {
   },
   props: {
     userAnswer: {
-      type: String,
+      type:  [Array, String, Number],
       default: "",
     },
     correctAnswer: {
-      type: String,
+      type:  [Array, String, Number],
       default: "",
     },
     desc: {
