@@ -1,18 +1,18 @@
 <template>
   <view class="select">
-    <i-option @change="onOptionChange" v-for="(item, index) in options" :label="item.topic_option"
-              :value="item.topic_option" :key="index" :status="status(item.topic_option)" :noletter="noletter">
-      <u-parse :content="item.topic_option_description" />
-    </i-option>
+    <s-option @change="onOptionChange" v-for="(item, index) in options" :label="item.topic_option"
+              :value="item.id" :key="index" :status="status(item.id)" :noletter="noletter">
+      <u-parse :content="item.content" />
+    </s-option>
   </view>
 </template>
 <script>
-import IOption from "../option";
+import SOption from "../option";
 import uParse from "@/components/gaoyia-parse/parse.vue";
 export default {
   name: "ISelect",
   components: {
-    IOption,
+    SOption,
     uParse,
   },
   props: {
@@ -58,36 +58,14 @@ export default {
   },
   methods: {
     status(value) {
-      if (this.multiple) {
-        if (this.correctAnswer.length) {
-          if (this.correctAnswer.includes(value)) {
-            return "success";
-          }
-          if (
-            this.checkedAnswer.includes(value) &&
-            !this.correctAnswer.includes(value)
-          ) {
-            return "error";
-          }
-        }
-        if (this.checkedAnswer.includes(value)) {
-          return "active";
-        }
-        return "";
+      if (this.analysis) {
+        return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'             
       } else {
-        // 单选下的状态
-        if (this.correctAnswer) {
-          if (value == this.correctAnswer) {
-            return "success";
-          }
-          if (value != this.correctAnswer && this.checkedAnswer === value) {
-            return "error";
-          }
+        if (this.multiple) {
+          return this.checkedAnswer.includes(value) ? 'active' : ''
+        } else {
+          return value === this.checkedAnswer ? 'active' : ''
         }
-        if (value === this.checkedAnswer) {
-          return "active";
-        }
-        return "";
       }
     },
     onOptionChange(val) {

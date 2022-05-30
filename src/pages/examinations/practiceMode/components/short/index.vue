@@ -1,10 +1,10 @@
 <template>
   <div class="short">
     <view class="quetion-content">
-      <u-parse :content="options.topic_description" />
+      <u-parse :content="options.title" />
     </view>
     <textarea :disabled="!!correctAnswer" class="text" @input="onInput" v-model="value" placeholder="请输入" />
-    <AnswerEye @change="handleEyeChange" v-if="model === '1'" />
+    <AnswerEye @change="handleEyeChange" />
     <AnswerAnalysis short v-if="correctAnswer" :desc="correctAnswer" />
   </div>
 </template>
@@ -26,7 +26,7 @@ export default {
       type: Object,
       default: () => ({
         option: [],
-        topic_description: "",
+        title: "",
       }),
     },
     model: {

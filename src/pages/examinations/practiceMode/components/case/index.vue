@@ -1,7 +1,7 @@
 <template>
   <div class="case">
     <view class="quetion-content">
-      <u-parse :content="options.topic_description" />
+      <u-parse :content="options.title" />
     </view>
     <view class="drawer" :class="{ 'drawer--open': isOpen }">
       <view class="btn" @click="handleToggle">
@@ -65,7 +65,7 @@ export default {
       type: Object,
       default: () => ({
         child: [],
-        topic_description: "",
+        title: "",
       }),
     },
     current: {

@@ -1,13 +1,13 @@
 <template>
   <view class="answer">
-    <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].topic_type" :total="total"
-                :serial-number="currentIndex + 1" />
+    <!-- <AnswerHead v-if="questionList[currentIndex]" :type="answerSheetArr[currentIndex].topic_type" :total="total"
+                :serial-number="currentIndex + 1" /> -->
     <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex"
             @animationfinish="onAnimationfinish">
       <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.topic_type === 7 }"
-                   v-for="(item, index) in questionList" :key="index">
-          <Single :model="model" :options="item" @change="onSingleChange" v-if="item.topic_type === 1" />
-          <Multiple :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 2" />
+                   v-for="(item, index) in answerSheetArr" :key="index">
+          <Single :options="question " :userAnswer="answer" @change="onSingleChange" v-if="question.question_type === 1" />
+          <!-- <Multiple :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 2" />
           <Judg :model="model" :options="item" @change="onSingleChange" v-if="item.topic_type === 3" />
           <Indefinite :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 4" />
           <Completion :model="model" :options="item" @change="onOtherChange" v-if="item.topic_type === 5" />
@@ -15,13 +15,13 @@
           <Case :model="model" :options="item" :serial-number="currentIndex + 1" :log-id="logId"
                 v-if="item.topic_type === 7" :ref="`case-${item.id}`"
                 :is-active="currentIndex === index && duration === 300" :type="type" @change="onCaseChange"
-                @index-change="onCaseIndexChange" />
+                @index-change="onCaseIndexChange" /> -->
       </swiper-item>
     </swiper>
-    <AnswerBar class="bar" :model="model" :is-end="isEnd" :is-start="isStart" :time="time"
+    <!-- <AnswerBar class="bar" :model="model" :is-end="isEnd" :is-start="isStart" :time="time"
                :isCollection="!!getCurrentData.is_collection" @submit-paper="toTestResoult" @card="toCard"
                @next="handleNext" @prev="handlePrev" @collect="setCollection" @timeup="onTimeUp">
-    </AnswerBar>
+    </AnswerBar> -->
   </view>
 </template>
 
@@ -69,10 +69,13 @@ export default {
       last_question_id: 0,
       question_bank_id: 0,
       question: {},
+      answer: {},
       total: 0,
       questionList: [],
       answerSheet: {},
+      answerSheetArr: [],
       userAnswerMap: {},
+
     };
   },
   computed: {
@@ -85,13 +88,20 @@ export default {
     },
     isRight() {
       return this.currentIndex > this.prevIndex
+    },
+  },
+  watch: {
+    currentIndex(val) {
+      console.log('val', val);
+      let question_id = this.answerSheetArr[val].id
+      this.getQuestionDetail(question_id)
+      this.getAnswerDetail(question_id)
     }
   },
   onShow() {
     this.duration = 300;
   },
   onLoad(query) {
-    // isContinue 是否为继续做题
     let { chapterId, question_bank_id, question_id, title = "章节练习" } = query
     this.chapter_id = +chapterId
     this.question_bank_id = +question_bank_id
@@ -115,10 +125,8 @@ export default {
       }
       if (flag) {
         this.cacheAnswer(answer)
-        this.disableTouch = false
       } else {
         uni.showToast({ title: '答案不能留空', icon: 'none' })
-        this.disableTouch = true
       }
     },
 
@@ -233,8 +241,13 @@ export default {
       }
     },
 
+    getAnswerDetail(question_id) {
+      this.answer = this.userAnswerMap[question_id]
+    },
+
     async getQuestionDetail(question_id) {
-      let params = { question_id}
+      let questionBankInfo = this.$store.getters.questionBankInfo
+      let params = { question_id: question_id, question_bank_id: questionBankInfo.id }
       let res = await getQuestionDetail(params)
       if (res.code === 0) {
         this.question = res.data
@@ -246,12 +259,13 @@ export default {
       let res = await getPracticeAnswerSheet(params)
       if (res.code === 0) {
         let lastId = res.data.last_question_id
+        let arr = res.data.arr
         if (!lastId) {
-          lastId =  res.data.arr[0].id
+          lastId =  arr[0].id
         }
         this.last_question_id = lastId
-        this.total = res.data.arr.length
-        this.questionList = res.data.arr
+        this.answerSheetArr = arr
+        this.total = arr.length
         this.answerSheet = res.data.list
         this.getQuestionDetail(lastId)
       }

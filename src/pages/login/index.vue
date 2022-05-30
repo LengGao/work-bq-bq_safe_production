@@ -45,7 +45,9 @@ import logImag from "@/static/logo.png"
 export default {
   data() {
     return {
-      username: '13535019471',
+      // username: '13535019471',
+      // password: '123456',
+      username: '15673416691',
       password: '123456',
       isRead: false,
       visibility: false,
@@ -53,7 +55,9 @@ export default {
       logImag: logImag
     }
   },
-  onLoad() {
+  onLoad(query) {
+    let isRead = query.isRead
+    this.isRead = !!isRead
     this.getSystemConfig()
   },
   onReady() {

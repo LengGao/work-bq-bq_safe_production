@@ -1,5 +1,6 @@
 <template>
   <view class="answer">
+    <uni-notice-bar v-if="notice" scrollable single showIcon color="#E2E227" background-color="#000" text="答完当前题，可左右滑动。"></uni-notice-bar>
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex"
@@ -66,6 +67,7 @@ export default {
       questionList: [],
       answer: {},
       userAnswerMap: {},
+      notice: true
     };
   },
   computed: {
@@ -81,6 +83,7 @@ export default {
   },
   onShow() {
     this.duration = 300;
+    setTimeout(() => { this.notice = false}, 1500)
   },
   onLoad(query) {
     let { course_id, lesson_id } = query

@@ -1,7 +1,7 @@
 <template>
   <div class="single">
     <view class="quetion-content">
-      <u-parse :content="options.topic_description" />
+      <u-parse :content="options.title" />
     </view>
     <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer">
     </Select>
@@ -27,7 +27,7 @@ export default {
       type: Object,
       default: () => ({
         option: [],
-        topic_description: "",
+        title: "",
       }),
     },
     model: {

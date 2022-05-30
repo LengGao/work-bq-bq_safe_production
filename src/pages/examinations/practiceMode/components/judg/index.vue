@@ -1,7 +1,7 @@
 <template>
   <div class="judg">
     <view class="quetion-content">
-      <u-parse :content="options.topic_description" />
+      <u-parse :content="options.title" />
     </view>
     <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer">
     </Select>
@@ -25,12 +25,12 @@ export default {
       type: Object,
       default: () => ({
         option: [],
-        topic_description: "",
+        title: "",
       }),
     },
-    model: {
-      type: String,
-      default: "1",
+    userAnswer: {
+      type: [Array, String, Number],
+      default: "",
     },
   },
   data() {

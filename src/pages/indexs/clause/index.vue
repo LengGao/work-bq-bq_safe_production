@@ -83,17 +83,10 @@
 </template>
 
 <script>
-export default {
+export default {  
   methods: {
     onRead() {
-      let pages = getCurrentPages(), page = pages[pages.length - 1];
-      console.log(pages, page);      
-      uni.navigateBack({
-        delta: 1,
-        success() {
-            page && page.updateRead && page.updateRead(true);
-        }
-      })
+      uni.redirectTo({url: '/pages/login/index?isRead=1'})
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="completion">
     <view class="quetion-content">
-      <u-parse :content="options.topic_description" />
+      <u-parse :content="options.title" />
     </view>
     <IOption v-for="(item, index) in inputItem" :key="index" :label="index + 1 + ''" :status="item.status">
       <input type="text" :disabled="!!correctAnswer" v-model="item.value" placeholder="请输入" @blur="handlBlur" />
@@ -30,7 +30,7 @@ export default {
       type: Object,
       default: () => ({
         option: [],
-        topic_description: "",
+        title: "",
       }),
     },
     model: {

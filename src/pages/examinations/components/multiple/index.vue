@@ -1,7 +1,7 @@
 <template>
   <div class="multiple">
     <view class="quetion-content">
-      <u-parse :content="options.topic_description" />
+      <u-parse :content="options.title" />
     </view>
     <Select :options="options.option" multiple v-model="checkedAnswer" :correct-answer="correctAnswer">
     </Select>
@@ -29,7 +29,7 @@ export default {
       type: Object,
       default: () => ({
         option: [],
-        topic_description: "",
+        title: "",
       }),
     },
     model: {

@@ -129,7 +129,7 @@ export default {
       if (res.code === 0) {
         let list = res.data
         list.shift()
-        list.unshift({id: -1, title: "全部", sub: []})
+        list.unshift({id: -1, title: "全部分类", sub: []})
         this.categoryData = list
       }
     },

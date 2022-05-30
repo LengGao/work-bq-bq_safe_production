@@ -1,12 +1,12 @@
 <template>
   <div class="single">
     <view class="quetion-content">
-      <u-parse :content="options.topic_description" />
+      <u-parse :content="options.title" />
     </view>
     <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer">
     </Select>
     <AnswerAnalysis v-if="correctAnswer" :user-answer="checkedAnswer" :correct-answer="correctAnswer"
-                    :desc="options.topic_analysis" />
+                    :desc="options.analyse" />
   </div>
 </template>
 <script>
@@ -27,39 +27,29 @@ export default {
       type: Object,
       default: () => ({
         option: [],
-        topic_description: "",
+        title: "",
       }),
     },
-    model: {
-      type: String,
-      default: "1",
+    userAnswer: {
+      type: [Array, String, Number],
+      default: "",
     },
   },
   data() {
     return {
       correctAnswer: "",
-      checkedAnswer: this.options.userAnswer || "",
+      checkedAnswer: userAnswer || "",
     };
   },
   watch: {
     checkedAnswer(val) {
-      if (this.model === "1") {
-        this.correctAnswer = this.options.topic_answer;
-      }
+      this.correctAnswer = this.options.true_answer;
       this.$emit("change", val, this.options.id);
-    },
-    model() {
-      if (this.model === "3") {
-        this.correctAnswer = this.options.topic_answer;
-      }
     },
   },
   created() {
-    if (this.options.userAnswer && this.model === "1") {
-      this.correctAnswer = this.options.topic_answer;
-    }
-    if (this.model === "3") {
-      this.correctAnswer = this.options.topic_answer;
+    if (this.options.userAnswer) {
+      this.correctAnswer = this.options.true_answer;
     }
   },
 };

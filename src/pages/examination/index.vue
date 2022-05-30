@@ -89,11 +89,7 @@ export default {
     return {
       // 组合框
       currentCandidates: 0,
-      candidates: [
-        { name: '低压电工作业题库1', value: 1 },
-        { name: '低压电工作业题库2', value: 2 },
-        { name: '低压电工作业题库3', value: 3 }, 
-      ],
+      candidates: [],
       // 宫格数据
       gridIndex: 0,
       grids: [
@@ -112,32 +108,36 @@ export default {
         { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination-swiper.png", url: "" }
       ],
       isReady: false,
+      questionInfoId: '',
     };
   },
   computed: {
     activeQuestionBank() {
-      return this.candidates[this.currentCandidates].title || '请选择题库'
+      return this.candidates.length ? this.candidates[this.currentCandidates].title : '请选择题库'
     }
   },
   onLoad() {
     this.getQuestionBankList()
   },
   onReady() {
-    let questionInfo = uni.getStorageSync('questionInfo')
-    if (!questionInfo || !questionInfo.id) {
-      this.$refs.popupRef.open()
+    let questionInfo = uni.getStorageSync('questionBankInfo')
+    if (questionInfo && questionInfo.id) {
+      this.questionInfoId = questionInfo.id
     }
   },
   onShow() {
   },
   methods: {
     to(url) {
+      if (!this.questionInfoId) return uni.showToast({ title: '请选择题库', icon: 'none' });
       uni.navigateTo({url})
     },
     goStudy() {
+      if (!this.questionInfoId) return uni.showToast({ title: '请选择题库', icon: 'none' });
       uni.navigateTo({url: '/pages/examinations/chapterList/index'})
     },
     onCandidates(e) {
+      uni.hideTabBar()
       this.$refs.popupRef.open()
     },  
     onClickItem(index) {
@@ -145,12 +145,13 @@ export default {
       let questionInfo = this.candidates[index]
       this.$store.dispatch('setQuestionBankInfo', questionInfo)
       this.$refs.popupRef.close()
+      uni.showTabBar()
     },
     async getQuestionBankList() {
       let res = await getQuestionBankList()
       if (res.code === 0) {
         this.candidates = res.data
-        let questionInfo = res.data[0]
+        let questionInfo = res.data[0] || {}
         this.$store.dispatch('setQuestionBankInfo', questionInfo)
       }
     }
