@@ -10,9 +10,9 @@
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerAnalysis from "../answerAnalysis";
-import Select from "../select";
-import AnswerEye from "../answerEye";
+import AnswerAnalysis from "../answerAnalysis/index";
+import Select from "../select/index";
+import AnswerEye from "../answerEye/index";
 
 export default {
   name: "indefinite",
@@ -56,7 +56,8 @@ export default {
       }
     },
     onChangeOpt(val) {
-      console.log('indefinite', val);
+      // console.log('indefinite', val);
+      this.checkedAnswer = val
       let data = { id: this.options.id, answer: val }
       this.$emit("change", data);
     },

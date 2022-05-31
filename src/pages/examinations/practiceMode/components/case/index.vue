@@ -21,16 +21,16 @@
       <swiper class="child-content swiper" @change="onSwiperChange" :current="currentIndexCase" :disable-touch="true">
         <swiper-item class="swiper-item" v-for="(item, index) in options.child" :key="'sub_' + index">
           <scroll-view scroll-y class="scroll-view">
-            <Single :options="question" @change="onSingleChange"
-                    v-if="question && question.question_child_type === 1" />
-            <Multiple :options="question" @change="onSingleChange"
-                      v-if="question && question.question_child_type === 2" />
-            <Indefinite :options="question" @change="onSingleChange"
-                        v-if="question && question.question_child_type === 3" />
-            <Judg :options="question" @change="onSingleChange" v-if="question && question.question_child_type === 4" />
-            <Completion :options="question" @change="onInputChange"
-                        v-if="question && question.question_child_type === 5" />
-            <Short :options="question" @change="onInputChange" v-if="question && question.question_child_type === 6" />
+            <Single :options="questionList[index]" @change="onSingleChange"
+                    v-if="questionList[index] && questionList[index].question_child_type === 1" />
+            <Multiple :options="questionList[index]" @change="onSingleChange"
+                      v-if="questionList[index] && questionList[index].question_child_type === 2" />
+            <Indefinite :options="questionList[index]" @change="onSingleChange"
+                        v-if="questionList[index] && questionList[index].question_child_type === 3" />
+            <Judg :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_child_type === 4" />
+            <Completion :options="questionList[index]" @change="onInputChange"
+                        v-if="questionList[index] && questionList[index].question_child_type === 5" />
+            <Short :options="questionList[index]" @change="onInputChange" v-if="question && question.question_child_type === 6" />
           </scroll-view>
         </swiper-item>
       </swiper>
@@ -103,11 +103,13 @@ export default {
       prevIndexCase: -1,
       currentIndexCase: 0,
       question: {},
+      questionList: [],
       userAnswerMap: {},
       userAnswer: '',
       answerSheetArr: this.options.child || [],
       total: 0,
       isEnd: false,
+      question_bank_id: 0,
 
       typeMap: {
         1: "单选题",
@@ -122,6 +124,7 @@ export default {
   },
   mounted() {
     this.total = this.options.child.length;
+    this.question_bank_id = this.$store.getters.questionBankInfo.id
     this.init()
   },
   methods: {
@@ -168,6 +171,24 @@ export default {
       }
     },
 
+    prevfetch() {
+      let index = 0
+      if (this.isRight) {
+        index = this.currentIndex + 1
+      } else {
+        index = this.currentIndex - 1
+      }
+      if (index > this.total - 1 || index < 0) return;
+
+      let inAnswerSheet = this.options.child[index]
+      let inQuestionList = this.questionList[index]
+
+      if (inAnswerSheet && !inQuestionList) {
+        let question_id = inAnswerSheet.id
+        this.getQuestionDetail(question_id, index)
+      }
+    },
+
     onSwiperChange({ detail }) {
       if (detail.source === 'touch') {
         this.prevIndexCase = this.currentIndexCase
@@ -175,39 +196,42 @@ export default {
       }
       if (detail.current <= 0) {
         uni.showToast({ title: '已经是第一题了', icon: 'none' })
+        this.isEnd = true
       } else if (detail.current >= this.total - 1) {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
         this.isEnd = true
-      }  else {
+      } else {
         this.isEnd = false
       }
 
-      let question_id = this.answerSheetArr[this.prevIndexCase]
-      this.getQuestionDetail(question_id)
-      this.submitAnswer(question_id)
+      this.prevfetch()
+      this.submitAnswer()
     },
 
 
-    getCurrAnswer(key) {
+    getCurrAnswer(index) {
+      // console.log(index, this.questionList);
+      let key = this.questionList[index].id
       return this.userAnswerMap[key]
     },
 
     cacheAnswer(answer) {
       let key = answer.id
-      if (!this.userAnswerMap[key]) {
-        this.userAnswerMap[key] = answer
-      }
-      if (this.isEnd && answer) {
+      // if (!this.userAnswerMap[key]) {
+        this.userAnswerMap[key] = answer   
+      // }
+
+      if ((this.total === 1 || this.isEnd) && answer) {
         let questionBankInfo = this.$store.getters.questionBankInfo
         let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
         practiceAnswerTheQuestion(data);
       }
-      console.log('cacheAnswer', answer, this.userAnswerMap);
+      // console.log('cacheAnswer', answer, this.userAnswerMap);
     },
 
-    async submitAnswer(question_id) {
-      let answer = this.getCurrAnswer(question_id)
-      console.log('answer', this.prevIndexCase, answer);
+    async submitAnswer() {
+      let answer = this.getCurrAnswer(this.prevIndexCase)
+      // console.log('answer', this.prevIndexCase, answer);
       if (answer) {
         let questionBankInfo = this.$store.getters.questionBankInfo
         let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
@@ -218,25 +242,28 @@ export default {
     },
 
     async init() {
-      let questionBankInfo = this.$store.getters.questionBankInfo
-      let index = this.currentIndexCase
-      let question_id = this.options.child[index]
-      console.log(question_id, this.options, this.currentIndexCase);
-      if (question_id) {
-        let params = { question_id: question_id, question_bank_id: questionBankInfo.id }
-        let res = await getQuestionDetail(params)
-        if (res.code === 0) {
-          this.question = res.data
-        }
+      let question_bank_id = this.question_bank_id
+      let childs = this.options.child
+      let params1 = { question_bank_id: question_bank_id, question_id: childs[0]}
+      let params2 = { question_bank_id: question_bank_id, question_id: childs[1] }
+      let params3 = { question_bank_id: question_bank_id, question_id: childs[2] }
+      let res = await Promise.all([getQuestionDetail(params1), getQuestionDetail(params2), getQuestionDetail(params3)])
+      if (res.length) {
+        let list = res.map(item => item.data)
+        let arr = [].fill({}, 0, childs.length)
+        arr[0] = list[0]
+        arr[1] = list[1]
+        arr[2] = list[2]
+        this.questionList = arr
       }
     },
 
-    async getQuestionDetail(question_id) {
+    async getQuestionDetail(question_id, index) {
       let questionBankInfo = this.$store.getters.questionBankInfo
       let params = { question_id: question_id, question_bank_id: questionBankInfo.id }
       let res = await getQuestionDetail(params)
       if (res.code === 0) {
-        this.question = res.data
+        this.questionList[index] = res.data
       }
     },
   },

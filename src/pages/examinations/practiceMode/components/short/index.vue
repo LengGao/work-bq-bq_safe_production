@@ -11,9 +11,10 @@
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerAnalysis from "../answerAnalysis";
-import Select from "../select";
-import AnswerEye from "../answerEye";
+import AnswerAnalysis from "../answerAnalysis/index.vue";
+import Select from "../select/index";
+import AnswerEye from "../answerEye/index.vue";
+
 export default {
   name: "short",
   components: {
@@ -48,8 +49,9 @@ export default {
     }
   },
   methods: {
-    onInput(val) {
-      console.log("short", val);
+    onInput({ detail }) {
+      // console.log("short", detail);
+      this.value = detail.value
       let data = { id: this.options.id, answer: this.value }
       this.$emit("change", data);
     },

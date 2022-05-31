@@ -9,8 +9,8 @@
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerAnalysis from "../answerAnalysis";
-import Select from "../select";
+import AnswerAnalysis from "../answerAnalysis/index.vue";
+import Select from "../select/index";
 
 export default {
   name: "single",
@@ -43,12 +43,13 @@ export default {
     if (this.options.user_answer.length) {
       this.correctAnswer = this.options.true_answer.map(item => +item)
       this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
-      console.log("single", this.options.user_answer, this.checkedAnswer);
+      // console.log("single", this.options.user_answer, this.checkedAnswer)
     }
   },
   methods: {
     onChangeOpt(val) {
-        console.log('single onChangeOpt', val);
+        // console.log('single onChangeOpt', val);
+        this.checkedAnswer = val
         this.correctAnswer = this.options.true_answer.map(item => +item)
         let data = { id: this.options.id, answer: [val] }
         this.$emit("change", data);

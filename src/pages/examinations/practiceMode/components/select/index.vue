@@ -49,7 +49,7 @@ export default {
   },
   watch: {
     checkedAnswer(newValue, oldValue) {
-      console.log('newValue ', newValue);
+      // console.log('newValue ', newValue);
       if (this.multiple) {
         this.$emit("change", newValue)
       } else if (newValue !== oldValue) {
@@ -58,11 +58,11 @@ export default {
     },
   },
   mounted() {
-    console.log('options', this.options, this.checkedAnswer);
+    // console.log('options', this.options, this.checkedAnswer);
   },
   methods: {
     status(value) {
-      console.log('checkedAnswe status',value,typeof value, this.checkedAnswer, this.correctAnswer);
+      // console.log('checkedAnswe status',value,typeof value, this.checkedAnswer, this.correctAnswer);
       if (this.checkedAnswer) {
         if (this.correctAnswer) {
           return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'
@@ -76,7 +76,7 @@ export default {
       }
     },
     onOptionChange(val) {
-      console.log('onOptionChange', val, this.checkedAnswer);
+      // console.log('onOptionChange', val, this.checkedAnswer);
       if (this.multiple) {
         this.checkedAnswer.indexOf(val) !== -1
           ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)

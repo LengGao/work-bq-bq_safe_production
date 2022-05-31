@@ -1,6 +1,6 @@
 <template>
-  <view class="answer-eye" :class="{ 'answer-eye--active': active }" @click="handleClick">
-    <view class="eye-btn">
+  <view class="answer-eye" :class="{ 'answer-eye--active': active }">
+    <view class="eye-btn" @click="handleClick">
       <uni-icons custom-prefix="iconfont" v-show="active" color="#199fff" type="icon-view" size="32rpx">
       </uni-icons>
       <uni-icons custom-prefix="iconfont" v-show="!active" type="icon-hide" size="32rpx">

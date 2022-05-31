@@ -73,7 +73,7 @@ export default {
   },
   mounted() {
     let userAnswer = this.userAnswer, right = this.question.true_answer, options = this.question.option, type = this.question.question_type    
-    console.log('answerAnalysis', userAnswer, right, options);
+    // console.log('answerAnalysis', userAnswer, right, options);
     if (!Array.isArray(userAnswer)) {
       userAnswer = [userAnswer]
     }
@@ -89,7 +89,7 @@ export default {
       this.userAnswerText = userAnswerText
       this.correctAnswerText = correctAnswerText
     }
-    console.log(this.userAnswerText, this.correctAnswerText);
+    // console.log(this.userAnswerText, this.correctAnswerText);
   },
   methods: {
     inputTypeParse(answer, options) {

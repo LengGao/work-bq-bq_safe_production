@@ -84,10 +84,11 @@ export default {
     onSelect(type, index) {
       let types = this.listData[type]
       let question_id = types[index].id
+      console.log(type, index, types);
       let chapter_id = this.chapter_id
       let question_bank_id = this.question_bank_id
       let url = `/pages/examinations/practiceMode/answer/index`
-      let query = `?chapterId=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}`
+      let query = `?chapterId=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1`
       uni.redirectTo({ url: url + query })
     },
     handleSubmit() {

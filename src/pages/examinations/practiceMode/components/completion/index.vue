@@ -17,10 +17,11 @@
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerAnalysis from "../answerAnalysis";
-import Select from "../select";
-import AnswerEye from "../answerEye";
+import AnswerAnalysis from "../answerAnalysis/index";
+import Select from "../select/index";
+import AnswerEye from "../answerEye/index";
 import IOption from "../ioption";
+
 export default {
   name: "completion",
   components: {
@@ -53,7 +54,7 @@ export default {
   },
   watch: {
     correctAnswer(val) {
-      console.log(val);
+      // console.log(val);
       if (val.length) {
         if (this.reorder) {
           let map = {}
@@ -98,7 +99,7 @@ export default {
   methods: {
     handlBlur() {
       const vals = this.inputItem.map((item) => { item.value.trim(); return item.value })
-      console.log("completion", vals);
+      // console.log("completion", vals);
       this.checkedAnswer = vals
       let data = { id: this.options.id, answer: vals }
       this.$emit("change", data);
@@ -121,5 +122,6 @@ export default {
 .input {
   font-size: 28rpx;
   line-height: 100%;
+  width: 100%;
 }
 </style>

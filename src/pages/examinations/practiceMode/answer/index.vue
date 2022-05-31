@@ -92,6 +92,8 @@ export default {
       answerSheetArr: [],
       userAnswerMap: {},
 
+      isReview: false
+
     };
   },
   computed: {
@@ -110,8 +112,8 @@ export default {
     }
   },
   onLoad(query) {
-    let { chapterId, question_bank_id, question_id, title = "章节练习" } = query
-
+    let { chapterId, question_bank_id, question_id, title = "章节练习", isReview = false } = query
+    this.isReview = !!isReview
     this.chapter_id = +chapterId
     this.question_bank_id = +question_bank_id
     this.question_id = +question_id
@@ -212,9 +214,9 @@ export default {
 
     cacheAnswer(answer) {
       let key = answer.id
-      if (!this.userAnswerMap[key]) {
-        this.userAnswerMap[key] = answer
-      }
+      // if (!this.userAnswerMap[key]) {
+      this.userAnswerMap[key] = answer
+      // }
       // console.log('cacheAnswer', answer, this.userAnswerMap);
     },
 
@@ -297,9 +299,11 @@ export default {
         let curr = 0
         let next = 0
         if (!lastId) lastId = arr[0].id;
+        if (this.isReview) lastId = this.question_id;
 
         let index = arr.findIndex(item => item.id === lastId)
         // console.log("index", index);
+        
         if (index === -1) {
           prev = arr[0].id
           curr = arr[1].id
@@ -358,10 +362,6 @@ export default {
 
       this.questionList = JSON.parse(JSON.stringify(arr))
     },
-
-    async initAnswer(pre, curr, prv) {
-
-    }
 
   }
 }
