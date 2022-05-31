@@ -4,7 +4,7 @@
       <u-parse :content="options.title" />
     </view>
     <i-option v-for="(item, index) in checkedAnswer" :key="index" :label="index + 1 + ''" :status="status(item.value)">
-      <input type="text" v-model="item.value" placeholder="请输入" @blur="onInput" />
+      <input type="text" v-model="item.value" placeholder="请输入" @input="onInput" />
     </i-option>
     <AnswerAnalysis v-if="analysis && options.option.length" :question="options"/>
   </view>

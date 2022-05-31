@@ -39,9 +39,7 @@ export default {
   },
   methods: {
     handleClick() {
-      if (!this.analysis) {
-        this.$emit("change", this.checkedValue); 
-      }
+      this.$emit("change", this.checkedValue); 
     },
     
   },

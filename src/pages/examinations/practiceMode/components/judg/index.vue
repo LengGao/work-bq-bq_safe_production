@@ -3,16 +3,15 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer">
-    </Select>
-    <AnswerAnalysis v-if="correctAnswer" :user-answer="checkedAnswer" :correct-answer="correctAnswer"
-                    :desc="options.analyse" />
+    <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer" />
+    <AnswerAnalysis v-if="checkedAnswer && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
 <script>
 import AnswerAnalysis from "../answerAnalysis";
 import Select from "../select";
 import uParse from "@/components/gaoyia-parse/parse.vue";
+
 export default {
   name: "Judg",
   components: {

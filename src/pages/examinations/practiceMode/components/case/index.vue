@@ -10,9 +10,7 @@
       </view>
       <view class="child-header">
         <view class="child-header-title">案例题 {{ serialNumber }}-{{ currentIndex + 1 }}
-          <text class="text">（{{
-              typeMap[options.child[currentIndex].topic_child_type]
-            }}）</text>
+          <text class="text">（{{typeMap[options.child[currentIndex].question_type]}}）</text>
         </view>
         <view class="child-header-actions">
           <view class="prev" @click="handlePrev">上一题</view>
@@ -20,16 +18,15 @@
         </view>
       </view>
 
-      <swiper class="child-content swiper" @change="onSwiperChange" :current="currentIndex" duration="300"
-              @animationfinish="onAnimationfinish">
+      <swiper class="child-content swiper" @change="onSwiperChange" :current="currentIndex"  :disable-touch="true">
         <swiper-item class="swiper-item" v-for="(item, index) in options.child" :key="index">
           <scroll-view scroll-y class="scroll-view">
-            <Single :model="model" :options="item" @change="onSingleChange" v-if="item.topic_child_type === 1" />
-            <Multiple :model="model" :options="item" @change="onOtherChange" v-if="item.topic_child_type === 2" />
-            <Judg :model="model" :options="item" @change="onSingleChange" v-if="item.topic_child_type === 3" />
-            <Indefinite :model="model" :options="item" @change="onOtherChange" v-if="item.topic_child_type === 4" />
-            <Completion :model="model" :options="item" @change="onOtherChange" v-if="item.topic_child_type === 5" />
-            <Short :model="model" :options="item" @change="onOtherChange" v-if="item.topic_child_type === 6" />
+            <Single :options="question" @change="onSingleChange" v-if="question.question_type === 1" />
+            <Multiple :options="question" @change="onSingleChange" v-if="question.question_type === 2" />
+            <Judg :options="question" @change="onSingleChange" v-if="question.question_type === 3" />
+            <Indefinite :options="question" @change="onSingleChange" v-if="question.question_type === 4" />
+            <Completion :options="question" @change="onInputChange" v-if="question.question_type === 5" />
+            <Short :options="question" @change="onInputChange" v-if="question.question_type === 6" />
           </scroll-view>
         </swiper-item>
       </swiper>
@@ -46,7 +43,8 @@ import Judg from "../judg";
 import Indefinite from "../indefinite";
 import Completion from "../completion";
 import Short from "../short";
-import { submitAnswer } from "@/api/question";
+import { getQuestionDetail } from "@/api/question";
+
 export default {
   name: "case",
   components: {
@@ -98,11 +96,9 @@ export default {
     current(newValue) {
       this.currentIndex = newValue;
     },
-    isActive(val) {
-      if (!val) {
-        // 失焦时提交答案
-        this.submitOtherAnswer();
-      }
+    currentIndex(val) {
+      let question_id = this.answerSheetArr[val]
+      this.getQuestionDetail(question_id)
     },
   },
   data() {
@@ -110,12 +106,14 @@ export default {
       isOpen: false,
       currentIndex: 0,
       userAnswerMap: {},
+      question: {},
+      userAnswer: '',
       total: 0,
       typeMap: {
         1: "单选题",
         2: "多选题",
-        3: "判断题",
-        4: "不定项题",
+        3: "不定项题",
+        4: "判断题",
         5: "填空题",
         6: "简答题",
         7: "案例题",
@@ -127,88 +125,73 @@ export default {
   },
   onUnload() {
     if (!["7", "8"].includes(this.type)) {
-      this.submitOtherAnswer()
+      // this.submitOtherAnswer()
     }
   },
   methods: {
-    // 提交其他题型答案
-    submitOtherAnswer() {
-      for (const id in this.userAnswerMap) {
-        this.userAnswerMap[id] && this.submitAnswer(id, this.userAnswerMap[id]);
+    checkInputAnswer(answer) {
+      let res = false
+      if (Array.isArray(answer)) {
+        res = answer.some(val => val !== undefined && val !== '' && val !== null)
+      } else if (answer !== undefined && answer !== '' && answer !== null) {
+        res = true
+      }
+      return res
+    },
+
+    onSingleChange(answer) {
+      let flag = false
+      flag = this.checkInputAnswer(answer.answer)
+      if (flag) {
+        this.cacheAnswer(answer)
       }
     },
-    // 收集其他题型答案
-    onOtherChange(answer, id) {
-      this.userAnswerMap[id] = answer;
-      this.$emit("change", this.currentIndex, answer);
-    },
-    // 单选跟判断题答案提交
-    onSingleChange(answer, id) {
-      // 收藏夹不用提交答案
-      if (this.type !== "7") {
-        this.submitAnswer(id, [answer]);
+
+    onInputChange(answer) {
+      let flag = false
+      flag = this.checkInputAnswer(answer.answer)
+      if (flag) {
+        this.cacheAnswer(answer)
       }
-      this.$emit("change", this.currentIndex, answer);
-      this.model === "2" && this.handleNext();
     },
-    onSwiperChange({ detail }) {
-      const { current } = detail;
-      this.currentIndex = current;
-      this.$emit("indexChange", current);
-    },
-    // 提交答案
-    async submitAnswer(topic_id, answer) {
-      const data = {
-        log_id: this.logId,
-        topic_id,
-        answer,
-      };
-      const res = await submitAnswer(data);
-      // 已提交的重置掉
-      this.userAnswerMap[topic_id] && (this.userAnswerMap[topic_id] = null);
-    },
+    
     handlePrev() {
       if (this.currentIndex <= 0) {
-        uni.showToast({
-          icon: "none",
-          title: "已经是第一小题了",
-        });
-        return;
+        uni.showToast({ icon: "none", title: "已经是第一小题了" });
+      } else {
+        this.currentIndex--;
       }
-      this.currentIndex--;
     },
     handleNext() {
       if (this.currentIndex >= this.total - 1) {
-        uni.showToast({
-          icon: "none",
-          title: "已经是最后一小题了",
-        });
-        return;
-      }
-      this.currentIndex++;
-    },
-    onSwiperBoundary() {
-      if (this.currentIndex <= 0) {
-        uni.showToast({
-          icon: "none",
-          title: "已经是第一小题了",
-        });
-      }
-      if (this.currentIndex >= this.total - 1) {
-        uni.showToast({
-          icon: "none",
-          title: "已经是最后一小题了",
-        });
+        uni.showToast({icon: "none", title: "已经是最后一小题了" });
+      } else {
+        this.currentIndex++;
       }
     },
-    onAnimationfinish({ detail }) {
-      const { current } = detail;
-      this.submitOtherAnswer()
-      this.onSwiperBoundary();
+
+    onSwiperChange({ detail }) {
+      if (detail.current <= 0) {
+        uni.showToast({ title: '已经是第一题了', icon: 'none' })
+      } else if (detail.current >= this.total - 1) {
+        uni.showToast({ title: '已经是最后一题了', icon: 'none' })
+      }
+      this.currentIndex = detail.current
     },
+
     handleToggle() {
       this.isOpen = !this.isOpen;
     },
+
+    async getQuestionDetail(question_id) {
+      let questionBankInfo = this.$store.getters.questionBankInfo
+      let params = { question_id: question_id, question_bank_id: questionBankInfo.id }
+      let res = await getQuestionDetail(params)
+      if (res.code === 0) {
+        this.question = res.data
+      }
+    },
+
   },
 };
 </script>

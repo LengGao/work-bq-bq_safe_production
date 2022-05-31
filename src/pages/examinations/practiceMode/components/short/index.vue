@@ -5,7 +5,7 @@
     </view>
     <textarea :disabled="!!correctAnswer" class="text" @input="onInput" v-model="value" placeholder="请输入" />
     <AnswerEye @change="handleEyeChange" />
-    <AnswerAnalysis short v-if="correctAnswer" :desc="correctAnswer" />
+    <AnswerAnalysis v-if="correctAnswer" short :question="options" :userAnswer="value" />
   </div>
 </template>
 <script>
@@ -29,9 +29,9 @@ export default {
         title: "",
       }),
     },
-    model: {
-      type: String,
-      default: "1",
+    userAnswer: {
+      type: [Array, String, Number],
+      default: "",
     },
   },
   data() {
@@ -40,13 +40,10 @@ export default {
       value: this.userAnswer || "",
     };
   },
-  watch: {
-  },
-  created() {
-  },
   methods: {
     onInput() {
-      this.$emit("change", [this.value], this.options.id);
+      let data = { id: this.options.id, answer: [this.value] }
+      this.$emit("change", data);
     },
     handleEyeChange(val) {
       if (val) {

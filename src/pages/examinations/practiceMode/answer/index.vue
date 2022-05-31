@@ -1,27 +1,36 @@
 <template>
   <view class="answer">
-    <!-- <AnswerHead v-if="questionList[currentIndex]" :type="answerSheetArr[currentIndex].topic_type" :total="total"
-                :serial-number="currentIndex + 1" /> -->
-    <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex"
+    <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
+                :serial-number="currentIndex + 1" />
+    <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex" :disable-touch="false"
             @animationfinish="onAnimationfinish">
-      <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.topic_type === 7 }"
+
+      <swiper-item class="swiper-item"
+                   :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
-        <Single :options="question" :userAnswer="userAnswer" @change="onSingleChange" v-if="question.question_type === 1" />
-        <Multiple :options="item" :userAnswer="answer" @change="onSingleChange" v-if="item.question_type === 2" />
-        <Indefinite :options="item" :userAnswer="userAnswer" @change="onSingleChange" v-if="item.question_type === 3" />
-        <Judg :options="item" :userAnswer="userAnswer" @change="onSingleChange" v-if="item.question_type === 4" />
-        <Completion :options="item" :userAnswer="userAnswer" @change="onOtherChange" v-if="item.question_type === 5" />
-        <Short :options="item" :userAnswer="userAnswer" @change="onOtherChange" v-if="item.question_type === 6" />
-        <!-- <Case :options="item" :serial-number="currentIndex + 1" :log-id="logId"
-                v-if="item.topic_type === 7" :ref="`case-${item.id}`"
+        <template v-if="currentIndex === index || currentIndex - 1 === index || currentIndex + 1 === index">
+          <Single :options="questionList[index]" :userAnswer="userAnswer" @change="onSingleChange"
+                  v-if="questionList[index] && questionList[index].question_type === 1" />
+          <Multiple :options="questionList[index]" :userAnswer="userAnswer" @change="onSingleChange"
+                    v-if="questionList[index] && questionList[index].question_type === 2" />
+          <Indefinite :options="questionList[index]" :userAnswer="userAnswer" @change="onSingleChange"
+                      v-if="questionList[index] && questionList[index].question_type === 3" />
+          <Judg :options="questionList[index]" :userAnswer="userAnswer" @change="onSingleChange"
+                v-if="questionList[index] && questionList[index].question_type === 4" />
+          <Completion :options="questionList[index]" :userAnswer="userAnswer" @change="onInputChange"
+                      v-if="questionList[index] && questionList[index].question_type === 5" />
+          <Short :options="questionList[index]" :userAnswer="userAnswer" @change="onInputChange"
+                 v-if="questionList[index] && questionList[index].question_type === 6" />
+          <Case :options="questionList[index]" :serial-number="currentIndex + 1" :log-id="logId"
+                v-if="questionList[index] && questionList[index].question_type === 7" :ref="`case-${item.id}`"
                 :is-active="currentIndex === index && duration === 300" :type="type" @change="onCaseChange"
-                @index-change="onCaseIndexChange" /> -->
+                @index-change="onCaseIndexChange" />
+        </template>
       </swiper-item>
     </swiper>
-    <!-- <AnswerBar class="bar" :model="model" :is-end="isEnd" :is-start="isStart" :time="time"
-               :isCollection="!!getCurrentData.is_collection" @submit-paper="toTestResoult" @card="toCard"
-               @next="handleNext" @prev="handlePrev" @collect="setCollection" @timeup="onTimeUp">
-    </AnswerBar> -->
+    <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" @submit-paper="toTestResoult" @card="toCard"
+               @next="handleNext" @prev="handlePrev" @collect="setCollection">
+    </AnswerBar>
   </view>
 </template>
 
@@ -38,7 +47,8 @@ import Case from "../components/case";
 
 import {
   getPracticeAnswerSheet,
-  getQuestionDetail
+  getQuestionDetail,
+  practiceAnswerTheQuestion,
 } from "@/api/question";
 
 export default {
@@ -57,21 +67,23 @@ export default {
 
   data() {
     return {
-      // 当前的swiper 索引
       prevIndex: -1,
       currentIndex: 0,
       nextIndex: 1,
       duration: 300,
 
-      model: '1',
       chapter_id: 0,
       last_question_id: 0,
       question_bank_id: 0,
+
+      caseIndex: 0,
+      logId: '',
+
       answer: {},
-      question: {},
-      userAnswer: '',
-      total: 0,
       questionList: [],
+      question: {},
+      total: 0,
+      userAnswer: '',
       answerSheet: {},
       answerSheetArr: [],
       userAnswerMap: {},
@@ -89,13 +101,11 @@ export default {
     isRight() {
       return this.currentIndex > this.prevIndex
     },
+    isCollection() {
+      return this.question.is_collect
+    }
   },
   watch: {
-    currentIndex(val) {
-      let question_id = this.answerSheetArr[val].id
-      this.getQuestionDetail(question_id)
-      this.getAnswerDetail(question_id)
-    }
   },
   onShow() {
   },
@@ -148,27 +158,52 @@ export default {
       }
     },
 
+    prevfetch() {
+      let index = 0
+      if (this.isRight) {
+        if ((this.currentIndex + 1) <= (this.total - 1)) {
+          index = this.currentIndex + 1
+        }
+      } else {
+        if ((this.prevIndex - 1) >= 0) {
+          index = this.prevIndex - 1
+        }
+      }
+      if (!this.questionList[index]) {
+        console.log(index, this.questionList[index], this.answerSheetArr[index]);
+        let question_id = this.answerSheetArr[index].id
+        this.getQuestionDetail(question_id)
+      }
+    },
+
+
     onSwiperChange({ detail }) {
       if (detail.source === 'touch') {
         this.prevIndex = this.currentIndex
         this.currentIndex = detail.current
       }
-      // let prevAnswer = this.getCurrAnswer(this.prevIndex)
-      // let currAnswer = this.getCurrAnswer(this.currentIndex)      
-      // if (this.isRight && prevAnswer) {
-      //   this.submitAnswer(prevAnswer)
-      // }
-    },
+      if (detail.current <= 0) {
+        uni.showToast({ title: '已经是第一题了', icon: 'none' })
+      } else if (detail.current >= this.total - 1) {
+        uni.showToast({ title: '已经是最后一题了', icon: 'none' })
+      }
+      if (this.isRight) {
+        // this.submitAnswer()
+      }
 
-    oonTouchmove() {
+      this.prevfetch()
     },
 
     onAnimationfinish({ detail }) {
-      // if (detail.current <= 0) {
-      //   uni.showToast({ title: '已经是第一题了', icon: 'none' })
-      // } else if (detail.current >= thiotal -1) {
-      //   uni.showToast({ title: '已经是最后一题了', icon: 'none' })
-      // }
+    },
+
+
+    onCaseIndexChange() {
+
+    },
+
+    onCaseChange() {
+
     },
 
     getCurrAnswer(index) {
@@ -177,9 +212,25 @@ export default {
     },
 
     cacheAnswer(answer) {
-      console.log('cacheAnswer', answer);
-      let key = answer.question_id
-      this.userAnswerMap[key] = answer
+      let key = answer.id
+      if (!this.userAnswerMap[key]) {
+        this.userAnswerMap[key] = answer
+      }
+      console.log('cacheAnswer', answer, this.userAnswerMap);
+    },
+
+    getAnswerDetail(question_id) {
+      let userAnswer = this.userAnswerMap[question_id]
+      this.userAnswer = userAnswer ? userAnswer.answer : ''
+      console.log('getAnswerDetail', userAnswer);
+    },
+
+    async toCard() {
+
+    },
+
+    async setCollection() {
+
     },
 
     async submitPaper() {
@@ -200,10 +251,9 @@ export default {
     async submitAnswer(prevAnswer) {
       let data = { practice_id: this.practice_id, question_id: prevAnswer.question_id, answer: prevAnswer.answer }
       const res = await practiceAnswer(data);
-    },
-
-    getAnswerDetail(question_id) {
-      this.userAnswer = this.userAnswerMap[question_id].amswer
+      if (res.code === 0) {
+        this.duration = 0
+      }
     },
 
     async getQuestionDetail(question_id) {
@@ -211,8 +261,13 @@ export default {
       let params = { question_id: question_id, question_bank_id: questionBankInfo.id }
       let res = await getQuestionDetail(params)
       if (res.code === 0) {
-        this.question = res.data
+        this.questionList.push(res.data)
+        this.direction = 0
       }
+    },
+
+    async practiceAnswerTheQuestion() {
+
     },
 
     async getPracticeAnswerSheet() {
@@ -221,16 +276,44 @@ export default {
       if (res.code === 0) {
         let lastId = res.data.last_question_id
         let arr = res.data.arr
+        let prev = 0
+        let curr = 0
+        let next = 0
         if (!lastId) {
           lastId = arr[0].id
+          prev = arr[0].id
+          curr = arr[1].id
+          next = arr[2].id
+        } else {
+          let index = arr.findIndex(item => item.id === lastId)
+          prev = arr[index - 1].id
+          curr = arr[index].id
+          next = arr[index + 1].id
         }
         this.last_question_id = lastId
         this.answerSheetArr = arr
         this.total = arr.length
         this.answerSheet = res.data.list
-        this.getQuestionDetail(lastId)
+        this.initQuestion(prev, curr, next)
       }
     },
+
+
+    async initQuestion(prev, curr, next) {
+      let questionBankInfo = this.$store.getters.questionBankInfo
+      let params1 = { question_bank_id: questionBankInfo.id, question_id: prev }
+      let params2 = { question_bank_id: questionBankInfo.id, question_id: curr }
+      let params3 = { question_bank_id: questionBankInfo.id, question_id: next }
+      let res = await Promise.all([getQuestionDetail(params1), getQuestionDetail(params2), getQuestionDetail(params3)])
+      if (res.length) {
+        this.questionList = res.map(question => question.data)
+      }
+    },
+
+    async initAnswer(pre, curr, prv) {
+
+    }
+
   }
 }
 </script>

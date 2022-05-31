@@ -360,6 +360,17 @@ export default {
       }      
     },
 
+    seekSendData() {
+      let end_time = this.player.getCurrentTime()
+      let lesson_id = this.lesson_id
+      this.sendData(lesson_id, end_time, end_time)
+    },
+    stopSend() {
+      clearInterval(this.intervalId)
+      this.intervalId = null
+      let end_time = this.player.getCurrentTime()
+      this.sendData(this.lesson_id, end_time, end_time)
+    },
     playSendData() {
       if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
       this.intervalId = setInterval(() => {
@@ -369,17 +380,22 @@ export default {
         this.sendData(lesson_id, start_second, end_time)
       }, this.time)
     },
-    seekSendData() {
-      let start_second = this.player.getCurrentTime()
-      let end_time = this.player.getCurrentTime()
-      let lesson_id = this.lesson_id
-      this.sendData(lesson_id, start_second, end_time)
-    },
-    stopSend() {
+    pauseSendData() {
       clearInterval(this.intervalId)
       this.intervalId = null
       let end_time = this.player.getCurrentTime()
-      this.sendData(this.lesson_id, end_time, end_time)
+      this.sendData(this.lesson_id, this.prev_time, end_time)
+    },
+    endedSendData() {
+      clearInterval(this.intervalId)
+      this.intervalId = null
+      let end_time = this.player.getCurrentTime()
+      this.sendData(this.lesson_id, this.prev_time, end_time)
+    },
+    errSendData() {
+      let end_time = this.player.getCurrentTime()
+      let lesson_id = this.lesson_id
+      this.sendData(lesson_id, this.prev_time, end_time)
     },
     pausePlay() {
       if (this.player) this.player.pause();
@@ -392,15 +408,8 @@ export default {
       this.end_time = 0
     },
     endedCallback() {
-      this.stopSend()
       this.showModal()
       this.resetProgress()
-    },
-    errSendData() {
-      let start_second = this.prev_time
-      let end_time = this.player.getCurrentTime()
-      let lesson_id = this.lesson_id
-      this.sendData(lesson_id, start_second, end_time)
     },
     
     // 创建播放器
@@ -452,7 +461,7 @@ export default {
         })
         player.on('pause', () => {
           console.log('pause');
-          this.stopSend()
+          this.pauseSendData()
         })
         player.on('ended', () => {
           console.log("ended");
@@ -496,7 +505,11 @@ export default {
         if (redirect_url) {
           location.href = redirect_url
         }
+        this.finish_second = +res.data.finish_second
+        this.prev_time = +res.data.last_second
       } else if (res.code === 2201) {
+        this.prev_time = +res.data.last_second
+        this.finish_second = +res.data.finish_second
         // 有章节没看完
         this.pausePlay()
         this.resetProgress()
@@ -504,11 +517,11 @@ export default {
         this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: res.data.lesson_id })
         uni.showToast({ title: `${res.message}`, icon: 'none', duration: 2000 })
       } else {
-        this.pausePlay()
-        uni.showToast({ title: `${res.message}`, icon: 'none' })
+          this.prev_time = +res.data.last_second
+          this.finish_second = +res.data.finish_second
+          this.pausePlay()
+          uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
-
-      this.prev_time = end_second
     },
     // 获取视频凭证
     async getCourseGetVideoAuth(params) {

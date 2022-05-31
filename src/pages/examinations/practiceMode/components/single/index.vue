@@ -3,9 +3,8 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer"></Select>
-    <AnswerAnalysis v-if="correctAnswer" :user-answer="checkedAnswer" :correct-answer="correctAnswer"
-                    :desc="options.analyse" />
+    <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer" />
+    <AnswerAnalysis v-if="checkedAnswer && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
 <script>
@@ -48,7 +47,7 @@ export default {
     },
   },
   created() {
-    if (this.options.userAnswer) {
+    if (this.userAnswer) {
       this.correctAnswer = this.options.true_answer;
     }
   },

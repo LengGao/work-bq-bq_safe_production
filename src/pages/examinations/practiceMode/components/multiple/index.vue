@@ -3,11 +3,9 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" multiple v-model="checkedAnswer" :correct-answer="correctAnswer">
-    </Select>
+    <Select :options="options.option" multiple v-model="checkedAnswer" :correct-answer="correctAnswer" />
     <AnswerEye @change="handleEyeChange" />
-    <AnswerAnalysis v-if="correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                    :desc="options.analyse" />
+    <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
 <script>
@@ -46,11 +44,13 @@ export default {
   },
   watch: {
     checkedAnswer(val) {
-      let data = { id: this.options.id, answer: [val] }
+      console.log('checkedAnswer', val);
+      let data = { id: this.options.id, answer: val }
       this.$emit("change", data);
     },
-  },
-  created() {
+    userAnswer(val) {
+      this.userAnswer = val
+    }
   },
   methods: {
     handleEyeChange(val) {

@@ -1,8 +1,11 @@
 <template>
   <view class="select">
-    <s-option @change="onOptionChange" v-for="(item, index) in options" :label="item.topic_option"
-              :value="item.id" :key="index" :status="status(item.id)" :noletter="noletter">
-      <u-parse :content="item.content" />
+    <s-option @change="onOptionChange" v-for="(item, index) in options" :key="index"
+              :value="item.id" :status="status(item.id)">
+      <template v-slot:label>
+         <text> {{ selectLabel[index] }}</text>
+      </template>
+    <u-parse :content="item.content" />
     </s-option>
   </view>
 </template>
@@ -42,60 +45,41 @@ export default {
     return {
       // 选中的答案
       checkedAnswer: this.value,
+      selectLabel: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
     };
   },
-
   watch: {
     checkedAnswer(newValue, oldValue) {
       if (this.multiple) {
-        this.$emit("input", newValue);
-        return;
-      }
-      if (newValue !== oldValue) {
-        this.$emit("input", newValue);
+        this.$emit("input", newValue)
+      } else if (newValue !== oldValue) {
+        this.$emit("input", newValue)
       }
     },
   },
   methods: {
     status(value) {
-      if (this.analysis) {
-        return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'             
-      } else {
-        if (this.multiple) {
-          return this.checkedAnswer.includes(value) ? 'active' : ''
+      if (`${this.checkedAnswer}`.length) {
+        console.log("status", this.checkedAnswer, "value", value);
+        if (this.correctAnswer) {
+          return this.correctAnswer.indexOf(`${value}`) !== -1 ? 'success' : 'error'             
         } else {
-          return value === this.checkedAnswer ? 'active' : ''
+          if (this.multiple) {
+            return this.checkedAnswer.indexOf(value) !== -1 ? 'active' : ''
+          } else {
+            return this.checkedAnswer === value ? 'active' : ''
+          }
         }
       }
     },
     onOptionChange(val) {
-      // 多选
+      console.log('onOptionChange', val, this.checkedAnswer);
       if (this.multiple) {
-        if (!this.correctAnswer.length) {
-          //已经选了就去掉
-          if (this.checkedAnswer.includes(val)) {
-            this.checkedAnswer = this.checkedAnswer.filter(
-              (item) => item !== val
-            );
-          } else {
-            this.checkedAnswer.push(val);
-          }
-        } else {
-          // uni.showToast({
-          //   icon: "none",
-          //   title: "已经答过了",
-          // });
-        }
+        this.checkedAnswer.indexOf(val) !== -1 
+        ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)
+        : this.checkedAnswer.push(val)
       } else {
-        //单选
-        if (!this.correctAnswer) {
-          this.checkedAnswer = val;
-        } else {
-          // uni.showToast({
-          //   icon: "none",
-          //   title: "已经答过了",
-          // });
-        }
+        this.checkedAnswer = val
       }
     },
   },

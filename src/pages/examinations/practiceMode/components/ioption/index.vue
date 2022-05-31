@@ -5,7 +5,9 @@
       </uni-icons>
       <uni-icons custom-prefix="iconfont" v-else-if="status === 'error'" color="#fff" type="icon-cha" size="28rpx">
       </uni-icons>
-      <text v-else>{{ !noletter ? label : "" }}</text>
+      <text v-else>
+        <slot name="label"> {{ label }}</slot>
+      </text>
     </view>
     <view class="option-text">
       <slot></slot>
@@ -13,13 +15,10 @@
   </view>
 </template>
 <script>
+
 export default {
-  name: "IOption",
+  name: "SOption",
   props: {
-    noletter: {
-      type: Boolean,
-      default: false,
-    },
     status: {
       type: String,
       default: "",
@@ -29,11 +28,10 @@ export default {
       default: "",
     },
     value: {
-      type: [String, Number],
+      type: [Array, String, Number],
       default: "",
     },
   },
-  computed: {},
   data() {
     return {
       checkedValue: this.value,
@@ -41,8 +39,9 @@ export default {
   },
   methods: {
     handleClick() {
-      this.$emit("change", this.checkedValue);
+      this.$emit("change", this.checkedValue); 
     },
+    
   },
 };
 </script>
