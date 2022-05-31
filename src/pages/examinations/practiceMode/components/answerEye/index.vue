@@ -24,7 +24,7 @@ export default {
     };
   },
   mounted() {
-    if (this.correctAnswer) {
+    if (this.correctAnswer.length ) {
       this.handleClick()
     }
   },

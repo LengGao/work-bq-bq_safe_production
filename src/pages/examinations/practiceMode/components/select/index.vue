@@ -49,7 +49,7 @@ export default {
   },
   watch: {
     checkedAnswer(newValue, oldValue) {
-      // console.log('newValue ', newValue);
+      console.log('newValue ', newValue);
       if (this.multiple) {
         this.$emit("change", newValue)
       } else if (newValue !== oldValue) {

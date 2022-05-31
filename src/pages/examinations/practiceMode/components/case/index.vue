@@ -10,7 +10,7 @@
       </view>
       <view class="child-header">
         <view class="child-header-title">案例题 {{ serialNumber }}-{{ currentIndexCase + 1 }}
-          <text class="text">（{{typeMap[question.question_type]}}）</text>
+          <text class="text">（{{typeMap[question.question_child_type]}}）</text>
         </view>
         <view class="child-header-actions">
           <view class="prev" @click="handlePrev">上一题</view>
@@ -25,9 +25,9 @@
                     v-if="question && question.question_child_type === 1" />
             <Multiple :options="question" @change="onSingleChange"
                       v-if="question && question.question_child_type === 2" />
-            <Judg :options="question" @change="onSingleChange" v-if="question && question.question_child_type === 3" />
             <Indefinite :options="question" @change="onSingleChange"
-                        v-if="question && question.question_child_type === 4" />
+                        v-if="question && question.question_child_type === 3" />
+            <Judg :options="question" @change="onSingleChange" v-if="question && question.question_child_type === 4" />
             <Completion :options="question" @change="onInputChange"
                         v-if="question && question.question_child_type === 5" />
             <Short :options="question" @change="onInputChange" v-if="question && question.question_child_type === 6" />
@@ -46,7 +46,10 @@ import Judg from "../judg/index";
 import Indefinite from "../indefinite/index";
 import Completion from "../completion/index";
 import Short from "../short/index";
-import { getQuestionDetail } from "@/api/question";
+import {
+  getQuestionDetail,
+  practiceAnswerTheQuestion,
+ } from "@/api/question";
 
 export default {
   name: "case",
@@ -94,26 +97,17 @@ export default {
       default: "1",
     },
   },
-  watch: {
-    current(newValue) {
-      console.log('current', newValue);
-      // this.currentIndexCase = newValue;
-    },
-    currentIndexCase(val) {
-      console.log('current', currentIndexCase);
-      // let question_id = this.answerSheetArr[val]
-      // this.getQuestionDetail(question_id)
-    },
-  },
   data() {
     return {
       isOpen: true,
       prevIndexCase: -1,
       currentIndexCase: 0,
-      userAnswerMap: {},
       question: {},
+      userAnswerMap: {},
       userAnswer: '',
+      answerSheetArr: this.options.child || [],
       total: 0,
+      isEnd: false,
       typeMap: {
         1: "单选题",
         2: "多选题",
@@ -128,11 +122,6 @@ export default {
   mounted() {
     this.total = this.options.child.length;
     this.init()
-  },
-  onUnload() {
-    // if (!["7", "8"].includes(this.type)) {
-    //   // this.submitOtherAnswer()
-    // }
   },
   methods: {
     checkInputAnswer(answer) {
@@ -161,33 +150,70 @@ export default {
       }
     },
 
+    handleToggle() {
+      this.isOpen = !this.isOpen;
+    },
+
     handlePrev() {
-      if (this.currentIndexCase <= 0) {
+      if (this.currentIndexCase > 0) {
         this.prevIndexCase = this.currentIndexCase
-        this.currentIndexCase  = this.currentIndexCase  - 1
+        this.currentIndexCase = this.currentIndexCase - 1
       }
     },
     handleNext() {
-      if (this.currentIndexCase >= this.total - 1) {
+      if (this.currentIndexCase < this.total - 1) {
         this.prevIndexCase = this.currentIndexCase
-        this.currentIndexCase  = this.currentIndexCase  + 1
+        this.currentIndexCase = this.currentIndexCase + 1
       }
     },
 
     onSwiperChange({ detail }) {
+      if (detail.source === 'touch') {
+        this.prevIndexCase = this.currentIndexCase
+        this.currentIndexCase = detail.current
+      }
       if (detail.current <= 0) {
         uni.showToast({ title: '已经是第一题了', icon: 'none' })
       } else if (detail.current >= this.total - 1) {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
+        this.isEnd = true
+      }  else {
+        this.isEnd = false
       }
 
-      this.currentIndexCase = detail.current
-      
-
+      let question_id = this.answerSheetArr[this.prevIndexCase]
+      this.getQuestionDetail(question_id)
+      this.submitAnswer(question_id)
     },
 
-    handleToggle() {
-      this.isOpen = !this.isOpen;
+
+    getCurrAnswer(key) {
+      return this.userAnswerMap[key]
+    },
+
+    cacheAnswer(answer) {
+      let key = answer.id
+      if (!this.userAnswerMap[key]) {
+        this.userAnswerMap[key] = answer
+      }
+      if (this.isEnd && answer) {
+        let questionBankInfo = this.$store.getters.questionBankInfo
+        let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
+        practiceAnswerTheQuestion(data);
+      }
+      console.log('cacheAnswer', answer, this.userAnswerMap);
+    },
+
+    async submitAnswer(question_id) {
+      let answer = this.getCurrAnswer(question_id)
+      console.log('answer', this.prevIndexCase, answer);
+      if (answer) {
+        let questionBankInfo = this.$store.getters.questionBankInfo
+        let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
+        const res = await practiceAnswerTheQuestion(data);
+        if (res.code === 0) {
+        }
+      }
     },
 
     async init() {
@@ -200,7 +226,6 @@ export default {
         let res = await getQuestionDetail(params)
         if (res.code === 0) {
           this.question = res.data
-          console.log('question', this.question);
         }
       }
     },

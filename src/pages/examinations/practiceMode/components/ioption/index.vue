@@ -64,7 +64,7 @@ export default {
     margin-right: 12rpx;
   }
   &-text {
-    flex: 1;
+    height: 100%;
   }
   &--active {
     color: $uni-color-primary;

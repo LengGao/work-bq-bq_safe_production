@@ -3,7 +3,8 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" multiple :value="checkedAnswer" :correct-answer="correctAnswer" @change="onChangeOpt" />
+    <Select :options="options.option" multiple :value="checkedAnswer" :correct-answer="correctAnswer"
+            @change="onChangeOpt" />
     <AnswerEye :correctAnswer="correctAnswer" @change="handleEyeChange" />
     <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
@@ -55,12 +56,12 @@ export default {
         this.correctAnswer = "";
       }
     },
+    onChangeOpt(val) {
+      console.log('multiple', val);
+      let data = { id: this.options.id, answer: val }
+      this.$emit("change", data);
+    }
   },
-  onChangeOpt(val) {
-    console.log('multiple', val);
-    let data = { id: this.options.id, answer: val }
-    this.$emit("change", data);
-  }
 };
 </script>
 <style lang="scss" scoped>

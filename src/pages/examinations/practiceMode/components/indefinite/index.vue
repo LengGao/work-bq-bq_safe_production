@@ -4,7 +4,7 @@
       <u-parse :content="options.title" />
     </view>
     <Select :options="options.option" multiple :value="checkedAnswer" :correct-answer="correctAnswer" @change="onChangeOpt" />
-    <AnswerEye :correctAnswer="correctAnswer" @change="handleEyeChange" />
+    <AnswerEye :correct-answer="correctAnswer" @change="handleEyeChange" />
     <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
@@ -42,7 +42,7 @@ export default {
     };
   },
   created() {
-    if (this.options.userAnswer.langth) {
+    if (this.options.user_answer.length) {
       this.correctAnswer = this.options.true_answer.map(item => +item)
       this.checkedAnswer = this.options.user_answer.map(item => +item)
     }
@@ -57,7 +57,7 @@ export default {
     },
     onChangeOpt(val) {
       console.log('indefinite', val);
-      let data = { id: this.options.id, answer: val }
+      let data = { id: this.options.id, answer: [val] }
       this.$emit("change", data);
     },
   },

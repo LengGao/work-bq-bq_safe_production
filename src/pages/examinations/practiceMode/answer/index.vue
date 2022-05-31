@@ -23,6 +23,7 @@
                v-if="questionList[index] && questionList[index].question_type === 6" />
         <Case :options="questionList[index]" :serial-number="currentIndex + 1" :log-id="logId"
               v-if="questionList[index] && questionList[index].question_type === 7" :ref="`case-${item.id}`"
+              :is-active="currentIndex === index"
               @change="onCaseChange" @index-change="onCaseIndexChange" />
         <!-- </template> -->
       </swiper-item>
@@ -196,11 +197,11 @@ export default {
 
 
     onCaseIndexChange(index) {
-      this.caseIndex = index;
+      // this.caseIndex = index;
     },
 
     onCaseChange(index, answer) {
-      this.questionList[this.currentIndex].child[index].userAnswer = answer;
+      // this.questionList[this.currentIndex].child[index].userAnswer = answer;
     },
 
     getCurrAnswer(index) {
@@ -214,12 +215,6 @@ export default {
         this.userAnswerMap[key] = answer
       }
       console.log('cacheAnswer', answer, this.userAnswerMap);
-    },
-
-    getAnswerDetail(question_id) {
-      let userAnswer = this.userAnswerMap[question_id]
-      this.userAnswer = userAnswer ? userAnswer.answer : ''
-      console.log('getAnswerDetail', userAnswer);
     },
 
     async toCard() {
@@ -247,7 +242,7 @@ export default {
 
     async submitAnswer() {
       let answer = this.getCurrAnswer(this.prevIndex)
-      console.log('answer', answer);
+      console.log('answer', this.prevIndex, answer);
       if (answer) {
         let questionBankInfo = this.$store.getters.questionBankInfo
         let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
@@ -280,7 +275,7 @@ export default {
         if (!lastId) lastId = arr[0].id;
 
         let index = arr.findIndex(item => item.id === lastId)
-
+        console.log("index", index);
         if (index === -1) {
           prev = arr[0].id
           curr = arr[1].id
@@ -323,11 +318,11 @@ export default {
 
     fiilQuestion(list) {
       let arr = [].fill({}, 0, this.answerSheetArr.length), index = this.currentIndex
-      if (index === 0) {
+      if (index <= 0) {
         arr[index] = list[0]
         arr[index + 1] = list[1]
         arr[index + 2] = list[2]
-      } else if (index === this.total - 1) {
+      } else if (index >= this.total - 1) {
         arr[index - 2] = list[0]
         arr[index - 1] = list[1]
         arr[index] = list[2]

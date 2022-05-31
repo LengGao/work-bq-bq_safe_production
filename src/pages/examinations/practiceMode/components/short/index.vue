@@ -4,7 +4,7 @@
       <u-parse :content="options.title" />
     </view>
     <!-- confirm="onInput -->
-    <textarea :disabled="!!correctAnswer" class="text" @blur="onInput" v-model="value" placeholder="请输入" />
+    <textarea :disabled="!!correctAnswer" class="text" @blur="onInput" :value="value" placeholder="请输入" />
     <AnswerEye :correctAnswer="correctAnswer" @change="handleEyeChange" />
     <AnswerAnalysis v-if="correctAnswer" short :question="options" :userAnswer="value" />
   </div>
