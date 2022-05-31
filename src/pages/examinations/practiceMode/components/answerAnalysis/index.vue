@@ -109,7 +109,7 @@ export default {
       
       let str = options.filter(item => {
         return answer.indexOf(item.id) !== -1;
-      }).map(item => item.label).join('')
+      }).map(item => item.label).join('\n')
 
       return { userAnswerText: str, correctAnswerText: correct }
     }

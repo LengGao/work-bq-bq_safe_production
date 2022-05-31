@@ -12,10 +12,21 @@
 <script>
 export default {
   name: "answerEye", // 查看答案
+  props: {
+    correctAnswer: {
+      type: [Array, String, Number],
+      default: "",
+    }
+  },
   data() {
     return {
       active: false,
     };
+  },
+  mounted() {
+    if (this.correctAnswer) {
+      this.handleClick()
+    }
   },
   methods: {
     handleClick() {

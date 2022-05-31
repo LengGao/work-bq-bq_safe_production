@@ -8,24 +8,23 @@
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
-        <template v-if="currentIndex === index || currentIndex - 1 === index || currentIndex + 1 === index">
-          <Single :options="questionList[index]" :userAnswer="userAnswer" @change="onSingleChange"
-                  v-if="questionList[index] && questionList[index].question_type === 1" />
-          <Multiple :options="questionList[index]" :userAnswer="userAnswer" @change="onSingleChange"
-                    v-if="questionList[index] && questionList[index].question_type === 2" />
-          <Indefinite :options="questionList[index]" :userAnswer="userAnswer" @change="onSingleChange"
-                      v-if="questionList[index] && questionList[index].question_type === 3" />
-          <Judg :options="questionList[index]" :userAnswer="userAnswer" @change="onSingleChange"
-                v-if="questionList[index] && questionList[index].question_type === 4" />
-          <Completion :options="questionList[index]" :userAnswer="userAnswer" @change="onInputChange"
-                      v-if="questionList[index] && questionList[index].question_type === 5" />
-          <Short :options="questionList[index]" :userAnswer="userAnswer" @change="onInputChange"
-                 v-if="questionList[index] && questionList[index].question_type === 6" />
-          <Case :options="questionList[index]" :serial-number="currentIndex + 1" :log-id="logId"
-                v-if="questionList[index] && questionList[index].question_type === 7" :ref="`case-${item.id}`"
-                :is-active="currentIndex === index && duration === 300" :type="type" @change="onCaseChange"
-                @index-change="onCaseIndexChange" />
-        </template>
+        <!-- <template v-if="currentIndex === index || (currentIndex - 1) === index || (currentIndex + 1) === index"> -->
+        <Single :options="questionList[index]" @change="onSingleChange"
+                v-if="questionList[index] && questionList[index].question_type === 1" />
+        <Multiple :options="questionList[index]" @change="onSingleChange"
+                  v-if="questionList[index] && questionList[index].question_type === 2" />
+        <Indefinite :options="questionList[index]" @change="onSingleChange"
+                    v-if="questionList[index] && questionList[index].question_type === 3" />
+        <Judg :options="questionList[index]" @change="onSingleChange"
+              v-if="questionList[index] && questionList[index].question_type === 4" />
+        <Completion :options="questionList[index]" @change="onInputChange"
+                    v-if="questionList[index] && questionList[index].question_type === 5" />
+        <Short :options="questionList[index]" @change="onInputChange"
+               v-if="questionList[index] && questionList[index].question_type === 6" />
+        <Case :options="questionList[index]" :serial-number="currentIndex + 1" :log-id="logId"
+              v-if="questionList[index] && questionList[index].question_type === 7" :ref="`case-${item.id}`"
+              @change="onCaseChange" @index-change="onCaseIndexChange" />
+        <!-- </template> -->
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" @submit-paper="toTestResoult" @card="toCard"
@@ -161,18 +160,18 @@ export default {
     prevfetch() {
       let index = 0
       if (this.isRight) {
-        if ((this.currentIndex + 1) <= (this.total - 1)) {
-          index = this.currentIndex + 1
-        }
+        index = this.currentIndex + 1
       } else {
-        if ((this.prevIndex - 1) >= 0) {
-          index = this.prevIndex - 1
-        }
+        index = this.currentIndex - 1
       }
-      if (!this.questionList[index]) {
-        console.log(index, this.questionList[index], this.answerSheetArr[index]);
-        let question_id = this.answerSheetArr[index].id
-        this.getQuestionDetail(question_id)
+      if (index > this.total - 1 || index < 0) return;
+
+      let inAnswerSheet = this.answerSheetArr[index]
+      let inQuestionList = this.questionList[index]
+
+      if (inAnswerSheet && !inQuestionList) {
+        let question_id = inAnswerSheet.id
+        this.getQuestionDetail(question_id, index)
       }
     },
 
@@ -187,23 +186,21 @@ export default {
       } else if (detail.current >= this.total - 1) {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
       }
-      if (this.isRight) {
-        // this.submitAnswer()
-      }
-
       this.prevfetch()
+      this.submitAnswer()
     },
 
     onAnimationfinish({ detail }) {
-    },
-
-
-    onCaseIndexChange() {
 
     },
 
-    onCaseChange() {
 
+    onCaseIndexChange(index) {
+      this.caseIndex = index;
+    },
+
+    onCaseChange(index, answer) {
+      this.questionList[this.currentIndex].child[index].userAnswer = answer;
     },
 
     getCurrAnswer(index) {
@@ -235,7 +232,7 @@ export default {
 
     async submitPaper() {
       let index = this.currentIndex
-      let key = this.questionList[index].question_id
+      let key = this.questionList[index].id
       let currAnswer = this.userAnswerMap[key]
       let data = { practice_id: this.practice_id, question_id: key, answer: currAnswer.answer }
       const res = await practiceAnswer(data);
@@ -248,26 +245,26 @@ export default {
       }
     },
 
-    async submitAnswer(prevAnswer) {
-      let data = { practice_id: this.practice_id, question_id: prevAnswer.question_id, answer: prevAnswer.answer }
-      const res = await practiceAnswer(data);
-      if (res.code === 0) {
-        this.duration = 0
+    async submitAnswer() {
+      let answer = this.getCurrAnswer(this.prevIndex)
+      console.log('answer', answer);
+      if (answer) {
+        let questionBankInfo = this.$store.getters.questionBankInfo
+        let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
+        const res = await practiceAnswerTheQuestion(data);
+        if (res.code === 0) {
+        }
       }
     },
 
-    async getQuestionDetail(question_id) {
+    async getQuestionDetail(question_id, index) {
+      console.log(index, this.currentIndex);
       let questionBankInfo = this.$store.getters.questionBankInfo
       let params = { question_id: question_id, question_bank_id: questionBankInfo.id }
       let res = await getQuestionDetail(params)
       if (res.code === 0) {
-        this.questionList.push(res.data)
-        this.direction = 0
+        this.questionList[index] = res.data
       }
-    },
-
-    async practiceAnswerTheQuestion() {
-
     },
 
     async getPracticeAnswerSheet() {
@@ -276,23 +273,36 @@ export default {
       if (res.code === 0) {
         let lastId = res.data.last_question_id
         let arr = res.data.arr
+        let total = arr.length
         let prev = 0
         let curr = 0
         let next = 0
-        if (!lastId) {
-          lastId = arr[0].id
+        if (!lastId) lastId = arr[0].id;
+
+        let index = arr.findIndex(item => item.id === lastId)
+
+        if (index === -1) {
           prev = arr[0].id
           curr = arr[1].id
           next = arr[2].id
+        } else if (index === 0) {
+          prev = arr[index].id
+          curr = arr[index + 1].id
+          next = arr[index + 2].id
+        } else if (index === total - 1) {
+          prev = arr[index - 2].id
+          curr = arr[index - 1].id
+          next = arr[index].id
         } else {
-          let index = arr.findIndex(item => item.id === lastId)
           prev = arr[index - 1].id
           curr = arr[index].id
           next = arr[index + 1].id
         }
+
         this.last_question_id = lastId
         this.answerSheetArr = arr
-        this.total = arr.length
+        this.total = total
+        this.currentIndex = (index !== -1 ? index : 0)
         this.answerSheet = res.data.list
         this.initQuestion(prev, curr, next)
       }
@@ -306,8 +316,28 @@ export default {
       let params3 = { question_bank_id: questionBankInfo.id, question_id: next }
       let res = await Promise.all([getQuestionDetail(params1), getQuestionDetail(params2), getQuestionDetail(params3)])
       if (res.length) {
-        this.questionList = res.map(question => question.data)
+        let list = res.map(item => item.data)
+        this.fiilQuestion(list)
       }
+    },
+
+    fiilQuestion(list) {
+      let arr = [].fill({}, 0, this.answerSheetArr.length), index = this.currentIndex
+      if (index === 0) {
+        arr[index] = list[0]
+        arr[index + 1] = list[1]
+        arr[index + 2] = list[2]
+      } else if (index === this.total - 1) {
+        arr[index - 2] = list[0]
+        arr[index - 1] = list[1]
+        arr[index] = list[2]
+      } else {
+        arr[index - 1] = list[0]
+        arr[index] = list[1]
+        arr[index + 1] = list[2]
+      }
+
+      this.questionList = JSON.parse(JSON.stringify(arr))
     },
 
     async initAnswer(pre, curr, prv) {

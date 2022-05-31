@@ -9,8 +9,8 @@
         <view class="right" :class="{ 'right--active': isOpen }"></view>
       </view>
       <view class="child-header">
-        <view class="child-header-title">案例题 {{ serialNumber }}-{{ currentIndex + 1 }}
-          <text class="text">（{{typeMap[options.child[currentIndex].question_type]}}）</text>
+        <view class="child-header-title">案例题 {{ serialNumber }}-{{ currentIndexCase + 1 }}
+          <text class="text">（{{typeMap[question.question_type]}}）</text>
         </view>
         <view class="child-header-actions">
           <view class="prev" @click="handlePrev">上一题</view>
@@ -18,15 +18,19 @@
         </view>
       </view>
 
-      <swiper class="child-content swiper" @change="onSwiperChange" :current="currentIndex"  :disable-touch="true">
-        <swiper-item class="swiper-item" v-for="(item, index) in options.child" :key="index">
+      <swiper class="child-content swiper" @change="onSwiperChange" :current="currentIndexCase" :disable-touch="true">
+        <swiper-item class="swiper-item" v-for="(item, index) in options.child" :key="'sub_' + index">
           <scroll-view scroll-y class="scroll-view">
-            <Single :options="question" @change="onSingleChange" v-if="question.question_type === 1" />
-            <Multiple :options="question" @change="onSingleChange" v-if="question.question_type === 2" />
-            <Judg :options="question" @change="onSingleChange" v-if="question.question_type === 3" />
-            <Indefinite :options="question" @change="onSingleChange" v-if="question.question_type === 4" />
-            <Completion :options="question" @change="onInputChange" v-if="question.question_type === 5" />
-            <Short :options="question" @change="onInputChange" v-if="question.question_type === 6" />
+            <Single :options="question" @change="onSingleChange"
+                    v-if="question && question.question_child_type === 1" />
+            <Multiple :options="question" @change="onSingleChange"
+                      v-if="question && question.question_child_type === 2" />
+            <Judg :options="question" @change="onSingleChange" v-if="question && question.question_child_type === 3" />
+            <Indefinite :options="question" @change="onSingleChange"
+                        v-if="question && question.question_child_type === 4" />
+            <Completion :options="question" @change="onInputChange"
+                        v-if="question && question.question_child_type === 5" />
+            <Short :options="question" @change="onInputChange" v-if="question && question.question_child_type === 6" />
           </scroll-view>
         </swiper-item>
       </swiper>
@@ -35,21 +39,19 @@
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerBar from "../answerBar";
-import AnswerHead from "../answerHead";
-import Single from "../single";
-import Multiple from "../multiple";
-import Judg from "../judg";
-import Indefinite from "../indefinite";
-import Completion from "../completion";
-import Short from "../short";
+import AnswerHead from "../answerHead/index";
+import Single from "../single/index";
+import Multiple from "../multiple/index";
+import Judg from "../judg/index";
+import Indefinite from "../indefinite/index";
+import Completion from "../completion/index";
+import Short from "../short/index";
 import { getQuestionDetail } from "@/api/question";
 
 export default {
   name: "case",
   components: {
     AnswerHead,
-    AnswerBar,
     Single,
     Multiple,
     Judg,
@@ -94,17 +96,20 @@ export default {
   },
   watch: {
     current(newValue) {
-      this.currentIndex = newValue;
+      console.log('current', newValue);
+      // this.currentIndexCase = newValue;
     },
-    currentIndex(val) {
-      let question_id = this.answerSheetArr[val]
-      this.getQuestionDetail(question_id)
+    currentIndexCase(val) {
+      console.log('current', currentIndexCase);
+      // let question_id = this.answerSheetArr[val]
+      // this.getQuestionDetail(question_id)
     },
   },
   data() {
     return {
-      isOpen: false,
-      currentIndex: 0,
+      isOpen: true,
+      prevIndexCase: -1,
+      currentIndexCase: 0,
       userAnswerMap: {},
       question: {},
       userAnswer: '',
@@ -120,13 +125,14 @@ export default {
       },
     };
   },
-  created() {
+  mounted() {
     this.total = this.options.child.length;
+    this.init()
   },
   onUnload() {
-    if (!["7", "8"].includes(this.type)) {
-      // this.submitOtherAnswer()
-    }
+    // if (!["7", "8"].includes(this.type)) {
+    //   // this.submitOtherAnswer()
+    // }
   },
   methods: {
     checkInputAnswer(answer) {
@@ -154,19 +160,17 @@ export default {
         this.cacheAnswer(answer)
       }
     },
-    
+
     handlePrev() {
-      if (this.currentIndex <= 0) {
-        uni.showToast({ icon: "none", title: "已经是第一小题了" });
-      } else {
-        this.currentIndex--;
+      if (this.currentIndexCase <= 0) {
+        this.prevIndexCase = this.currentIndexCase
+        this.currentIndexCase  = this.currentIndexCase  - 1
       }
     },
     handleNext() {
-      if (this.currentIndex >= this.total - 1) {
-        uni.showToast({icon: "none", title: "已经是最后一小题了" });
-      } else {
-        this.currentIndex++;
+      if (this.currentIndexCase >= this.total - 1) {
+        this.prevIndexCase = this.currentIndexCase
+        this.currentIndexCase  = this.currentIndexCase  + 1
       }
     },
 
@@ -176,11 +180,29 @@ export default {
       } else if (detail.current >= this.total - 1) {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
       }
-      this.currentIndex = detail.current
+
+      this.currentIndexCase = detail.current
+      
+
     },
 
     handleToggle() {
       this.isOpen = !this.isOpen;
+    },
+
+    async init() {
+      let questionBankInfo = this.$store.getters.questionBankInfo
+      let index = this.currentIndexCase
+      let question_id = this.options.child[index]
+      console.log(question_id, this.options, this.currentIndexCase);
+      if (question_id) {
+        let params = { question_id: question_id, question_bank_id: questionBankInfo.id }
+        let res = await getQuestionDetail(params)
+        if (res.code === 0) {
+          this.question = res.data
+          console.log('question', this.question);
+        }
+      }
     },
 
     async getQuestionDetail(question_id) {
@@ -191,7 +213,6 @@ export default {
         this.question = res.data
       }
     },
-
   },
 };
 </script>

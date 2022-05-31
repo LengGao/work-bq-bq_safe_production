@@ -3,8 +3,8 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" multiple v-model="checkedAnswer" :correct-answer="correctAnswer" />
-    <AnswerEye @change="handleEyeChange" />
+    <Select :options="options.option" multiple :value="checkedAnswer" :correct-answer="correctAnswer" @change="onChangeOpt" />
+    <AnswerEye :correctAnswer="correctAnswer" @change="handleEyeChange" />
     <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
@@ -38,25 +38,27 @@ export default {
   data() {
     return {
       correctAnswer: "",
-      checkedAnswer: this.userAnswer || [],
+      checkedAnswer: [],
     };
   },
-  watch: {
-    checkedAnswer(val) {
-      let data = { id: this.options.id, answer: val }
-      this.$emit("change", data);
-    },
-  },
   created() {
+    if (this.options.userAnswer.langth) {
+      this.correctAnswer = this.options.true_answer.map(item => +item)
+      this.checkedAnswer = this.options.user_answer.map(item => +item)
+    }
   },
   methods: {
     handleEyeChange(val) {
       if (val) {
-        this.correctAnswer = this.options.true_answer;
-        this.userAnswerText = this.checkedAnswer.toString(",");
+        this.correctAnswer = this.options.true_answer.map(item => +item);
       } else {
         this.correctAnswer = "";
       }
+    },
+    onChangeOpt(val) {
+      console.log('indefinite', val);
+      let data = { id: this.options.id, answer: val }
+      this.$emit("change", data);
     },
   },
 };

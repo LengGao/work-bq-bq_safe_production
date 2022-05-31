@@ -3,8 +3,9 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <textarea :disabled="!!correctAnswer" class="text" @input="onInput" v-model="value" placeholder="请输入" />
-    <AnswerEye @change="handleEyeChange" />
+    <!-- confirm="onInput -->
+    <textarea :disabled="!!correctAnswer" class="text" @blur="onInput" v-model="value" placeholder="请输入" />
+    <AnswerEye :correctAnswer="correctAnswer" @change="handleEyeChange" />
     <AnswerAnalysis v-if="correctAnswer" short :question="options" :userAnswer="value" />
   </div>
 </template>
@@ -37,12 +38,19 @@ export default {
   data() {
     return {
       correctAnswer: "",
-      value: this.userAnswer || "",
+      value: "",
     };
   },
+  created() {
+    if (this.options.user_answer.length) {
+      this.value = this.options.user_answer[0]
+      this.correctAnswer = this.options.true_answer
+    }
+  },
   methods: {
-    onInput() {
-      let data = { id: this.options.id, answer: [this.value] }
+    onInput(val) {
+      console.log("short", val);
+      let data = { id: this.options.id, answer: this.value }
       this.$emit("change", data);
     },
     handleEyeChange(val) {

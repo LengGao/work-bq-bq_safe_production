@@ -1,11 +1,11 @@
 <template>
   <view class="select">
-    <s-option @change="onOptionChange" v-for="(item, index) in options" :key="index"
-              :value="item.id" :status="status(item.id)">
+    <s-option @change="onOptionChange" v-for="(item, index) in options" :key="index" :value="item.id"
+              :status="status(item.id)">
       <template v-slot:label>
-         <text> {{ selectLabel[index] }}</text>
+        <text> {{ selectLabel[index] }}</text>
       </template>
-    <u-parse :content="item.content" />
+      <u-parse :content="item.content" />
     </s-option>
   </view>
 </template>
@@ -35,7 +35,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    // 题目正确答案
     correctAnswer: {
       type: [Array, String, Number],
       default: "",
@@ -50,19 +49,23 @@ export default {
   },
   watch: {
     checkedAnswer(newValue, oldValue) {
+      // console.log('newValue ', newValue);
       if (this.multiple) {
-        this.$emit("input", newValue)
+        this.$emit("change", newValue)
       } else if (newValue !== oldValue) {
-        this.$emit("input", newValue)
+        this.$emit("change", newValue)
       }
     },
   },
+  mounted() {
+    console.log('options', this.options, this.checkedAnswer);
+  },
   methods: {
     status(value) {
-      if (`${this.checkedAnswer}`.length) {
-        console.log("status", this.checkedAnswer, "value", value);
+      console.log('checkedAnswe status',value,typeof value, this.checkedAnswer, this.correctAnswer);
+      if (this.checkedAnswer) {
         if (this.correctAnswer) {
-          return this.correctAnswer.indexOf(`${value}`) !== -1 ? 'success' : 'error'             
+          return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'
         } else {
           if (this.multiple) {
             return this.checkedAnswer.indexOf(value) !== -1 ? 'active' : ''
@@ -75,9 +78,9 @@ export default {
     onOptionChange(val) {
       console.log('onOptionChange', val, this.checkedAnswer);
       if (this.multiple) {
-        this.checkedAnswer.indexOf(val) !== -1 
-        ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)
-        : this.checkedAnswer.push(val)
+        this.checkedAnswer.indexOf(val) !== -1
+          ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)
+          : this.checkedAnswer.push(val)
       } else {
         this.checkedAnswer = val
       }

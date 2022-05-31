@@ -3,7 +3,7 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" v-model="checkedAnswer" :correct-answer="correctAnswer" />
+    <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" @change="onChangeOpt" />
     <AnswerAnalysis v-if="checkedAnswer && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
@@ -35,21 +35,23 @@ export default {
   data() {
     return {
       correctAnswer: "",
-      checkedAnswer: this.userAnswer || "",
+      checkedAnswer: "",
     };
   },
-  watch: {
-    checkedAnswer(val) {
-      this.correctAnswer = this.options.true_answer;
-      let data = { id: this.options.id, answer: [val] }
-      this.$emit("change", data);
-    },
-  },
   created() {
-    if (this.options.userAnswer) {
-      this.correctAnswer = this.options.true_answer;
+    if (this.options.user_answer.length) {
+      this.correctAnswer = this.options.true_answer.map(item => +item);
+      this.checkedAnswer = this.options.user_answer.map(item => +item)
     }
   },
+  methods: {
+    onChangeOptval() {
+      console.log('judg', val);
+      this.correctAnswer = this.options.true_answer.map(item => +item);
+      let data = { id: this.options.id, answer: [val] }
+      this.$emit("change", data);
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
