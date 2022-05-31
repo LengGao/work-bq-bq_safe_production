@@ -28,7 +28,10 @@
         <!-- </template> -->
       </swiper-item>
     </swiper>
-    <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" @submit-paper="toTestResoult" @card="toCard"
+    <AnswerBar class="bar"
+              v-if="questionList[currentIndex]"
+              :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @card="toCard"
+               :isCollection="questionList[currentIndex].is_collect"
                @next="handleNext" @prev="handlePrev" @collect="setCollection">
     </AnswerBar>
   </view>
@@ -49,6 +52,7 @@ import {
   getPracticeAnswerSheet,
   getQuestionDetail,
   practiceAnswerTheQuestion,
+  collect,
 } from "@/api/question";
 
 export default {
@@ -105,12 +109,9 @@ export default {
       return this.question.is_collect
     }
   },
-  watch: {
-  },
-  onShow() {
-  },
   onLoad(query) {
     let { chapterId, question_bank_id, question_id, title = "章节练习" } = query
+
     this.chapter_id = +chapterId
     this.question_bank_id = +question_bank_id
     this.question_id = +question_id
@@ -192,7 +193,6 @@ export default {
     },
 
     onAnimationfinish({ detail }) {
-
     },
 
 
@@ -205,6 +205,7 @@ export default {
     },
 
     getCurrAnswer(index) {
+      // console.log(index, this.questionList);
       let key = this.questionList[index].id
       return this.userAnswerMap[key]
     },
@@ -214,38 +215,61 @@ export default {
       if (!this.userAnswerMap[key]) {
         this.userAnswerMap[key] = answer
       }
-      console.log('cacheAnswer', answer, this.userAnswerMap);
+      // console.log('cacheAnswer', answer, this.userAnswerMap);
     },
 
     async toCard() {
+      let index = this.currentIndex <= 0 ? 0 : this.currentIndex
+      let answer = this.getCurrAnswer(index)
+      // console.log('toCard', this.prevIndex, answer)
+      let question_bank_id = this.question_bank_id
+      let url = '/pages/examinations/practiceMode/result/index'
+      let query = `?chapter_id=${this.chapter_id}&question_bank_id=${question_bank_id}`
 
+      if (answer) {
+        let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
+        const res = await practiceAnswerTheQuestion(data);
+        if (res.code === 0) {
+          uni.redirectTo({ url: url + query})
+        }
+      } else {
+          uni.redirectTo({ url: url + query})
+      }
     },
 
     async setCollection() {
-
+      let question_id = this.questionList[this.currentIndex].id
+      let question_bank_id = this.question_bank_id
+      let data = {question_bank_id: question_bank_id, question_id}
+      let res = await collect(data)
+      if (res.code === 0) {
+        if (res.message.indexOf('取消') !== -1) {
+          this.questionList[this.currentIndex].is_collect = 0
+        } else {
+          this.questionList[this.currentIndex].is_collect = 1
+        }
+        uni.showToast({ title: `${res.message}`, icon: 'none'})
+      }
     },
 
     async submitPaper() {
-      let index = this.currentIndex
-      let key = this.questionList[index].id
-      let currAnswer = this.userAnswerMap[key]
-      let data = { practice_id: this.practice_id, question_id: key, answer: currAnswer.answer }
-      const res = await practiceAnswer(data);
-      if (res.code === 0) {
-        let url = `/pages/examinations/classTestMode/result/index`
-        let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&grade=${80}`
-        setTimeout(() => {
-          uni.navigateTo({ url: url + query });
-        }, 800);
+      let index = this.currentIndex <= 0 ? 0 : this.currentIndex
+      let answer = this.getCurrAnswer(index)
+      // console.log('submitPaper', this.prevIndex, answer);
+      if (answer) {
+        let question_bank_id = this.question_bank_id
+        let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
+        const res = await practiceAnswerTheQuestion(data);
       }
+      uni.navigateBack()
     },
 
     async submitAnswer() {
       let answer = this.getCurrAnswer(this.prevIndex)
-      console.log('answer', this.prevIndex, answer);
+      // console.log('answer', this.prevIndex, answer);
       if (answer) {
-        let questionBankInfo = this.$store.getters.questionBankInfo
-        let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
+        let question_bank_id = this.question_bank_id
+        let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
         const res = await practiceAnswerTheQuestion(data);
         if (res.code === 0) {
         }
@@ -253,9 +277,9 @@ export default {
     },
 
     async getQuestionDetail(question_id, index) {
-      console.log(index, this.currentIndex);
-      let questionBankInfo = this.$store.getters.questionBankInfo
-      let params = { question_id: question_id, question_bank_id: questionBankInfo.id }
+      // console.log(index, this.currentIndex);
+      let question_bank_id = this.question_bank_id
+      let params = { question_id: question_id, question_bank_id: question_bank_id }
       let res = await getQuestionDetail(params)
       if (res.code === 0) {
         this.questionList[index] = res.data
@@ -275,7 +299,7 @@ export default {
         if (!lastId) lastId = arr[0].id;
 
         let index = arr.findIndex(item => item.id === lastId)
-        console.log("index", index);
+        // console.log("index", index);
         if (index === -1) {
           prev = arr[0].id
           curr = arr[1].id
@@ -305,10 +329,10 @@ export default {
 
 
     async initQuestion(prev, curr, next) {
-      let questionBankInfo = this.$store.getters.questionBankInfo
-      let params1 = { question_bank_id: questionBankInfo.id, question_id: prev }
-      let params2 = { question_bank_id: questionBankInfo.id, question_id: curr }
-      let params3 = { question_bank_id: questionBankInfo.id, question_id: next }
+      let question_bank_id = this.question_bank_id
+      let params1 = { question_bank_id: question_bank_id, question_id: prev }
+      let params2 = { question_bank_id: question_bank_id, question_id: curr }
+      let params3 = { question_bank_id: question_bank_id, question_id: next }
       let res = await Promise.all([getQuestionDetail(params1), getQuestionDetail(params2), getQuestionDetail(params3)])
       if (res.length) {
         let list = res.map(item => item.data)

@@ -7,8 +7,8 @@
       <template v-slot:label>
         <text> {{ index + 1 }}</text>
       </template>
-      <input type="text" class="input" :disabled="!!correctAnswer" :value="item.value" placeholder="请输入"
-             @confirm="handlBlur" />
+      <input type="text" class="input" :disabled="!!correctAnswer" v-model="item.value" placeholder="请输入"
+             @blur="handlBlur" />
              <!-- @confirm -->
     </IOption>
     <AnswerEye :correct-answer="correctAnswer" @change="handleEyeChange" />

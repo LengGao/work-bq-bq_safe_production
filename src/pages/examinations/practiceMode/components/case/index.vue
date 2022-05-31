@@ -108,6 +108,7 @@ export default {
       answerSheetArr: this.options.child || [],
       total: 0,
       isEnd: false,
+
       typeMap: {
         1: "单选题",
         2: "多选题",

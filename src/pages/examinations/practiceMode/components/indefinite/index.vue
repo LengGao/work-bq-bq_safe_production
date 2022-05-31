@@ -57,7 +57,7 @@ export default {
     },
     onChangeOpt(val) {
       console.log('indefinite', val);
-      let data = { id: this.options.id, answer: [val] }
+      let data = { id: this.options.id, answer: val }
       this.$emit("change", data);
     },
   },

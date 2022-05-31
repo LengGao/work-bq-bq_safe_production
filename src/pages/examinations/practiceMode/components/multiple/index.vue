@@ -5,7 +5,7 @@
     </view>
     <Select :options="options.option" multiple :value="checkedAnswer" :correct-answer="correctAnswer"
             @change="onChangeOpt" />
-    <AnswerEye :correctAnswer="correctAnswer" @change="handleEyeChange" />
+    <AnswerEye :correct-answer="correctAnswer" @change="handleEyeChange" />
     <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
@@ -42,7 +42,7 @@ export default {
       checkedAnswer: [],
     };
   },
-  mounted() {
+  created() {
     if (this.options.user_answer.length) {
       this.correctAnswer = this.options.true_answer.map(item => +item)
       this.checkedAnswer = this.options.user_answer.map(item => +item)

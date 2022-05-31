@@ -120,13 +120,14 @@ export function practiceAnswerTheQuestion(data) {
     data   
   })
 }
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
+
+export function collect(data) {
+  return requset({
+    url: 'question/collect',
+    method: 'post',
+    data   
+  })
+}
 // export function practiceAnalyse(data) {
 //   return requset({
 //     url: 'course/practiceAnalyse',

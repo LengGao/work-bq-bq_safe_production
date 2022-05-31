@@ -17,12 +17,9 @@ export default {
     aliplayer.async = true
     head.appendChild(aliplayer)
 
-    uni.navigateBack = (details = 0) => {      
-      if (details) {
-        history.go( 0 - details )
-      } else {
-        history.back() 
-      }
+    uni.navigateBack = (details) => { 
+      if (details !== undefined) history.go( 0 - details);
+        history.back()
     }
     /* #endif */
 
