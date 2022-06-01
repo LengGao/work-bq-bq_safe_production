@@ -39,6 +39,10 @@ export default {
         title: "",
       }),
     },
+    isAnalysis: {
+      type: Boolean,
+      default: false,
+    },    
     userAnswer: {
       type: [Array, String, Number],
       default: "",
@@ -87,14 +91,15 @@ export default {
     // },
   },
   created() {
-    // if (this.options.user_answer.length) {
-    //   this.inputItem = this.options.option.map((item, index) => {
-    //     return {value: this.options.user_answer[index] || '', status: '' }
-    //   })
-    //   this.correctAnswer = this.options.true_answer
-    // } else {
+    if (this.options.user_answer.length) {
+      this.inputItem = this.options.option.map((item, index) => {
+        return {value: this.options.user_answer[index] || '', status: '' }
+      })
+    } else if (this.isAnalysis) {
+      this.correctAnswer = this.options.true_answer
+    } else {
       this.inputItem = this.options.option.map(item => ({ value: '', status: '' }))
-    // }
+    }
   },
   methods: {
     handlBlur() {

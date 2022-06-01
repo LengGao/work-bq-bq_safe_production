@@ -63,12 +63,13 @@ export default {
       let exam_id = this.exam_id
       let exam_log_id = this.exam_log_id
       let type = this.type
+      let title = this.configData.title
       let params = { question_bank_id: question_bank_id, exam_id: exam_id, exam_log_id: exam_log_id }
 
       let api = !!type ? getMockExamLog : createExamLog
       let res = await api(params)
       if (res.code === 0) {
-        query = `?exam_id=${this.exam_id}&question_bank_id=${question_bank_id}&exam_log_id=${res.data.exam_log_id}&type=${this.type}`
+        query = `?exam_id=${this.exam_id}&question_bank_id=${question_bank_id}&exam_log_id=${res.data.exam_log_id}&type=${this.type}&title=${title}`
         uni.redirectTo({ url: url + query })
       }
     },

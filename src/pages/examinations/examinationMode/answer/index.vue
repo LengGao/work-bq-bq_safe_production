@@ -8,24 +8,22 @@
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
-        <!-- <template v-if="currentIndex === index || (currentIndex - 1) === index || (currentIndex + 1) === index"> -->
-        <Single :options="questionList[index]" @change="onSingleChange"
+        <Single :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                 v-if="questionList[index] && questionList[index].question_type === 1" />
-        <Multiple :options="questionList[index]" @change="onSingleChange"
+        <Multiple :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_type === 2" />
-        <Indefinite :options="questionList[index]" @change="onSingleChange"
+        <Indefinite :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                     v-if="questionList[index] && questionList[index].question_type === 3" />
-        <Judg :options="questionList[index]" @change="onSingleChange"
+        <Judg :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
               v-if="questionList[index] && questionList[index].question_type === 4" />
-        <Completion :options="questionList[index]" @change="onInputChange"
+        <Completion :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
                     v-if="questionList[index] && questionList[index].question_type === 5" />
-        <Short :options="questionList[index]" @change="onInputChange"
+        <Short :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
                v-if="questionList[index] && questionList[index].question_type === 6" />
-        <Case :options="questionList[index]" :serial-number="currentIndex + 1" :log-id="exam_log_id"
-              v-if="questionList[index] && questionList[index].question_type === 7" :ref="`case-${item.id}`"
-              :is-active="currentIndex === index"
+        <Case :options="questionList[index]" :isAnalysis="isAnalysis" :serial-number="currentIndex + 1" 
+              :log-id="exam_log_id" :is-active="currentIndex === index" :ref="`case-${item.id}`"
+              v-if="questionList[index] && questionList[index].question_type === 7"
               @change="onCaseChange" @index-change="onCaseIndexChange" />
-        <!-- </template> -->
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar"
@@ -80,29 +78,22 @@ export default {
       chapter_id: 0,
       last_question_id: 0,
       question_bank_id: 0,
-      exam_log_id: 0,
-
-      caseIndex: 0,
-      logId: '',
+      exam_log_id: 0,      
       tiem: 0,
       model: '2',
 
       answer: {},
       questionList: [],
-      question: {},
       total: 0,
-      userAnswer: '',
-      answerSheet: {},
       answerSheetArr: [],
       userAnswerMap: {},
-
+      
+      title: '',
       isReview: false,
-      is_collect: 0,
-
+      isAnalysis: false
     };
   },
   computed: {
-    // 是否最后一题
     isEnd() {
       return this.currentIndex >= this.total - 1
     },
@@ -119,14 +110,17 @@ export default {
       chapterId, 
       question_bank_id, 
       question_id, 
-      title = "章节练习", 
-      isReview = false 
+      title = "模拟考试",
+      isReview = false,
+      isAnalysis
     } = query
     this.isReview = !!isReview
     this.chapter_id = +chapterId
     this.question_bank_id = +question_bank_id
     this.question_id = +question_id
     this.exam_log_id = +exam_log_id
+    this.isAnalysis = !!isAnalysis
+
     uni.setNavigationBarTitle({ title })
     this.getPracticeAnswerSheet()
   },
@@ -189,7 +183,6 @@ export default {
       }
     },
 
-
     onSwiperChange({ detail }) {
       if (detail.source === 'touch') {
         this.prevIndex = this.currentIndex
@@ -207,23 +200,10 @@ export default {
     onAnimationfinish({ detail }) {
     },
 
-    onTimeUp() {
-      uni.showModal({
-        title: '提示',
-        content: '考试时间到，系统自动交卷',
-        showCancel: false,
-        success: ({ confirm }) => {
-          if (confirm) { this.toCard() }
-        }
-      })
-    },
-
     onCaseIndexChange(index) {
-      // this.caseIndex = index;
     },
 
     onCaseChange(index, answer) {
-      // this.questionList[this.currentIndex].child[index].userAnswer = answer;
     },
 
     getCurrAnswer(index) {
@@ -234,28 +214,60 @@ export default {
 
     cacheAnswer(answer) {
       let key = answer.id
-      // if (!this.userAnswerMap[key]) {
       this.userAnswerMap[key] = answer
-      // }
-      // console.log('cacheAnswer', answer, this.userAnswerMap);
+      console.log('cacheAnswer', answer, this.userAnswerMap);
+    },
+
+    onTimeUp() {
+      uni.showModal({
+        title: '提示',
+        content: '考试时间到，系统自动交卷',
+        showCancel: false,
+        success: ({ confirm }) => {
+          if (confirm) { 
+            this.submitPaper()
+          }
+        }
+      })
     },
 
     async toCard() {
-      let index = this.currentIndex <= 0 ? 0 : this.currentIndex
-      let answer = this.getCurrAnswer(index)
-      // console.log('toCard', this.prevIndex, answer)
+      let index = this.currentIndex
+      let quetion = this.questionList[index]
       let question_bank_id = this.question_bank_id
-      let url = '/pages/examinations/examinationMode/result/index'
-      let query = `?chapter_id=${this.chapter_id}&question_bank_id=${question_bank_id}`
+      let exam_log_id = this.exam_log_id
+      let type = quetion.question_type
+      let question_id = quetion.id
+      let title = this.title
+      let answer = this.getCurrAnswer(index)
 
-      if (answer) {
-        let data = { question_bank_id: question_bank_id, exam_log_id: this.exam_log_id, question_id: answer.id, user_answer: answer.answer }
-        const res = await examAnswerTheQuestion(data);
+      let url = '/pages/examinations/examinationMode/answerSheet/index'
+      let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}`
+      
+      let params = {}, res, ret
+
+      if (type === 7) {
+        params = {question_bank_id, exam_log_id}
+        res = await this.submitAnswer(params)
         if (res.code === 0) {
-          uni.redirectTo({ url: url + query})
+          uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
+            uni.redirectTo({ url: url + query })
+          })
+        }
+      } else if (answer) {
+        params = { question_bank_id, exam_log_id, question_id, user_answer: answer.answer }
+        res = await examAnswerTheQuestion(params)
+        if (res.code === 0) {
+          params = {question_bank_id, exam_log_id}
+          ret = await this.submitAnswer(params)
+          if (ret.code === 0) {
+            uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
+              uni.redirectTo({ url: url + query })
+            })
+          }
         }
       } else {
-          uni.redirectTo({ url: url + query})
+        uni.redirectTo({ url: url + query})
       }
     },
 
@@ -278,38 +290,51 @@ export default {
     },
 
     async submitPaper() {
-      let index = this.currentIndex <= 0 ? 0 : this.currentIndex
+      let index = this.currentIndex
+      let quetion = this.questionList[index]
+      let question_bank_id = this.question_bank_id
+      let exam_log_id = this.exam_log_id
+      let type = quetion.question_type
+      let question_id = quetion.id
       let answer = this.getCurrAnswer(index)
-      console.log('submitPaper', this.prevIndex, answer);
-      if (answer) {
-        let question_bank_id = this.question_bank_id
-        let data = { question_bank_id: question_bank_id, exam_log_id: this.exam_log_id, question_id: answer.id, user_answer: answer.answer }
-        const res = await examAnswerTheQuestion(data);
+      
+      let params = {}, res, ret
+
+      if (type === 7) {
+        params = {question_bank_id, exam_log_id}
+        res = await submitExamPaper(params)
         if (res.code === 0) {
-          let params = {question_bank_id: question_bank_id, exam_log_id: this.exam_log_id}
-          let ret = await submitExamPaper(params)
+          uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
+            uni.redirectTo({ url: '/pages/examinations/examinationMode/result/index' })
+          })
+        }
+      } else if (answer) {
+        params = { question_bank_id, exam_log_id, question_id, user_answer: answer.answer }
+        res = await examAnswerTheQuestion(params)
+        if (res.code === 0) {
+          params = {question_bank_id, exam_log_id}
+          ret = await submitExamPaper(params)
           if (ret.code === 0) {
-            uni.showToast({
-              title: '提交陈功', 
-              icon: 'success',
-              success() {
-                uni.navigateBack()
-              } 
+            uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
+              uni.redirectTo({ url: '/pages/examinations/examinationMode/result/index' })
             })
           }
         }
       }
     },
 
-    async submitAnswer() {
-      let answer = this.getCurrAnswer(this.prevIndex)
-      // console.log('answer', this.prevIndex, answer);
+    async submitAnswer(params) {
+      let answer
+      if (params) {
+        answer = this.getCurrAnswer(this.currentIndex)
+      } else {
+        answer = this.getCurrAnswer(this.prevIndex)
+      }
+
       if (answer) {
         let question_bank_id = this.question_bank_id
         let data = { question_bank_id: question_bank_id, exam_log_id: this.exam_log_id, question_id: answer.id, user_answer: answer.answer }
-        const res = await examAnswerTheQuestion(data);
-        if (res.code === 0) {
-        }
+        examAnswerTheQuestion(data);
       }
     },
 
@@ -363,7 +388,6 @@ export default {
         this.total = total
         this.time = res.data.expires_time
         this.currentIndex = (index !== -1 ? index : 0)
-        this.answerSheet = res.data.list
         this.initQuestion(prev, curr, next)
       }
     },
@@ -397,7 +421,7 @@ export default {
       }
 
       this.questionList = JSON.parse(JSON.stringify(arr))
-      console.log('this.questionList', this.questionList);
+      // console.log('this.questionList', this.questionList);
     },
 
   }

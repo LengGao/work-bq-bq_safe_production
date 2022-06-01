@@ -45,10 +45,10 @@ import logImag from "@/static/logo.png"
 export default {
   data() {
     return {
-      username: '13535019471',
-      password: '123456',
-      // username: '15673416691',
+      // username: '13535019471',
       // password: '123456',
+      username: '15673416691',
+      password: '123456',
       isRead: false,
       visibility: false,
       loading: false,

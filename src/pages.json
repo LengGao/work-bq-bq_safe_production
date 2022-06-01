@@ -215,11 +215,17 @@
 				{
 					"path": "examinationMode/answer/index",
 					"style": {
-						"navigationBarTitleText": "答题卡"
+						"navigationBarTitleText": "模拟考试"
 					}
 				},
 				{
 					"path": "examinationMode/result/index",
+					"style": {
+						"navigationBarTitleText": "答题卡"
+					}
+				},
+				{
+					"path": "examinationMode/answerSheet/index",
 					"style": {
 						"navigationBarTitleText": "答题卡"
 					}

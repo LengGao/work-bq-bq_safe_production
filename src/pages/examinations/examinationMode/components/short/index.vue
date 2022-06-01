@@ -31,6 +31,10 @@ export default {
         title: "",
       }),
     },
+    isAnalysis: {
+      type: Boolean,
+      default: false,
+    },
     userAnswer: {
       type: [Array, String, Number],
       default: "",

@@ -27,6 +27,10 @@ export default {
         title: "",
       }),
     },
+    isAnalysis: {
+      type: Boolean,
+      default: false,
+    },
     userAnswer: {
       type: [Array, String, Number],
       default: "",
@@ -39,11 +43,12 @@ export default {
     };
   },
   created() {
-    // if (this.options.user_answer.length) {
-    //   this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
-    //   this.correctAnswer = this.options.true_answer.map(item => +item);
+    if (this.options.user_answer.length) {
+      this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
       // console.log("judg", this.options.user_answer, this.checkedAnswer);
-    // }
+    } else if (this.isAnalysis) {
+      this.correctAnswer = this.options.true_answer.map(item => +item)
+    }
   },
   methods: {
     onChangeOpt(val) {
