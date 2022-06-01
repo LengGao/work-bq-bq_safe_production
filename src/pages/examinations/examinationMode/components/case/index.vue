@@ -48,7 +48,7 @@ import Completion from "../completion/index";
 import Short from "../short/index";
 import {
   getQuestionDetail,
-  practiceAnswerTheQuestion,
+  examAnswerTheQuestion,
  } from "@/api/question";
 
 export default {
@@ -223,8 +223,8 @@ export default {
 
       if ((this.total === 1 || this.isEnd) && answer) {
         let questionBankInfo = this.$store.getters.questionBankInfo
-        let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
-        practiceAnswerTheQuestion(data);
+        let data = { question_bank_id: questionBankInfo.id, exam_log_id: this.logId, question_id: answer.id, user_answer: answer.answer }
+        examAnswerTheQuestion(data);
       }
       // console.log('cacheAnswer', answer, this.userAnswerMap);
     },
@@ -234,8 +234,8 @@ export default {
       // console.log('answer', this.prevIndexCase, answer);
       if (answer) {
         let questionBankInfo = this.$store.getters.questionBankInfo
-        let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
-        const res = await practiceAnswerTheQuestion(data);
+        let data = { question_bank_id: questionBankInfo.id, exam_log_id: this.logId, question_id: answer.id, user_answer: answer.answer }
+        const res = await examAnswerTheQuestion(data);
         if (res.code === 0) {
         }
       }

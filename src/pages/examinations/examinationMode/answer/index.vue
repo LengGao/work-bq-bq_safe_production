@@ -21,7 +21,7 @@
                     v-if="questionList[index] && questionList[index].question_type === 5" />
         <Short :options="questionList[index]" @change="onInputChange"
                v-if="questionList[index] && questionList[index].question_type === 6" />
-        <Case :options="questionList[index]" :serial-number="currentIndex + 1" :log-id="logId"
+        <Case :options="questionList[index]" :serial-number="currentIndex + 1" :log-id="exam_log_id"
               v-if="questionList[index] && questionList[index].question_type === 7" :ref="`case-${item.id}`"
               :is-active="currentIndex === index"
               @change="onCaseChange" @index-change="onCaseIndexChange" />
@@ -51,7 +51,8 @@ import Case from "../components/case";
 import {
   getExamAnswerSheet,
   getQuestionDetail,
-  practiceAnswerTheQuestion,
+  examAnswerTheQuestion,
+  submitExamPaper,
   collect,
 } from "@/api/question";
 
@@ -248,8 +249,8 @@ export default {
       let query = `?chapter_id=${this.chapter_id}&question_bank_id=${question_bank_id}`
 
       if (answer) {
-        let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
-        const res = await practiceAnswerTheQuestion(data);
+        let data = { question_bank_id: question_bank_id, exam_log_id: this.exam_log_id, question_id: answer.id, user_answer: answer.answer }
+        const res = await examAnswerTheQuestion(data);
         if (res.code === 0) {
           uni.redirectTo({ url: url + query})
         }
@@ -279,13 +280,25 @@ export default {
     async submitPaper() {
       let index = this.currentIndex <= 0 ? 0 : this.currentIndex
       let answer = this.getCurrAnswer(index)
-      // console.log('submitPaper', this.prevIndex, answer);
+      console.log('submitPaper', this.prevIndex, answer);
       if (answer) {
         let question_bank_id = this.question_bank_id
-        let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
-        const res = await practiceAnswerTheQuestion(data);
+        let data = { question_bank_id: question_bank_id, exam_log_id: this.exam_log_id, question_id: answer.id, user_answer: answer.answer }
+        const res = await examAnswerTheQuestion(data);
+        if (res.code === 0) {
+          let params = {question_bank_id: question_bank_id, exam_log_id: this.exam_log_id}
+          let ret = await submitExamPaper(params)
+          if (ret.code === 0) {
+            uni.showToast({
+              title: '提交陈功', 
+              icon: 'success',
+              success() {
+                uni.navigateBack()
+              } 
+            })
+          }
+        }
       }
-      uni.navigateBack()
     },
 
     async submitAnswer() {
@@ -293,8 +306,8 @@ export default {
       // console.log('answer', this.prevIndex, answer);
       if (answer) {
         let question_bank_id = this.question_bank_id
-        let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
-        const res = await practiceAnswerTheQuestion(data);
+        let data = { question_bank_id: question_bank_id, exam_log_id: this.exam_log_id, question_id: answer.id, user_answer: answer.answer }
+        const res = await examAnswerTheQuestion(data);
         if (res.code === 0) {
         }
       }

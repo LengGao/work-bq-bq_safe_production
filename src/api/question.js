@@ -144,6 +144,23 @@ export function practiceAnswerTheQuestion(data) {
   })
 }
 
+export function examAnswerTheQuestion(data) {
+  return requset({
+    url: 'question/examAnswerTheQuestion',
+    method: 'post',
+    data
+  })
+}
+
+export function submitExamPaper(data) {
+  return requset({
+    url: 'question/submitExamPaper',
+    method: 'post',
+    data
+  })
+}
+
+
 export function collect(data) {
   return requset({
     url: 'question/collect',
@@ -175,14 +192,6 @@ export function getExamAnswerSheet(data) {
     data   
   })
 }
-
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
 
 
 

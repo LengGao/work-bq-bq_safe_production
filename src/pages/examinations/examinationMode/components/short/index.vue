@@ -5,8 +5,8 @@
     </view>
     <!-- confirm="onInput -->
     <textarea :disabled="!!correctAnswer" class="text" @blur="onInput" :value="value" placeholder="请输入" />
-    <AnswerEye :correctAnswer="correctAnswer" @change="handleEyeChange" />
-    <AnswerAnalysis v-if="correctAnswer" short :question="options" :userAnswer="value" />
+    <!-- <AnswerEye :correctAnswer="correctAnswer" @change="handleEyeChange" />
+    <AnswerAnalysis v-if="correctAnswer" short :question="options" :userAnswer="value" /> -->
   </div>
 </template>
 <script>
@@ -43,10 +43,10 @@ export default {
     };
   },
   created() {
-    if (this.options.user_answer.length) {
-      this.value = this.options.user_answer[0]
-      this.correctAnswer = this.options.true_answer
-    }
+    // if (this.options.user_answer.length) {
+    //   this.value = this.options.user_answer[0]
+    //   this.correctAnswer = this.options.true_answer
+    // }
   },
   methods: {
     onInput({ detail }) {
@@ -56,11 +56,11 @@ export default {
       this.$emit("change", data);
     },
     handleEyeChange(val) {
-      if (val) {
-        this.correctAnswer = this.options.true_answer;
-      } else {
-        this.correctAnswer = "";
-      }
+      // if (val) {
+      //   this.correctAnswer = this.options.true_answer;
+      // } else {
+      //   this.correctAnswer = "";
+      // }
     },
   },
 };

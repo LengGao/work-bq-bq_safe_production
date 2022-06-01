@@ -31,7 +31,7 @@ import Header from "../components/header/index";
 import Footer from "../components/footer/index";
 import Title from "../components/title/index";
 import Circular from "../components/circular/index";
-import { getPracticeAnswerSheet } from "@/api/question";
+import { getExamAnswerSheet } from "@/api/question";
 
 export default {
   name: "answerSheet",
@@ -43,8 +43,8 @@ export default {
   },
   data() {
     return {
-      model: "1", // 1 刷题 2，考试 3 答题后的解析
-      chapter_id: 0,
+      model: "2", // 1 刷题 2，考试 3 答题后的解析
+      exam_log_id: 0,
       question_bank_id: 0,
       listData: {},
       statusMap: {
@@ -77,8 +77,8 @@ export default {
   },
   computed: {
   },
-  onLoad({ chapter_id, question_bank_id }) {
-    this.chapter_id = chapter_id
+  onLoad({ exam_log_id, question_bank_id }) {
+    this.exam_log_id = exam_log_id
     this.question_bank_id = question_bank_id
     this.getQuestionBoard();
   },
@@ -87,10 +87,10 @@ export default {
       let types = this.listData[type]
       let question_id = types[index].id
       console.log(type, index, types);
-      let chapter_id = this.chapter_id
+      let exam_log_id = this.exam_log_id
       let question_bank_id = this.question_bank_id
       let url = `/pages/examinations/practiceMode/answer/index`
-      let query = `?chapterId=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1`
+      let query = `?chapterId=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1`
       uni.redirectTo({ url: url + query })
     },
     handleSubmit() {
@@ -111,8 +111,8 @@ export default {
       uni.navigateBack();
     },
     async getQuestionBoard() {
-      let data = { question_bank_id: this.question_bank_id, chapter_id: this.chapter_id }
-      const res = await getPracticeAnswerSheet(data);
+      let data = { question_bank_id: this.question_bank_id, exam_log_id: this.exam_log_id }
+      const res = await getExamAnswerSheet(data);
       this.listData = res.data.list;
     },
   },

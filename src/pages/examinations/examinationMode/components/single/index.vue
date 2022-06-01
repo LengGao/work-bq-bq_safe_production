@@ -40,17 +40,17 @@ export default {
     };
   },
   created() {
-    if (this.options.user_answer.length) {
-      this.correctAnswer = this.options.true_answer.map(item => +item)
-      this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
-      // console.log("single", this.options.user_answer, this.checkedAnswer)
-    }
+    // if (this.options.user_answer.length) {
+    //   this.correctAnswer = this.options.true_answer.map(item => +item)
+    //   this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
+    //   console.log("single", this.options.user_answer, this.checkedAnswer)
+    // }
   },
   methods: {
     onChangeOpt(val) {
         // console.log('single onChangeOpt', val);
         this.checkedAnswer = val
-        this.correctAnswer = this.options.true_answer.map(item => +item)
+        // this.correctAnswer = this.options.true_answer.map(item => +item)
         let data = { id: this.options.id, answer: [val] }
         this.$emit("change", data);
     }

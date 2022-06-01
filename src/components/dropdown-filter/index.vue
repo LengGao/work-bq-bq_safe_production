@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     defaultName() {
-      return '全部'
+      return '全部分类'
     }
   },
   created() {
