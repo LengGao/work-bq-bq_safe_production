@@ -12,7 +12,7 @@
         <view class="independent-container" v-if="list.length">
           <view class="independent-list">
             <view class="independent-list-item" v-for="item in list" :key="item.id"
-                  @click="toConfig(item.id)">
+                  @click="toConfig(item)">
               <view class="independent-info">
                 <view class="independent-info-title">
                   <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx"></uni-icons>
@@ -66,10 +66,12 @@ export default {
     goBack() {
       uni.navigateBack()
     },
-    toConfig(exam_id) {
-      uni.navigateTo({
-        url: `/pages/examinations/testPaperIntroduce/index?exam_id=${exam_id}$source=0`,
-      });
+    toConfig(item) {
+      let exam_id = item.id
+      let exam_log_id = item.exam_log_id
+      let url = `/pages/examinations/testPaperIntroduce/index`
+      let query = `?exam_id=${exam_id}&exam_log_id=${exam_log_id}&type=0`
+      uni.navigateTo({ url: url + query })
     },
     onScrolltolower() {
     },

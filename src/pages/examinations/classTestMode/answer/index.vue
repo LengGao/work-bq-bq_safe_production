@@ -197,7 +197,7 @@ export default {
         let index = this.currentIndex
         let key = this.questionList[index].question_id
         let currAnswer = this.userAnswerMap[key]
-        let data = { practice_id: this.practice_id, question_id: key, answer: currAnswer.answer }
+        let data = { practice_id: +this.practice_id, question_id: key, answer: currAnswer.answer }
         const res = await practiceAnswer(data);
         if (res.code === 0) {
           let url = `/pages/examinations/classTestMode/result/index`

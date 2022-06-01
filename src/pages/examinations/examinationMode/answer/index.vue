@@ -29,8 +29,9 @@
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar"
-               :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @card="toCard"
+               :is-end="isEnd" :is-start="isStart" :time="time" :model="model"
                :isCollection="questionList[currentIndex].is_collect"
+               @timeup="onTimeUp" @card="toCard" @submit-paper="submitPaper"
                @next="handleNext" @prev="handlePrev" @collect="setCollection">
     </AnswerBar>
   </view>
@@ -48,7 +49,7 @@ import Short from "../components/short";
 import Case from "../components/case";
 
 import {
-  getPracticeAnswerSheet,
+  getExamAnswerSheet,
   getQuestionDetail,
   practiceAnswerTheQuestion,
   collect,
@@ -78,9 +79,12 @@ export default {
       chapter_id: 0,
       last_question_id: 0,
       question_bank_id: 0,
+      exam_log_id: 0,
 
       caseIndex: 0,
       logId: '',
+      tiem: 0,
+      model: '2',
 
       answer: {},
       questionList: [],
@@ -109,11 +113,19 @@ export default {
     },
   },
   onLoad(query) {
-    let { chapterId, question_bank_id, question_id, title = "章节练习", isReview = false } = query
+    let { 
+      exam_log_id,
+      chapterId, 
+      question_bank_id, 
+      question_id, 
+      title = "章节练习", 
+      isReview = false 
+    } = query
     this.isReview = !!isReview
     this.chapter_id = +chapterId
     this.question_bank_id = +question_bank_id
     this.question_id = +question_id
+    this.exam_log_id = +exam_log_id
     uni.setNavigationBarTitle({ title })
     this.getPracticeAnswerSheet()
   },
@@ -194,6 +206,16 @@ export default {
     onAnimationfinish({ detail }) {
     },
 
+    onTimeUp() {
+      uni.showModal({
+        title: '提示',
+        content: '考试时间到，系统自动交卷',
+        showCancel: false,
+        success: ({ confirm }) => {
+          if (confirm) { this.toCard() }
+        }
+      })
+    },
 
     onCaseIndexChange(index) {
       // this.caseIndex = index;
@@ -289,8 +311,8 @@ export default {
     },
 
     async getPracticeAnswerSheet() {
-      let params = { question_bank_id: this.question_bank_id, chapter_id: this.chapter_id }
-      let res = await getPracticeAnswerSheet(params)
+      let params = { question_bank_id: this.question_bank_id, exam_log_id: this.exam_log_id }
+      let res = await getExamAnswerSheet(params)
       if (res.code === 0) {
         let lastId = res.data.last_question_id
         let arr = res.data.arr
@@ -326,12 +348,12 @@ export default {
         this.question_id = lastId
         this.answerSheetArr = arr
         this.total = total
+        this.time = res.data.expires_time
         this.currentIndex = (index !== -1 ? index : 0)
         this.answerSheet = res.data.list
         this.initQuestion(prev, curr, next)
       }
     },
-
 
     async initQuestion(prev, curr, next) {
       let question_bank_id = this.question_bank_id

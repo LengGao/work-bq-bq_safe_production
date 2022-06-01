@@ -26,7 +26,6 @@
           <text>{{ questionTypes[item.question_type] }}题</text>
           <text>{{ item.question_num }}题，</text>
           <text>一题{{ item.score }}分</text>
-
         </view>
       </view>
     </view>
@@ -37,45 +36,54 @@
 </template>
 
 <script>
-import { getCustomExamInfo } from "@/api/question";
+import { getCustomExamInfo, getMockExamInfo, getMockExamLog, createExamLog } from "@/api/question";
 
 export default {
   name: "testPaperIntroduce",
   data() {
     return {
-      configData: {
-        list: [],
-      },
-      exam_id: '',
-      source: 0,
+      configData: { list: [] },
+      exam_id: 9,
+      exam_log_id: 0,
+      type: 0,
       questionTypes: ['', '单选', '多选', '不定项', '判断', '填空', '简答', '案例'],
     };
   },
-  onLoad({ exam_id, source }) {
-    this.exam_id = exam_id
-    this.source = source
+  onLoad({ exam_id, type, exam_log_id }) {
+    this.exam_id = exam_id || ''
+    this.type = +type
+    this.exam_log_id = +exam_log_id
     this.getConfig();
   },
   methods: {
-    toAnswer() {
-      if (!!this.source) {
-        uni.redirectTo({ url: `/pages/examinations/examinationMode/answer/index?exam_id${this.exam_id}` })
-      } else {
-        uni.redirectTo({ url: `/pages/examinations/examinationMode/answer/index?exam_id${this.exam_id}` })
+    async toAnswer() {
+      let url = `/pages/examinations/examinationMode/answer/index`
+      let query = ``
+      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let exam_id = this.exam_id
+      let exam_log_id = this.exam_log_id
+      let type = this.type
+      let params = { question_bank_id: question_bank_id, exam_id: exam_id, exam_log_id: exam_log_id }
+
+      let api = !!type ? getMockExamLog : createExamLog
+      let res = await api(params)
+      if (res.code === 0) {
+        query = `?exam_id=${this.exam_id}&question_bank_id=${question_bank_id}&exam_log_id=${res.data.exam_log_id}&type=${this.type}`
+        uni.redirectTo({ url: url + query })
       }
     },
-    
+
     async getConfig() {
       let questionBankInfo = this.$store.getters.questionBankInfo
       let params = { exam_id: this.exam_id, question_bank_id: questionBankInfo.id }
-
-      const res = await getCustomExamInfo(params)
+      let api = !!this.type ? getMockExamInfo : getCustomExamInfo
+      const res = await api(params)
       if (res.code === 0) {
         this.configData = res.data
       }
     },
   },
-};
+}
 </script>
 <style lang="scss" scoped>
 .over-years-introduce {

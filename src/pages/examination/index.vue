@@ -62,7 +62,7 @@
       </view>
     </view>
 
-    <uni-popup ref="popupRef" type="bottom">
+    <uni-popup ref="popupRef" type="bottom" :is-mask-click="false">
       <view class="popup-box">
       <uni-list>
         <view class="list-item-body-title">请选择题库</view>

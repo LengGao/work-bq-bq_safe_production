@@ -207,13 +207,13 @@
 					}
 				},
 				{
-					"path": "answer/index",
+					"path": "examinationMode/answer/index",
 					"style": {
 						"navigationBarTitleText": "答题"
 					}
 				},
 				{
-					"path": "answerSheet/index",
+					"path": "examinationMode/result/index",
 					"style": {
 						"navigationBarTitleText": "答题卡"
 					}

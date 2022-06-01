@@ -1,4 +1,3 @@
-
 import requset from '@/request/index'
 
 export function practiceStart(data) {
@@ -89,6 +88,14 @@ export function getCustomExamInfo(data) {
   })
 }
 
+export function getMockExamInfo(data) {
+  return requset({
+    url: 'question/getMockExamInfo',
+    method: 'post',
+    data   
+  })
+}
+
 export function wrongChapterList(data) {
   return requset({
     url: 'question/wrongChapterList',
@@ -145,35 +152,30 @@ export function collect(data) {
   })
 }
 
+export function getMockExamLog(data) {
+  return requset({
+    url: 'question/getMockExamLog',
+    method: 'post',
+    data   
+  })
+}
 
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
+export function createExamLog(data) {
+  return requset({
+    url: 'question/createExamLog',
+    method: 'post',
+    data   
+  })
+}
+
+export function getExamAnswerSheet(data) {
+  return requset({
+    url: 'question/getExamAnswerSheet',
+    method: 'post',
+    data   
+  })
+}
+
 // export function practiceAnalyse(data) {
 //   return requset({
 //     url: 'course/practiceAnalyse',
