@@ -189,6 +189,18 @@
 					}
 				},
 				{
+					"path": "selfQuestion/answer/index",
+					"style": {
+						"navigationBarTitleText": "答题卡"
+					}
+				},
+				{
+					"path": "selfQuestion/result/index",
+					"style": {
+						"navigationBarTitleText": "题集答题卡"
+					}
+				},
+				{
 					"path": "testPaperIntroduce/index",
 					"style": {
 						"navigationBarTitleText": "试卷简介"
@@ -212,7 +224,6 @@
 						"navigationBarTitleText": "考试结果"
 					}
 				},
-
 				{
 					"path": "classTestMode/answer/index",
 					"style": {

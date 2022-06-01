@@ -9,9 +9,9 @@
       <view class="bar-text">答题卡</view>
     </view>
     <view class="answer-bar-item" @click="onClickCollect">
-      <uni-icons custom-prefix="iconfont" v-if="!!isCollection" color="#199fff" type="icon-shoucang" size="28rpx">
+      <uni-icons custom-prefix="iconfont" v-show="isCollection" color="#199fff" type="icon-shoucang" size="28rpx">
       </uni-icons>
-      <uni-icons custom-prefix="iconfont" v-else type="icon-shoucang1" size="28rpx"></uni-icons>
+      <uni-icons custom-prefix="iconfont" v-show="!isCollection" type="icon-shoucang1" size="28rpx"></uni-icons>
       <view class="bar-text">收藏</view>
     </view>
     <!-- <view class="answer-bar-item" v-if="model === '2'">
@@ -54,12 +54,6 @@ export default {
       type: String,
       default: "1",
     },
-  },
-  width: {
-    isCollection(val) {
-      console.log('is_collect', val);
-      this.isCollection = val
-    }
   },
   methods: {
     onTimeUp(e) {

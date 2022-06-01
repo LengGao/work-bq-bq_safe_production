@@ -9,29 +9,29 @@
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
         <!-- <template v-if="currentIndex === index || (currentIndex - 1) === index || (currentIndex + 1) === index"> -->
-        <Single :options="questionList[index]" @change="onSingleChange"
+        <Single :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                 v-if="questionList[index] && questionList[index].question_type === 1" />
-        <Multiple :options="questionList[index]" @change="onSingleChange"
+        <Multiple :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_type === 2" />
-        <Indefinite :options="questionList[index]" @change="onSingleChange"
+        <Indefinite :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                     v-if="questionList[index] && questionList[index].question_type === 3" />
-        <Judg :options="questionList[index]" @change="onSingleChange"
+        <Judg :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
               v-if="questionList[index] && questionList[index].question_type === 4" />
-        <Completion :options="questionList[index]" @change="onInputChange"
+        <Completion :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
                     v-if="questionList[index] && questionList[index].question_type === 5" />
-        <Short :options="questionList[index]" @change="onInputChange"
+        <Short :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
                v-if="questionList[index] && questionList[index].question_type === 6" />
         <Case :options="questionList[index]" :serial-number="currentIndex + 1" :log-id="logId"
               v-if="questionList[index] && questionList[index].question_type === 7" :ref="`case-${item.id}`"
-              :is-active="currentIndex === index"
+              :is-active="currentIndex === index" :isAnalysis="isAnalysis"
               @change="onCaseChange" @index-change="onCaseIndexChange" />
         <!-- </template> -->
       </swiper-item>
     </swiper>
     <AnswerBar class="bar"
-               v-if="questionList[currentIndex]"
-               :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @card="toCard"
-               :is-collection="questionList[currentIndex].is_collect"
+              v-if="questionList[currentIndex]"
+              :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @card="toCard"
+               :isCollection="questionList[currentIndex].is_collect"
                @next="handleNext" @prev="handlePrev" @collect="setCollection">
     </AnswerBar>
   </view>
@@ -49,7 +49,8 @@ import Short from "../components/short";
 import Case from "../components/case";
 
 import {
-  getPracticeAnswerSheet,
+  wrongAnswerSheet,
+  collectAnswerSheet,
   getQuestionDetail,
   practiceAnswerTheQuestion,
   collect,
@@ -78,7 +79,6 @@ export default {
 
       chapter_id: 0,
       last_question_id: 0,
-      question_bank_id: 0,
 
       caseIndex: 0,
       logId: '',
@@ -92,7 +92,9 @@ export default {
       answerSheetArr: [],
       userAnswerMap: {},
 
-      isReview: false
+      isReview: false,
+      isAnalysis: false,
+      source: '',
 
     };
   },
@@ -107,13 +109,18 @@ export default {
     isRight() {
       return this.currentIndex > this.prevIndex
     },
+    isCollection() {
+      return this.question.is_collect
+    }
   },
   onLoad(query) {
-    let { chapterId, question_bank_id, question_id, title = "章节练习", isReview = false } = query
+    let { chapterId, question_bank_id, question_id, title = "章节练习", source, isAnalysis, isReview = false } = query
     this.isReview = !!isReview
     this.chapter_id = +chapterId
     this.question_bank_id = +question_bank_id
     this.question_id = +question_id
+    this.source = source
+    this.isAnalysis = !!isAnalysis
     uni.setNavigationBarTitle({ title })
     this.getPracticeAnswerSheet()
   },
@@ -171,7 +178,7 @@ export default {
       let inQuestionList = this.questionList[index]
 
       if (inAnswerSheet && !inQuestionList) {
-        let question_id = inAnswerSheet.id
+        let question_id = inAnswerSheet
         this.getQuestionDetail(question_id, index)
       }
     },
@@ -222,8 +229,8 @@ export default {
       let answer = this.getCurrAnswer(index)
       // console.log('toCard', this.prevIndex, answer)
       let question_bank_id = this.question_bank_id
-      let url = '/pages/examinations/practiceMode/result/index'
-      let query = `?chapter_id=${this.chapter_id}&question_bank_id=${question_bank_id}`
+      let url = '/pages/examinations/selfQuestion/result/index'
+      let query = `?chapter_id=${this.chapter_id}&question_bank_id=${question_bank_id}&source=${this.source}&isAnalysis=${this.isAnalysis}`
 
       if (answer) {
         let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
@@ -247,7 +254,6 @@ export default {
         } else {
           this.questionList[this.currentIndex].is_collect = 1
         }
-        console.log('this.questionList', this.questionList, this.currentIndex);
         uni.showToast({ title: `${res.message}`, icon: 'none'})
       }
     },
@@ -265,6 +271,7 @@ export default {
     },
 
     async submitAnswer() {
+      if (this.isAnalysis) return;
       let answer = this.getCurrAnswer(this.prevIndex)
       // console.log('answer', this.prevIndex, answer);
       if (answer) {
@@ -288,7 +295,8 @@ export default {
 
     async getPracticeAnswerSheet() {
       let params = { question_bank_id: this.question_bank_id, chapter_id: this.chapter_id }
-      let res = await getPracticeAnswerSheet(params)
+      let api = this.source === 'wrong' ? wrongAnswerSheet : collectAnswerSheet
+      let res = await api(params)
       if (res.code === 0) {
         let lastId = res.data.last_question_id
         let arr = res.data.arr
@@ -296,32 +304,31 @@ export default {
         let prev = 0
         let curr = 0
         let next = 0
-        if (!lastId) lastId = arr[0].id;
+        if (!lastId) lastId = arr[0];
         if (this.isReview) lastId = this.question_id;
 
         let index = arr.findIndex(item => item.id === lastId)
         // console.log("index", index);
         
         if (index === -1) {
-          prev = arr[0].id
-          curr = arr[1].id
-          next = arr[2].id
+          prev = arr[0]
+          curr = arr[1]
+          next = arr[2]
         } else if (index === 0) {
-          prev = arr[index].id
-          curr = arr[index + 1].id
-          next = arr[index + 2].id
+          prev = arr[index]
+          curr = arr[index + 1]
+          next = arr[index + 2]
         } else if (index === total - 1) {
-          prev = arr[index - 2].id
-          curr = arr[index - 1].id
-          next = arr[index].id
+          prev = arr[index - 2]
+          curr = arr[index - 1]
+          next = arr[index]
         } else {
-          prev = arr[index - 1].id
-          curr = arr[index].id
-          next = arr[index + 1].id
+          prev = arr[index - 1]
+          curr = arr[index]
+          next = arr[index + 1]
         }
 
         this.last_question_id = lastId
-        this.question_id = lastId
         this.answerSheetArr = arr
         this.total = total
         this.currentIndex = (index !== -1 ? index : 0)

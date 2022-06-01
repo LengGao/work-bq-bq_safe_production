@@ -10,7 +10,7 @@ export const download_file_common = async (url, name = '', header = {}) => {
   if (obj.statusCode === 200 && obj.tempFilePath) {
     const openMsg = await GLOBAL.openDocument({ filePath: obj.tempFilePath, showMenu: true })
     if (!!WeixinJSBridge) {
-      GLOBAL.showModal({ content: '请使用手机浏览器打开', showCancel: false })
+      GLOBAL.showModal({ title: '提示', content: '请使用手机浏览器打开', showCancel: false })
     }
   } else {
     GLOBAL.showToast({ title: '下载失败', icon: 'error' })

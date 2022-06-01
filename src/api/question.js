@@ -97,9 +97,25 @@ export function wrongChapterList(data) {
   })
 }
 
+export function wrongAnswerSheet(data) {
+  return requset({
+    url: 'question/wrongAnswerSheet',
+    method: 'post',
+    data   
+  })
+}
+
 export function collectChapterList(data) {
   return requset({
     url: 'question/collectChapterList',
+    method: 'post',
+    data   
+  })
+}
+
+export function collectAnswerSheet(data) {
+  return requset({
+    url: 'question/collectAnswerSheet',
     method: 'post',
     data   
   })
@@ -128,20 +144,8 @@ export function collect(data) {
     data   
   })
 }
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
-// export function practiceAnalyse(data) {
-//   return requset({
-//     url: 'course/practiceAnalyse',
-//     method: 'get',
-//     data   
-//   })
-// }
+
+
 // export function practiceAnalyse(data) {
 //   return requset({
 //     url: 'course/practiceAnalyse',

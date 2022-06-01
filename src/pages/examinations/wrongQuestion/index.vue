@@ -27,15 +27,15 @@ export default {
   },
   methods: {
     toAnswer(isAnalysis, chapterId, title) {
+      let question_bank_id = this.$store.getters.questionBankInfo.id
       let url = ``
-      let query = `?chapterId=${chapterId}&title=${title}`
+      let query = `?chapterId=${chapterId}&question_bank_id=${question_bank_id}&title=${title}&source=wrong&isAnalysis=${isAnalysis}`
       if (isAnalysis) {
-        url = `/pages/examinations/wrongMode/analysis/index`
+        url = `/pages/examinations/selfQuestion/answer/index`
         uni.navigateTo({ url: url + query })
       } else {
-        url = `/pages/examinations/wrongMode/answer/index`
-        let questionBankInfo = this.$store.getters.questionBankInfo
-        let params = { chapter_id: chapterId, question_bank_id: questionBankInfo.id }
+        url = `/pages/examinations/selfQuestion/answer/index`
+        let params = { chapter_id: chapterId, question_bank_id: question_bank_id }
         restartPractice(params).then(res => {
           if (res.code === 0) uni.navigateTo({ url: url + query });
         })

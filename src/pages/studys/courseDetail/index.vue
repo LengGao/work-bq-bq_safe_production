@@ -345,7 +345,6 @@ export default {
         uni.showModal({
           title: '提示',
           content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
-          showCancel: true,
           cancelText: '取消',
           confirmText: '开始考试',
           cancelColor: '#199fff',

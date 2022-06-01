@@ -46,6 +46,8 @@ export default {
       model: "1", // 1 刷题 2，考试 3 答题后的解析
       chapter_id: 0,
       question_bank_id: 0,
+      source: '',
+      isAnalysis: '',
       listData: {},
       statusMap: {
         1: {
@@ -75,22 +77,21 @@ export default {
       },
     };
   },
-  computed: {
-  },
-  onLoad({ chapter_id, question_bank_id }) {
+  onLoad({ chapter_id, question_bank_id, source, isAnalysis }) {
     this.chapter_id = chapter_id
     this.question_bank_id = question_bank_id
+    this.source = source
+    this.isAnalysis = isAnalysis
     this.getQuestionBoard();
   },
   methods: {
     onSelect(type, index) {
       let types = this.listData[type]
       let question_id = types[index].id
-      console.log(type, index, types);
       let chapter_id = this.chapter_id
       let question_bank_id = this.question_bank_id
-      let url = `/pages/examinations/practiceMode/answer/index`
-      let query = `?chapterId=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1`
+      let url = `/pages/examinations/selfQuestion/answer/index`
+      let query = `?chapterId=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1&source=${this.source}&isAnalysis=${this.isAnalysis}`
       uni.redirectTo({ url: url + query })
     },
     handleSubmit() {
