@@ -55,12 +55,6 @@ export default {
       default: "1",
     },
   },
-  width: {
-    isCollection(val) {
-      console.log('is_collect', val);
-      this.isCollection = val
-    }
-  },
   methods: {
     onTimeUp(e) {
       this.$emit('timeup', e)

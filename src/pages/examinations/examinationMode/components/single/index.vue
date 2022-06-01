@@ -1,28 +1,25 @@
 <template>
-  <view class="single">
+  <div class="single">
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" :value="checkedAnswer" :correct-answer="currectAnswer" @change="onChangeOpt" />
-    
-    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="options.answer" :correct-answer="currectAnswer"
-                :desc="options.analyse" />
-  </view>
+    <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" @change="onChangeOpt"  />
+    <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
+  </div>
 </template>
-
 <script>
-import uParse from "@/components/gaoyia-parse/parse";
+import uParse from "@/components/gaoyia-parse/parse.vue";
+import AnswerAnalysis from "../answerAnalysis/index.vue";
 import Select from "../select/index";
-import AnswerAnalysis from "../answerAnalysis/index";
-
 
 export default {
   name: "single",
   components: {
+    AnswerAnalysis,
     uParse,
     Select,
-    AnswerAnalysis
   },
+
   props: {
     options: {
       type: Object,
@@ -30,41 +27,33 @@ export default {
         option: [],
         title: "",
       }),
-      analysis: {
-        type: Boolean,
-        default: false
-      },
-      userAnswer: {
-        type: Object,
-        default: () => ({})
-      }
+    },
+    userAnswer: {
+      type: [Array, String, Number],
+      default: "",
     },
   },
   data() {
     return {
-      currectAnswer: '', // 保存已选择过的答案
-      checkedAnswer: '', // 选中的答案
+      correctAnswer: '',
+      checkedAnswer: '',
     };
   },
-  mounted() {
-    if (this.userAnswer && this.userAnswer.answer) {
-      this.checkedAnswer = this.userAnswer.answer[0]
-    }
-    if (analysis) {
-      this.currectAnswer()
+  created() {
+    if (this.options.user_answer.length) {
+      this.correctAnswer = this.options.true_answer.map(item => +item)
+      this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
+      // console.log("single", this.options.user_answer, this.checkedAnswer)
     }
   },
   methods: {
-    onChangeOpt(answer) {
-      this.currectAnswer = answer
-      let data = { id: this.options.id, question_id: this.options.question_id, answer: [answer] }
-      this.$emit("change", data);
+    onChangeOpt(val) {
+        // console.log('single onChangeOpt', val);
+        this.checkedAnswer = val
+        this.correctAnswer = this.options.true_answer.map(item => +item)
+        let data = { id: this.options.id, answer: [val] }
+        this.$emit("change", data);
     }
-  },
-  correctAnswer() {
-    this.currectAnswer = this.options.option.filter(item => {
-      return item.is_right
-    })
   }
 };
 </script>

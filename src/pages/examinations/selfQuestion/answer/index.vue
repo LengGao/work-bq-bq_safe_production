@@ -255,6 +255,7 @@ export default {
           this.questionList[this.currentIndex].is_collect = 1
         }
         uni.showToast({ title: `${res.message}`, icon: 'none'})
+        this.$forceUpdate()
       }
     },
 

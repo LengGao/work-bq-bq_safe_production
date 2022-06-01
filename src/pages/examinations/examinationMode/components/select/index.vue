@@ -1,20 +1,17 @@
 <template>
   <view class="select">
-    <s-option @change="onOptionChange" v-for="(item, index) in options" :key="item.id" 
-      :value="item.id" :status="status(item.id)">
+    <s-option @change="onOptionChange" v-for="(item, index) in options" :key="index" :value="item.id"
+              :status="status(item.id)">
       <template v-slot:label>
-        <text v-if="optionsType === 'select'"> {{ selectLabel[index] }}</text>
-        <text v-else> {{ index }}</text>
+        <text> {{ selectLabel[index] }}</text>
       </template>
       <u-parse :content="item.content" />
     </s-option>
   </view>
 </template>
-
 <script>
 import SOption from "../soption";
 import uParse from "@/components/gaoyia-parse/parse.vue";
-
 export default {
   name: "ISelect",
   components: {
@@ -22,6 +19,10 @@ export default {
     uParse,
   },
   props: {
+    noletter: {
+      type: Boolean,
+      default: false,
+    },
     multiple: {
       type: Boolean,
       default: false,
@@ -34,12 +35,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    optionsType: {
-      type: String,
-      default: 'select'
-    },
-    // 题目正确答案
-    currectAnswer: {
+    correctAnswer: {
       type: [Array, String, Number],
       default: "",
     },
@@ -51,35 +47,42 @@ export default {
       selectLabel: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
     };
   },
+  watch: {
+    checkedAnswer(newValue, oldValue) {
+      // console.log('newValue ', newValue);
+      if (this.multiple) {
+        this.$emit("change", newValue)
+      } else if (newValue !== oldValue) {
+        this.$emit("change", newValue)
+      }
+    },
+  },
+  mounted() {
+    // console.log('options', this.options, this.checkedAnswer);
+  },
   methods: {
-    // 状态更新
     status(value) {
-      if (this.multiple) {
-        return this.checkedAnswer.includes(value) ? 'active' : ''
-      } else {
-        return value === this.checkedAnswer ? 'active' : ''
+      // console.log('checkedAnswe status',value,typeof value, this.checkedAnswer, this.correctAnswer);
+      if (this.checkedAnswer) {
+        if (this.correctAnswer) {
+          return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'
+        } else {
+          if (this.multiple) {
+            return this.checkedAnswer.indexOf(value) !== -1 ? 'active' : ''
+          } else {
+            return this.checkedAnswer === value ? 'active' : ''
+          }
+        }
       }
     },
-    // 多选
-    multipleChoice(val) {
-      if (this.checkedAnswer.includes(val)) {
-        this.checkedAnswer = this.checkedAnswer.filter((item) => item !== val);
-      } else {
-        this.checkedAnswer.push(val);
-      }
-    },
-    // 单选
-    simgleChoice(val) {
-      this.checkedAnswer = val;
-    },
-    // 单选 多选
     onOptionChange(val) {
+      // console.log('onOptionChange', val, this.checkedAnswer);
       if (this.multiple) {
-        this.multipleChoice(val)
-        this.$emit("change", this.checkedAnswer);
-      } else{
-        this.simgleChoice(val)
-        this.$emit("change", this.checkedAnswer);
+        this.checkedAnswer.indexOf(val) !== -1
+          ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)
+          : this.checkedAnswer.push(val)
+      } else {
+        this.checkedAnswer = val
       }
     },
   },

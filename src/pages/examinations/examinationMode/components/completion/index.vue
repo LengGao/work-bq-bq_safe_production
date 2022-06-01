@@ -1,75 +1,127 @@
 <template>
-  <view class="completion">
+  <div class="completion">
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <i-option v-for="(item, index) in checkedAnswer" :key="index" :label="index + 1 + ''">
-      <input type="text" v-model="item.value" placeholder="请输入" @input="onInput" />
-    </i-option>
-
-    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                :desc="options.topic_analysis" />
-  </view>
+    <IOption v-for="(item, index) in inputItem" :key="index" :label="index + 1 + ''" :status="item.status">
+      <template v-slot:label>
+        <text> {{ index + 1 }}</text>
+      </template>
+      <input type="text" class="input" :disabled="!!correctAnswer" v-model="item.value" placeholder="请输入"
+             @blur="handlBlur" />
+             <!-- @confirm -->
+    </IOption>
+    <AnswerEye :correct-answer="correctAnswer" @change="handleEyeChange" />
+    <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
+  </div>
 </template>
 <script>
-
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import IOption from "../ioption";
 import AnswerAnalysis from "../answerAnalysis/index";
+import Select from "../select/index";
+import AnswerEye from "../answerEye/index";
+import IOption from "../ioption";
 
 export default {
   name: "completion",
   components: {
+    AnswerAnalysis,
+    Select,
+    AnswerEye,
     IOption,
     uParse,
-    AnswerAnalysis
   },
   props: {
     options: {
       type: Object,
       default: () => ({
-        title: "",
         option: [],
+        title: "",
       }),
     },
-    analysis: {
-      type: Boolean,
-      default: false
-    },
     userAnswer: {
-      type: Object,
-      default: () => ({})
-    }
+      type: [Array, String, Number],
+      default: "",
+    },
   },
   data() {
     return {
-      currectAnswer: "",
-      checkedAnswer: []
+      sequence: true,
+      correctAnswer: "",
+      checkedAnswer: '',
+      inputItem: [],
     };
   },
-  created() {
-    if (this.userAnswer && this.userAnswer.answer) {
-      this.checkedAnswer = this.userAnswer.answer.map(item => ({value: item}))
-    } else {
-      let len = this.options.option.length, list = []
-      for (let i = 0; i < len; i++) {
-        list[i] = { value: ''}
+  watch: {
+    correctAnswer(val) {
+      // console.log(val);
+      if (val.length) {
+        if (this.reorder) {
+          let map = {}
+          this.inputItem.forEach((item, index) => {
+            if (val.includes(item.value)) {
+              if (!map[item.value]) {
+                item.status = "success";
+                map[item.value] = true
+              }
+            } else {
+              item.status = "error";
+            }
+          });
+        } else {
+          let list = this.inputItem
+          for (let i = 0, ii = list.length; i < ii; i++) {
+            let item = list[i]
+            if (item.value.trim() === val[i].trim()) {
+              item.status = 'success'
+            } else {
+              item.status = 'error'
+            }
+          }
+        }
+      } else {
+        this.inputItem.forEach((item) => {
+          item.status = ''
+        })
       }
-      this.checkedAnswer = list
+    },
+  },
+  created() {
+    if (this.options.user_answer.length) {
+      this.inputItem = this.options.option.map((item, index) => {
+        return {value: this.options.user_answer[index] || '', status: '' }
+      })
+      this.correctAnswer = this.options.true_answer
+    } else {
+      this.inputItem = this.options.option.map(item => ({ value: '', status: '' }))
     }
   },
   methods: {
-    onInput() {
-      let answer = this.checkedAnswer.map(item => item.value)
-      this.currectAnswer = answer
-      let data = {id: this.options.id, question_id: this.options.question_id, answer: answer}
-      this.$emit("change", data)
-    }
+    handlBlur() {
+      const vals = this.inputItem.map((item) => { item.value.trim(); return item.value })
+      // console.log("completion", vals);
+      this.checkedAnswer = vals
+      let data = { id: this.options.id, answer: vals }
+      this.$emit("change", data);
+    },
+    handleEyeChange(val) {
+      if (val) {
+        this.correctAnswer = this.options.true_answer
+      } else {
+        this.correctAnswer = "";
+      }
+    },
   },
 };
 </script>
 <style lang="scss" scoped>
 .quetion-content {
   margin-bottom: 20rpx;
+}
+
+.input {
+  font-size: 28rpx;
+  line-height: 100%;
+  width: 100%;
 }
 </style>

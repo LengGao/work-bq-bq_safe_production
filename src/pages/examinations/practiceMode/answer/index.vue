@@ -28,10 +28,9 @@
         <!-- </template> -->
       </swiper-item>
     </swiper>
-    <AnswerBar class="bar"
-               v-if="questionList[currentIndex]"
+    <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar"
                :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @card="toCard"
-               :is-collection="questionList[currentIndex].is_collect"
+               :isCollection="questionList[currentIndex].is_collect"
                @next="handleNext" @prev="handlePrev" @collect="setCollection">
     </AnswerBar>
   </view>
@@ -92,7 +91,8 @@ export default {
       answerSheetArr: [],
       userAnswerMap: {},
 
-      isReview: false
+      isReview: false,
+      is_collect: 0,
 
     };
   },
@@ -237,18 +237,20 @@ export default {
     },
 
     async setCollection() {
-      let question_id = this.questionList[this.currentIndex].id
+      let index = this.currentIndex
+      let question_id = this.questionList[index].id
       let question_bank_id = this.question_bank_id
+
       let data = {question_bank_id: question_bank_id, question_id}
       let res = await collect(data)
       if (res.code === 0) {
         if (res.message.indexOf('取消') !== -1) {
-          this.questionList[this.currentIndex].is_collect = 0
+          this.questionList[index].is_collect = 0
         } else {
-          this.questionList[this.currentIndex].is_collect = 1
+          this.questionList[index].is_collect = 1
         }
-        console.log('this.questionList', this.questionList, this.currentIndex);
         uni.showToast({ title: `${res.message}`, icon: 'none'})
+        this.$forceUpdate()
       }
     },
 
@@ -344,7 +346,7 @@ export default {
     },
 
     fiilQuestion(list) {
-      let arr = [].fill({}, 0, this.answerSheetArr.length), index = this.currentIndex
+      let arr = [].fill('', 0, this.answerSheetArr.length), index = this.currentIndex
       if (index <= 0) {
         arr[index] = list[0]
         arr[index + 1] = list[1]
@@ -360,6 +362,7 @@ export default {
       }
 
       this.questionList = JSON.parse(JSON.stringify(arr))
+      console.log('this.questionList', this.questionList);
     },
 
   }

@@ -1,60 +1,56 @@
 <template>
-  <view class="judg">
+  <div class="judg">
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-
-    <Select :options="options.option" :value="checkedAnswer" :currect-answer="currectAnswer" @change="onChangeOpt" />    
-
-    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                :desc="options.topic_analysis" />
-  </view>
+    <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" @change="onChangeOpt" />
+    <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
+  </div>
 </template>
-
 <script>
-import Select from "../select";
 import uParse from "@/components/gaoyia-parse/parse.vue";
 import AnswerAnalysis from "../answerAnalysis/index";
+import Select from "../select/index";
 
 export default {
   name: "Judg",
   components: {
+    AnswerAnalysis,
     Select,
     uParse,
-    AnswerAnalysis
   },
   props: {
     options: {
       type: Object,
       default: () => ({
-        title: "",
         option: [],
+        title: "",
       }),
     },
-    analysis: {
-      type: Boolean,
-      default: false
-    },
     userAnswer: {
-      type: Object,
-      default: () => ({})
-    }
+      type: [Array, String, Number],
+      default: "",
+    },
   },
   data() {
     return {
-      currectAnswer: "",
-      checkedAnswer: ""
+      correctAnswer: "",
+      checkedAnswer: "",
     };
   },
   created() {
-    if (this.userAnswer && this.userAnswer.answer) {
-      this.checkedAnswer = this.userAnswer.answer[0]
+    if (this.options.user_answer.length) {
+      this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
+      this.correctAnswer = this.options.true_answer.map(item => +item);
+      // console.log("judg", this.options.user_answer, this.checkedAnswer);
     }
   },
   methods: {
-    onChangeOpt(answer) {
-      this.currectAnswer = answer
-      let data = { id: this.options.id, question_id: this.options.question_id, answer: [answer] }
+    onChangeOpt(val) {
+      // console.log('judg', val);
+      this.checkedAnswer = val
+      this.correctAnswer = this.options.true_answer.map(item => +item);
+      let data = { id: this.options.id, answer: [val] }
       this.$emit("change", data);
     }
   }

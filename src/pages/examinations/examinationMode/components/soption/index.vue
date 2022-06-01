@@ -28,11 +28,10 @@ export default {
       default: "",
     },
     value: {
-      type: [String, Number],
+      type: [Array, String, Number],
       default: "",
     },
   },
-  computed: {},
   data() {
     return {
       checkedValue: this.value,
@@ -40,8 +39,9 @@ export default {
   },
   methods: {
     handleClick() {
-      this.$emit("change", this.checkedValue);
+      this.$emit("change", this.checkedValue); 
     },
+    
   },
 };
 </script>

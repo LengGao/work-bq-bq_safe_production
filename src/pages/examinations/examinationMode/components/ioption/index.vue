@@ -17,7 +17,7 @@
 <script>
 
 export default {
-  name: "IOption",
+  name: "SOption",
   props: {
     status: {
       type: String,
@@ -28,11 +28,10 @@ export default {
       default: "",
     },
     value: {
-      type: [String, Number],
+      type: [Array, String, Number],
       default: "",
     },
   },
-  computed: {},
   data() {
     return {
       checkedValue: this.value,
@@ -40,8 +39,9 @@ export default {
   },
   methods: {
     handleClick() {
-      this.$emit("change", this.checkedValue);
+      this.$emit("change", this.checkedValue); 
     },
+    
   },
 };
 </script>
@@ -65,6 +65,7 @@ export default {
   }
   &-text {
     flex: 1;
+    height: 100%;
   }
   &--active {
     color: $uni-color-primary;

@@ -1,26 +1,27 @@
 <template>
-  <view class="multiple">
+  <div class="multiple">
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-
-    <Select :options="options.option" multiple :value="checkedAnswer" :currect-answer="currectAnswer" @change="onChangeOpt" />    
-    
-    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                :desc="options.topic_analysis" />
-  </view>
+    <Select :options="options.option" multiple :value="checkedAnswer" :correct-answer="correctAnswer"
+            @change="onChangeOpt" />
+    <AnswerEye :correct-answer="correctAnswer" @change="handleEyeChange" />
+    <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
+  </div>
 </template>
 <script>
-import uParse from "@/components/gaoyia-parse/parse";
-import Select from "../select/index";
+import uParse from "@/components/gaoyia-parse/parse.vue";
 import AnswerAnalysis from "../answerAnalysis/index";
+import Select from "../select/index";
+import AnswerEye from "../answerEye/index";
 
 export default {
   name: "multiple",
   components: {
+    AnswerAnalysis,
     Select,
+    AnswerEye,
     uParse,
-    AnswerAnalysis
   },
   props: {
     options: {
@@ -30,31 +31,35 @@ export default {
         option: [],
       }),
     },
-    analysis: {
-      type: Boolean,
-      default: false
-    },
     userAnswer: {
-      type: Object,
-      default: () => ({})
-    }
+      type: [Array, String, Number],
+      default: "",
+    },
   },
   data() {
     return {
-      currectAnswer: [],
-      checkedAnswer: []
+      correctAnswer: "",
+      checkedAnswer: [],
     };
   },
   created() {
-    if (this.userAnswer && this.userAnswer.answer) {
-      this.checkedAnswer = this.userAnswer.answer.map(item => item)
+    if (this.options.user_answer.length) {
+      this.correctAnswer = this.options.true_answer.map(item => +item)
+      this.checkedAnswer = this.options.user_answer.map(item => +item)
     }
   },
   methods: {
-    onChangeOpt(answer) {
-      console.log(answer);
-      this.currectAnswer = answer
-      let data = { id: this.options.id, question_id: this.options.question_id, answer: answer }
+    handleEyeChange(val) {
+      if (val) {
+        this.correctAnswer = this.options.true_answer.map(item => +item)
+      } else {
+        this.correctAnswer = "";
+      }
+    },
+    onChangeOpt(val) {
+      // console.log('multiple', val);
+      this.checkedAnswer = val
+      let data = { id: this.options.id, answer: val }
       this.$emit("change", data);
     }
   },

@@ -1,70 +1,74 @@
 <template>
-  <view class="short">
+  <div class="short">
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <textarea class="text" placeholder="请输入" :value="checkedAnswer" @blur="onInput" />
-
-    <AnswerAnalysis v-if="analysis && correctAnswer" :user-answer="userAnswerText" :correct-answer="correctAnswer"
-                :desc="options.topic_analysis" />
-  </view>
+    <!-- confirm="onInput -->
+    <textarea :disabled="!!correctAnswer" class="text" @blur="onInput" :value="value" placeholder="请输入" />
+    <AnswerEye :correctAnswer="correctAnswer" @change="handleEyeChange" />
+    <AnswerAnalysis v-if="correctAnswer" short :question="options" :userAnswer="value" />
+  </div>
 </template>
-
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
+import AnswerAnalysis from "../answerAnalysis/index.vue";
 import Select from "../select/index";
-import AnswerAnalysis from "../answerAnalysis/index";
+import AnswerEye from "../answerEye/index.vue";
 
 export default {
   name: "short",
   components: {
+    AnswerAnalysis,
     Select,
+    AnswerEye,
     uParse,
-    AnswerAnalysis
   },
   props: {
     options: {
       type: Object,
       default: () => ({
-        title: '',
         option: [],
+        title: "",
       }),
     },
-    analysis: {
-      type: Boolean,
-      default: false
-    },
     userAnswer: {
-      type: Object,
-      default: () => ({})
-    }
+      type: [Array, String, Number],
+      default: "",
+    },
   },
   data() {
     return {
       correctAnswer: "",
-      checkedAnswer: '',
+      value: "",
     };
   },
   created() {
-    if (this.userAnswer && this.userAnswer.answer) {
-      this.checkedAnswer = this.userAnswer.answer
+    if (this.options.user_answer.length) {
+      this.value = this.options.user_answer[0]
+      this.correctAnswer = this.options.true_answer
     }
   },
   methods: {
     onInput({ detail }) {
-      console.log("textarea", detail);
-      let data = {id: this.options.id, question_id: this.options.question_id, answer: [detail.value]}
-      this.$emit("change", data)
+      // console.log("short", detail);
+      this.value = detail.value
+      let data = { id: this.options.id, answer: this.value }
+      this.$emit("change", data);
+    },
+    handleEyeChange(val) {
+      if (val) {
+        this.correctAnswer = this.options.true_answer;
+      } else {
+        this.correctAnswer = "";
+      }
     },
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .quetion-content {
   margin-bottom: 20rpx;
 }
-
 .text {
   width: 100%;
   box-sizing: border-box;

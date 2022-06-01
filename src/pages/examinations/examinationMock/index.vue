@@ -4,7 +4,6 @@
     <image class="b-img" src="../static/mock-background.png" mode="aspectFit"></image>
     <view class="examination-mock-content">
       <view class="examinationcard-bar">
-
         <view class="xamination-card" v-for="(item, index) in examinations" :key="index" @click="() => handleClick(item.url)">
           <view class="card-body-row">
             <view class="card-body-left">
