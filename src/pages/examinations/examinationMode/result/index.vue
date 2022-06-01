@@ -31,7 +31,7 @@ import Header from "../components/header/index";
 import Footer from "../components/footer/index";
 import Title from "../components/title/index";
 import Circular from "../components/circular/index";
-import { getExamAnswerSheet } from "@/api/question";
+import { getExamAnswerSheet, submitExamPaper } from "@/api/question";
 
 export default {
   name: "answerSheet",
@@ -93,13 +93,14 @@ export default {
       let query = `?chapterId=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1`
       uni.redirectTo({ url: url + query })
     },
+
     handleSubmit() {
       uni.showModal({
         title: '提示',
         content: '您还有题未作答，确认交卷吗？',
         success: ({ confirm }) => {
           if (confirm) {
-            uni.navigateBack()
+            this.submitExamPaper()
           }
         }
       });
@@ -110,6 +111,15 @@ export default {
     goBack() {
       uni.navigateBack();
     },
+
+    async submitExamPaper() {
+      let params = {question_bank_id: this.question_bank_id, exam_log_id: this.exam_log_id}
+      let res = await submitExamPaper(params)
+      if (res.code === 0) {
+        uni.showToast({ title: '提交陈功' , icon: 'success' })
+      }
+    },
+
     async getQuestionBoard() {
       let data = { question_bank_id: this.question_bank_id, exam_log_id: this.exam_log_id }
       const res = await getExamAnswerSheet(data);

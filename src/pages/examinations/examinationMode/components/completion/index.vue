@@ -93,7 +93,7 @@ export default {
     //   })
     //   this.correctAnswer = this.options.true_answer
     // } else {
-    //   this.inputItem = this.options.option.map(item => ({ value: '', status: '' }))
+      this.inputItem = this.options.option.map(item => ({ value: '', status: '' }))
     // }
   },
   methods: {
