@@ -41,37 +41,28 @@ export default {
       list: [],
       total: 0,
       page: 1,
+      question_bank_id: 0,
     };
   },
   onShow() {
     this.getMockExamHistory();
   },
+  mounted() {
+    
+  },
   methods: {
     toAnswer(id, title) {
-      let url = `/pages/examinations/examinationRecordSheet/index`
-      let query = `?exam_log_id=${id}&title=${title}`
+      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let url = `/pages/examinations/examinationRecord/examinationRecordResult/index`
+      let query = `?exam_log_id=${id}&question_bank_id=${question_bank_id}&title=${title}`
       uni.navigateTo({ url: url + query })
     },
     async getMockExamHistory() {
-      let questionBankInfo = this.$store.getters.questionBankInfo
-      const data = {question_bank_id: questionBankInfo.id};
+      let question_bank_id = this.$store.getters.questionBankInfo.id      
+      const data = {question_bank_id:question_bank_id};
       const res = await mockExamList(data);
       if (res.code === 0) {
-        newFunction();
         this.list = res.data
-      }
-      
-
-      function newFunction() {
-        res.data=[
-          {
-            "id": 22,
-            "title": "测试添加1",
-            "create_time": "2022-05-25 15:52:15",
-            "total_question_num": 9,
-            "score": "0.0"
-          }
-        ];
       }
     },
   },

@@ -68,7 +68,8 @@ export function getQuestionDetail(data) {
   return requset({
     url: 'question/getQuestionDetail',
     method: 'post',
-    data   
+    data,
+    nocatch: true
   })
 }
 

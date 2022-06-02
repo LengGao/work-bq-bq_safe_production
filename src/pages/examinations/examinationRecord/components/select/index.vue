@@ -39,6 +39,10 @@ export default {
       type: [Array, String, Number],
       default: "",
     },
+    isAnalysis: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
@@ -62,28 +66,44 @@ export default {
   },
   methods: {
     status(value) {
-      // console.log('checkedAnswe status',value,typeof value, this.checkedAnswer, this.correctAnswer);
-      if (this.checkedAnswer) {
-        if (this.correctAnswer) {
-          return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'
-        } else {
-          if (this.multiple) {
-            return this.checkedAnswer.indexOf(value) !== -1 ? 'active' : ''
-          } else {
-            return this.checkedAnswer === value ? 'active' : ''
+      // console.log('checkedAnswe status',value, this.checkedAnswer, this.correctAnswer);
+      if (this.multiple) {
+        if (this.correctAnswer.length) {
+          if (this.correctAnswer.includes(value)) {
+            return "success";
+          }
+          if (this.checkedAnswer.includes(value) && !this.correctAnswer.includes(value)) {
+            return "error";
           }
         }
+        if (this.checkedAnswer.includes(value)) {
+          return "active";
+        }
+        return "";
+      } else {
+        if (this.correctAnswer) {
+          if (this.correctAnswer == value) {
+            return "success";
+          }
+          if (value != this.correctAnswer && this.checkedAnswer == value) {
+            return "error";
+          }
+        }
+        if (this.checkedAnswer == value) {
+          return "active";
+        }
+        return "";
       }
     },
     onOptionChange(val) {
       // console.log('onOptionChange', val, this.checkedAnswer);
-      if (this.multiple) {
-        this.checkedAnswer.indexOf(val) !== -1
-          ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)
-          : this.checkedAnswer.push(val)
-      } else {
-        this.checkedAnswer = val
-      }
+      // if (this.multiple) {
+      //   this.checkedAnswer.indexOf(val) !== -1
+      //     ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)
+      //     : this.checkedAnswer.push(val)
+      // } else {
+      //   this.checkedAnswer = val
+      // }
     },
   },
 };

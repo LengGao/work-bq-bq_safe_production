@@ -124,7 +124,8 @@ export function courseGetVideoAuth(data) {
   return request({
     url: 'course/getVideoAuth',
     method: 'get',
-    data
+    data,
+    nocatch: true
   })
 }
 

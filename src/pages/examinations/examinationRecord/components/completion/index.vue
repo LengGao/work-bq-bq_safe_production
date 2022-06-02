@@ -11,8 +11,8 @@
              @blur="handlBlur" />
              <!-- @confirm -->
     </IOption>
-    <AnswerEye :correct-answer="correctAnswer" @change="handleEyeChange" />
-    <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
+    <!-- <AnswerEye :correct-answer="correctAnswer" @change="handleEyeChange" /> -->
+    <AnswerAnalysis v-if="isAnalysis && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
 <script>
@@ -39,6 +39,10 @@ export default {
         title: "",
       }),
     },
+    isAnalysis: {
+      type: Boolean,
+      default: false,
+    },    
     userAnswer: {
       type: [Array, String, Number],
       default: "",
@@ -91,10 +95,13 @@ export default {
       this.inputItem = this.options.option.map((item, index) => {
         return {value: this.options.user_answer[index] || '', status: '' }
       })
-      this.correctAnswer = this.options.true_answer
     } else {
       this.inputItem = this.options.option.map(item => ({ value: '', status: '' }))
     }
+
+    if (this.isAnalysis) {
+      this.correctAnswer = this.options.true_answer
+    } 
   },
   methods: {
     handlBlur() {
@@ -105,11 +112,11 @@ export default {
       this.$emit("change", data);
     },
     handleEyeChange(val) {
-      if (val) {
-        this.correctAnswer = this.options.true_answer
-      } else {
-        this.correctAnswer = "";
-      }
+      // if (val) {
+      //   this.correctAnswer = this.options.true_answer
+      // } else {
+      //   this.correctAnswer = "";
+      // }
     },
   },
 };

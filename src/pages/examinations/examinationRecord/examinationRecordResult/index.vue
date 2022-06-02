@@ -1,26 +1,26 @@
 <template>
   <view class="test-results">
-    <!-- <view class="results-header">
+    <view class="results-header">
       <view class="score">
-        <image class="score-img" src="../static/icon-water.png"></image>
+        <image class="score-img" src="@/pages/examinations/static/icon-water.png" />
         <view class="score-title">最终得分</view>
-        <view class="score-value">{{ testResult.info.mark || 0 }}</view>
+        <view class="score-value">{{ testResult.final_score || 0 }}</view>
       </view>
       <view class="topics">
         <view class="topics-number topics-number--success">
           <text class="title">正确题数：</text>
-          <text class="number">{{ testResult.info.right_problem || 0 }}</text>
+          <text class="number">{{ testResult.right_answer || 0 }}</text>
         </view>
         <view class="topics-number topics-number--error">
           <text class="title">错误题数：</text>
-          <text class="number">{{ testResult.info.fail_problem || 0 }}</text>
+          <text class="number">{{ testResult.wrong_answer || 0 }}</text>
         </view>
         <view class="topics-number topics-number--none">
           <text class="title">未答题数：</text>
-          <text class="number">{{ testResult.info.unanswered || 0 }}</text>
+          <text class="number">{{ testResult.unanswered || 0 }}</text>
         </view>
       </view>
-    </view> -->
+    </view>
     
     <view class="results-container">
       <view v-for="(item, type) in listData" :key="type">
@@ -44,7 +44,7 @@
       </view>
     </view>
     <view class="results-footer">
-      <view class="btn" @click="goBack">查看全部解析</view>
+      <view class="btn" @click="handleClick">查看全部解析</view>
     </view>
   </view>
 </template>
@@ -54,7 +54,7 @@ import Header from "../components/header/index";
 import Footer from "../components/footer/index";
 import Title from "../components/title/index";
 import Circular from "../components/circular/index";
-import { submitExamPaper } from "@/api/question";
+import { getExamResult } from "@/api/question";
 
 export default {
   name: "answerSheet",
@@ -71,7 +71,7 @@ export default {
       question_bank_id: 0,
       exam_log_id: 0,
       source: '',
-      isAnalysis: '',
+      isAnalysis: true,
       testResult: {},
       listData: {},
       statusMap: {
@@ -102,43 +102,36 @@ export default {
       },
     };
   },
-  onLoad({ exam_log_id, title }) {
-    this.question_bank_id = this.$store.getters.questionBankInfo.id
-    this.exam_log_id = exam_log_id
+  onLoad({ question_bank_id, exam_log_id, title  }) {
+    this.question_bank_id = +question_bank_id
+    this.exam_log_id = +exam_log_id
     this.title = title
-    this.isAnalysis = isAnalysis
     this.getQuestionBoard();
   },
   methods: {
     onSelect(type, index) {
       let types = this.listData[type]
       let question_id = types[index].id
-      let chapter_id = this.chapter_id
+      let exam_log_id = this.exam_log_id
       let question_bank_id = this.question_bank_id
-      let url = `/pages/examinations/selfQuestion/answer/index`
-      let query = `?chapterId=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1&source=${this.source}&isAnalysis=${this.isAnalysis}`
+      let url = `/pages/examinations/examinationRecord/examinationRecordAnalysis/index`
+      let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1&isAnalysis=${this.isAnalysis}`
       uni.redirectTo({ url: url + query })
     },
-    handleSubmit() {
-      uni.showModal({
-        title: '提示',
-        content: '您还有题未作答，确认交卷吗？',
-        success: ({ confirm }) => {
-          if (confirm) {
-            uni.navigateBack()
-          }
-        }
-      });
-    },
+    
     handleClick() {
-      this.goBack();
+      let types = this.listData[1]
+      let question_id = types[0].id
+      let exam_log_id = this.exam_log_id
+      let question_bank_id = this.question_bank_id
+      let url = `/pages/examinations/examinationRecord/examinationRecordAnalysis/index`
+      let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1&isAnalysis=${this.isAnalysis}`
+      uni.redirectTo({ url: url + query })
     },
-    goBack() {
-      uni.navigateBack();
-    },
+
     async getQuestionBoard() {
       let data = { question_bank_id: this.question_bank_id, exam_log_id: this.exam_log_id }
-      const res = await submitExamPaper(data);
+      const res = await getExamResult(data);
       if (res.code === 0) {
         this.testResult = res.data.info
         this.listData = res.data.list

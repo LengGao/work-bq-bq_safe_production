@@ -195,15 +195,15 @@
 					}
 				},
 				{
-					"path": "examinationRecord/examinationRecordSheet/index",
+					"path": "examinationRecord/examinationRecordResult/index",
 					"style": {
-						"navigationBarTitleText": "考试记录答题卡"
+						"navigationBarTitleText": "答题卡"
 					}
 				},
 				{
 					"path": "examinationRecord/examinationRecordAnalysis/index",
 					"style": {
-						"navigationBarTitleText": "考试记录答题卡"
+						"navigationBarTitleText": "考试记录解析"
 					}
 				},
 				{

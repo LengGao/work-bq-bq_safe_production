@@ -4,7 +4,7 @@
       <u-parse :content="options.title" />
     </view>
     <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" @change="onChangeOpt" />
-    <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
+    <AnswerAnalysis v-if="isAnalysis && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
 <script>
@@ -27,6 +27,10 @@ export default {
         title: "",
       }),
     },
+    isAnalysis: {
+      type: Boolean,
+      default: false,
+    },
     userAnswer: {
       type: [Array, String, Number],
       default: "",
@@ -41,15 +45,17 @@ export default {
   created() {
     if (this.options.user_answer.length) {
       this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
-      this.correctAnswer = this.options.true_answer.map(item => +item);
       // console.log("judg", this.options.user_answer, this.checkedAnswer);
+    } 
+    if (this.isAnalysis) {
+      this.correctAnswer = this.options.true_answer.map(item => +item)
     }
   },
   methods: {
     onChangeOpt(val) {
       // console.log('judg', val);
       this.checkedAnswer = val
-      this.correctAnswer = this.options.true_answer.map(item => +item);
+      // this.correctAnswer = this.options.true_answer.map(item => +item);
       let data = { id: this.options.id, answer: [val] }
       this.$emit("change", data);
     }

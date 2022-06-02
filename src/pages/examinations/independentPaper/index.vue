@@ -52,10 +52,7 @@ export default {
     };
   },
   onShow() {
-    !this.isOnload &&
-      setTimeout(() => {
-        this.getRealTestPapers();
-      }, 1000);
+    !this.isOnload && setTimeout(() => { this.getRealTestPapers(); }, 1000);
     this.isOnload = false;
   },
   onLoad() {

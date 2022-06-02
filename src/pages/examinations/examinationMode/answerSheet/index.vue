@@ -109,12 +109,8 @@ export default {
         content = '考试时间未结束，确认交卷吗？'
       }
       
-      uni.showModal({
-        title: '提示',
-        content: content,
-        success: ({ confirm }) => {
-          if (confirm) { this.submitExamPaper() }
-        }
+      uni.showModal({ title: "提示", content: content,
+        success(res) { if (res.confirm) { this.submitExamPaper() }}
       })
     },
 
