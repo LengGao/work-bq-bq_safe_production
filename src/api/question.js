@@ -193,7 +193,13 @@ export function getExamAnswerSheet(data) {
   })
 }
 
-
+export function getExamResult(data) {
+  return requset({
+    url: 'question/getExamResult',
+    method: 'post',
+    data   
+  })
+}
 
 
 

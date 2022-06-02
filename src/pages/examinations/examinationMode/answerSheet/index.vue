@@ -48,7 +48,7 @@ export default {
       question_id: 0,
       question_bank_id: 0,
       title: '',
-      
+      expires_time: 0,
       listData: {},
       arr: [],
       statusMap: {
@@ -101,15 +101,21 @@ export default {
     },
 
     handleSubmit() {
+      let content = '您确认要交卷吗？'
+      let arr = this.arr
+      if (arr.some(item => item.is_answered === 0)) {
+        content = '您还有题未作答，确认交卷吗？'
+      } else if (!!this.expires_time) {
+        content = '考试时间未结束，确认交卷吗？'
+      }
+      
       uni.showModal({
         title: '提示',
-        content: '您还有题未作答，确认交卷吗？',
+        content: content,
         success: ({ confirm }) => {
-          if (confirm) {
-            this.submitExamPaper()
-          }
+          if (confirm) { this.submitExamPaper() }
         }
-      });
+      })
     },
 
     handleClick() {
@@ -137,6 +143,7 @@ export default {
       let data = { question_bank_id: this.question_bank_id, exam_log_id: this.exam_log_id }
       const res = await getExamAnswerSheet(data);
       if (res.code === 0) {
+        this.expires_time = res.data.expires_time
         this.listData = res.data.list;
         this.arr = res.data.arr
       }

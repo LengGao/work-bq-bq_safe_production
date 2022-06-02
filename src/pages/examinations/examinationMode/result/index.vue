@@ -2,18 +2,18 @@
   <view class="test-results">
     <view class="results-header">
       <view class="score">
-        <image class="score-img" src="@/pages/examinations/static/icon-water.png"></image>
+        <image class="score-img" src="@/pages/examinations/static/icon-water.png" />
         <view class="score-title">最终得分</view>
-        <view class="score-value">{{ testResult.total_source || 0 }}</view>
+        <view class="score-value">{{ testResult.final_score || 0 }}</view>
       </view>
       <view class="topics">
         <view class="topics-number topics-number--success">
           <text class="title">正确题数：</text>
-          <text class="number">{{ testResult.right_problem || 0 }}</text>
+          <text class="number">{{ testResult.right_answer || 0 }}</text>
         </view>
         <view class="topics-number topics-number--error">
           <text class="title">错误题数：</text>
-          <text class="number">{{ testResult.fail_problem || 0 }}</text>
+          <text class="number">{{ testResult.wrong_answer || 0 }}</text>
         </view>
         <view class="topics-number topics-number--none">
           <text class="title">未答题数：</text>
@@ -54,7 +54,7 @@ import Header from "../components/header/index";
 import Footer from "../components/footer/index";
 import Title from "../components/title/index";
 import Circular from "../components/circular/index";
-import { getExamAnswerSheet } from "@/api/question";
+import { getExamResult } from "@/api/question";
 
 export default {
   name: "answerSheet",
@@ -120,23 +120,20 @@ export default {
     },
     
     handleClick() {
+      let types = this.listData[1]
+      let question_id = types[0].id
       let exam_log_id = this.exam_log_id
       let question_bank_id = this.question_bank_id
       let url = `/pages/examinations/examinationMode/answer/index`
-      let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&isAnalysis=${this.isAnalysis}`
+      let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1&isAnalysis=${this.isAnalysis}`
       uni.redirectTo({ url: url + query })
     },
 
     async getQuestionBoard() {
       let data = { question_bank_id: this.question_bank_id, exam_log_id: this.exam_log_id }
-      const res = await getExamAnswerSheet(data);
+      const res = await getExamResult(data);
       if (res.code === 0) {
-        this.testResult = res.data.info || {
-            total_source: 0, // 最终得分
-            right_problem: 0, // 正确题数：
-            fail_problem: 0, // 错误题数：
-            unanswered: 0, // 未答题数：
-        }
+        this.testResult = res.data.info
         this.listData = res.data.list
       }
     },

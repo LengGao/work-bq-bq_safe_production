@@ -232,6 +232,8 @@ export default {
       if ((this.isStart || this.isEnd) && answer) {
         let data = { question_bank_id: this.question_bank_id, exam_log_id: this.logId, question_id: answer.id, user_answer: answer.answer }
         examAnswerTheQuestion(data);
+      } else if (answer) {
+        this.$emit('onCaseChange', this.currentIndexCase, answer)
       }
       // console.log('case cacheAnswer', answer, this.userAnswerMap);
     },
@@ -240,18 +242,19 @@ export default {
       let answer = this.getCurrAnswer(this.prevIndexCase)
       // console.log('answer', this.prevIndexCase, answer);
       if (answer) {
-        let questionBankInfo = this.$store.getters.questionBankInfo
-        let data = { question_bank_id: questionBankInfo.id, exam_log_id: this.logId, question_id: answer.id, user_answer: answer.answer }
+        let question_bank_id = this.question_bank_id
+        let data = { question_bank_id, exam_log_id: this.logId, question_id: answer.id, user_answer: answer.answer }
         const res = await examAnswerTheQuestion(data);
       }
     },
 
     async init() {
       let question_bank_id = this.question_bank_id
+      let exam_log_id = this.logId
       let childs = this.options.child
-      let params1 = { question_bank_id: question_bank_id, question_id: childs[0] }
-      let params2 = { question_bank_id: question_bank_id, question_id: childs[1] }
-      let params3 = { question_bank_id: question_bank_id, question_id: childs[2] }
+      let params1 = { question_bank_id: question_bank_id, question_id: childs[0], exam_log_id }
+      let params2 = { question_bank_id: question_bank_id, question_id: childs[1], exam_log_id }
+      let params3 = { question_bank_id: question_bank_id, question_id: childs[2], exam_log_id }
       let res = await Promise.all([getQuestionDetail(params1), getQuestionDetail(params2), getQuestionDetail(params3)])
       if (res.length) {
         let list = res.map(item => item.data)
@@ -264,11 +267,13 @@ export default {
     },
 
     async getQuestionDetail(question_id, index) {
-      let questionBankInfo = this.$store.getters.questionBankInfo
-      let params = { question_id: question_id, question_bank_id: questionBankInfo.id }
-      let res = await getQuestionDetail(params)
-      if (res.code === 0) {
-        this.questionList[index] = res.data
+      let question_bank_id = this.question_bank_id
+      let params = { question_id: question_id, question_bank_id, exam_log_id: this.logId }
+      if (question_id) {
+        let res = await getQuestionDetail(params)
+        if (res.code === 0) {
+          this.questionList[index] = res.data
+        }
       }
     },
   },

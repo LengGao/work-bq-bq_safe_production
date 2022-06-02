@@ -88,6 +88,9 @@ export default {
       answerSheetArr: [],
       userAnswerMap: {},
       
+      caseIndex: 0,
+      userAnswerMapCase: [],
+      
       title: '',
       isReview: false,
       isAnalysis: false
@@ -203,7 +206,9 @@ export default {
     onCaseIndexChange(index) {
     },
 
-    onCaseChange(index, answer) {
+    onCaseChange(caseIndex, answer) {
+      this.caseIndex = caseIndex
+      this.userAnswerMapCase[caseIndex] = answer.answer
     },
 
     getCurrAnswer(index) {
@@ -240,32 +245,21 @@ export default {
       let question_id = quetion.id
       let title = this.title
       let answer = this.getCurrAnswer(index)
+      let answerCase = this.userAnswerMapCase[this.caseIndex]
 
       let url = '/pages/examinations/examinationMode/answerSheet/index'
       let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}`
       
-      let params = {}, res, ret
+      let params = {}, res
 
-      if (type === 7) {
-        params = {question_bank_id, exam_log_id}
-        res = await this.submitAnswer(params)
-        if (res.code === 0) {
-          uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
-            uni.redirectTo({ url: url + query })
-          })
-        }
-      } else if (answer) {
-        params = { question_bank_id, exam_log_id, question_id, user_answer: answer.answer }
+      if (type === 7 && answerCase) {
+        params = { question_bank_id, exam_log_id, question_id: answerCase.id, user_answer: answerCase.answer }
         res = await examAnswerTheQuestion(params)
-        if (res.code === 0) {
-          params = {question_bank_id, exam_log_id}
-          ret = await this.submitAnswer(params)
-          if (ret.code === 0) {
-            uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
-              uni.redirectTo({ url: url + query })
-            })
-          }
-        }
+        if (res.code === 0) uni.redirectTo({ url: url + query });
+      } else if (answer) {
+        params = { question_bank_id, exam_log_id, question_id: answer.id, user_answer: answer.answer }
+        res = await examAnswerTheQuestion(params)
+        if (res.code === 0) { uni.redirectTo({ url: url + query }) }
       } else {
         uni.redirectTo({ url: url + query})
       }
@@ -296,8 +290,11 @@ export default {
       let exam_log_id = this.exam_log_id
       let type = quetion.question_type
       let question_id = quetion.id
+      let title = this.title
       let answer = this.getCurrAnswer(index)
       
+      let url = `/pages/examinations/examinationMode/result/index`
+      let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}`
       let params = {}, res, ret
 
       if (type === 7) {
@@ -305,7 +302,7 @@ export default {
         res = await submitExamPaper(params)
         if (res.code === 0) {
           uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
-            uni.redirectTo({ url: '/pages/examinations/examinationMode/result/index' })
+            uni.redirectTo({ url: url + query })
           })
         }
       } else if (answer) {
@@ -316,7 +313,7 @@ export default {
           ret = await submitExamPaper(params)
           if (ret.code === 0) {
             uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
-              uni.redirectTo({ url: '/pages/examinations/examinationMode/result/index' })
+              uni.redirectTo({ url: url + query })
             })
           }
         }
@@ -341,10 +338,13 @@ export default {
     async getQuestionDetail(question_id, index) {
       // console.log(index, this.currentIndex);
       let question_bank_id = this.question_bank_id
-      let params = { question_id: question_id, question_bank_id: question_bank_id }
-      let res = await getQuestionDetail(params)
-      if (res.code === 0) {
-        this.questionList[index] = res.data
+      let exam_log_id = this.exam_log_id
+      let params = { question_id: question_id, question_bank_id: question_bank_id, exam_log_id }
+      if (question_id) {
+        let res = await getQuestionDetail(params)
+        if (res.code === 0) {
+          this.questionList[index] = res.data
+        }
       }
     },
 
@@ -394,9 +394,10 @@ export default {
 
     async initQuestion(prev, curr, next) {
       let question_bank_id = this.question_bank_id
-      let params1 = { question_bank_id: question_bank_id, question_id: prev }
-      let params2 = { question_bank_id: question_bank_id, question_id: curr }
-      let params3 = { question_bank_id: question_bank_id, question_id: next }
+      let exam_log_id = this.exam_log_id
+      let params1 = { question_bank_id: question_bank_id, question_id: prev, exam_log_id }
+      let params2 = { question_bank_id: question_bank_id, question_id: curr, exam_log_id }
+      let params3 = { question_bank_id: question_bank_id, question_id: next, exam_log_id }
       let res = await Promise.all([getQuestionDetail(params1), getQuestionDetail(params2), getQuestionDetail(params3)])
       if (res.length) {
         let list = res.map(item => item.data)
