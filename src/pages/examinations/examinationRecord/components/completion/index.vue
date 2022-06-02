@@ -101,6 +101,7 @@ export default {
 
     if (this.isAnalysis) {
       this.correctAnswer = this.options.true_answer
+      this.checkedAnswer = this.options.user_answer.map(item => item)
     } 
   },
   methods: {

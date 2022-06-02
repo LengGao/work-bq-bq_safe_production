@@ -219,7 +219,6 @@ export default {
       this.submitAnswer()
     },
 
-
     getCurrAnswer(index) {
       // console.log(index, this.questionList);
       let key = this.questionList[index].id
@@ -244,7 +243,7 @@ export default {
       if (answer) {
         let question_bank_id = this.question_bank_id
         let data = { question_bank_id, exam_log_id: this.logId, question_id: answer.id, user_answer: answer.answer }
-        const res = await examAnswerTheQuestion(data);
+        examAnswerTheQuestion(data);
       }
     },
 

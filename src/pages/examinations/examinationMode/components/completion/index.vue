@@ -60,33 +60,28 @@ export default {
     correctAnswer(val) {
       // console.log(val);
       if (val.length) {
-        if (this.reorder) {
-          let map = {}
+        if (!this.options.reorder) {
           this.inputItem.forEach((item, index) => {
-            if (val.includes(item.value)) {
-              if (!map[item.value]) {
-                item.status = "success";
-                map[item.value] = true
-              }
+            if (this.inputItem[index].value === val[index]) {
+              item.status = "success";
             } else {
               item.status = "error";
             }
           });
         } else {
-          let list = this.inputItem
-          for (let i = 0, ii = list.length; i < ii; i++) {
-            let item = list[i]
-            if (item.value.trim() === val[i].trim()) {
-              item.status = 'success'
+          this.inputItem.forEach((item) => {
+            if (val.includes(item.value)) {
+              val.splice(val.indexOf(item.value), 1);
+              item.status = "success";
             } else {
-              item.status = 'error'
+              item.status = "error";
             }
-          }
+          });
         }
       } else {
         this.inputItem.forEach((item) => {
-          item.status = ''
-        })
+          item.status = "";
+        });
       }
     },
   },
@@ -101,6 +96,7 @@ export default {
 
     if (this.isAnalysis) {
       this.correctAnswer = this.options.true_answer
+      this.checkedAnswer = this.options.user_answer.map(item => item)
     } 
   },
   methods: {

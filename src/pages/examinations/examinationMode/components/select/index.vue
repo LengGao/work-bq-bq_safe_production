@@ -69,6 +69,9 @@ export default {
       // console.log('checkedAnswe status',value, this.checkedAnswer, this.correctAnswer);
       if (this.multiple) {
         if (this.correctAnswer.length) {
+          if (this.correctAnswer.includes(value) && !this.checkedAnswer.includes(value)) {
+            return 'omission'
+          }
           if (this.correctAnswer.includes(value)) {
             return "success";
           }
@@ -97,6 +100,8 @@ export default {
     },
     onOptionChange(val) {
       // console.log('onOptionChange', val, this.checkedAnswer);
+      
+      if (!!this.isAnalysis) return;
       if (this.multiple) {
         this.checkedAnswer.indexOf(val) !== -1
           ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)

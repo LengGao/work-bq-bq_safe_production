@@ -8,29 +8,28 @@
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
-        <!-- <template v-if="currentIndex === index || (currentIndex - 1) === index || (currentIndex + 1) === index"> -->
-        <Single :options="questionList[index]" @change="onSingleChange"
+        <Single :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                 v-if="questionList[index] && questionList[index].question_type === 1" />
-        <Multiple :options="questionList[index]" @change="onSingleChange"
+        <Multiple :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_type === 2" />
-        <Indefinite :options="questionList[index]" @change="onSingleChange"
+        <Indefinite :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                     v-if="questionList[index] && questionList[index].question_type === 3" />
-        <Judg :options="questionList[index]" @change="onSingleChange"
+        <Judg :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
               v-if="questionList[index] && questionList[index].question_type === 4" />
-        <Completion :options="questionList[index]" @change="onInputChange"
+        <Completion :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
                     v-if="questionList[index] && questionList[index].question_type === 5" />
-        <Short :options="questionList[index]" @change="onInputChange"
+        <Short :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
                v-if="questionList[index] && questionList[index].question_type === 6" />
-        <Case :options="questionList[index]" :serial-number="currentIndex + 1" :log-id="logId"
-              v-if="questionList[index] && questionList[index].question_type === 7" :ref="`case-${item.id}`"
-              :is-active="currentIndex === index"
+        <Case :options="questionList[index]" :isAnalysis="isAnalysis" :serial-number="currentIndex + 1" 
+              :log-id="exam_log_id" :is-active="currentIndex === index" :ref="`case-${item.id}`"
+              v-if="questionList[index] && questionList[index].question_type === 7"
               @change="onCaseChange" @index-change="onCaseIndexChange" />
-        <!-- </template> -->
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar"
-               :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @card="toCard"
+               :is-end="isEnd" :is-start="isStart" 
                :isCollection="questionList[currentIndex].is_collect"
+               @timeup="onTimeUp" @card="toCard" @submit-paper="submitPaper"
                @next="handleNext" @prev="handlePrev" @collect="setCollection">
     </AnswerBar>
   </view>
@@ -78,22 +77,22 @@ export default {
       chapter_id: 0,
       last_question_id: 0,
       question_bank_id: 0,
-
-      caseIndex: 0,
-      logId: '',
+      exam_log_id: 0,      
+      tiem: 0,
+      model: '2',
 
       answer: {},
       questionList: [],
-      question: {},
       total: 0,
-      userAnswer: '',
-      answerSheet: {},
       answerSheetArr: [],
       userAnswerMap: {},
-
+      
+      caseIndex: 0,
+      userAnswerMapCase: [],
+      
+      title: '',
       isReview: false,
-      is_collect: 0,
-
+      isAnalysis: false
     };
   },
   computed: {
@@ -109,11 +108,22 @@ export default {
     },
   },
   onLoad(query) {
-    let { chapterId, question_bank_id, question_id, title = "章节练习", isReview = false } = query
-    this.isReview = !!isReview
+    let { 
+      chapterId, 
+      question_bank_id, 
+      question_id, 
+      title = "章节练习",
+      isReview = false,
+      isAnalysis
+    } = query
+    
     this.chapter_id = +chapterId
     this.question_bank_id = +question_bank_id
     this.question_id = +question_id
+    this.isReview = !!isReview
+    this.isAnalysis = !!isAnalysis
+    this.title = title
+    
     uni.setNavigationBarTitle({ title })
     this.getPracticeAnswerSheet()
   },
@@ -199,8 +209,9 @@ export default {
       // this.caseIndex = index;
     },
 
-    onCaseChange(index, answer) {
-      // this.questionList[this.currentIndex].child[index].userAnswer = answer;
+    onCaseChange(caseIndex, answer) {
+      this.caseIndex = caseIndex
+      this.userAnswerMapCase[caseIndex] = answer.answer
     },
 
     getCurrAnswer(index) {
@@ -211,28 +222,36 @@ export default {
 
     cacheAnswer(answer) {
       let key = answer.id
-      // if (!this.userAnswerMap[key]) {
       this.userAnswerMap[key] = answer
-      // }
       // console.log('cacheAnswer', answer, this.userAnswerMap);
     },
 
     async toCard() {
-      let index = this.currentIndex <= 0 ? 0 : this.currentIndex
-      let answer = this.getCurrAnswer(index)
-      // console.log('toCard', this.prevIndex, answer)
+      let index = this.currentIndex <= 0 ? 0 : this.currentIndex      
+      let quetion = this.questionList[index]
       let question_bank_id = this.question_bank_id
-      let url = '/pages/examinations/practiceMode/result/index'
-      let query = `?chapter_id=${this.chapter_id}&question_bank_id=${question_bank_id}`
+      let type = quetion.question_type
+      let question_id = quetion.id
+      let chapter_id = this.chapter_id
+      let title = this.title
+      let answer = this.getCurrAnswer(index)
+      let answerCase = this.userAnswerMapCase[this.caseIndex]
 
-      if (answer) {
-        let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
-        const res = await practiceAnswerTheQuestion(data);
-        if (res.code === 0) {
-          uni.redirectTo({ url: url + query})
-        }
+      // console.log('toCard', this.prevIndex, answer)
+      let params, res
+      let url = '/pages/examinations/practiceMode/result/index'
+      let query = `?chapter_id=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}`
+
+      if (type === 7 && answerCase) {
+        params = { question_bank_id: question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
+        practiceAnswerTheQuestion(params)
+        if (res.code === 0) { uni.redirectTo({ url: url + query}) }
+      } else if (answer) {
+        params = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
+        const res = await practiceAnswerTheQuestion(params);
+        if (res.code === 0) { uni.redirectTo({ url: url + query}) }
       } else {
-          uni.redirectTo({ url: url + query})
+        uni.redirectTo({ url: url + query})
       }
     },
 
@@ -261,7 +280,7 @@ export default {
       if (answer) {
         let question_bank_id = this.question_bank_id
         let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
-        const res = await practiceAnswerTheQuestion(data);
+        practiceAnswerTheQuestion(data);
       }
       uni.navigateBack()
     },

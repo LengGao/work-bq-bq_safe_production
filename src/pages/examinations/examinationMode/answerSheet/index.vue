@@ -110,7 +110,7 @@ export default {
       }
       
       uni.showModal({ title: "提示", content: content,
-        success(res) { if (res.confirm) { this.submitExamPaper() }}
+        success: (res) => { if (res.confirm) { this.submitExamPaper() }}
       })
     },
 

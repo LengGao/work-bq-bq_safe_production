@@ -69,6 +69,9 @@ export default {
       // console.log('checkedAnswe status',value, this.checkedAnswer, this.correctAnswer);
       if (this.multiple) {
         if (this.correctAnswer.length) {
+          if (this.correctAnswer.includes(value) && !this.checkedAnswer.includes(value)) {
+            return 'omission'
+          }
           if (this.correctAnswer.includes(value)) {
             return "success";
           }

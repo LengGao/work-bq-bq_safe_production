@@ -62,9 +62,12 @@ export default {
   },
   methods: {
     status(value) {
-      // console.log('checkedAnswe status',value,typeof value, this.checkedAnswer, this.correctAnswer);
+      // console.log('checkedAnswe status', this.multiple, value, this.checkedAnswer, this.correctAnswer);
       if (this.multiple) {
         if (this.correctAnswer.length) {
+          if (this.correctAnswer.includes(value) && !this.checkedAnswer.includes(value)) {
+            return 'omission'
+          }
           if (this.correctAnswer.includes(value)) {
             return "success";
           }
@@ -90,20 +93,10 @@ export default {
         }
         return "";
       }
-      // if (this.checkedAnswer) {
-      //   if (this.correctAnswer) {
-      //     return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'
-      //   } else {
-      //     if (this.multiple) {
-      //       return this.checkedAnswer.indexOf(value) !== -1 ? 'active' : ''
-      //     } else {
-      //       return this.checkedAnswer === value ? 'active' : ''
-      //     }
-      //   }
-      // }
     },
     onOptionChange(val) {
       // console.log('onOptionChange', val, this.checkedAnswer);
+      if (this.correctAnswer.length) return;
       if (this.multiple) {
         this.checkedAnswer.indexOf(val) !== -1
           ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)

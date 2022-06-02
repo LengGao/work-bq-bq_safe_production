@@ -10,27 +10,29 @@
       </view>
       <view class="child-header">
         <view class="child-header-title">案例题 {{ serialNumber }}-{{ currentIndexCase + 1 }}
-          <text class="text">（{{typeMap[question.question_child_type]}}）</text>
+          <text class="text" v-if="questionList[currentIndexCase]">（{{ title }}）</text>
         </view>
         <view class="child-header-actions">
-          <view class="prev" @click="handlePrev">上一题</view>
-          <view class="next" @click="handleNext">下一题</view>
+          <view class="prev" :class="{'disabled': isStart }" @click="handlePrev">上一题</view>
+          <view class="next" :class="{'disabled': isEnd }" @click="handleNext">下一题</view>
         </view>
       </view>
 
       <swiper class="child-content swiper" @change="onSwiperChange" :current="currentIndexCase" :disable-touch="true">
         <swiper-item class="swiper-item" v-for="(item, index) in options.child" :key="'sub_' + index">
           <scroll-view scroll-y class="scroll-view">
-            <Single :options="questionList[index]" @change="onSingleChange"
+            <Single :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                     v-if="questionList[index] && questionList[index].question_child_type === 1" />
-            <Multiple :options="questionList[index]" @change="onSingleChange"
+            <Multiple :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                       v-if="questionList[index] && questionList[index].question_child_type === 2" />
-            <Indefinite :options="questionList[index]" @change="onSingleChange"
+            <Indefinite :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                         v-if="questionList[index] && questionList[index].question_child_type === 3" />
-            <Judg :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_child_type === 4" />
-            <Completion :options="questionList[index]" @change="onInputChange"
+            <Judg :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
+                  v-if="questionList[index] && questionList[index].question_child_type === 4" />
+            <Completion :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
                         v-if="questionList[index] && questionList[index].question_child_type === 5" />
-            <Short :options="questionList[index]" @change="onInputChange" v-if="question && question.question_child_type === 6" />
+            <Short :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
+                   v-if="questionList[index] && questionList[index].question_child_type === 6" />
           </scroll-view>
         </swiper-item>
       </swiper>
@@ -88,6 +90,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isAnalysis: {
+      type: Boolean,
+      default: false,
+    },
     model: {
       type: String,
       default: "1",
@@ -99,17 +105,27 @@ export default {
   },
   data() {
     return {
-      isOpen: true,
+      question_bank_id: 0,
+
       prevIndexCase: -1,
       currentIndexCase: 0,
-      question: {},
-      questionList: [],
+
       userAnswerMap: {},
-      userAnswer: '',
-      answerSheetArr: this.options.child || [],
+      questionList: [],
       total: 0,
-      isEnd: false,
-      question_bank_id: 0,
+      
+      isOpen: true,
+
+      typeMap: {
+        1: "单选题",
+        2: "多选题",
+        3: "不定项题",
+        4: "判断题",
+        5: "填空题",
+        6: "简答题",
+        7: "案例题",
+      },
+      
 
       typeMap: {
         1: "单选题",
@@ -121,6 +137,22 @@ export default {
         7: "案例题",
       },
     };
+  },
+  computed: {
+    isEnd() {
+      return this.currentIndexCase >= this.total - 1
+    },
+    isStart() {
+      return this.currentIndexCase <= 0
+    },
+    isRight() {
+      return this.currentIndexCase > this.prevIndexCase
+    },
+    title() {
+      let types = this.typeMap
+      let type = this.questionList[this.currentIndexCase].question_child_type
+      return types[type]
+    }
   },
   mounted() {
     this.total = this.options.child.length;
@@ -196,12 +228,9 @@ export default {
       }
       if (detail.current <= 0) {
         uni.showToast({ title: '已经是第一题了', icon: 'none' })
-        this.isEnd = true
       } else if (detail.current >= this.total - 1) {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
-        this.isEnd = true
       } else {
-        this.isEnd = false
       }
 
       this.prevfetch()
@@ -217,14 +246,13 @@ export default {
 
     cacheAnswer(answer) {
       let key = answer.id
-      // if (!this.userAnswerMap[key]) {
-        this.userAnswerMap[key] = answer   
-      // }
+      this.userAnswerMap[key] = answer   
 
-      if ((this.total === 1 || this.isEnd) && answer) {
-        let questionBankInfo = this.$store.getters.questionBankInfo
-        let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
+      if ((this.isStart || this.isEnd) && answer) {
+        let data = { question_bank_id: this.question_bank_id, question_id: answer.id, user_answer: answer.answer }
         practiceAnswerTheQuestion(data);
+      } else if (answer) {
+        this.$emit('onCaseChange', this.currentIndexCase, answer)
       }
       // console.log('cacheAnswer', answer, this.userAnswerMap);
     },
@@ -233,11 +261,9 @@ export default {
       let answer = this.getCurrAnswer(this.prevIndexCase)
       // console.log('answer', this.prevIndexCase, answer);
       if (answer) {
-        let questionBankInfo = this.$store.getters.questionBankInfo
-        let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
-        const res = await practiceAnswerTheQuestion(data);
-        if (res.code === 0) {
-        }
+        let question_bank_id = this.question_bank_id
+        let data = { question_bank_id, question_id: answer.id, user_answer: answer.answer }
+        practiceAnswerTheQuestion(data);
       }
     },
 
@@ -348,6 +374,10 @@ export default {
         font-size: 24rpx;
         margin-left: 10rpx;
         border-radius: 10rpx;
+      }
+      .disabled {
+        color: #ddd;
+        border-color: #ddd;
       }
     }
   }

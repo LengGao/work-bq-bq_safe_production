@@ -45,7 +45,9 @@ export default {
     return {
       model: "1", // 1 刷题 2，考试 3 答题后的解析
       chapter_id: 0,
+      question_id: 0,
       question_bank_id: 0,
+      title: '',
       listData: {},
       statusMap: {
         1: {
@@ -75,45 +77,41 @@ export default {
       },
     };
   },
-  computed: {
-  },
-  onLoad({ chapter_id, question_bank_id }) {
+  onLoad({ chapter_id, question_bank_id, question_id, title }) {
     this.chapter_id = chapter_id
     this.question_bank_id = question_bank_id
+    this.question_id = question_id
+    this.title = title
     this.getQuestionBoard();
   },
   methods: {
     onSelect(type, index) {
       let types = this.listData[type]
       let question_id = types[index].id
-      console.log(type, index, types);
       let chapter_id = this.chapter_id
       let question_bank_id = this.question_bank_id
+      let title = this.title
       let url = `/pages/examinations/practiceMode/answer/index`
-      let query = `?chapterId=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1`
+      let query = `?chapterId=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}&isReview=1`
       uni.redirectTo({ url: url + query })
     },
     handleSubmit() {
-      uni.showModal({
-        title: '提示',
-        content: '您还有题未作答，确认交卷吗？',
-        success: ({ confirm }) => {
-          if (confirm) {
-            uni.navigateBack()
-          }
-        }
-      });
     },
-    handleClick() {
-      this.goBack();
-    },
-    goBack() {
-      uni.navigateBack();
+    handleClick() {      
+      let chapter_id = this.chapter_id
+      let question_id = this.question_id
+      let question_bank_id = this.question_bank_id
+      let title = this.title
+      let url = `/pages/examinations/practiceMode/answer/index`
+      let query = `?chapterId=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}&isReview=1`
+      uni.redirectTo({ url: url + query })
     },
     async getQuestionBoard() {
       let data = { question_bank_id: this.question_bank_id, chapter_id: this.chapter_id }
       const res = await getPracticeAnswerSheet(data);
-      this.listData = res.data.list;
+      if (res.code === 0) {
+        this.listData = res.data.list;
+      }
     },
   },
 };

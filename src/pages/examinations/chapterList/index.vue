@@ -7,7 +7,7 @@
         <view class="chapter-container" v-if="chapterList.length">
           <view class="chapter-list">
             <view class="chapter-list-item" v-for="item in chapterList" :key="item.id"
-                  @click="toAnswer(item.id, item.title, item.question_bank_id, item.last_question_id, item.question_count )">
+                  @click="toAnswer(item)">
               <view class="chapter-info">
                 <view class="chapter-info-title">
                   <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx"></uni-icons>
@@ -56,37 +56,40 @@ export default {
   },
   onShow() {
     if (!this.isOnload) {
-      setTimeout(() => {
-        this.getChapterList();
-      }, 500);
+      setTimeout(() => {this.getChapterList();}, 800);
     }
     this.isOnload = false;
   },
   methods: {
-    toAnswer(chapterId, title, question_bank_id, last_question_id, question_count) {
-      let url = '/pages/examinations/practiceMode/answer/index', query = ''
-      if (!question_count) {
-        uni.showToast({ title: '当前章节暂未配置题目', icon: 'none' })
-        return;
+    toAnswer({id, title, question_bank_id, last_question_id, is_answer, question_count }) {
+      let url = '/pages/examinations/practiceMode/answer/index', query = ''      
+
+      const cancelCallback = () => {
+          query = `?chapterId=${id}&question_bank_id=${question_bank_id}&title=${title}`
+          restartPractice({ question_bank_id, chapter_id: chapterId }).then(res => {
+            if (res.code === 0) uni.navigateTo({ url: url + query });
+          })
+      }
+      
+      const confirmCallback = () => {
+        query = `?chapterId=${id}&question_bank_id=${question_bank_id}&question_id=${last_question_id}&title=${title}`
+        uni.navigateTo({ url: url + query });
       }
 
-      uni.showModal({
-        title: '提示',
-        content: '检测到您有做题记录',
-        cancelText: '重新开始',
-        confirmText: '继续上次',
-        success: function (res) {
-          if (res.cancel) {
-            query = `?chapterId=${chapterId}&question_bank_id=${question_bank_id}&title=${title}`
-            restartPractice({ question_bank_id, chapter_id: chapterId }).then(res => {
-              if (res.code === 0) uni.navigateTo({ url: url + query });
-            })
-          } else {
-            query = `?chapterId=${chapterId}&question_bank_id=${question_bank_id}&title=${title}`
-            uni.navigateTo({ url: url + query });
-          }
-        }
-      })
+      const startCallback = () => {
+        query = `?chapterId=${id}&question_bank_id=${question_bank_id}&title=${title}`
+        uni.navigateTo({ url: url + query });
+      }
+
+      if (!question_count) { 
+        uni.showToast({ title: '当前章节暂未配置题目', icon: 'none' })
+      } else if (is_answer == 0) {
+        startCallback()
+      } else if (is_answer == 1) {
+        confirmCallback()
+      } else if (is_answer == 2) {
+        cancelCallback()
+      }
     },
 
     async getChapterList() {
