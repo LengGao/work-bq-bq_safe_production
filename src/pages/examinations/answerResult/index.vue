@@ -66,12 +66,13 @@ export default {
   },
   data() {
     return {
-      model: "1", // 1 刷题 2，考试 3 答题后的解析
-      chapter_id: 0,
-      question_bank_id: 0,
+      model: 0,
       exam_log_id: 0,
+      question_bank_id: 0,
       source: '',
-      isAnalysis: true,
+      model: '',
+      title: '',
+
       testResult: {},
       listData: {},
       statusMap: {
@@ -102,31 +103,62 @@ export default {
       },
     };
   },
-  onLoad({ question_bank_id, exam_log_id, title  }) {
-    this.question_bank_id = +question_bank_id
-    this.exam_log_id = +exam_log_id
-    this.title = title
+  onLoad(query) {
+    this.init(query)
     this.getQuestionBoard();
   },
   methods: {
+    init(query) {
+      let {
+        exam_log_id,
+        question_bank_id,
+        model,
+        source,
+        title,
+      } = query
+      this.exam_log_id = exam_log_id
+      this.question_bank_id = question_bank_id
+      this.model = model
+      this.source = source
+      this.title = title
+    },
+
+    getPath(url, query) {
+      let params = ''
+      Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
+      params.replace(/&?/, '?')
+      return url + params
+    },
+
+    getQuery() {
+      return {
+        exam_log_id: this.exam_log_id,
+        question_bank_id: this.question_bank_id,
+        model: this.model,
+        source:  this.source,
+        title: this.title,
+      }
+    },
+
+    getQuestionId(type, index) {
+      return this.listData[type][index].id
+    },
+
     onSelect(type, index) {
-      let types = this.listData[type]
-      let question_id = types[index].id
-      let exam_log_id = this.exam_log_id
-      let question_bank_id = this.question_bank_id
-      let url = `/pages/examinations/examinationMode/answer/index`
-      let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1&isAnalysis=${this.isAnalysis}`
-      uni.redirectTo({ url: url + query })
+      let url = `/pages/examinations/answer/index`
+      let question_id = this.getQuestionId(type, index)
+      let {exam_log_id, question_bank_id, model, source, title} = this.getQuery()
+      let query = { exam_log_id, last_question_id: question_id, question_bank_id, model, source, title }
+      let path = this.getPath(url, query)
+      uni.redirectTo({ url: path })
     },
     
     handleClick() {
-      let types = this.listData[1]
-      let question_id = types[0].id
-      let exam_log_id = this.exam_log_id
-      let question_bank_id = this.question_bank_id
-      let url = `/pages/examinations/examinationMode/answer/index`
-      let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&isReview=1&isAnalysis=${this.isAnalysis}`
-      uni.redirectTo({ url: url + query })
+      let url = `/pages/examinations/answer/index`
+      let {exam_log_id, question_bank_id, model, source, title} = this.getQuery()
+      let query = {exam_log_id, question_bank_id, model: 3, source, title}
+      let path = this.getPath(url, query)
+      uni.redirectTo({ url: path })
     },
 
     async getQuestionBoard() {

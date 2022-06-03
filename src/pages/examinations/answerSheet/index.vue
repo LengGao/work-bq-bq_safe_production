@@ -2,7 +2,7 @@
   <view class="answer-sheet">
     <Header :model="model" />
     <view class="content">
-      <view v-for="(item, type) in listData" :key="type">
+      <view v-for="(item, type) in list" :key="type">
         <Title>{{ typeMap[type] }}</Title>
         <view class="circular-list">
           <template v-if="type == 7">
@@ -31,7 +31,13 @@ import Header from "../components/header/index";
 import Footer from "../components/footer/index";
 import Title from "../components/title/index";
 import Circular from "../components/circular/index";
-import { getExamAnswerSheet, submitExamPaper } from "@/api/question";
+import { 
+  wrongAnswerSheet,
+  collectAnswerSheet,
+  getPracticeAnswerSheet,
+  getExamAnswerSheet, 
+  submitExamPaper
+} from "@/api/question";
 
 export default {
   name: "answerSheet",
@@ -43,13 +49,15 @@ export default {
   },
   data() {
     return {
-      model: "2", // 1 刷题 2，考试 3 答题后的解析
-      exam_log_id: 0,
-      question_id: 0,
-      question_bank_id: 0,
-      title: '',
-      expires_time: 0,
-      listData: {},
+      chapter_id, 
+      exam_log_id,
+      question_id,
+      question_bank_id,
+      source,
+      model,
+      title,
+
+      list: {},
       arr: [],
       statusMap: {
         1: {
@@ -77,71 +85,124 @@ export default {
         6: "简答题",
         7: "案例题",
       },
+      answerSheetApiMap: {}
     };
   },
   computed: {
   },
-  onLoad({ exam_log_id, question_bank_id, question_id, title }) {
-    this.exam_log_id = exam_log_id
-    this.question_bank_id = question_bank_id
-    this.question_id = question_id
-    this.title = title
+  onLoad(query) {
+    this.init(query)
+    this.injectApi()
+    this.determineStatus()
     this.getQuestionBoard();
   },
   methods: {
+    inti(query) {
+      let {
+        chapter_id, 
+        exam_log_id,
+        question_id,
+        question_bank_id,
+        source,
+        model,
+        title
+      } = query
+      this.chapter_id = +chapter_id
+      this.exam_log_id = +exam_log_id
+      this.question_id = +question_id
+      this.question_bank_id = +question_bank_id
+      this.source = source
+      this.model = !!model
+      this.title = title
+    },
+
+    injectApi() {
+      this.answerSheetApiMap = {
+        "wrong": wrongAnswerSheet,
+        "favorites": collectAnswerSheet,
+        "chapter": getPracticeAnswerSheet,
+        "examRandom": getExamAnswerSheet,
+        "examAutonomy": getExamAnswerSheet,
+        "examRecord": getExamAnswerSheet,
+        "memory": this.source === 'wrong' ? collectAnswerSheet : wrongAnswerSheet
+      }
+    },
+
+    getPath(url, query) {
+      let params = ''
+      Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
+      params.replace(/&?/, '?')
+      return url + params
+    },
+
+    getQuery() {
+      return {
+        exam_log_id: this.exam_log_id,
+        chapter_id: this.chapter_id,
+        question_id: this.question_id,
+        question_bank_id: this.question_bank_id,
+        model: this.model,
+        source:  this.source,
+        title: this.title,
+      }
+    },
+
+    getQuestionId(type, index) {
+      return this.list[type][index].id
+    },
+
     onSelect(type, index) {
-      let types = this.listData[type]
-      let question_id = types[index].id
-      let exam_log_id = this.exam_log_id
-      let question_bank_id = this.question_bank_id
-      let title = this.title
-      let url = `/pages/examinations/examinationMode/answer/index`
-      let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}&isReview=1`
-      uni.redirectTo({ url: url + query })
+      let url = `/pages/examinations/answer/index`
+      let question_id = this.getQuestionId(type, index)
+      let {exam_log_id, chapter_id, question_bank_id,  model, source, title} = this.getQuery()
+      let query = { exam_log_id, chapter_id, last_question_id: question_id, question_bank_id,  model, source, title }
+      let path = this.getPath(url, query)
+      uni.redirectTo({ url: path })
     },
 
     handleSubmit() {
-      let content = '您确认要交卷吗？'
-      let arr = this.arr
-      if (arr.some(item => item.is_answered === 0)) {
-        content = '您还有题未作答，确认交卷吗？'
-      } else if (!!this.expires_time) {
-        content = '考试时间未结束，确认交卷吗？'
-      }
+      let empty = this.arr.some(item => item.is_answered === 0)
       
-      uni.showModal({ title: "提示", content: content,
+      uni.showModal({
+        title: "提示", 
+        content: empty ? '您还有题未作答，确认交卷吗？' : '您确认要交卷吗？',
         success: (res) => { if (res.confirm) { this.submitExamPaper() }}
       })
     },
 
     handleClick() {
-      let question_id = this.question_id
-      let exam_log_id = this.exam_log_id
-      let question_bank_id = this.question_bank_id
-      let title = this.title
-      let url = `/pages/examinations/examinationMode/answer/index`
-      let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}&isReview=1`
-      uni.redirectTo({ url: url + query })
+      let url = `/pages/examinations/answer/index`
+      let {exam_log_id, chapter_id, question_id, question_bank_id,  model, source, title} = this.getQuery()
+      let query = {exam_log_id, chapter_id, last_question_id: question_id, question_bank_id,  model, source, title}
+      let path = this.getPath(url, query)
+      uni.redirectTo({ url: path })
     },
 
     async submitExamPaper() {
-      let params = {question_bank_id: this.question_bank_id, exam_log_id: this.exam_log_id}
-      let url = `/pages/examinations/examinationMode/result/index`
-      let query = `?exam_log_id=${params.exam_log_id}&question_bank_id=${params.question_bank_id}&title=${this.title}`
+      let url = `/pages/examinations/result/index`
+      let {exam_log_id, chapter_id, question_id, question_bank_id, model, source, title} = this.getQuery()
+      let query = { exam_log_id, chapter_id, question_bank_id, model, source, title}
+      let path = this.getPath(url, query)
+      let params = { exam_log_id, question_bank_id }
       let res = await submitExamPaper(params)
       if (res.code === 0) {
         uni.showToast({ title: '提交陈功' , icon: 'success' })
+        uni.redirectTo({ url: path })
       }
-      uni.redirectTo({ url: url + query })
     },
 
     async getQuestionBoard() {
-      let data = { question_bank_id: this.question_bank_id, exam_log_id: this.exam_log_id }
-      const res = await getExamAnswerSheet(data);
+      let params = {
+        chapter_id: this.chapter_id, 
+        exam_log_id: this.exam_log_id,
+        question_bank_id: this.question_bank_id, 
+      }
+      
+      let api = this.answerSheetApiMap[this.source] 
+      let res = await api(params)
       if (res.code === 0) {
-        this.expires_time = res.data.expires_time
-        this.listData = res.data.list;
         this.arr = res.data.arr
+        this.list = res.data.list;
       }
     },
   },

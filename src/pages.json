@@ -213,21 +213,21 @@
 					}
 				},
 				{
-					"path": "examinationMode/answer/index",
-					"style": {
-						"navigationBarTitleText": "模拟考试"
-					}
+					"path": "answer/index"
 				},
 				{
-					"path": "examinationMode/result/index",
+					"path": "analysis/index"
+				},
+				{
+					"path": "answerSheet/index",
 					"style": {
 						"navigationBarTitleText": "答题卡"
 					}
 				},
 				{
-					"path": "examinationMode/answerSheet/index",
+					"path": "answerResult/index",
 					"style": {
-						"navigationBarTitleText": "答题卡"
+						"navigationBarTitleText": "考试结果"
 					}
 				},
 				{

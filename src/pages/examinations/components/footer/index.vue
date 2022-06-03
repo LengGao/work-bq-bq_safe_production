@@ -1,15 +1,15 @@
 <template>
   <view class="footer">
-    <block v-if="model === '1'">
+    <template v-if="model === 1">
       <view class="btn" @click="handleClick">继续练习</view>
-    </block>
-    <block v-if="model === '2'">
+    </template>
+    <template v-else-if="model === 2">
       <view class="btn plain" @click="handleClick">继续做题</view>
       <view class="btn" @click="handleSubmit">马上交卷</view>
-    </block>
-    <block v-if="model === '3'">
+    </template>
+    <template v-else>
       <view class="btn" @click="handleClick">查看全部解析</view>
-    </block>
+    </template>
   </view>
 </template>
 <script>
@@ -17,8 +17,8 @@ export default {
   name: "IFooter",
   props: {
     model: {
-      type: String,
-      default: "1",
+      type: [String, Number],
+      default: 1,
     },
   },
   methods: {

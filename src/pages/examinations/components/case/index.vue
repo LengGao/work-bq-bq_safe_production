@@ -21,17 +21,17 @@
       <swiper class="child-content swiper" @change="onSwiperChange" :current="currentIndexCase" :disable-touch="true">
         <swiper-item class="swiper-item" v-for="(item, index) in options.child" :key="'sub_' + index">
           <scroll-view scroll-y class="scroll-view">
-            <Single :options="questionList[index]" :model="model" :isAnalysis="isAnalysis" @change="onSingleChange"
+            <Single :options="questionList[index]" :model="model" @change="onSingleChange"
                     v-if="questionList[index] && questionList[index].question_child_type === 1" />
-            <Multiple :options="questionList[index]" :model="model" :isAnalysis="isAnalysis" @change="onSingleChange"
+            <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
                       v-if="questionList[index] && questionList[index].question_child_type === 2" />
-            <Indefinite :options="questionList[index]" :model="model" :isAnalysis="isAnalysis" @change="onSingleChange"
+            <Indefinite :options="questionList[index]" :model="model" @change="onSingleChange"
                         v-if="questionList[index] && questionList[index].question_child_type === 3" />
-            <Judg :options="questionList[index]" :model="model" :isAnalysis="isAnalysis" @change="onSingleChange"
+            <Judg :options="questionList[index]" :model="model" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_child_type === 4" />
-            <Completion :options="questionList[index]" :model="model" :isAnalysis="isAnalysis" @change="onInputChange"
+            <Completion :options="questionList[index]" :model="model" @change="onInputChange"
                         v-if="questionList[index] && questionList[index].question_child_type === 5" />
-            <Short :options="questionList[index]" :model="model" :isAnalysis="isAnalysis" @change="onInputChange"
+            <Short :options="questionList[index]" :model="model" @change="onInputChange"
                    v-if="questionList[index] && questionList[index].question_child_type === 6" />
           </scroll-view>
         </swiper-item>
@@ -70,9 +70,9 @@ export default {
         title: "",
       }),
     },
-    current: {
-      type: Number,
-      default: 0,
+    questionBank: {
+      type: [String, Number],
+      default: ''
     },
     // 当前案例题序号
     serialNumber: {
@@ -82,10 +82,6 @@ export default {
     logId: {
       type: [Number, String],
       default: "",
-    },
-    isAnalysis: {
-      type: Boolean,
-      default: false,
     },
     isActive: {
       type: Boolean,
@@ -144,9 +140,9 @@ export default {
       return types[type]
     }
   },
-  mounted() {
+  created() {
     this.total = this.options.child.length;
-    this.question_bank_id = this.$store.getters.questionBankInfo.id
+    this.question_bank_id = this.questionBank
     this.init()
   },
   methods: {
@@ -173,7 +169,7 @@ export default {
     handleToggle() {
       this.isOpen = !this.isOpen;
     },
-    
+
     handlePrev() {
       if (this.currentIndexCase > 0) {
         this.prevIndexCase = this.currentIndexCase
@@ -192,7 +188,7 @@ export default {
         this.prevIndexCase = this.currentIndexCase
         this.currentIndexCase = detail.current
       }
-      
+
       if (detail.current <= 0) {
         uni.showToast({ title: '已经是第一题了', icon: 'none' })
       } else if (detail.current >= this.total - 1) {
@@ -239,7 +235,7 @@ export default {
     },
 
     async getQuestionDetail(question_id, index) {
-      let params = { question_id: question_id,  question_bank_id: this.question_bank_id, exam_log_id: this.logId }
+      let params = { question_id: question_id, question_bank_id: this.question_bank_id, exam_log_id: this.logId }
       if (question_id) {
         let res = await getQuestionDetail(params)
         if (res.code === 0) {

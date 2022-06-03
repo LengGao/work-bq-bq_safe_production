@@ -1,14 +1,14 @@
 <template>
   <view class="header">
-    <block v-if="model === '1' || model === '3'">
+    <template v-if="model === 2">
+      <view class="status status--primary">已回答</view>
+      <view class="status status--none">未回答</view>
+    </template>
+    <template v-else>
       <view class="status status--success">正确</view>
       <view class="status status--error">错误</view>
       <view class="status status--none">未回答</view>
-    </block>
-    <block v-if="model === '2'">
-      <view class="status status--primary">已回答</view>
-      <view class="status status--none">未回答</view>
-    </block>
+    </template>
   </view>
 </template>
 <script>
@@ -16,8 +16,8 @@ export default {
   name: "IHeader",
   props: {
     model: {
-      type: String,
-      default: "primary",
+      type: [String, Number],
+      default: 1,
     },
   },
 };

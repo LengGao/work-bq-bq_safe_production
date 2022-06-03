@@ -44,32 +44,39 @@ export default {
     return {
       configData: { list: [] },
       exam_id: 9,
-      exam_log_id: 0,
       type: 0,
+      source: 'examRandom',
       questionTypes: ['', '单选', '多选', '不定项', '判断', '填空', '简答', '案例'],
     };
   },
-  onLoad({ exam_id, type, exam_log_id }) {
+  onLoad({ exam_id, type }) {
     this.exam_id = exam_id || ''
     this.type = +type
-    this.exam_log_id = +exam_log_id
     this.getConfig();
   },
   methods: {
     async toAnswer() {
-      let url = `/pages/examinations/examinationMode/answer/index`
+      let url = `/pages/examinations/answer/index`
       let query = ``
-      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let source = this.source
       let exam_id = this.exam_id
-      let exam_log_id = this.exam_log_id
-      let type = this.type
       let title = this.configData.title
-      let params = { question_bank_id: question_bank_id, exam_id: exam_id, exam_log_id: exam_log_id }
+      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let params = {}
+      let api = {}
 
-      let api = !!type ? getMockExamLog : createExamLog
+      if (source === 'examRandom') {
+        params = {question_bank_id}
+        api = getMockExamLog
+      } else {
+        params = {exam_id, question_bank_id}
+        api = createExamLog
+      }
+
       let res = await api(params)
       if (res.code === 0) {
-        query = `?exam_id=${this.exam_id}&question_bank_id=${question_bank_id}&exam_log_id=${res.data.exam_log_id}&type=${this.type}&title=${title}`
+        let exam_log_id = res.data.exam_log_id
+        query = `?question_bank_id=${question_bank_id}&exam_log_id=${exam_log_id}&source=${source}&title=${title}`
         uni.redirectTo({ url: url + query })
       }
     },

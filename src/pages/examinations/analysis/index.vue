@@ -8,28 +8,29 @@
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
-        <Single :options="questionList[index]" @change="onSingleChange"
+        <Single :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                 v-if="questionList[index] && questionList[index].question_type === 1" />
-        <Multiple :options="questionList[index]" @change="onSingleChange"
+        <Multiple :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_type === 2" />
-        <Indefinite :options="questionList[index]" @change="onSingleChange"
+        <Indefinite :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                     v-if="questionList[index] && questionList[index].question_type === 3" />
-        <Judg :options="questionList[index]" @change="onSingleChange"
+        <Judg :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
               v-if="questionList[index] && questionList[index].question_type === 4" />
-        <Completion :options="questionList[index]" @change="onInputChange"
+        <Completion :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
                     v-if="questionList[index] && questionList[index].question_type === 5" />
-        <Short :options="questionList[index]" @change="onInputChange"
+        <Short :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
                v-if="questionList[index] && questionList[index].question_type === 6" />
         <Case :options="questionList[index]" :serial-number="currentIndex + 1"
-              v-if="questionList[index] && questionList[index].question_type === 7" :model="model"
-              :ref="`case-${item.id}`" :question-bank="question_bank_id" :log-id="exam_log_id" 
+              v-if="questionList[index] && questionList[index].question_type === 7" 
+              :model="model" :isAnalysis="isAnalysis"
+              :log-id="exam_log_id"  :ref="`case-${item.id}`"
               @change="onCaseChange" @submitanswer="submitAnswerChild" @index-change="onCaseIndexChange" />
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar" :is-end="isEnd" :is-start="isStart"
-               :time="time" :model="model" :isCollection="questionList[currentIndex].is_collect" @card="toCard"
-               @submit-paper="submitPaper" @collect="setCollection" @timeup="onTimeUp" @prev="handlePrev"
-               @next="handleNext">
+               :time="time" :model="model" :isCollection="questionList[currentIndex].is_collect" 
+               @card="toCard" @submit-paper="submitPaper" @collect="setCollection" @timeup="onTimeUp"
+               @prev="handlePrev" @next="handleNext" >
     </AnswerBar>
   </view>
 </template>
@@ -88,6 +89,7 @@ export default {
       tiem: 0,
       title: '',
       source: '',
+      isAnalysis: false,
 
       chapter_id: 0,
       question_id: 0,
@@ -123,7 +125,6 @@ export default {
   onLoad(query) {
     this.init(query)
     this.injectApi()
-    this.determiniModel()
     this.getPracticeAnswerSheet()
   },
   methods: {
@@ -134,8 +135,8 @@ export default {
         last_question_id,
         question_bank_id,
         title = "",
-        model = 0,
         source = "",
+        isAnalysis = false,
       } = query
       if (!source) uni.showToast({ title: '无效答题来源' })
 
@@ -145,7 +146,8 @@ export default {
       this.question_bank_id = +question_bank_id
       this.title = title
       this.source = source
-      this.model = !!model ? model : this.sourceMap[source]
+      this.isAnalysis = !!isAnalysis
+      this.model = this.sourceMap[source]
 
       uni.setNavigationBarTitle({ title })
     },
@@ -158,7 +160,7 @@ export default {
         "examRandom": getExamAnswerSheet,
         "examAutonomy": getExamAnswerSheet,
         "examRecord": getExamAnswerSheet,
-        "memory": this.source === 'wrong' ? collectAnswerSheet : wrongAnswerSheet
+        "memory": source === 'wrong' ? collectAnswerSheet : wrongAnswerSheet
       }
       this.answerApiMap = {
         "wrong": practiceAnswerTheQuestion,
@@ -214,10 +216,10 @@ export default {
         uni.showToast({ title: '已经是第一题了', icon: 'none' })
       } else if (this.isEnd) {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
+      } else {
+        this.submitAnswer(this.prevIndex)
       }
-
       this.prevfetch()
-      this.submitAnswer(this.prevIndex)
     },
 
     prevfetch() {
@@ -372,10 +374,8 @@ export default {
     async submitAnswer(prevIndex) {
       let { exam_log_id, question_bank_id, source, answer } = this.getQuery(prevIndex)
       let api = this.answerApiMap[source]
-      if (answer) {
-        let params = { exam_log_id, question_bank_id, question_id: answer.id, user_answer: answer.answer }
-        return api(params)
-      }
+      let params = { exam_log_id, question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
+      if (answer) { return api(params) }
     },
 
     async getQuestionDetail(question_id, index) {
@@ -442,9 +442,9 @@ export default {
       let exam_log_id = this.exam_log_id
       let question_bank_id = this.question_bank_id
 
-      let params1 = { question_bank_id, exam_log_id, question_id: prev }
-      let params2 = { question_bank_id, exam_log_id, question_id: curr }
-      let params3 = { question_bank_id, exam_log_id, question_id: next }
+      let params1 = { question_bank_id: question_bank_id, question_id: prev, exam_log_id }
+      let params2 = { question_bank_id: question_bank_id, question_id: curr, exam_log_id }
+      let params3 = { question_bank_id: question_bank_id, question_id: next, exam_log_id }
       let res = await Promise.all([getQuestionDetail(params1), getQuestionDetail(params2), getQuestionDetail(params3)])
       if (res.length) {
         let list = res.map(item => item.data)
