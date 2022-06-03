@@ -79,19 +79,21 @@ export default {
 
       chapter_id: 0,
       last_question_id: 0,
-
-      caseIndex: 0,
-      logId: '',
+      question_bank_id: 0,
+      exam_log_id: 0,      
+      tiem: 0,
+      model: '2',
 
       answer: {},
       questionList: [],
-      question: {},
       total: 0,
-      userAnswer: '',
-      answerSheet: {},
       answerSheetArr: [],
       userAnswerMap: {},
-
+      
+      caseIndex: 0,
+      userAnswerMapCase: [],
+      
+      title: '',
       isReview: false,
       isAnalysis: false,
       source: '',
@@ -206,8 +208,9 @@ export default {
       // this.caseIndex = index;
     },
 
-    onCaseChange(index, answer) {
-      // this.questionList[this.currentIndex].child[index].userAnswer = answer;
+    onCaseChange(caseIndex, answer) {
+      this.caseIndex = caseIndex
+      this.userAnswerMapCase[caseIndex] = answer.answer
     },
 
     getCurrAnswer(index) {
@@ -218,28 +221,35 @@ export default {
 
     cacheAnswer(answer) {
       let key = answer.id
-      // if (!this.userAnswerMap[key]) {
       this.userAnswerMap[key] = answer
-      // }
-      // console.log('cacheAnswer', answer, this.userAnswerMap);
     },
 
     async toCard() {
-      let index = this.currentIndex <= 0 ? 0 : this.currentIndex
-      let answer = this.getCurrAnswer(index)
-      // console.log('toCard', this.prevIndex, answer)
+      let index = this.currentIndex <= 0 ? 0 : this.currentIndex      
+      let quetion = this.questionList[index]
       let question_bank_id = this.question_bank_id
-      let url = '/pages/examinations/selfQuestion/result/index'
-      let query = `?chapter_id=${this.chapter_id}&question_bank_id=${question_bank_id}&source=${this.source}&isAnalysis=${this.isAnalysis}`
+      let type = quetion.question_type
+      let question_id = quetion.id
+      let chapter_id = this.chapter_id
+      let title = this.title
+      let answer = this.getCurrAnswer(index)
+      let answerCase = this.userAnswerMapCase[this.caseIndex]
 
-      if (answer) {
-        let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
-        const res = await practiceAnswerTheQuestion(data);
-        if (res.code === 0) {
-          uni.redirectTo({ url: url + query})
-        }
+      // console.log('toCard', this.prevIndex, answer)
+      let params, res
+      let url = '/pages/examinations/selfQuestion/result/index'
+      let query = `?chapter_id=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}`
+
+      if (type === 7 && answerCase) {
+        params = { question_bank_id: question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
+        practiceAnswerTheQuestion(params)
+        if (res.code === 0) { uni.redirectTo({ url: url + query}) }
+      } else if (answer) {
+        params = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
+        const res = await practiceAnswerTheQuestion(params);
+        if (res.code === 0) { uni.redirectTo({ url: url + query}) }
       } else {
-          uni.redirectTo({ url: url + query})
+        uni.redirectTo({ url: url + query})
       }
     },
 
@@ -260,15 +270,32 @@ export default {
     },
 
     async submitPaper() {
-      let index = this.currentIndex <= 0 ? 0 : this.currentIndex
+      let index = this.currentIndex <= 0 ? 0 : this.currentIndex      
+      let quetion = this.questionList[index]
+      let question_bank_id = this.question_bank_id
+      let type = quetion.question_type
+      let question_id = quetion.id
+      let chapter_id = this.chapter_id
+      let title = this.title
       let answer = this.getCurrAnswer(index)
+      let answerCase = this.userAnswerMapCase[this.caseIndex]
+
       // console.log('submitPaper', this.prevIndex, answer);
-      if (answer) {
-        let question_bank_id = this.question_bank_id
-        let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
-        const res = await practiceAnswerTheQuestion(data);
+      let params, res
+      let url = '/pages/examinations/selfQuestion/result/index'
+      let query = `?chapter_id=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}`
+
+      if (type === 7 && answerCase) {
+        params = { question_bank_id: question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
+        practiceAnswerTheQuestion(params)
+        if (res.code === 0) { uni.redirectTo({ url: url + query}) }
+      } else if (answer) {
+        params = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
+        const res = await practiceAnswerTheQuestion(params);
+        if (res.code === 0) { uni.redirectTo({ url: url + query}) }
+      } else {
+        uni.redirectTo({ url: url + query})
       }
-      uni.navigateBack()
     },
 
     async submitAnswer() {

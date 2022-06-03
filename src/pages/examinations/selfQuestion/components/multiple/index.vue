@@ -3,7 +3,7 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" multiple :value="checkedAnswer" :correct-answer="correctAnswer"
+    <Select :options="options.option" multiple :value="checkedAnswer" :isAnalysis="isAnalysis" :correct-answer="correctAnswer"
             @change="onChangeOpt" />
     <AnswerEye :correct-answer="correctAnswer" @change="handleEyeChange" />
     <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
@@ -50,7 +50,8 @@ export default {
     if (this.options.user_answer.length) {
       this.correctAnswer = this.options.true_answer.map(item => +item)
       this.checkedAnswer = this.options.user_answer.map(item => +item)
-    } else if (this.isAnalysis) {
+    } 
+    if (this.isAnalysis) {
       this.correctAnswer = this.options.true_answer.map(item => +item)
       this.checkedAnswer = this.options.true_answer.map(item => +item)
     }

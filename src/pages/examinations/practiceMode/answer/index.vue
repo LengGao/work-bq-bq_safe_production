@@ -48,8 +48,8 @@ import Case from "../components/case";
 
 import {
   getPracticeAnswerSheet,
-  getQuestionDetail,
   practiceAnswerTheQuestion,
+  getQuestionDetail,
   collect,
 } from "@/api/question";
 
@@ -274,15 +274,32 @@ export default {
     },
 
     async submitPaper() {
-      let index = this.currentIndex <= 0 ? 0 : this.currentIndex
+      let index = this.currentIndex <= 0 ? 0 : this.currentIndex      
+      let quetion = this.questionList[index]
+      let question_bank_id = this.question_bank_id
+      let type = quetion.question_type
+      let question_id = quetion.id
+      let chapter_id = this.chapter_id
+      let title = this.title
       let answer = this.getCurrAnswer(index)
+      let answerCase = this.userAnswerMapCase[this.caseIndex]
+
       // console.log('submitPaper', this.prevIndex, answer);
-      if (answer) {
-        let question_bank_id = this.question_bank_id
-        let data = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
-        practiceAnswerTheQuestion(data);
+      let params, res
+      let url = '/pages/examinations/practiceMode/result/index'
+      let query = `?chapter_id=${chapter_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}`
+
+      if (type === 7 && answerCase) {
+        params = { question_bank_id: question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
+        practiceAnswerTheQuestion(params)
+        if (res.code === 0) { uni.redirectTo({ url: url + query}) }
+      } else if (answer) {
+        params = { question_bank_id: question_bank_id, question_id: answer.id, user_answer: answer.answer }
+        const res = await practiceAnswerTheQuestion(params);
+        if (res.code === 0) { uni.redirectTo({ url: url + query}) }
+      } else {
+        uni.redirectTo({ url: url + query})
       }
-      uni.navigateBack()
     },
 
     async submitAnswer() {

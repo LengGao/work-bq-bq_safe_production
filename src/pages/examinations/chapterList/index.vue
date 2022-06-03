@@ -66,7 +66,7 @@ export default {
 
       const cancelCallback = () => {
           query = `?chapterId=${id}&question_bank_id=${question_bank_id}&title=${title}`
-          restartPractice({ question_bank_id, chapter_id: chapterId }).then(res => {
+          restartPractice({ question_bank_id, chapter_id: id }).then(res => {
             if (res.code === 0) uni.navigateTo({ url: url + query });
           })
       }

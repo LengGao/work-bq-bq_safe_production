@@ -47,7 +47,8 @@ export default {
       this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
       this.correctAnswer = this.options.true_answer.map(item => +item);
       // console.log("judg", this.options.user_answer, this.checkedAnswer);
-    } else if (this.isAnalysis) {
+    } 
+    if (this.isAnalysis) {
       this.correctAnswer = this.options.true_answer.map(item => +item)
       this.checkedAnswer = this.options.true_answer.map(item => +item)[0]
     }

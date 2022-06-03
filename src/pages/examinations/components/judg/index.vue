@@ -1,25 +1,24 @@
 <template>
-  <div class="single">
+  <div class="judg">
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" :value="checkedAnswer" :isAnalysis="isAnalysis" :correct-answer="correctAnswer" @change="onChangeOpt"  />
+    <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" @change="onChangeOpt" />
     <AnswerAnalysis v-if="isAnalysis && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import AnswerAnalysis from "../answerAnalysis/index.vue";
+import AnswerAnalysis from "../answerAnalysis/index";
 import Select from "../select/index";
 
 export default {
-  name: "single",
+  name: "Judg",
   components: {
     AnswerAnalysis,
-    uParse,
     Select,
+    uParse,
   },
-
   props: {
     options: {
       type: Object,
@@ -28,39 +27,37 @@ export default {
         title: "",
       }),
     },
-    userAnswer: {
-      type: [Array, String, Number],
-      default: "",
-    },
     isAnalysis: {
       type: Boolean,
       default: false,
     },
+    model: {
+      type: Number,
+      default: 1
+    }
   },
   data() {
     return {
-      correctAnswer: '',
-      checkedAnswer: '',
+      correctAnswer: "",
+      checkedAnswer: "",
     };
   },
   created() {
     if (this.options.user_answer.length) {
-      this.correctAnswer = this.options.true_answer.map(item => +item)
       this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
-      // console.log("single", this.options.user_answer, this.checkedAnswer)
+      // console.log("judg", this.options.user_answer, this.checkedAnswer);
     } 
     if (this.isAnalysis) {
       this.correctAnswer = this.options.true_answer.map(item => +item)
-      this.checkedAnswer = this.options.true_answer.map(item => +item)[0]
     }
   },
   methods: {
     onChangeOpt(val) {
-        // console.log('single onChangeOpt', val);
-        this.checkedAnswer = val
-        this.correctAnswer = this.options.true_answer.map(item => +item)
-        let data = { id: this.options.id, answer: [val] }
-        this.$emit("change", data);
+      // console.log('judg', val);
+      this.checkedAnswer = val
+      // this.correctAnswer = this.options.true_answer.map(item => +item);
+      let data = { id: this.options.id, answer: [val] }
+      this.$emit("change", data);
     }
   }
 };

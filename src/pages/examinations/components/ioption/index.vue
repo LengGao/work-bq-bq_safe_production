@@ -5,9 +5,6 @@
       </uni-icons>
       <uni-icons custom-prefix="iconfont" v-else-if="status === 'error'" color="#fff" type="icon-cha" size="28rpx">
       </uni-icons>
-      <text v-else-if="status === 'omission'" class="label">
-         漏
-      </text>
       <text v-else>
         <slot name="label"> {{ label }}</slot>
       </text>
@@ -68,6 +65,7 @@ export default {
   }
   &-text {
     flex: 1;
+    height: 100%;
   }
   &--active {
     color: $uni-color-primary;
@@ -100,22 +98,6 @@ export default {
     }
     .iconfont {
       color: $uni-answer-error;
-    }
-  }
-  &--omission {
-    color: $uni-answer-success;
-    border-color: $uni-answer-success;
-    .option-label {
-      border-color: $uni-answer-success;
-      background-color: $uni-answer-success;
-      color: #fff;
-    }
-    .label {
-      font-size: 28rpx;
-      color: #fff;
-    }
-    .iconfont {
-      color: $uni-answer-success;
     }
   }
 }

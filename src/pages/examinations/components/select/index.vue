@@ -35,14 +35,18 @@ export default {
       type: Array,
       default: () => [],
     },
-    isAnalysis: {
-      type: Boolean,
-      default: false,
-    },
     correctAnswer: {
       type: [Array, String, Number],
       default: "",
     },
+    isAnalysis: {
+      type: Boolean,
+      default: false,
+    },
+    model: {
+      type: Number,
+      default: 1
+    }
   },
   data() {
     return {
@@ -66,8 +70,7 @@ export default {
   },
   methods: {
     status(value) {
-      // console.log('checkedAnswe status',value,typeof value, this.checkedAnswer, this.correctAnswer);
-      // console.log('checkedAnswe status', this.multiple, value, this.checkedAnswer, this.correctAnswer);
+      // console.log('checkedAnswe status',value, this.checkedAnswer, this.correctAnswer);
       if (this.multiple) {
         if (this.correctAnswer.length) {
           if (this.correctAnswer.includes(value) && !this.checkedAnswer.includes(value)) {
@@ -101,7 +104,8 @@ export default {
     },
     onOptionChange(val) {
       // console.log('onOptionChange', val, this.checkedAnswer);
-      if (this.isAnalysis) return;
+      
+      if (!!this.isAnalysis) return;
       if (this.multiple) {
         this.checkedAnswer.indexOf(val) !== -1
           ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)

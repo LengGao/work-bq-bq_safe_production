@@ -292,12 +292,13 @@ export default {
       let question_id = quetion.id
       let title = this.title
       let answer = this.getCurrAnswer(index)
+      let answerCase = this.userAnswerMapCase[this.caseIndex]
       
       let url = `/pages/examinations/examinationMode/result/index`
       let query = `?exam_log_id=${exam_log_id}&question_bank_id=${question_bank_id}&question_id=${question_id}&title=${title}`
       let params = {}, res, ret
 
-      if (type === 7) {
+      if (type === 7 && answerCase) {
         params = {question_bank_id, exam_log_id}
         res = await submitExamPaper(params)
         if (res.code === 0) {

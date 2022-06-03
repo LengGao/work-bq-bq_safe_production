@@ -10,11 +10,11 @@
       </view>
       <view class="child-header">
         <view class="child-header-title">案例题 {{ serialNumber }}-{{ currentIndexCase + 1 }}
-          <text class="text">（{{typeMap[question.question_child_type]}}）</text>
+          <text class="text" v-if="questionList[currentIndexCase]">（{{ title }}）</text>
         </view>
         <view class="child-header-actions">
-          <view class="prev" @click="handlePrev">上一题</view>
-          <view class="next" @click="handleNext">下一题</view>
+          <view class="prev" :class="{'disabled': isStart }" @click="handlePrev">上一题</view>
+          <view class="next" :class="{'disabled': isEnd }" @click="handleNext">下一题</view>
         </view>
       </view>
 
@@ -27,10 +27,12 @@
                       v-if="questionList[index] && questionList[index].question_child_type === 2" />
             <Indefinite :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
                         v-if="questionList[index] && questionList[index].question_child_type === 3" />
-            <Judg :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_child_type === 4" />
+            <Judg :options="questionList[index]" :isAnalysis="isAnalysis" @change="onSingleChange"
+                  v-if="questionList[index] && questionList[index].question_child_type === 4" />
             <Completion :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
                         v-if="questionList[index] && questionList[index].question_child_type === 5" />
-            <Short :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange" v-if="question && question.question_child_type === 6" />
+            <Short :options="questionList[index]" :isAnalysis="isAnalysis" @change="onInputChange"
+                   v-if="questionList[index] && questionList[index].question_child_type === 6" />
           </scroll-view>
         </swiper-item>
       </swiper>
@@ -103,17 +105,16 @@ export default {
   },
   data() {
     return {
-      isOpen: true,
+      question_bank_id: 0,
+
       prevIndexCase: -1,
       currentIndexCase: 0,
-      question: {},
-      questionList: [],
+
       userAnswerMap: {},
-      userAnswer: '',
-      answerSheetArr: this.options.child || [],
+      questionList: [],
       total: 0,
-      isEnd: false,
-      question_bank_id: 0,
+      
+      isOpen: true,
 
       typeMap: {
         1: "单选题",
@@ -125,6 +126,22 @@ export default {
         7: "案例题",
       },
     };
+  },
+  computed: {
+    isEnd() {
+      return this.currentIndexCase >= this.total - 1
+    },
+    isStart() {
+      return this.currentIndexCase <= 0
+    },
+    isRight() {
+      return this.currentIndexCase > this.prevIndexCase
+    },
+    title() {
+      let types = this.typeMap
+      let type = this.questionList[this.currentIndexCase].question_child_type
+      return types[type]
+    }
   },
   mounted() {
     this.total = this.options.child.length;
@@ -188,7 +205,7 @@ export default {
       let inQuestionList = this.questionList[index]
 
       if (inAnswerSheet && !inQuestionList) {
-        let question_id = inAnswerSheet.id
+        let question_id = inAnswerSheet
         this.getQuestionDetail(question_id, index)
       }
     },
@@ -221,14 +238,13 @@ export default {
 
     cacheAnswer(answer) {
       let key = answer.id
-      // if (!this.userAnswerMap[key]) {
-        this.userAnswerMap[key] = answer   
-      // }
+      this.userAnswerMap[key] = answer   
 
-      if ((this.total === 1 || this.isEnd) && answer) {
-        let questionBankInfo = this.$store.getters.questionBankInfo
-        let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
+      if ((this.isStart || this.isEnd) && answer) {
+        let data = { question_bank_id: this.question_bank_id, question_id: answer.id, user_answer: answer.answer }
         practiceAnswerTheQuestion(data);
+      } else if (answer) {
+        this.$emit('onCaseChange', this.currentIndexCase, answer)
       }
       // console.log('cacheAnswer', answer, this.userAnswerMap);
     },
@@ -238,11 +254,9 @@ export default {
       let answer = this.getCurrAnswer(this.prevIndexCase)
       // console.log('answer', this.prevIndexCase, answer);
       if (answer) {
-        let questionBankInfo = this.$store.getters.questionBankInfo
-        let data = { question_bank_id: questionBankInfo.id, question_id: answer.id, user_answer: answer.answer }
-        const res = await practiceAnswerTheQuestion(data);
-        if (res.code === 0) {
-        }
+        let question_bank_id = this.question_bank_id
+        let data = { question_bank_id, question_id: answer.id, user_answer: answer.answer }
+        practiceAnswerTheQuestion(data);
       }
     },
 

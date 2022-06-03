@@ -199,7 +199,7 @@ export default {
       let inQuestionList = this.questionList[index]
 
       if (inAnswerSheet && !inQuestionList) {
-        let question_id = inAnswerSheet.id
+        let question_id = inAnswerSheet
         this.getQuestionDetail(question_id, index)
       }
     },
