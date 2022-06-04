@@ -178,18 +178,20 @@ export default {
 
     getQuery(prevIndex) {
       let index = prevIndex !== undefined ? prevIndex : this.currentIndex
-      let practice_id = this.practice_id
       let question = this.questionList[index]
       let question_id = question.question_id
+      let practice_id = this.practice_id
+      let course_id = this.course_id
+      let lesson_id = this.lesson_id
       let answer = this.userAnswerMap[question_id]
 
-      return { practice_id, question_id, answer }
+      return { practice_id, question_id, course_id, lesson_id, answer}
     },
 
     async submitPaper() {
-      let url = `/pages/examinations/classTestMode/result/index`
-      let { practice_id, question_id, answer } = this.getQuery()
-      let query = { practice_id, course_id: this.course_id, lesson_id: this.lesson_id }
+      let url = `/pages/studys/classTestMode/result/index`
+      let { practice_id, course_id, lesson_id, answer } = this.getQuery()
+      let query = { practice_id, course_id, lesson_id }
       let path = this.getPath(url, query)
       let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
       let res = await practiceAnswer(params)

@@ -33,7 +33,7 @@
         <button class="footer-second-btn" @click="onNext">继续学习</button>
       </view>
       <view class="footer-second" v-else>
-        <button class="footer-second-btn" @click="() => onRestart('study')">再看一次</button>
+        <button class="footer-second-btn" @click="() => onRestart('study')">再学一次</button>
         <button class="footer-second-btn" @click="() => onRestart('examination')">再考一次</button>
       </view>
     </view>
@@ -51,9 +51,11 @@ export default {
     return {
       victoryText: '恭喜您，成功通过本次考试！',
       defeatText: '很遗憾，您并没有通过本次考试！',
+
       grader: 0,
       pass: false,
       list: [],
+
       practice_id: '',
       lesson_id: '',
       course_id: '',
@@ -68,10 +70,27 @@ export default {
     this.getData()
   },
   methods: {
+    getPath(url, query) {
+      let params = ''
+      Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
+      params = params.replace(/&?/, '?')
+      return url + params
+    },
+
+    getQuery() {
+      let practice_id = this.practice_id
+      let course_id = this.course_id
+      let lesson_id = this.lesson_id
+      let next_lesson_id = this.next_lesson_id
+      let pass = this.pass
+      return { practice_id, course_id, lesson_id, next_lesson_id, pass }
+    },
     onAnalysis() {
-      let url = `/pages/examinations/classTestMode/analysis/index`
-      let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&next_lesson_id=${this.next_lesson_id}$course_id=${course_id}&pass=${this.pass}`
-      uni.redirectTo({ url: url + query})
+      let url = `/pages/studys/classTestMode/analysis/index`
+      let {practice_id, lesson_id, course_id, next_lesson_id, pass} = this.getQuery()
+      let query = {practice_id, lesson_id, course_id, next_lesson_id, pass}
+      let path = this.getPath(url, query)
+      uni.redirectTo({ url: path })
     },
     onNext() {
       let url = `/pages/studys/courseDetail/index`
@@ -84,9 +103,9 @@ export default {
       if (type === 'study') {
         url = `/pages/studys/courseDetail/index`
         query = `?lesson_id=${this.lesson_id}&course_id=${this.course_id}`
-        uni.reLaunch({ url: url + query })
+        uni.redirectTo({ url: url + query })
       } else {
-        url = `/pages/examinations/classTestMode/answer/index`
+        url = `/pages/studys/classTestMode/answer/index`
         query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${course_id}`
         uni.redirectTo({ url: url + query})
       }

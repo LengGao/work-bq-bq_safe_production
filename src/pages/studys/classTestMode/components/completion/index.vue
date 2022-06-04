@@ -3,8 +3,11 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <i-option v-for="(item, index) in checkedAnswer" :key="index" :label="index + 1 + ''" :status="status(item.value)">
-      <input type="text" :disabled="analysis" v-model="item.value" placeholder="请输入" @input="onInput" />
+    <i-option v-for="(item, index) in inputItem" :key="index" :status="item.status">
+      <template v-slot:label>
+        {{ index + 1  }}
+      </template>
+      <input type="text" :disabled="analysis" v-model="item.value" placeholder="请输入" @blur="onInput" />
     </i-option>
     <AnswerAnalysis v-if="analysis" :question="options" />
   </view>
@@ -43,10 +46,10 @@ export default {
   },
   created() {
     if (this.analysis) {
-      this.correctAnswer = this.options.right.map(item => item.trim())
-      let right = this.options.right.map(item => item.trim())
-      this.inputItem = this.options.option.map((item, index) => {
-        return { value: right[index] || '', status: '' }
+      this.correctAnswer = this.options.option.map(item => item.content.trim())
+
+      this.inputItem = this.options.answer.map((item, index, arr) => {
+        return { value: arr[index] || '', status: '' }
       })
     } else {
       this.inputItem = this.options.option.map((item, index) => {
@@ -56,7 +59,7 @@ export default {
   },
   methods: {
     onInput() {
-      let answer = this.checkedAnswer.map(item => item.value)
+      let answer = this.inputItem.map(item => item.value)
       this.checkedAnswer = answer
       let data = { question_id: this.options.question_id, answer: answer }
       this.$emit("change", data)

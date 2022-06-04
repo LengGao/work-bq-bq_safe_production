@@ -52,14 +52,35 @@ export default {
   methods: {
     // 状态更新
     status(value) {
-      if (this.analysis) {
-        return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'             
-      } else {
-        if (this.multiple) {
-          return this.checkedAnswer.includes(value) ? 'active' : ''
-        } else {
-          return value === this.checkedAnswer ? 'active' : ''
+      if (this.multiple) {
+        if (this.correctAnswer.length) {
+          if (this.correctAnswer.includes(value) && !this.checkedAnswer.includes(value)) {
+            return 'omission'
+          }
+          if (this.correctAnswer.includes(value)) {
+            return "success";
+          }
+          if (this.checkedAnswer.includes(value) && !this.correctAnswer.includes(value)) {
+            return "error";
+          }
         }
+        if (this.checkedAnswer.includes(value)) {
+          return "active";
+        }
+        return "";
+      } else {
+        if (this.correctAnswer) {
+          if (this.correctAnswer == value) {
+            return "success";
+          }
+          if (value != this.correctAnswer && this.checkedAnswer == value) {
+            return "error";
+          }
+        }
+        if (this.checkedAnswer == value) {
+          return "active";
+        }
+        return "";
       }
     },
     // 多选

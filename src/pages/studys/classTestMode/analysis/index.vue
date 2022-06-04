@@ -52,11 +52,11 @@ export default {
       lesson_id: '',
       next_lesson_id: '',
       course_id: '',
+
       pass: false,
       analysis: true,
       // 当前的swiper 索引
       prevIndex: -1,
-      nextIndex: 1,
       currentIndex: 0,
       // swiper 动画时间
       duration: 300,
@@ -83,13 +83,11 @@ export default {
     this.createQuestion();
   },
   methods: {
-    // 上一题
     handlePrev() {
       if (!this.isStart) {
         this.currentIndex = this.currentIndex - 1
       }
     },
-    // 下一题
     handleNext() {
       if (!this.isEnd) {
         this.currentIndex = this.currentIndex + 1
@@ -112,7 +110,7 @@ export default {
         let query = `?course_id=${course_id}&lesson_id=${this.next_lesson_id}`
         uni.redirectTo({ url: url + query })
       } else {
-        let url = `/pages/examinations/classTestMode/answer/index`
+        let url = `/pages/studys/classTestMode/answer/index`
         let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${course_id}`
         uni.redirectTo({ url: url + query })
       }
