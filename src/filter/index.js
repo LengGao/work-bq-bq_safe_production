@@ -19,7 +19,7 @@ const filters = {
     },
     empty(val) {
         if (val === undefined  || val === null  || val === '') {
-           return '-'
+           return '--'
         }
         return val
     },

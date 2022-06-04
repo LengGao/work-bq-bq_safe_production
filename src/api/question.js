@@ -1,5 +1,7 @@
 import requset from '@/request/index'
 
+
+
 export function practiceStart(data) {
   return requset({
     url: 'course/practiceStart',
@@ -28,6 +30,14 @@ export function practiceAnalyse(data) {
   return requset({
     url: 'course/practiceAnalyse',
     method: 'get',
+    data   
+  })
+}
+
+export function getDailyStatistics(data) {
+  return requset({
+    url: 'question/getDailyStatistics',
+    method: 'post',
     data   
   })
 }

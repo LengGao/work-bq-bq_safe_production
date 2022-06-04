@@ -12,25 +12,25 @@
           <view class="report-top-title">每日学习，为梦想持续加码</view>
           <view class="report-top-data">
             <view class="report-top-col">
-              <text class="data-number">10天</text>
+              <text class="data-number">{{statistics.answer_days | empty}}天</text>
               <text class="data-desc">累计答题天数</text>
             </view>
             <view class="spacing" style="width: 2rpx; height: 75rpx; background-color: #fff;"></view>
             <view class="report-top-col">
-              <text class="data-number">--</text>
+              <text class="data-number">{{statistics.today_answer_num | empty}}</text>
               <text class="data-desc">今日答题数</text>
             </view>
             <view class="spacing" style="width: 2rpx; height: 75rpx; background-color: #fff;"></view>
             <view class="report-top-col">
-              <text class="data-number">--%</text>
-              <text class="data-desc">累计答题天数</text>
+              <text class="data-number">{{statistics.today_correct_rate | empty}}%</text>
+              <text class="data-desc">今日正确率</text>
             </view>
           </view>
         </view>
         <view class="report-bottom">
           <view class="report-bottom-left">
             <image src="/static/img/examination_icon_person.png" mode="aspectFit" class="icon-person" />
-            <text class="text-person">2650人正在学习</text>
+            <text class="text-person">{{statistics.learning_num | empty}}人正在学习</text>
           </view>
           <view class="report-bottom-right">
             <button class="report-bottom-btn" @click="goStudy">今日未学习</button>
@@ -62,7 +62,7 @@
       </view>
     </view>
 
-    <uni-popup ref="popupRef" type="bottom" :is-mask-click="false">
+    <uni-popup ref="popupRef" type="bottom">
       <view class="popup-box">
       <uni-list>
         <view class="list-item-body-title">请选择题库</view>
@@ -79,7 +79,10 @@
 
 <script>
 import ExaminationCard from './components/ExaminationCard'
-import { getQuestionBankList } from '@/api/question'
+import { 
+  getQuestionBankList,
+  getDailyStatistics
+ } from '@/api/question'
 
 export default {
   components: {
@@ -109,6 +112,13 @@ export default {
       ],
       isReady: false,
       questionInfoId: '',
+      
+      statistics: {
+        answer_days: 0,
+        today_answer_num: 0,
+        today_correct_rate: 0,
+        learning_num: 0
+      }
     };
   },
   computed: {
@@ -122,6 +132,7 @@ export default {
   onReady() {
   },
   onShow() {
+    this.getDailyStatistics()
   },
   methods: {
     to(url) {
@@ -150,6 +161,15 @@ export default {
         let questionInfo = res.data[0] || {}
         if (questionInfo.id) this.questionInfoId = questionInfo.id
         this.$store.dispatch('setQuestionBankInfo', questionInfo)
+      }
+    },
+    async getDailyStatistics() {
+      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let params = {question_bank_id}
+      let res = await getDailyStatistics(params)
+      if (res.code === 0) {
+        console.log('res', res);
+        this.statistics = res.data
       }
     }
   },
