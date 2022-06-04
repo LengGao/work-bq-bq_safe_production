@@ -11,32 +11,32 @@
       <view class="learn-report-statistics">
         <view class="statistics-top">
           <view class="statistics-top-user">
-            <image class="user-avatar" :src="srcImage" />
+            <image class="user-avatar" :src="userInfo.avatar_url" />
             <view>
-              <view class="user-name">娿饿肚肚</view>
-              <view class="user-time">2021-20-20 开始学习</view>
+              <view class="user-name">{{userInfo.real_name}}</view>
+              <view class="user-time">{{practiceData.first_time_study | dateFormat}} 开始学习</view>
             </view>
           </view>
           <view class="statistics-top-day">
             <p class="day-title">累计答题天数</p>
-            <p class="day-value">255</p>
+            <p class="day-value">{{todyData.answer_days | dayFormat}}</p>
           </view>
         </view>
         <view class="statistics-data">
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-value">{{todyData.today_answer_num | empty}}</view>
             <view class="statistics-data-item-title">今日答题数</view>
           </view>
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">9999<text>%</text></view>
+            <view class="statistics-data-item-value">{{todyData.today_correct_rate | empty}}<text>%</text></view>
             <view class="statistics-data-item-title">今日正确率</view>
           </view>
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-value">{{todyData.wrong_num | empty}}</view>
             <view class="statistics-data-item-title">总答题数</view>
           </view>
           <view class="statistics-data-item none">
-            <view class="statistics-data-item-value">9999<text>%</text></view>
+            <view class="statistics-data-item-value">{{customData.total_correct_rate | empty}}<text>%</text></view>
             <view class="statistics-data-item-title">总正确率</view>
           </view>
         </view>
@@ -57,21 +57,25 @@
         </view>
         <view class="learn-report-card-statistics statistics-data">
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-value">{{practiceData.today_answer_num | empty}}</view>
             <view class="statistics-data-item-title">答题总数</view>
           </view>
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">9999<text>%</text></view>
+            <view class="statistics-data-item-value">{{practiceData.answer_progress | empty}}<text>%</text></view>
             <view class="statistics-data-item-title">答题进度</view>
           </view>
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">9999</view>
+            <!-- <view class="statistics-data-item-value">{{customData.total_exam_num | empty}}</view>
+            <view class="statistics-data-item-title">总考试次数</view> -->
+            <view class="statistics-data-item-value">{{practiceData.collect_num | empty}}</view>
             <view class="statistics-data-item-title">收藏题数</view>
           </view>
           <view class="statistics-data-item none">
-            <view class="statistics-data-item-value">9999</view>
+            <!-- <view class="statistics-data-item-value">{{customData.top_score | empty}}</view>
+            <view class="statistics-data-item-title">最高得分</view> -->
+            <view class="statistics-data-item-value">{{practiceData.wrong_num | empty}}</view>
             <view class="statistics-data-item-title">答错题数</view>
-          </view>study
+          </view>
         </view>
       </view>
       <view class="learn-report-card">
@@ -86,20 +90,20 @@
         <view class="learn-report-card-contetn">
           <view class="charts-line-title">最近7次模拟考试成绩</view>
           <view class="charts-line-box">
-            <qiun-data-charts type="line" :chartData="chartLineData" :opts="chartsLineOpts" />
+            <qiun-data-charts type="line" :chartData="chartLineData" :opts="chartLineData" />
           </view>
         </view>
         <view class="learn-report-card-statistics statistics-data">
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-value">{{mockData.total_exam_num | empty}}</view>
             <view class="statistics-data-item-title">模拟考试次数</view>
           </view>
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-value">{{mockData.total_answer_num | empty}}</view>
             <view class="statistics-data-item-title">累计答题总数</view>
           </view>
           <view class="statistics-data-item none">
-            <view class="statistics-data-item-value">9999</view>
+            <view class="statistics-data-item-value">{{mockData.top_score | empty}}</view>
             <view class="statistics-data-item-title">模拟考试最高分</view>
           </view>
         </view>
@@ -111,46 +115,36 @@
 
 <script>
 import qiunDataCharts from "@/uni_modules/ucharts/components/qiun-data-charts/qiun-data-charts.vue";
+import moment from '@/utils/date'
+import { 
+  getDailyStatistics,
+  getStudyReport
+ } from '@/api/question'
+
+
 export default {
   components: {
     qiunDataCharts,
   },
+  filters: {
+    dayFormat(val) {
+      return new Date(val).getDay()
+    },
+    dateFormat(val) {
+      let date = new Date(val) 
+      return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}` 
+    }
+  },
   data() {
     return {
       srcImage: 'https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
-      chartsLineOpts: {
-        legend: {
-          show: false,
-        },
-        extra: {
-          line: {
-            type: "curve",
-            width: 2
-          },
-        }
-      },
-      chartLineData: {
-        categories: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
-        series: [
-          {
-            name: "目标值",
-            data: [35, 36, 31, 33, 13, 34, 5],
-          },
-        ],
-      },
-      chartGaugeOpts: {
-        subtitle: {
-          name: '50%',
-          offsetY: 30,
-          color: '#ffcc2d'
-        },
-        title: {
-          name: '答题正确率',
-          fontSize: 12,
-          offsetY: 70,
-          color: '#111'
-        }
-      },
+
+      userInfo: {},
+      todyData: {},
+      practiceData: {},
+      mockData: {},
+      customData: {},
+        
       chartGaugeData: {
         categories: [
           {
@@ -169,21 +163,87 @@ export default {
         series: [
           {
             "name": "完成率",
-            "data": 0.5
+            "data": 0
           }
         ]
       },
+
+      chartGaugeOpts: {
+        subtitle: {
+          name: '0%',
+          offsetY: 30,
+          color: '#ffcc2d'
+        },
+        title: {
+          name: '答题正确率',
+          fontSize: 12,
+          offsetY: 70,
+          color: '#111'
+        }
+      },
+
+      chartsLineOpts: {
+        legend: {
+          show: false,
+        },
+        extra: {
+          line: { type: "curve", width: 2 },
+        }
+      },
+      chartLineData: {
+        categories: [],
+        series: [{ name: '考试成绩', data: [] }],
+      },
     };
   },
+  onLoad() {
+    this.userInfo = this.$store.getters.userInfo
+    this.getDailyStatistics()
+    this.getStudyReport()
+  },
   created() {
-    setTimeout(() => {
-      this.chartGaugeOpts.subtitle.name = '20%'
-      this.chartGaugeData.series[0].data = 0.2
-    }, 2000);
+    // setTimeout(() => {
+    //   this.chartGaugeOpts.subtitle.name = '20%'
+    //   this.chartGaugeData.series[0].data = 0.2
+    // }, 2000);
   },
   methods: {
     goBack() {
       uni.navigateBack();
+    },
+
+    fullData(mockData, correct_rate) {
+      this.chartGaugeOpts.subtitle.name = `${correct_rate}%`
+      this.chartLineData.series[0].data = parseFloat(correct_rate) / 100
+
+      this.chartLineData.categories = mockData.map(item => item.time)
+      this.chartLineData.series[0].data = mockData.map(item => +item.score)
+
+      console.log('mock', mockData, this.chartLineData,);
+      
+    },
+
+    async getDailyStatistics() {
+      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let params = {question_bank_id} 
+      let res = await getDailyStatistics(params)
+      if (res.code === 0) {
+        this.todyData = res.data
+      }
+    },
+
+    async getStudyReport() {
+      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let params = {question_bank_id} 
+      let res = await getStudyReport(params)
+      if (res.code === 0) {
+        let { practice, custom, mock} = res.data
+        this.practiceData = practice   
+        this.mockData = mock
+        this.customData = custom
+        let mockData = mock.chart_list.slice(0, 7) 
+        this.fullData(mockData, custom.correct_rate)
+      }
     },
   },
 };
@@ -213,7 +273,7 @@ export default {
         font-size: 50rpx;
         color: $uni-color-primary;
         text {
-          font-size: $uni-font-size-sm;
+          font-size: $uni-font-size-md;
         }
       }
     }
@@ -284,7 +344,7 @@ export default {
           font-size: $uni-font-size-sm;
         }
         .day-value {
-          font-size: 85rpx;
+          font-size: 80rpx;
           color: $uni-color-primary;
           font-weight: bold;
         }

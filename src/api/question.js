@@ -34,14 +34,6 @@ export function practiceAnalyse(data) {
   })
 }
 
-export function getDailyStatistics(data) {
-  return requset({
-    url: 'question/getDailyStatistics',
-    method: 'post',
-    data   
-  })
-}
-
 export function getQuestionBankList(data) {
   return requset({
     url: 'question/getQuestionBankList',
@@ -70,7 +62,7 @@ export function getPracticeAnswerSheet(data) {
   return requset({
     url: 'question/getPracticeAnswerSheet',
     method: 'post',
-    data   
+    data,
   })
 }
 
@@ -212,6 +204,21 @@ export function getExamResult(data) {
   })
 }
 
+export function getDailyStatistics(data) {
+  return requset({
+    url: 'question/getDailyStatistics',
+    method: 'post',
+    data   
+  })
+}
+
+export function getStudyReport(data) {
+  return requset({
+    url: 'question/getStudyReport',
+    method: 'post',
+    data   
+  })
+}
 
 
 

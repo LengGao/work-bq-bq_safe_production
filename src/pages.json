@@ -113,13 +113,6 @@
 					}
 				},
 				{
-					"path": "learnReport/index",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "学习报告"
-					}
-				},
-				{
 					"path": "learnData/index",
 					"style": {
 						"navigationStyle": "custom",
@@ -131,6 +124,13 @@
 		{
 			"root": "pages/examinations",
 			"pages": [
+				{
+					"path": "learnReport/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "学习报告"
+					}
+				},
 				{
 					"path": "chapterList/index",
 					"style": {
