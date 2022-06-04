@@ -8,41 +8,41 @@
     </view>
 
     <view class="report">
-        <view class="report-top">
-          <view class="report-top-title">每日学习，为梦想持续加码</view>
-          <view class="report-top-data">
-            <view class="report-top-col">
-              <text class="data-number">{{statistics.answer_days | empty}}天</text>
-              <text class="data-desc">累计答题天数</text>
-            </view>
-            <view class="spacing" style="width: 2rpx; height: 75rpx; background-color: #fff;"></view>
-            <view class="report-top-col">
-              <text class="data-number">{{statistics.today_answer_num | empty}}</text>
-              <text class="data-desc">今日答题数</text>
-            </view>
-            <view class="spacing" style="width: 2rpx; height: 75rpx; background-color: #fff;"></view>
-            <view class="report-top-col">
-              <text class="data-number">{{statistics.today_correct_rate | empty}}%</text>
-              <text class="data-desc">今日正确率</text>
-            </view>
+      <view class="report-top">
+        <view class="report-top-title">每日学习，为梦想持续加码</view>
+        <view class="report-top-data">
+          <view class="report-top-col">
+            <text class="data-number">{{statistics.answer_days | empty}}天</text>
+            <text class="data-desc">累计答题天数</text>
+          </view>
+          <view class="spacing" style="width: 2rpx; height: 75rpx; background-color: #fff;"></view>
+          <view class="report-top-col">
+            <text class="data-number">{{statistics.today_answer_num | empty}}</text>
+            <text class="data-desc">今日答题数</text>
+          </view>
+          <view class="spacing" style="width: 2rpx; height: 75rpx; background-color: #fff;"></view>
+          <view class="report-top-col">
+            <text class="data-number">{{statistics.today_correct_rate | empty}}%</text>
+            <text class="data-desc">今日正确率</text>
           </view>
         </view>
-        <view class="report-bottom">
-          <view class="report-bottom-left">
-            <image src="/static/img/examination_icon_person.png" mode="aspectFit" class="icon-person" />
-            <text class="text-person">{{statistics.learning_num | empty}}人正在学习</text>
-          </view>
-          <view class="report-bottom-right">
-            <button class="report-bottom-btn" @click="goStudy">今日未学习</button>
-          </view>
+      </view>
+      <view class="report-bottom">
+        <view class="report-bottom-left">
+          <image src="/static/img/examination_icon_person.png" mode="aspectFit" class="icon-person" />
+          <text class="text-person">{{statistics.learning_num | empty}}人正在学习</text>
         </view>
+        <view class="report-bottom-right">
+          <button class="report-bottom-btn" @click="goStudy">今日未学习</button>
+        </view>
+      </view>
     </view>
 
     <view class="grids">
       <uni-grid :column="4" :showBorder="false" class="grid">
         <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item">
           <view class="grid-box" @click="() => to(grid.url)">
-            <image :src="grid.thumb" class="grid-image"  mode="aspectFit" />
+            <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
             <text class="grid-text">{{ grid.title }}</text>
           </view>
         </uni-grid-item>
@@ -52,26 +52,26 @@
     <view class="examinationcard-bar">
       <view class="examinationcard-list">
         <view v-for="(examination) in examinations" :key="examination.id" class="examinationcard-list-item">
-          <ExaminationCard @click="() => to(examination.url)" :leftImage="examination.thumb" :rightTop="examination.name"
-                           :rightFooter="examination.desc" :bgColor="examination.bgColor" >
-              <template v-slot:arrow>
-                <image :src="examination.arrow" mode="aspectFit" class="arrow-image" />
-              </template>
+          <ExaminationCard @click="() => to(examination.url)" :leftImage="examination.thumb"
+                           :rightTop="examination.name" :rightFooter="examination.desc" :bgColor="examination.bgColor">
+            <template v-slot:arrow>
+              <image :src="examination.arrow" mode="aspectFit" class="arrow-image" />
+            </template>
           </ExaminationCard>
         </view>
       </view>
     </view>
 
-    <uni-popup ref="popupRef" type="bottom">
+    <uni-popup ref="popupRef" type="bottom" @change="openPopupChange">
       <view class="popup-box">
-      <uni-list>
-        <view class="list-item-body-title">请选择题库</view>
-        <uni-list-item v-for="(item, index) in candidates" :key="index" @click="() => onClickItem(index)" clickable>
-          <template v-slot:body>
-            <view class="list-item-body-test">{{ item.title }}</view>
-          </template>
-        </uni-list-item>
-      </uni-list>
+        <uni-list>
+          <view class="list-item-body-title">请选择题库</view>
+          <uni-list-item v-for="(item, index) in candidates" :key="index" @click="() => onClickItem(index)" clickable>
+            <template v-slot:body>
+              <view class="list-item-body-test">{{ item.title }}</view>
+            </template>
+          </uni-list-item>
+        </uni-list>
       </view>
     </uni-popup>
   </view>
@@ -79,10 +79,10 @@
 
 <script>
 import ExaminationCard from './components/ExaminationCard'
-import { 
+import {
   getQuestionBankList,
   getDailyStatistics
- } from '@/api/question'
+} from '@/api/question'
 
 export default {
   components: {
@@ -112,7 +112,7 @@ export default {
       ],
       isReady: false,
       questionInfoId: '',
-      
+
       statistics: {
         answer_days: 0,
         today_answer_num: 0,
@@ -137,22 +137,29 @@ export default {
   methods: {
     to(url) {
       if (!this.questionInfoId) return uni.showToast({ title: '请选择题库', icon: 'none' });
-      uni.navigateTo({url})
+      uni.navigateTo({ url })
     },
     goStudy() {
       if (!this.questionInfoId) return uni.showToast({ title: '请选择题库', icon: 'none' });
-      uni.navigateTo({url: '/pages/examinations/chapterList/index'})
+      uni.navigateTo({ url: '/pages/examinations/chapterList/index' })
     },
     onCandidates(e) {
-      uni.hideTabBar()
       this.$refs.popupRef.open()
-    },  
+    },
+    openPopupChange({ show }) {
+      if (show) {
+        uni.hideTabBar()
+      } else {
+
+        uni.showTabBar()
+      }
+
+    },
     onClickItem(index) {
       this.currentCandidates = index
       let questionInfo = this.candidates[index]
       this.$store.dispatch('setQuestionBankInfo', questionInfo)
       this.$refs.popupRef.close()
-      uni.showTabBar()
     },
     async getQuestionBankList() {
       let res = await getQuestionBankList()
@@ -165,7 +172,7 @@ export default {
     },
     async getDailyStatistics() {
       let question_bank_id = this.$store.getters.questionBankInfo.id
-      let params = {question_bank_id}
+      let params = { question_bank_id }
       let res = await getDailyStatistics(params)
       if (res.code === 0) {
         console.log('res', res);
@@ -211,8 +218,8 @@ $padding-lr: 30rpx;
     color: #fff;
     border-top-left-radius: 24rpx;
     border-top-right-radius: 24rpx;
-    background-color: #199FFF;
-    
+    background-color: #199fff;
+
     &-title {
       font-size: $font-size-md;
     }
@@ -243,7 +250,6 @@ $padding-lr: 30rpx;
     }
   }
 
-
   &-bottom {
     display: flex;
     align-items: center;
@@ -256,14 +262,14 @@ $padding-lr: 30rpx;
       flex-direction: row;
       align-items: center;
     }
-    
+
     &-btn {
       color: #fff;
       font-size: $font-size-sm;
       border-radius: 12rpx;
       background-color: $color-primary;
     }
-  
+
     .icon-person {
       width: 140rpx;
       height: 60rpx;
@@ -287,11 +293,11 @@ $padding-lr: 30rpx;
 }
 
 .bg-1 {
-  background-color: #FFFAF4;
+  background-color: #fffaf4;
 }
 
 .bg-2 {
-  background-color: #FFF7F7;
+  background-color: #fff7f7;
 }
 
 .arrow-image {
@@ -351,5 +357,4 @@ $padding-lr: 30rpx;
   font-size: 28rpx;
   text-align: center;
 }
-
 </style>

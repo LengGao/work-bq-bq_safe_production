@@ -231,16 +231,18 @@ export default {
           uni.hideTabBar()
           this.$refs['popup-org'].open('bottom')
         } else {
-          this.$store.dispatch('setOrgCurrent', list[len - 1])
+          uni.setNavigationBarTitle({ title: list[0].name })
+          this.$store.dispatch('setOrgCurrent', list[0])
         }
       }
     },
-    // 选择机构
+    // 选择机构s
     onChoiceOrg(item) {
       uni.showToast({ title: `欢迎进入${item.name}`, icon: 'none'})
       this.$store.dispatch('setOrgCurrent', item)
       this.$refs['popup-org'].close()
       uni.showTabBar()
+      uni.setNavigationBarTitle({ title: item.name })
     },
     // 点击筛选
     onOpenFilter() {

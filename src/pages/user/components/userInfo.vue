@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { uploadImage } from '@/api/user'
 import Avator from "@/static/img/user_avator.png";
 
 export default {

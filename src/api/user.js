@@ -35,3 +35,11 @@ export function userCourseList(data) {
         data
     })
 }
+
+export function uploadImage(data) {
+    return request({
+        url: 'user/uploadImage',
+        method: 'post',
+        data
+    })
+}
