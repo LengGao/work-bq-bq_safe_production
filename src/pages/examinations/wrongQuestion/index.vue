@@ -1,6 +1,7 @@
 <template>
   <view class="wrong-question">
-    <!-- <uni-notice-bar show-icon text="答对一次后自动移除错题 " /> -->
+    <uni-notice-bar v-if="isShow" show-icon text="答对一次后自动移除错题 " />
+    <template v-if="list.length">
     <view class="wrong-question-list-item" v-for="item in list" :key="item.id">
       <view class="title">{{ item.title }}（{{ item.num }}）</view>
       <view class="actions">
@@ -8,39 +9,59 @@
         <view class="btn-primary" @click="toAnswer(0, item.id, item.title)">重练</view>
       </view>
     </view>
+    </template>
+    <NoData top="35%" v-else>暂无考试记录</NoData>
   </view>
 
 </template>
 
 <script>
+import NoData from "@/components/noData/index";
 import { wrongChapterList, restartPractice } from "@/api/question";
 
 export default {
   name: "wrongQuestion",
+  components: {
+    NoData
+  },
   data() {
     return {
       list: [],
+      isOnload: false,
+      isShow: true,
     }
   },
-  onShow() {
+  onLoad() {
     this.wrongChapterList()
+    this.isOnload = true
+  },
+  onShow() {
+    if (!this.isOnload) {
+      setTimeout(() => { 
+        this.wrongChapterList()
+      }, 800)
+    }
+    this.isOnload = false
   },
   methods: {
-    toAnswer(isAnalysis, chapterId, title) {
-      let question_bank_id = this.$store.getters.questionBankInfo.id
-      let url = ``
-      let query = `?chapterId=${chapterId}&question_bank_id=${question_bank_id}&title=${title}&source=wrong&isAnalysis=${isAnalysis}`
-      if (isAnalysis) {
-        url = `/pages/examinations/selfQuestion/answer/index`
-        uni.navigateTo({ url: url + query })
-      } else {
-        url = `/pages/examinations/selfQuestion/answer/index`
-        let params = { chapter_id: chapterId, question_bank_id: question_bank_id }
-        restartPractice(params).then(res => {
-          if (res.code === 0) uni.navigateTo({ url: url + query });
-        })
-      }
+    getPath(url, query) {
+      let params = ''
+      Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
+      params = params.replace(/&?/, '?')
+      return url + params
     },
+
+    async toAnswer(type, chapter_id, title) {
+      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let url = `/pages/examinations/answer/index`
+      let source = !!type ? 'memoryWrong' : 'wrong'
+      let query = { chapter_id, question_bank_id, source, title }
+      let path = this.getPath(url, query)
+      let params = {chapter_id, question_bank_id}
+      let res = await restartPractice(params)
+      if (res.code === 0) uni.navigateTo({ url: path })
+    },
+
     async wrongChapterList() {
       let questionBankInfo = this.$store.getters.questionBankInfo
       let params = { question_bank_id: questionBankInfo.id }

@@ -65,9 +65,8 @@ export default {
     },
     toConfig(item) {
       let exam_id = item.id
-      let exam_log_id = item.exam_log_id
       let url = `/pages/examinations/testPaperIntroduce/index`
-      let query = `?exam_id=${exam_id}&exam_log_id=${exam_log_id}&type=0`
+      let query = `?exam_id=${exam_id}&source=examAutonomy`
       uni.navigateTo({ url: url + query })
     },
     onScrolltolower() {

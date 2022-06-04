@@ -114,13 +114,14 @@ export default {
         7: "案例题",
       },
       sourceMap: {
-        "wrong": 1,
-        "favorites": 1,
-        "chapter": 1,
-        "examRandom": 2,
-        "examAutonomy": 2,
-        "examRecord": 3,
-        "memory": 3
+        'wrong': 1,
+        'favorites': 1,
+        'chapter': 1,
+        'examRandom': 2,
+        'examAutonomy': 2,
+        'examRecord': 3,
+        "memoryWrong": 3,
+        "memoryFavorites": 3,
       },
     };
   },
@@ -193,11 +194,10 @@ export default {
         uni.showToast({ title: '已经是第一题了', icon: 'none' })
       } else if (detail.current >= this.total - 1) {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
-      } else {
-        this.$emit('submitAnswer')
       }
 
       this.prevfetch()
+      this.$emit('submitAnswer')
     },
 
     prevfetch() {
@@ -226,7 +226,7 @@ export default {
     cacheAnswer(answer) {
       let key = answer.id
       this.userAnswerMap[key] = answer
-      if ((this.isStart || this.isEnd) && answer) {
+      if (this.isEnd && answer) {
         this.$emit('onCaseChange', this.currentIndexCase, answer)
         this.$emit('submitAnswer')
       } else if (answer) {
@@ -248,6 +248,8 @@ export default {
       let exam_log_id = this.logId
       let childs = this.options.child
       let question_bank_id = this.question_bank_id
+      
+      if (!childs.length) return;
 
       let params1 = { question_bank_id: question_bank_id, question_id: childs[0], exam_log_id }
       let params2 = { question_bank_id: question_bank_id, question_id: childs[1], exam_log_id }

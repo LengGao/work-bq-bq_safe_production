@@ -49,7 +49,7 @@ export default {
           name: "随机考试", desc: '这是描述文案', 
           arrow: '/pages/examinations/static/examinationMock_bg_list2.png', 
           thumb: '/pages/examinations/static/examinationMock_icon2.png', 
-          url: '/pages/examinations/testPaperIntroduce/index?type=1'
+          url: '/pages/examinations/testPaperIntroduce/index?source=examRandom'
         }
       ]
     }

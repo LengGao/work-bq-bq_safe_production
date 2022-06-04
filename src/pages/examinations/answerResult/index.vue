@@ -118,7 +118,7 @@ export default {
       } = query
       this.exam_log_id = exam_log_id
       this.question_bank_id = question_bank_id
-      this.model = model
+      this.model = +model
       this.source = source
       this.title = title
     },
@@ -126,7 +126,7 @@ export default {
     getPath(url, query) {
       let params = ''
       Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
-      params.replace(/&?/, '?')
+      params = params.replace(/&?/, '?')
       return url + params
     },
 

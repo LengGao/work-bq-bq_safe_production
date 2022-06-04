@@ -42,16 +42,17 @@ export default {
   name: "testPaperIntroduce",
   data() {
     return {
-      configData: { list: [] },
-      exam_id: 9,
+      exam_id: 0,
       type: 0,
-      source: 'examRandom',
+      source: '',
+      configData: { list: [] },
       questionTypes: ['', '单选', '多选', '不定项', '判断', '填空', '简答', '案例'],
     };
   },
-  onLoad({ exam_id, type }) {
-    this.exam_id = exam_id || ''
-    this.type = +type
+  onLoad({ exam_id, source }) {
+    this.exam_id = exam_id || 0
+    this.source = source
+    this.question_bank_id = this.$store.getters.questionBankInfo.id
     this.getConfig();
   },
   methods: {
@@ -61,7 +62,7 @@ export default {
       let source = this.source
       let exam_id = this.exam_id
       let title = this.configData.title
-      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let question_bank_id = this.question_bank_id
       let params = {}
       let api = {}
 
@@ -82,9 +83,10 @@ export default {
     },
 
     async getConfig() {
-      let questionBankInfo = this.$store.getters.questionBankInfo
-      let params = { exam_id: this.exam_id, question_bank_id: questionBankInfo.id }
-      let api = !!this.type ? getMockExamInfo : getCustomExamInfo
+      let question_bank_id = this.question_bank_id
+      let params = { exam_id: this.exam_id, question_bank_id: question_bank_id }
+      let source = this.source
+      let api =  source === 'examRandom' ? getMockExamInfo : getCustomExamInfo
       const res = await api(params)
       if (res.code === 0) {
         this.configData = res.data

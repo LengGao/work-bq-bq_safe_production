@@ -1,5 +1,6 @@
 <template>
   <view class="favorites">
+    <template v-if="list.length">
     <view class="favorites-list-item" v-for="item in list" :key="item.id">
       <view class="title">{{ item.title }}（{{ item.num }}）</view>
       <view class="actions">
@@ -7,38 +8,56 @@
         <view class="btn-primary" @click="toAnswer(0, item.id, item.title)">重练</view>
       </view>
     </view>
+    </template>
+    <NoData top="35%" v-else>暂无考试记录</NoData>
   </view>
 </template>
 <script>
 
+import NoData from "@/components/noData/index";
 import { collectChapterList, restartPractice } from "@/api/question";
 export default {
-
   name: "favorites",
+  components: {
+    NoData
+  },
   data() {
     return {
       list: [],
+      isOnload: false,
     };
   },
-  onShow() {
+  onLoad() {
     this.collectChapterList()
+    this.isOnload = true
+  },
+  onShow() {
+    if (!this.isOnload) {
+      setTimeout(() => { 
+        this.collectChapterList()
+      }, 800)
+    }
+    this.isOnload = false
   },
   methods: {
-    toAnswer(isAnalysis, chapterId, title) {
-      let question_bank_id = this.$store.getters.questionBankInfo.id
-      let url = ``
-      let query = `?chapterId=${chapterId}&question_bank_id=${question_bank_id}&title=${title}&source=favorites&isAnalysis=${isAnalysis}`
-      if (isAnalysis) {
-        url = `/pages/examinations/selfQuestion/answer/index`
-        uni.navigateTo({ url: url + query })
-      } else {
-        url = `/pages/examinations/selfQuestion/answer/index`
-        let params = { chapter_id: chapterId, question_bank_id: question_bank_id }
-        restartPractice(params).then(res => {
-          if (res.code === 0) uni.navigateTo({ url: url + query });
-        })
-      }
+    getPath(url, query) {
+      let params = ''
+      Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
+      params = params.replace(/&?/, '?')
+      return url + params
     },
+
+    async toAnswer(type, chapter_id, title) {
+      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let url = `/pages/examinations/answer/index`
+      let source = !!type ? 'memoryFavorites' : 'favorites'
+      let query = { chapter_id, question_bank_id, source, title }
+      let path = this.getPath(url, query)
+      let params = {chapter_id, question_bank_id}
+      let res = await restartPractice(params)
+      if (res.code === 0) uni.navigateTo({ url: path })
+    },
+    
     async collectChapterList() {
       let questionBankInfo = this.$store.getters.questionBankInfo
       let params = { question_bank_id: questionBankInfo.id }

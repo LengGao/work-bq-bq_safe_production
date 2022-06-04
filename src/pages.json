@@ -139,18 +139,6 @@
 					}
 				},
 				{
-					"path": "practiceMode/answer/index",
-					"style": {
-						"navigationBarTitleText": "章节练习"
-					}
-				},
-				{
-					"path": "practiceMode/result/index",
-					"style": {
-						"navigationBarTitleText": "答题卡"
-					}
-				},
-				{
 					"path": "independentPaper/index",
 					"style": {
 						"navigationStyle": "custom",
@@ -177,33 +165,9 @@
 					}
 				},
 				{
-					"path": "selfQuestion/answer/index",
-					"style": {
-						"navigationBarTitleText": "答题卡"
-					}
-				},
-				{
-					"path": "selfQuestion/result/index",
-					"style": {
-						"navigationBarTitleText": "题集答题卡"
-					}
-				},
-				{
 					"path": "examinationRecord/index",
 					"style": {
 						"navigationBarTitleText": "考试记录"
-					}
-				},
-				{
-					"path": "examinationRecord/examinationRecordResult/index",
-					"style": {
-						"navigationBarTitleText": "答题卡"
-					}
-				},
-				{
-					"path": "examinationRecord/examinationRecordAnalysis/index",
-					"style": {
-						"navigationBarTitleText": "考试记录解析"
 					}
 				},
 				{

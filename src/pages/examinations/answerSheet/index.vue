@@ -49,13 +49,13 @@ export default {
   },
   data() {
     return {
-      chapter_id, 
-      exam_log_id,
-      question_id,
-      question_bank_id,
-      source,
-      model,
-      title,
+      chapter_id: 0, 
+      exam_log_id: 0,
+      question_id: 0,
+      question_bank_id: 0,
+      source: '',
+      model: '',
+      title: '',
 
       list: {},
       arr: [],
@@ -93,11 +93,10 @@ export default {
   onLoad(query) {
     this.init(query)
     this.injectApi()
-    this.determineStatus()
     this.getQuestionBoard();
   },
   methods: {
-    inti(query) {
+    init(query) {
       let {
         chapter_id, 
         exam_log_id,
@@ -112,7 +111,7 @@ export default {
       this.question_id = +question_id
       this.question_bank_id = +question_bank_id
       this.source = source
-      this.model = !!model
+      this.model = +model
       this.title = title
     },
 
@@ -124,14 +123,15 @@ export default {
         "examRandom": getExamAnswerSheet,
         "examAutonomy": getExamAnswerSheet,
         "examRecord": getExamAnswerSheet,
-        "memory": this.source === 'wrong' ? collectAnswerSheet : wrongAnswerSheet
+        "memoryWrong": wrongAnswerSheet,
+        "memoryFavorites": collectAnswerSheet,
       }
     },
 
     getPath(url, query) {
       let params = ''
       Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
-      params.replace(/&?/, '?')
+      params = params.replace(/&?/, '?')
       return url + params
     },
 

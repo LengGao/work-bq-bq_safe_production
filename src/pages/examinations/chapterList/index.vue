@@ -47,6 +47,7 @@ export default {
       question_bank_id: '',
       question_id: '',
       last_question_id: 0,
+      source: 'chapter',
       isOnload: false,
     };
   },
@@ -62,22 +63,23 @@ export default {
   },
   methods: {
     toAnswer({id, title, question_bank_id, last_question_id, is_answer, question_count }) {
-      let url = '/pages/examinations/practiceMode/answer/index', query = ''      
+      let url = '/pages/examinations/answer/index', query = ''
+      let source = this.source
 
       const cancelCallback = () => {
-          query = `?chapterId=${id}&question_bank_id=${question_bank_id}&title=${title}`
-          restartPractice({ question_bank_id, chapter_id: id }).then(res => {
-            if (res.code === 0) uni.navigateTo({ url: url + query });
+          query = `?chapter_id=${id}&question_bank_id=${question_bank_id}&source=${source}&title=${title}`
+          restartPractice({ chapter_id: id, question_bank_id }).then(res => {
+            if (res.code === 0) uni.navigateTo({ url: url + query })
           })
       }
       
       const confirmCallback = () => {
-        query = `?chapterId=${id}&question_bank_id=${question_bank_id}&question_id=${last_question_id}&title=${title}`
+        query = `?chapter_id=${id}&question_bank_id=${question_bank_id}&last_question_id=${last_question_id}&source=${source}&title=${title}`
         uni.navigateTo({ url: url + query });
       }
 
       const startCallback = () => {
-        query = `?chapterId=${id}&question_bank_id=${question_bank_id}&title=${title}`
+        query = `?chapter_id=${id}&question_bank_id=${question_bank_id}&source=${source}&title=${title}`
         uni.navigateTo({ url: url + query });
       }
 

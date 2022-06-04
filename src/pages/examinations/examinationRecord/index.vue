@@ -5,7 +5,7 @@
       <!-- <scroll-view class="record-list" scroll-y @scrolltolower="onScrolltolower"> -->
         <template v-if="list.length">
           <view class="record-list-item" v-for="item in list" :key="item.id">
-            <view class="record-info" @click="() => toAnswer(item.id)">
+            <view class="record-info" @click="() => toAnswer(item)">
               <view class="record-info-title">
                 <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx" />
                 <view class="title van-ellipsis">{{ item.title }}</view>
@@ -42,21 +42,31 @@ export default {
       total: 0,
       page: 1,
       question_bank_id: 0,
+      source: 'examRecord',
+      isOnload: false,
     };
   },
-  onShow() {
-    this.getMockExamHistory();
+  onLoad() {
+    this.getMockExamHistory()
+    this.isOnload = true
   },
-  mounted() {
-    
+
+  onShow() {
+    if (!this.isOnload) {
+      setTimeout(() => { 
+        this.getMockExamHistory()
+      }, 800)
+    }
+    this.isOnload = false
   },
   methods: {
-    toAnswer(id, title) {
+    async toAnswer({ id, title }) {
       let question_bank_id = this.$store.getters.questionBankInfo.id
-      let url = `/pages/examinations/examinationRecord/examinationRecordResult/index`
-      let query = `?exam_log_id=${id}&question_bank_id=${question_bank_id}&title=${title}`
+      let url = `/pages/examinations/answerResult//index`
+      let query = `?exam_log_id=${id}&question_bank_id=${question_bank_id}&source=${this.source}&title=${title}`
       uni.navigateTo({ url: url + query })
     },
+
     async getMockExamHistory() {
       let question_bank_id = this.$store.getters.questionBankInfo.id      
       const data = {question_bank_id:question_bank_id};

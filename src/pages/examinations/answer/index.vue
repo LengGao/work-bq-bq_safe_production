@@ -103,7 +103,8 @@ export default {
         'examRandom': 2,
         'examAutonomy': 2,
         'examRecord': 3,
-        'memory': 3
+        "memoryWrong": 3,
+        "memoryFavorites": 3,
       },
       answerSheetApiMap: {},
       answerApiMap: {},
@@ -123,7 +124,6 @@ export default {
   onLoad(query) {
     this.init(query)
     this.injectApi()
-    this.determiniModel()
     this.getPracticeAnswerSheet()
   },
   methods: {
@@ -145,7 +145,7 @@ export default {
       this.question_bank_id = +question_bank_id
       this.title = title
       this.source = source
-      this.model = !!model ? model : this.sourceMap[source]
+      this.model = !!model ? +model : this.sourceMap[source]
 
       uni.setNavigationBarTitle({ title })
     },
@@ -158,7 +158,8 @@ export default {
         "examRandom": getExamAnswerSheet,
         "examAutonomy": getExamAnswerSheet,
         "examRecord": getExamAnswerSheet,
-        "memory": this.source === 'wrong' ? collectAnswerSheet : wrongAnswerSheet
+        "memoryWrong": wrongAnswerSheet,
+        "memoryFavorites": collectAnswerSheet,
       }
       this.answerApiMap = {
         "wrong": practiceAnswerTheQuestion,
@@ -167,7 +168,8 @@ export default {
         "examRandom": examAnswerTheQuestion,
         "examAutonomy": examAnswerTheQuestion,
         "examRecord": examAnswerTheQuestion,
-        "memory": practiceAnswerTheQuestion
+        "memoryWrong": wrongAnswerSheet,
+        "memoryFavorites": collectAnswerSheet,
       }
     },
 
@@ -257,7 +259,7 @@ export default {
     cacheAnswer(answer) {
       let key = answer.id
       this.userAnswerMap[key] = answer
-      if (this.isStart || this.isEnd) {
+      if (this.isEnd) {
         this.submitAnswer()
       }
     },
@@ -265,7 +267,8 @@ export default {
     getPath(url, query) {
       let params = ''
       Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
-      params.replace(/&?/, '?')
+      
+      params = params.replace(/&?/, '?')
       return url + params
     },
 
@@ -301,13 +304,13 @@ export default {
     },
 
     async toCard() {
-      let url = '/pages/examinations/examinationMode/answerSheet/index'
+      let url = '/pages/examinations/answerSheet/index'
       let { title, chapter_id, question_id, question_bank_id, exam_log_id, type, model, source, answer, answerCase } = this.getQuery()
       let query = { chapter_id, question_id, question_bank_id, exam_log_id, title, model, source }
       let path = this.getPath(url, query)
       let api = this.answerApiMap[source]
       let params = {}, res
-
+      console.log('path', path);
       if (type === 7 && answerCase) {
         params = { exam_log_id, question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
         res = await api(params)
@@ -317,7 +320,7 @@ export default {
         res = await api(params)
         if (res.code === 0) { uni.redirectTo({ url: path }) }
       } else {
-        uni.redirectTo({ url: url + query })
+        uni.redirectTo({ url: path })
       }
     },
 
@@ -337,7 +340,7 @@ export default {
     },
 
     async submitPaper() {
-      let url = `/pages/examinations/examinationMode/result/index`
+      let url = `/pages/examinations/answerResult/index`
       let { title, chapter_id, question_id, question_bank_id, exam_log_id, type, model, source, answer, answerCase } = this.getQuery()
       let query = { chapter_id, question_id, question_bank_id, exam_log_id, title, model, source }
       let path = this.getPath(url, query)
@@ -351,14 +354,13 @@ export default {
         params = { exam_log_id, question_bank_id, question_id: answer.id, user_answer: answer.answer }
         res = await api(params)
       }
-      if (res.code === 0) {
-        params = { exam_log_id, question_bank_id }
-        ret = await submitExamPaper(params)
-        if (ret.code === 0) {
-          uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
-            uni.redirectTo({ url: path })
-          })
-        }
+      let params2 = { exam_log_id, question_bank_id }
+      ret = await submitExamPaper(params2)
+      console.log('res', res, ret, path, answer, answerCase);
+      if (ret.code === 0) {
+        uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
+          uni.redirectTo({ url: path })
+        })
       }
     },
 
@@ -387,7 +389,7 @@ export default {
       } else if (source === 'examRandom' || source === 'examAutonomy') {
         params.exam_log_id = this.exam_log_id
       }
-
+      
       if (question_id) {
         let res = await getQuestionDetail(params)
         if (res.code === 0) { this.questionList[index] = res.data }
