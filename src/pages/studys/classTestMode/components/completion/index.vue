@@ -4,9 +4,9 @@
       <u-parse :content="options.title" />
     </view>
     <i-option v-for="(item, index) in checkedAnswer" :key="index" :label="index + 1 + ''" :status="status(item.value)">
-      <input type="text" v-model="item.value" placeholder="请输入" @input="onInput" />
+      <input type="text" :disabled="analysis" v-model="item.value" placeholder="请输入" @input="onInput" />
     </i-option>
-    <AnswerAnalysis v-if="analysis && options.option.length" :question="options"/>
+    <AnswerAnalysis v-if="analysis" :question="options" />
   </view>
 </template>
 <script>
@@ -34,10 +34,6 @@ export default {
       type: Boolean,
       default: false
     },
-    userAnswer: {
-      type: Object,
-      default: () => ({})
-    }
   },
   data() {
     return {
@@ -45,32 +41,39 @@ export default {
       checkedAnswer: []
     };
   },
-  mounted() {
-    if (this.userAnswer && this.userAnswer.answer) {
-      this.checkedAnswer = this.userAnswer.answer.map(item => ({value: item}))
-    } else {
-      let len = this.options.option.length, list = []
-      for (let i = 0; i < len; i++) {
-        list[i] = { value: ''}
-      }
-      this.checkedAnswer = list
-    }
+  created() {
     if (this.analysis) {
-      this.correctAnswer = this.options.right
-      this.checkedAnswer = this.options.answer.map(item => ({value: item}))
+      this.correctAnswer = this.options.right.map(item => item.trim())
+      let right = this.options.right.map(item => item.trim())
+      this.inputItem = this.options.option.map((item, index) => {
+        return { value: right[index] || '', status: '' }
+      })
+    } else {
+      this.inputItem = this.options.option.map((item, index) => {
+        return { value: '', status: '' }
+      })
     }
   },
   methods: {
     onInput() {
-      if (this.analysis) return;
       let answer = this.checkedAnswer.map(item => item.value)
-      this.correctAnswer = answer
-      let data = {id: this.options.id, question_id: this.options.question_id, answer: answer}
+      this.checkedAnswer = answer
+      let data = { question_id: this.options.question_id, answer: answer }
       this.$emit("change", data)
+    },
+    order() {
+      let correctAnswer = this.correctAnswer, inputItem = this.inputItem
+      inputItem.forEach((item, index, arr) => {
+        if (arr[index].value === correctAnswer[index]) {
+          item.status = "success"
+        } else {
+          item.status = "error"
+        }
+      })
     },
     status(value) {
       if (this.analysis) {
-        return this.correctAnswer.indexOf(value) !== -1 ? 'success' : 'error'             
+        this.order()
       }
     },
   },

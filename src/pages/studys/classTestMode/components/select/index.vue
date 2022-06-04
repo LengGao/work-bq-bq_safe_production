@@ -3,8 +3,7 @@
     <s-option @change="onOptionChange" v-for="(item, index) in options" :key="item.id" 
       :value="item.id" :status="status(item.id)">
       <template v-slot:label>
-        <text v-if="optionsType === 'select'"> {{ selectLabel[index] }}</text>
-        <text v-else> {{ index }}</text>
+        <text> {{ selectLabel[index] }}</text>
       </template>
       <u-parse :content="item.content" />
     </s-option>
@@ -34,11 +33,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    optionsType: {
-      type: String,
-      default: 'select'
-    },
-    // 题目正确答案
     correctAnswer: {
       type: [Array, String, Number],
       default: "",

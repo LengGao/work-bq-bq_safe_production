@@ -2,8 +2,7 @@
   <view class="answer">
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
-    <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex"
-            @animationfinish="onAnimationfinish">
+    <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex">
       <swiper-item class="swiper-item" v-for="(item, index) in questionList" :key="index">
         <template v-if="currentIndex === index || currentIndex - 1 === index || currentIndex + 1 === index">
           <Single :options="item" :analysis="analysis" @change="onSingleChange" v-if="item.question_type === 1" />
@@ -22,14 +21,14 @@
 </template>
 
 <script>
-import AnswerHead from "../components/answerHead/index.vue";
-import Single from "../components/single/index.vue";
-import Multiple from "../components/multiple/index.vue";
-import Judg from "../components/judg/index.vue";
-import Indefinite from "../components/indefinite/index.vue";
-import Completion from "../components/completion/index.vue";
-import Short from "../components/short/index.vue";
-import answerBar from "../components/answerBar/index.vue"
+import AnswerHead from "../components/answerHead/index";
+import Single from "../components/single/index";
+import Multiple from "../components/multiple/index";
+import Judg from "../components/judg/index";
+import Indefinite from "../components/indefinite/index";
+import Completion from "../components/completion/index";
+import Short from "../components/short/index";
+import answerBar from "../components/answerBar/index"
 
 import {
   practiceAnalyse,
@@ -74,9 +73,6 @@ export default {
       return this.currentIndex <= 0
     },
   },
-  onShow() {
-    this.duration = 300;
-  },
   onLoad(query) {
     let { practice_id, lesson_id, next_lesson_id, pass, course_id } = query
     this.practice_id = practice_id
@@ -102,11 +98,11 @@ export default {
 
     onSwiperChange({ detail }) {
       this.currentIndex = detail.current
-      this.prevIndex = detail.current - 1
-      this.nextIndex = detail.current + 1
-    },
-
-    onAnimationfinish({ detail }) {
+      if (this.isStart) {
+        uni.showToast({ title: '已经是第一题了', icon: 'none' })
+      } else if (this.isEnd) {
+        uni.showToast({ title: '已经是最后一题了', icon: 'none' })
+      }
     },
 
     submitPaper() {
@@ -114,7 +110,7 @@ export default {
         let course_id = this.course_id
         let url = '/pages/studys/courseDetail/index'
         let query = `?course_id=${course_id}&lesson_id=${this.next_lesson_id}`
-        uni.reLaunch({ url: url + query })
+        uni.redirectTo({ url: url + query })
       } else {
         let url = `/pages/examinations/classTestMode/answer/index`
         let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${course_id}`

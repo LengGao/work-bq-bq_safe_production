@@ -1,41 +1,36 @@
 <template>
   <view class="answer">
-    <uni-notice-bar v-if="notice" scrollable single showIcon color="#E2E227" background-color="#000" text="答完当前题，可左右滑动。"></uni-notice-bar>
+    <uni-notice-bar v-if="notice" scrollable single showIcon color="#E2E227" background-color="#000"
+                    text="答完当前题，可左右滑动。"></uni-notice-bar>
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
-    <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex"
-            :disable-touch="disableTouch" @animationfinish="onAnimationfinish">
+    <swiper class="swiper" :duration="duration" :current="currentIndex" :disable-touch="disableTouch"
+            @change="onSwiperChange">
       <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.question_type === 7 }"
-                   @touchmove="oonTouchmove" v-for="(item, index) in questionList" :key="index">
-        <Single :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
-                v-if="item.question_type === 1" />
-        <Multiple :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
-                  v-if="item.question_type === 2" />
-        <Indefinite :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
-                    v-if="item.question_type === 3" />
-        <Judg :options="item" :userAnswer="getCurrAnswer(index)" @change="onSingleChange"
-              v-if="item.question_type === 4" />
-        <Completion :options="item" :userAnswer="getCurrAnswer(index)" @change="onInputChange"
-                    v-if="item.question_type === 5" />
-        <Short :options="item" :userAnswer="getCurrAnswer(index)" @change="onInputChange"
-               v-if="item.question_type === 6" />
+                   v-for="(item, index) in questionList" :key="index">
+        <Single :options="item" @change="onSingleChange" v-if="item.question_type === 1" />
+        <Multiple :options="item" @change="onSingleChange" v-if="item.question_type === 2" />
+        <Indefinite :options="item" @change="onSingleChange" v-if="item.question_type === 3" />
+        <Judg :options="item" @change="onSingleChange" v-if="item.question_type === 4" />
+        <Completion :options="item" @change="onInputChange" v-if="item.question_type === 5" />
+        <Short :options="item" @change="onInputChange" v-if="item.question_type === 6" />
       </swiper-item>
     </swiper>
-    <answerBar class="bar" :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @next="handleNext"
+    <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @next="handleNext"
                @prev="handlePrev">
-    </answerBar>
+    </AnswerBar>
   </view>
 </template>
 
 <script>
-import AnswerHead from "../components/answerHead/index.vue";
-import Single from "../components/single/index.vue";
-import Multiple from "../components/multiple/index.vue";
-import Judg from "../components/judg/index.vue";
-import Indefinite from "../components/indefinite/index.vue";
-import Completion from "../components/completion/index.vue";
-import Short from "../components/short/index.vue";
-import answerBar from "../components/answerBar/index.vue"
+import AnswerHead from "../components/answerHead/index";
+import Single from "../components/single/index";
+import Multiple from "../components/multiple/index";
+import Judg from "../components/judg/index";
+import Indefinite from "../components/indefinite/index";
+import Completion from "../components/completion/index";
+import Short from "../components/short/index";
+import AnswerBar from "../components/answerBar/index"
 
 import {
   practiceStart,
@@ -52,22 +47,22 @@ export default {
     Indefinite,
     Completion,
     Short,
-    answerBar,
+    AnswerBar,
   },
   data() {
     return {
       lesson_id: 0,
       course_id: 0,
+
       prevIndex: -1,
       currentIndex: 0,
-      nextIndex: 1,
       disableTouch: true,
       duration: 300,
+      notice: true,
+
       total: 0,
       questionList: [],
-      answer: {},
       userAnswerMap: {},
-      notice: true
     };
   },
   computed: {
@@ -81,9 +76,8 @@ export default {
       return this.currentIndex > this.prevIndex
     }
   },
-  onShow() {
-    this.duration = 300;
-    setTimeout(() => { this.notice = false}, 1500)
+  onReady() {
+    setTimeout(() => { this.notice = false }, 1000)
   },
   onLoad(query) {
     let { course_id, lesson_id } = query
@@ -92,44 +86,29 @@ export default {
     this.createQuestion();
   },
   methods: {
-    checkInputAnswer(val) {
-      return val !== undefined && val !== '' && val !== null
+    checkInputAnswer(answer) {
+      let res = false
+      if (Array.isArray(answer)) {
+        res = answer.some(val => val !== undefined && val !== '' && val !== null)
+      } else if (answer !== undefined && answer !== '' && answer !== null) {
+        res = true
+      }
+      return res
     },
 
     onSingleChange(answer) {
-      console.log('onSingleChange', answer);
-      let flag = false
-      this.answer = answer
-      if (Array.isArray(answer.answer)) {
-        flag = answer.answer.some(val => {
-          return val !== undefined && val !== '' && val !== null
-        })
-      }
+      let flag = this.checkInputAnswer(answer.answer)
       if (flag) {
         this.cacheAnswer(answer)
         this.disableTouch = false
-      } else {
-        uni.showToast({ title: '答案不能留空', icon: 'none' })
-        this.disableTouch = true
       }
     },
 
     onInputChange(answer) {
-      let flag = false
-      this.answer = answer
-      if (Array.isArray(answer.answer)) {
-        flag = answer.answer.some(val => {
-          return val !== undefined && val !== '' && val !== null
-        })
-      } else {
-        flag = this.checkInputAnswer(answer.answer)
-      }
+      let flag = this.checkInputAnswer(answer.answer)
       if (flag) {
         this.cacheAnswer(answer)
         this.disableTouch = false
-      } else {
-        uni.showToast({ title: '答案不能留空', icon: 'none' })
-        this.disableTouch = true
       }
     },
 
@@ -156,77 +135,81 @@ export default {
     },
 
     onSwiperChange({ detail }) {
+      this.disableTouch = true
+
       if (detail.source === 'touch') {
         this.prevIndex = this.currentIndex
         this.currentIndex = detail.current
       }
-      let prevAnswer = this.getCurrAnswer(this.prevIndex)
+
+      if (this.isStart) {
+        uni.showToast({ title: '已经是第一题了', icon: 'none' })
+      } else if (this.isEnd) {
+        uni.showToast({ title: '已经是最后一题了', icon: 'none' })
+      }
+
       let currAnswer = this.getCurrAnswer(this.currentIndex)
-      // console.log(this.isRight, prevAnswer, currAnswer, this.prevIndex, this.currentIndex, detail);
-      if (this.isRight && prevAnswer) {
+      if (currAnswer) {
         this.disableTouch = false
-        this.submitAnswer(prevAnswer)
-      } else if (currAnswer) {
-        this.disableTouch = false
-      } else {
-        this.disableTouch = true
+      }
+      
+      if (this.isRight) {
+        this.submitAnswer(this.prevIndex)
       }
     },
 
-    oonTouchmove() {
-      // console.log('detail', detail);
-    },
-
-    onAnimationfinish({ detail }) {
-      // console.log('detail', detail);
-    },
-
     getCurrAnswer(index) {
-      let key = this.questionList[index].question_id
-      return this.userAnswerMap[key]
+      let question_id = this.questionList[index].question_id
+      let answer = this.userAnswerMap[question_id]
+      return answer ? answer : undefined 
     },
 
     cacheAnswer(answer) {
-      console.log('cacheAnswer', answer);
       let key = answer.question_id
       this.userAnswerMap[key] = answer
     },
 
+    getPath(url, query) {
+      let params = ''
+      Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
+      params = params.replace(/&?/, '?')
+      return url + params
+    },
+
+    getQuery(prevIndex) {
+      let index = prevIndex !== undefined ? prevIndex : this.currentIndex
+      let practice_id = this.practice_id
+      let question = this.questionList[index]
+      let question_id = question.question_id
+      let answer = this.userAnswerMap[question_id]
+
+      return { practice_id, question_id, answer }
+    },
+
     async submitPaper() {
-      if (!this.disableTouch) {
-        let index = this.currentIndex
-        let key = this.questionList[index].question_id
-        let currAnswer = this.userAnswerMap[key]
-        let data = { practice_id: +this.practice_id, question_id: key, answer: currAnswer.answer }
-        const res = await practiceAnswer(data);
-        if (res.code === 0) {
-          let url = `/pages/examinations/classTestMode/result/index`
-          let query = `?practice_id=${this.practice_id}&course_id=${this.course_id}&lesson_id=${this.lesson_id}`
-          setTimeout(() => {
-            uni.redirectTo({ url: url + query });
-          }, 800);
-          this.disableTouch = false
-        }
-      } else {
-        uni.showToast({ title: '考试不能留空', icon: 'none' })
+      let url = `/pages/examinations/classTestMode/result/index`
+      let { practice_id, question_id, answer } = this.getQuery()
+      let query = { practice_id, course_id: this.course_id, lesson_id: this.lesson_id }
+      let path = this.getPath(url, query)
+      let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
+      let res = await practiceAnswer(params)
+      if (res.code === 0) {
+        uni.redirectTo({ url: path })
       }
     },
 
-    async submitAnswer(prevAnswer) {
-      let data = { practice_id: this.practice_id, question_id: prevAnswer.question_id, answer: prevAnswer.answer }
-      const res = await practiceAnswer(data);
-      if (res.code === 0) {
-        // this.duration = 0;
-        this.disableTouch = true
-      }
+    async submitAnswer(prevIndex) {
+      let { practice_id, question_id, answer } = this.getQuery(prevIndex)
+      let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
+      await practiceAnswer(params)
     },
-    
+
     async createQuestion() {
       const data = { lesson_id: this.lesson_id };
       const res = await practiceStart(data);
       if (res.code === 0) {
         this.practice_id = res.data.practice_id
-        this.questionList = res.data.question
+        this.questionList = res.data.question.map(item => { item.answer = []; return item; })
         this.total = res.data.question.length
       }
     },

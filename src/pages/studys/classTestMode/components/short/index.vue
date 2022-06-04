@@ -3,9 +3,9 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <textarea class="text" placeholder="请输入" :value="checkedAnswer" @input="onInput" />
+    <textarea class="text" placeholder="请输入" :disabled="analysis" :value="checkedAnswer" @input="onInput" />
     
-    <AnswerAnalysis v-if="analysis && options.option.length" :question="options"/>
+    <AnswerAnalysis v-if="analysis" :question="options"/>
   </view>
 </template>
 
@@ -33,10 +33,6 @@ export default {
       type: Boolean,
       default: false
     },
-    userAnswer: {
-      type: Object,
-      default: () => ({})
-    }
   },
   data() {
     return {
@@ -45,8 +41,8 @@ export default {
     };
   },
   mounted() {
-    if (this.userAnswer && this.userAnswer.answer) {
-      this.checkedAnswer = this.userAnswer.answer
+    if (this.options.answer.length) {
+      this.checkedAnswer = this.options.answer[0]
     }
     if (this.analysis) {
       this.correctAnswer = this.options.right
@@ -55,8 +51,7 @@ export default {
   },
   methods: {
     onInput({ detail }) {
-      if (this.analysis) return;
-      let data = {id: this.options.id, question_id: this.options.question_id, answer: [detail.value]}
+      let data = {question_id: this.options.question_id, answer: [detail.value]}
       this.$emit("change", data)
     },
   },

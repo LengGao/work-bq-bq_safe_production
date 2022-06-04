@@ -3,10 +3,9 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-
-    <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" :multiple="true" :analysis="analysis" @change="onChangeOpt" />  
-  
-    <AnswerAnalysis v-if="analysis && options.option.length" :question="options"/>
+    <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" multiple
+            @change="onChangeOpt" />
+    <AnswerAnalysis v-if="analysis" :question="options" />
   </view>
 </template>
 <script>
@@ -33,10 +32,6 @@ export default {
       type: Boolean,
       default: false
     },
-    userAnswer: {
-      type: Object,
-      default: () => ({})
-    }
   },
   data() {
     return {
@@ -45,18 +40,17 @@ export default {
     };
   },
   created() {
-    if (this.userAnswer && this.userAnswer.answer) {
-      this.checkedAnswer = this.userAnswer.answer.map(item => item)
+    if (this.options.answer.length) {
+      this.checkedAnswer = this.options.answer
     }
     if (this.analysis) {
-      this.correctAnswer = this.options.right
+      this.correctAnswer = this.options.right.map(item => +item)
       this.checkedAnswer = this.options.answer
     }
   },
   methods: {
     onChangeOpt(answer) {
-      console.log(answer);
-      this.correctAnswer = answer
+      this.checkedAnswer = answer
       let data = { id: this.options.id, question_id: this.options.question_id, answer: answer }
       this.$emit("change", data);
     }
