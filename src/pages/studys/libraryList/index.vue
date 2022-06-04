@@ -1,13 +1,15 @@
 <template>
   <view class="library-list">
     <view class="search-bar">
-      <uni-search-bar @confirm="onSearch" @clear="onClear" v-model="keyword" placeholder="请输入您想要搜索的关键词" bgColor="#fff" cancelButton="none" />
+      <uni-search-bar @confirm="onSearch" @clear="onClear" v-model="keyword" placeholder="请输入您想要搜索的关键词" bgColor="#fff"
+                      cancelButton="none" />
     </view>
 
     <view class="list">
-      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="onDown" @up="onUp" :height="1000">
-        <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.thumb" :rightFooter="library.time"
-                 @clickRight="() => onClickLibrary()" class="list-item">
+      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
+                     :topbar="true" :safearea="true">
+        <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.cover"
+                 :rightFooter="library.time || '--'" @clickRight="() => onClickLibrary(library)" class="list-item">
           <template v-slot:rightTop>
             <view class="logan-card-right-top">
               <uni-icons customPrefix="iconfont" type="icon-file-pdf-fill" size="28rpx" color="#dd524d" />
@@ -17,33 +19,34 @@
         </CardRow>
       </mescroll-body>
     </view>
-
   </view>
 </template>
 
 <script>
 import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
-import { getChapterList } from '@/api/question'
+import {
+  libraryList
+} from '@/api/index'
 
 export default {
   components: { CardRow },
-  mixins: [MescrollMixin], // 使用mixin
+  mixins: [MescrollMixin],
   data() {
     return {
       keyword: '',
-      courseData: [],
-      // 文库资料
-      librarys: [
-        { id: 1, name: "name1", thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "2022-03-18 18:30" },
-        { id: 2, name: "name1", thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
-        { id: 3, name: "name1", thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
-        { id: 4, name: "name1", thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
-      ],
+      up: {
+        page: {
+          num: 0,
+          size: 20,
+          time: 500,
+        },
+      },
+      librarys: [],
     }
   },
-  mounted() {
-
+  onLoad() {
+    this.region_id = this.$store.getters.region.id
   },
   methods: {
     // 清空搜索
@@ -56,26 +59,44 @@ export default {
       console.log('onSearch', e)
     },
     // 点击政策栏
-    onClickLibrary() {
-      uni.navigateTo({ url: '/pages/studys/libraryDetails/index' })
+    onClickLibrary(item) {
+      let url = `/pages/studys/libraryDetails/index`,
+        query = `?library_id=${item.id}`
+      uni.navigateTo({ url: url + query })
     },
-    // 初始化 
-    mescrollInit(e) {
+    previewImg(url) {
+      uni.previewImage({
+        urls: [url]
+      })
     },
-    // 上拉加载
-    async onUp(page) {
-      this.mescroll.endBySize(1, 1)
+    reloadList(type, val) {
+      if (type === 'category') {
+        this.category_id = val
+      } else {
+        this.type_id = val
+      }
+      this.downCallback()
     },
-    // 下拉刷新
-    async onDown(page) {
-      // const res = await getChapterList()
-      page.endBySize(1, 1)
+    downCallback() {
+      this.mescroll.resetUpScroll(true)
     },
-    // 数据获取
-    getData() {
-
-    }
-
+    async upCallback(page) {
+      const data = {
+        page: page.num,
+        page_size: page.size,
+        region_id: this.region_id,
+        category_id: this.category_id,
+        price_type: this.type_id
+      }
+      const res = await libraryList(data)
+      if (res.code !== 0) return this.mescroll.endBySize(0, 0);
+      let curPageData = res.data.list;
+      let curPageLen = curPageData.length;
+      let totalSize = res.data.total;
+      if (page.num == 1) this.librarys = [];
+      this.librarys = this.librarys.concat(curPageData);
+      this.mescroll.endBySize(curPageLen, totalSize);
+    },
   }, // methods end
 
 }

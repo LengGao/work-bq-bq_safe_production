@@ -19,7 +19,7 @@
       <swiper :interval="2000" autoplay circular disable-touch class="swiper">
         <swiper-item v-for="swiper in swipers" :key="swiper.id" @click="() => onClickSwiperImg(swiper)" :current-item-id="swiper.id"
                      class="swiper-item">
-          <image @click="() => previewImg(swiper.thumb)" :src="swiper.thumb" class="swiper-image" mode="aspectFit" />
+          <image @click="() => previewImg(swiper.thumb)" :src="swiper.banner" class="swiper-image" mode="scaleToFill" />
         </swiper-item>
       </swiper>
     </view>
@@ -95,7 +95,7 @@
         <swiper @change="onChangeSwiper" :display-multiple-items="3" :autoplay="false" circular class="swiper">
           <swiper-item v-for="policy in policys" :key="policy.id" :current-item-id="policy.id">
             <view class="swiper-item-box" @click="() => onClickPolicy()">
-              <image :src="policy.thumb" class="swiper-image" mode="aspectFit" />
+              <image :src="policy.cover" class="swiper-image" mode="scaleToFill" />
               <view class="swiper-text">{{ policy.title }}</view>
             </view>
           </swiper-item>
@@ -113,7 +113,7 @@
       </view>
 
       <view class="library-list">
-        <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.thumb" :rightFooter="library.time"
+        <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.cover" :rightFooter="library.time || '--'"
                  @clickRight="() => onClickLibrary()" @previewImg="previewImg">
           <template v-slot:rightTop>
             <view class="logan-card-right-top">
@@ -146,7 +146,10 @@ import CardRow from "@/components/card-row/index";
 import RegionChange from './components/RegionChange'
 import { mapGetters } from 'vuex'
 import {
-  systemRegion
+  systemRegion,
+  banner,
+  articleList,
+  libraryList
 } from  '@/api/index'
 
 
@@ -169,9 +172,9 @@ export default {
       ],
       // 政策专栏
       policys: [
-        { id: 1, thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
-        { id: 2, thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
-        { id: 3, thumb: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
+        { id: 1, cover: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
+        { id: 2, cover: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
+        { id: 3, cover: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
       ],
       // 推荐课程
       courses: [
@@ -192,9 +195,8 @@ export default {
     };
   },
   onLoad() {
+    this.banner()
     this.getSystemRegion()
-  },
-  created() {
   },
   computed: {
     ...mapGetters(['organizationList'])
@@ -218,6 +220,10 @@ export default {
     }
   },
   methods: {
+    init() {
+      this.articleList()
+      this.libraryList()
+    },
     openPopup(list) {
       if (list && list.length) {
         let len = list.length
@@ -256,7 +262,7 @@ export default {
     // 轮播图点击事件
     onClickSwiperImg(swiper) {
       let url = '/pages/studys/courseDetail/index'
-      let query = `?course_id=${swiper.id}`
+      let query = `?course_id=${swiper.url}`
       uni.navigateTo({ url: url + query })
     },
     // 查看全部
@@ -317,7 +323,36 @@ export default {
     },
 
     reloadData() {
-
+    },
+    async banner() {
+      let res = await banner()
+      if (res.code === 0) {
+        this.swipers = res.data
+      }
+    },
+    async articleList() {
+      console.log('region_id',this.currLocation);
+      let region_id = this.currLocation.id
+      let category_id = 0
+      let is_recommend = 0
+      let page = 1
+      let pageSize = 3
+      let param = {region_id, is_recommend, page, pageSize}
+      let res = await articleList(param)
+      if (res.code === 0) {
+        this.policys = res.data.total ? res.data.list : this.policys
+      }
+    },
+    async libraryList() {
+      let region_id = this.currLocation.id
+      let is_recommend = 1
+      let page = 1
+      let pageSize = 3
+      let param = { region_id, is_recommend, page, pageSize}
+      let res = await libraryList(param)
+      if (res.code === 0) {
+        this.librarys = res.data.list
+      }
     },
     async getSystemRegion() {
       let res = await systemRegion()
@@ -332,6 +367,7 @@ export default {
           this.$store.commit('SET_REGION', currLocation)
         }
       }
+      this.init()
     }
   }, // methods end
 };

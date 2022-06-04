@@ -23,10 +23,15 @@
 </template>
 
 <script>
+import { libraryDetail } from "@/api/index";
 import { download_file_common } from '@/utils/api'
+
 export default {
   data() {
     return {
+      library_id: '',
+      region_id: '',
+      libraryData: {},
       open: false,
       imageMIME: ['jpg', 'png', 'jpeg', 'gif'],
       docMIME: ['docs', 'doc', 'pdf'],
@@ -36,6 +41,11 @@ export default {
       }
     }
   },
+  onLoad(query) {
+    this.library_id = query.library_id
+    this.region_id = this.$store.getters.region.id
+    this.libraryDetail()
+  },
   methods: {
     // 点击下载
     onDownLoad() {
@@ -43,6 +53,15 @@ export default {
       let imgFile = 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/index_swiper.png'
       download_file_common(docxFile, 'a.docx')
     },
+    async libraryDetail() {
+      let region_id = this.region_id
+      let page = 1
+      let pageSize = 10
+      let res = await libraryDetail({region_id, page, pageSize })
+      if (res.code === 0) {
+        this.libraryData = res.data
+      }
+    } 
   }
 }
 </script>

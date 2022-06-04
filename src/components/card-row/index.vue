@@ -4,7 +4,7 @@
       <slot name="cardBodyLeft">
         <view class="card-body-left" @click="onClickLeft">
           <image @click="previewImg" @load="onLoadImage" @errr="onerrorImagee" class="card-row-image" :src="leftImage || errorImage"
-                 mode="aspectFit" webp />
+                 mode="scaleToFill" webp />
         </view>
       </slot>
       <slot name="cardBodyRight">
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import errorImage from '@/static/imgerror.png'
+import errorImage from '@/static/no-data.png'
 export default {
   name: 'CardRow',
   props: {
