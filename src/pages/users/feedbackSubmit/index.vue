@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { feedback } from "@/api/user"
+
 export default {
   data() {
     return {
@@ -66,7 +68,9 @@ export default {
     },
     fail() {
     },
-    onSubmit() {
+    onSubmit(e) {
+      console.log(e);
+
       this.onReset()
       uni.navigateBack()
     },

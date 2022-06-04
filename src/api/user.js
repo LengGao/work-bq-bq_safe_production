@@ -43,3 +43,11 @@ export function uploadImage(data) {
         data
     })
 }
+
+export function feedback(data) {
+    return request({
+        url: 'helpcenter/feedback',
+        method: 'post',
+        data
+    })
+}
