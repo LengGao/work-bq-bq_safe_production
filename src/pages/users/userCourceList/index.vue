@@ -14,13 +14,16 @@
                 <text>{{ course.title }}</text>
               </view>
 
-              <view class="card-right-footer">
+              <view class="card-right-center">
                 <view class="time">
                   {{ course.chapter_count }}章
                   {{ course.lesson_count }}课时
                   <text style="margin: 0 8rpx;"> | </text>
                   共{{ course.duration_count }}课时
                 </view>
+              </view>
+
+              <view class="card-right-footer">
                 <view class="cost">
                   <view class="tag tag-two" v-if="course.learning_progress >= 100">已学完</view>
                   <view class="tag tag-three" v-else-if="course.learning_progress <= 0" >未开始</view>

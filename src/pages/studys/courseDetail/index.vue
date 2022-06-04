@@ -117,6 +117,7 @@ export default {
       is_forward: false,
       player: null,
       disableChange: false,
+      is_practice: false,
     }
   },
   computed: {
@@ -144,9 +145,11 @@ export default {
   onUnload() {
     clearInterval(this.intervalId)
     this.intervalId = null
-    /* #ifdef H5 */
-    if (this.player) this.player.dispose();
-    /* #endif */
+    // ifdef H5
+    if (this.player) {
+      this.player.dispose();
+    }
+    // #endif
   },
   methods: {
     // 加载完成
@@ -304,7 +307,7 @@ export default {
         uni.showToast({ title: `${res.message}`, icon: 'none'})
       }
     },
-    // 课程简介
+
     async getCourseInfo() {
       let param = { region_id: this.region_id, course_id: this.course_id }
       let res = await courseInfo(param)
@@ -325,7 +328,6 @@ export default {
       }
     },
 
-    // 更换播放视频
     onChangeVideo(detailArr) {
       let curr = detailArr[0]
       let params = { region_id: this.region_id, lesson_id: curr.id }
@@ -333,29 +335,30 @@ export default {
       this.getCourseGetVideoAuth(params)
     },
 
-    // 随堂测试
     showModal() {
-      let url = `/pages/examinations/classTestMode/answer/index`,
+      let url = `/pages/studys/classTestMode/answer/index`,
         query = `?course_id=${this.course_id}&lesson_id=${this.lesson_id}`
       if (this.free_second && Math.abs(this.free_second, this.start_second) <= 2) {
         this.is_free = false
-        uni.showToast({ title: `试看结束，请购买该课程`, icon: 'none'})
+        uni.showToast({ title: `试看结束`, icon: 'none'})
       } else {
         this.is_free = true
-        uni.showModal({
-          title: '提示',
-          content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
-          cancelText: '取消',
-          confirmText: '开始考试',
-          cancelColor: '#199fff',
-          confirmColor: '#199fff',
-          success: (res) => {
-            if (res.confirm) {
-              this.$store.commit('SET_EXAMINATION', true)
-              uni.navigateTo({ url: url + query })
+        if (this.is_practice) {
+          uni.showModal({
+            title: '提示',
+            content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
+            cancelText: '取消',
+            confirmText: '开始考试',
+            cancelColor: '#199fff',
+            confirmColor: '#199fff',
+            success: (res) => {
+              if (res.confirm) {
+                this.$store.commit('SET_EXAMINATION', true)
+                uni.navigateTo({ url: url + query })
+              }
             }
-          }
-        })
+          })
+        }
       }      
     },
 
@@ -474,7 +477,7 @@ export default {
             this.start_second = currTime
             if (Math.abs(distance) >= 2) this.sendData(this.lesson_id, currTime, currTime);
           } else {
-            console.log("distance", distance);
+            // console.log("distance", distance);
             if (distance >= 2) {
               player.seek(this.start_second)
             } else if (Math.abs(distance) >= 2) {
@@ -526,7 +529,7 @@ export default {
     async getCourseGetVideoAuth(params) {
       let res = await courseGetVideoAuth(params)
       let { video_id, auth_data, start_second, duration, lesson_id, title, cover,
-        free_second, finish_second, is_forward, is_free} = res.data
+        free_second, finish_second, is_forward, is_free, is_practice} = res.data
 
       if (res.code === 0) {
         this.title = title
@@ -538,6 +541,7 @@ export default {
         this.start_second = +start_second
         this.prev_time = +start_second
         this.duration = +duration
+        this.is_practice = is_practice
         /* #ifdef H5 */
         this.createPlayer({ video_id, auth_data, start_second, cover, free_second, duration })
         /* #endif */

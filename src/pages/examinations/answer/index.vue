@@ -109,6 +109,7 @@ export default {
       },
       answerSheetApiMap: {},
       answerApiMap: {},
+      needChangeSheet: ['memoryWrong', 'memoryFavorites', 'wrong', 'favorites']
     };
   },
   computed: {
@@ -125,7 +126,7 @@ export default {
   onLoad(query) {
     this.init(query)
     this.injectApi()
-    this.getPracticeAnswerSheet()
+    this.getAnswerSheet()
   },
   methods: {
     init(query) {
@@ -174,6 +175,14 @@ export default {
       }
     },
 
+    getAnswerSheet() {
+      if (this.needChangeSheet.includes(this.source)) {
+        this.getWrongCollectAnswerSheet()
+      } else {
+        this.getPracticeAnswerSheet()
+      }
+    },
+
     checkInputAnswer(answer) {
       let res = false
       if (Array.isArray(answer)) {
@@ -192,7 +201,6 @@ export default {
     onInputChange(answer) {
       let flag = this.checkInputAnswer(answer.answer)
       if (flag) { this.cacheAnswer(answer) }
-      // console.log(answer);
     },
 
     handlePrev() {
@@ -235,9 +243,14 @@ export default {
 
       let inAnswerSheet = this.answerSheetArr[index]
       let inQuestionList = this.questionList[index]
+      let question_id = ''
 
       if (inAnswerSheet && !inQuestionList) {
-        let question_id = inAnswerSheet.id
+        if (this.needChangeSheet.includes(this.source)) {  
+          question_id = inAnswerSheet
+        } else {
+          question_id = inAnswerSheet.id
+        }
         this.getQuestionDetail(question_id, index)
       }
     },
@@ -424,6 +437,52 @@ export default {
         if (res.code === 0) { this.questionList[index] = res.data }
       }
     },
+
+    async getWrongCollectAnswerSheet() {
+      let source = this.source
+      let chapter_id = this.chapter_id
+      let exam_log_id = this.exam_log_id
+      let last_question_id = this.last_question_id
+      let question_bank_id = this.question_bank_id
+      let api = this.answerSheetApiMap[source]
+
+      let params = { chapter_id, exam_log_id, question_bank_id }
+      let res = await api(params)
+      if (res.code === 0) {
+        let lastId = last_question_id ? last_question_id : res.data.last_question_id
+        let arr = res.data.arr
+        let total = arr.length
+        let prev = 0
+        let curr = 0
+        let next = 0
+
+        if (!lastId) lastId = arr[0];
+        let index = arr.findIndex(item => item.id === lastId)
+
+        if (index > 0 && index < total - 1) {
+          prev = arr[index - 1]
+          curr = arr[index]
+          next = arr[index + 1]
+        } else if (index === total - 1 && total > 3) {
+          prev = arr[index - 2]
+          curr = arr[index - 1]
+          next = arr[index]
+        } else {
+          prev = arr[0]
+          curr = arr[1]
+          next = arr[2]
+        }
+
+        this.last_question_id = lastId
+        this.answerSheetArr = arr
+        this.total = total
+        this.currentIndex = (index !== -1 ? index : 0)
+        this.time = res.data.expires_time || 0
+        this.initQuestion(prev, curr, next)
+      }
+    },
+
+    
 
     async getPracticeAnswerSheet() {
       let source = this.source

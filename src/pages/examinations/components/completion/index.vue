@@ -53,30 +53,15 @@ export default {
   },
   watch: {
     correctAnswer(val) {
-      console.log(val, this.checkedAnswer);
+      console.log('val',val);
       if (val.length) {
-        if (!this.options.reorder) {
-          this.inputItem.forEach((item, index) => {
-            if (this.inputItem[index] === val[index]) {
-              item.status = "success";
-            } else {
-              item.status = "error";
-            }
-          });
+        if (this.options.reorder) {
+          this.disorder()
         } else {
-          this.inputItem.forEach((item) => {
-            if (val.includes(item.value.trim())) {
-              val.splice(val.indexOf(item.value.trim()), 1);
-              item.status = "success";
-            } else {
-              item.status = "error";
-            }
-          });
+          this.order()
         }
       } else {
-        this.inputItem.forEach((item) => {
-          item.status = "";
-        });
+        this.inputItem.forEach((item) => { item.status = ""})
       }
     },
   },
@@ -106,13 +91,42 @@ export default {
       const vals = this.inputItem.map((item) => { item.value.trim(); return item.value })
       this.checkedAnswer = vals
       let data = { id: this.options.id, answer: vals }
-      this.$emit("change", data);
+      this.$emit("change", data)
     },
+    order() {
+      let correctAnswer = this.correctAnswer, inputItem = this.inputItem
+      inputItem.forEach((item, index, arr) => {
+        console.log(arr[index], correctAnswer[index] );
+        if (arr[index].value === correctAnswer[index]) {
+          item.status = "success"
+        } else {
+          item.status = "error"
+        }
+      })
+    },
+    disorder() {
+      let correctAnswer = this.correctAnswer, inputItem = this.inputItem, cache = {}
+      inputItem.forEach((item) => {
+        let val = item.value.trim()
+        if (correctAnswer.includes(val)) {
+          if (!cache[val]) {
+            item.status = "success"
+            cache[val] = true
+          } else {
+            item.status = "omission"
+          }
+        } else {
+          item.status = "error"
+        }
+      })
+    },
+
     handleEyeChange(val) {
       if (val) {
         this.correctAnswer = this.options.true_answer.map(item => item.trim())
       } else {
         this.correctAnswer = "";
+        // this.inputItem.forEach((item) => { item.status = ""})
       }
     },
   },

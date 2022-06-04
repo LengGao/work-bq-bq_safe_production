@@ -1,10 +1,13 @@
 <template>
-  <view class="option" :class="status ? `option--${status}` : ''" @click="handleClick">
+  <view class="option" :class="status ? `option--${status}` : ''">
     <view class="option-label">
       <uni-icons custom-prefix="iconfont" v-if="status === 'success'" color="#fff" type="icon-duigou" size="28rpx">
       </uni-icons>
       <uni-icons custom-prefix="iconfont" v-else-if="status === 'error'" color="#fff" type="icon-cha" size="28rpx">
       </uni-icons>
+      <text v-else-if="status === 'omission'" class="label">
+         重
+      </text>
       <text v-else>
         <slot name="label"> {{ label }}</slot>
       </text>
@@ -34,12 +37,12 @@ export default {
   },
   data() {
     return {
-      checkedValue: this.value,
+      // checkedValue: this.value,
     };
   },
   methods: {
     handleClick() {
-      this.$emit("change", this.checkedValue); 
+      // this.$emit("change", this.checkedValue); 
     },
     
   },
@@ -98,6 +101,22 @@ export default {
     }
     .iconfont {
       color: $uni-answer-error;
+    }
+  }
+  &--omission {
+    color: $uni-answer-success;
+    border-color: $uni-answer-success;
+    .option-label {
+      border-color: $uni-answer-success;
+      background-color: $uni-answer-success;
+      color: #fff;
+    }
+    .label {
+      font-size: 28rpx;
+      color: #fff;
+    }
+    .iconfont {
+      color: $uni-answer-success;
     }
   }
 }

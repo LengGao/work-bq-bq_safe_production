@@ -118,6 +118,5 @@ export default {
       color: $uni-answer-success;
     }
   }
-
 }
 </style>

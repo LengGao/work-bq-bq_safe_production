@@ -83,6 +83,24 @@
 					}
 				},
 				{
+					"path": "classTestMode/answer/index",
+					"style": {
+						"navigationBarTitleText": "随堂考试"
+					}
+				},
+				{
+					"path": "classTestMode/result/index",
+					"style": {
+						"navigationBarTitleText": "随堂考试"
+					}
+				},
+				{
+					"path": "classTestMode/analysis/index",
+					"style": {
+						"navigationBarTitleText": "随堂考试"
+					}
+				},
+				{
 					"path": "policyList/index",
 					"style": {
 						"navigationBarTitleText": "政策列表"
@@ -189,24 +207,6 @@
 					"path": "answerResult/index",
 					"style": {
 						"navigationBarTitleText": "考试结果"
-					}
-				},
-				{
-					"path": "classTestMode/answer/index",
-					"style": {
-						"navigationBarTitleText": "随堂考试"
-					}
-				},
-				{
-					"path": "classTestMode/result/index",
-					"style": {
-						"navigationBarTitleText": "随堂考试"
-					}
-				},
-				{
-					"path": "classTestMode/analysis/index",
-					"style": {
-						"navigationBarTitleText": "随堂考试"
 					}
 				}
 			]

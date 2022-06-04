@@ -3,79 +3,71 @@
     <form @submit="onSubmit" @reset="onReset">
       <view class="form-item">
         <view class="title">请选择建议类型</view>
-        <uni-combox v-model="form.type" :candidates="types" placeholder="请选择建议类型"></uni-combox>
+        <uni-data-select v-model="form.type" :localdata="types"></uni-data-select>
       </view>
-
       <view class="form-item">
         <view class="title">填写反馈内容</view>
         <view class="form-control">
-          <textarea @confirm="onConfirm" :value="form.remark" :maxlength="200" show-confirm-bar
-                    placeholder="请输入问题的正问内容">
-        </textarea>
+          <textarea v-model="form.content" :maxlength="200" show-confirm-bar placeholder="请输入问题的正问内容" />
         </view>
       </view>
-
       <view class="form-item">
-        <view class="title">截图( {{ form.fileList.length }} /3)</view>
+        <view class="title">截图( {{ form.images.length }} /3)</view>
         <view class="form-control">
-          <uni-file-picker v-model="form.fileList" fileMediatype="image" mode="grid" @select="select"
-                           @progress="progress" @success="success" @fail="fail" />
+          <uni-file-picker :limit="3" fileMediatype="image" mode="grid" @select="select" @delete="ondel" />
         </view>
       </view>
 
       <view class="footer">
-        <button @click="onCLick" class="footer-btn" type="primary" form-type="submit">我要反馈</button>
+        <button class="footer-btn" type="primary" form-type="submit">我要反馈</button>
       </view>
     </form>
   </view>
-
 </template>
 
 <script>
-import { feedback } from "@/api/user"
+import { feedback, uploadImage } from "@/api/user"
 
 export default {
   data() {
     return {
-      types: ['类型1', '类型2', '类型3'],
+      types: [
+        { text: '课程建议', value: 1 },
+        { text: '功能建议', value: 2 },
+        { text: '程序错误', value: 3 },
+        { text: '其他问题', value: 4 },
+      ],
+      candidates: ['课程建议', '功能建议', '程序错误', '其他问题'],
       form: {
         type: '',
-        remark: '',
-        fileList: []
+        content: '',
+        images: []
       },
-      value: '',
-      indicatorStyle: `height: 50px;`
     }
   },
   methods: {
-    onCLick() {
-
+    select({ tempFiles }) {
+      console.log(tempFiles);
+      let file = tempFiles[0]
+      this.form.images.push(file)
     },
-    onPicker() {
-
+    ondel({ tempFiles }) {
+      let file = tempFiles[0]
+      let index = this.form.images.findIndex(item.uuid === file.uuid)
+      this.form.images.splice(index, 1)
     },
-    onNodeClick() {
-
-    },
-    onConfirm(e) {
-      this.form.remark = e.detail.value
-    },
-    select() {
-    },
-    progress() {
-    },
-    success() {
-    },
-    fail() {
-    },
-    onSubmit(e) {
-      console.log(e);
-
-      this.onReset()
-      uni.navigateBack()
+    async onSubmit(e) {
+      console.log();
+      let params = { ...this.form }
+      let res = await feedback(params)
+      if (res.code === 0) {
+        this.onReset()
+        uni.showToast({ title: '提交陈功', icon: 'success'})
+        uni.navigateBack()
+      }
     },
     onReset() {
-      this.form = { type: '', remark: '', fileList: [] }
+      this.form = { type: '', content: '', images: [] }
     },
   }
 }
