@@ -8,27 +8,28 @@
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
-        <Single :options="questionList[index]" @change="onSingleChange"
+        <Single :options="questionList[index]" :model="model" @change="onSingleChange"
                 v-if="questionList[index] && questionList[index].question_type === 1" />
-        <Multiple :options="questionList[index]" @change="onSingleChange"
+        <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_type === 2" />
-        <Indefinite :options="questionList[index]" @change="onSingleChange"
+        <Indefinite :options="questionList[index]" :model="model" @change="onSingleChange"
                     v-if="questionList[index] && questionList[index].question_type === 3" />
-        <Judg :options="questionList[index]" @change="onSingleChange"
+        <Judg :options="questionList[index]" :model="model" @change="onSingleChange"
               v-if="questionList[index] && questionList[index].question_type === 4" />
-        <Completion :options="questionList[index]" @change="onInputChange"
+        <Completion :options="questionList[index]" :model="model" @change="onInputChange"
                     v-if="questionList[index] && questionList[index].question_type === 5" />
-        <Short :options="questionList[index]" @change="onInputChange"
+        <Short :options="questionList[index]" :model="model" @change="onInputChange"
                v-if="questionList[index] && questionList[index].question_type === 6" />
-        <Case :options="questionList[index]" :serial-number="currentIndex + 1"
-              v-if="questionList[index] && questionList[index].question_type === 7" :model="model"
+        <Case :options="questionList[index]" :serial-number="currentIndex + 1" :model="model"
+              v-if="questionList[index] && questionList[index].question_type === 7" 
               :ref="`case-${item.id}`" :question-bank="question_bank_id" :log-id="exam_log_id" 
-              @change="onCaseChange" @submitanswer="submitAnswerChild" @index-change="onCaseIndexChange" />
+              @change="onCaseChange" @submitanswe-case="submitAnswerChild" @index-change="onCaseIndexChange" />
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar" :is-end="isEnd" :is-start="isStart"
                :time="time" :model="model" :isCollection="questionList[currentIndex].is_collect" @card="toCard"
-               @submit-paper="submitPaper" @collect="setCollection" @timeup="onTimeUp" @prev="handlePrev"
+               @submit-paper="submitPaper" @end-practice="endPractice" 
+               @collect="setCollection" @timeup="onTimeUp" @prev="handlePrev"
                @next="handleNext">
     </AnswerBar>
   </view>
@@ -191,6 +192,7 @@ export default {
     onInputChange(answer) {
       let flag = this.checkInputAnswer(answer.answer)
       if (flag) { this.cacheAnswer(answer) }
+      // console.log(answer);
     },
 
     handlePrev() {
@@ -249,6 +251,7 @@ export default {
     onCaseChange(caseIndex, answer) {
       this.caseIndex = caseIndex
       this.userAnswerMapCase[caseIndex] = answer
+      // console.log('onCaseChange', this.userAnswerMapCase);
     },
 
     getCurrAnswer(index) {
@@ -276,7 +279,7 @@ export default {
       let index = prevIndex !== undefined ? prevIndex : this.currentIndex
       let quetion = this.questionList[index]
       let title = this.title
-      let chapter_id = this.question_id
+      let chapter_id = this.chapter_id
       let question_bank_id = this.question_bank_id
       let exam_log_id = this.exam_log_id
       let type = quetion.question_type
@@ -310,7 +313,7 @@ export default {
       let path = this.getPath(url, query)
       let api = this.answerApiMap[source]
       let params = {}, res
-      console.log('path', path);
+      // console.log('path', path);
       if (type === 7 && answerCase) {
         params = { exam_log_id, question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
         res = await api(params)
@@ -339,6 +342,29 @@ export default {
       }
     },
 
+
+    async endPractice() {
+      let url = '/pages/examinations/answerSheet/index'
+      let { title, chapter_id, question_id, question_bank_id, exam_log_id, type, model, source, answer, answerCase } = this.getQuery()
+      let query = { chapter_id, question_id, question_bank_id, exam_log_id, title, model, source }
+      let path = this.getPath(url, query)
+      let api = this.answerApiMap[source]
+      let params = {}, res
+      // console.log('path', path);
+      if (type === 7 && answerCase) {
+        params = { chapter_id, question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
+        res = await api(params)
+        if (res.code === 0) { uni.redirectTo({ url: path }) }
+      } else if (answer) {
+        params = { chapter_id, question_bank_id, question_id: answer.id, user_answer: answer.answer }
+        res = await api(params)
+        if (res.code === 0) { uni.redirectTo({ url: path }) }
+      } else {
+        uni.redirectTo({ url: path })
+      }
+    },
+
+
     async submitPaper() {
       let url = `/pages/examinations/answerResult/index`
       let { title, chapter_id, question_id, question_bank_id, exam_log_id, type, model, source, answer, answerCase } = this.getQuery()
@@ -356,7 +382,6 @@ export default {
       }
       let params2 = { exam_log_id, question_bank_id }
       ret = await submitExamPaper(params2)
-      console.log('res', res, ret, path, answer, answerCase);
       if (ret.code === 0) {
         uni.showToast({ title: '提交陈功', icon: 'success' }).then(succ => {
           uni.redirectTo({ url: path })
@@ -366,13 +391,17 @@ export default {
 
     async submitAnswerChild() {
       let { exam_log_id, question_bank_id, source, answerCase } = this.getQuery()
+      // console.log('submitAnswerChild', answerCase);
       let api = this.answerApiMap[source]
-      let params = { exam_log_id, question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
-      if (answerCase) { return api(params) }
+      if (answerCase) { 
+        let params = { exam_log_id, question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
+        return api(params)
+      }
     },
 
     async submitAnswer(prevIndex) {
       let { exam_log_id, question_bank_id, source, answer } = this.getQuery(prevIndex)
+      
       let api = this.answerApiMap[source]
       if (answer) {
         let params = { exam_log_id, question_bank_id, question_id: answer.id, user_answer: answer.answer }

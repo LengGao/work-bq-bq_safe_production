@@ -62,8 +62,8 @@ export default {
   methods: {
     async toAnswer({ id, title }) {
       let question_bank_id = this.$store.getters.questionBankInfo.id
-      let url = `/pages/examinations/answerResult//index`
-      let query = `?exam_log_id=${id}&question_bank_id=${question_bank_id}&source=${this.source}&title=${title}`
+      let url = `/pages/examinations/answerResult/index`
+      let query = `?exam_log_id=${id}&question_bank_id=${question_bank_id}&source=${this.source}&model=3&title=${title}`
       uni.navigateTo({ url: url + query })
     },
 

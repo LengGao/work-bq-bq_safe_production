@@ -3,8 +3,8 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" :value="checkedAnswer" :isAnalysis="isAnalysis" :correct-answer="correctAnswer" @change="onChangeOpt"  />
-    <AnswerAnalysis v-if="isAnalysis && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
+    <Select :options="options.option" :value="checkedAnswer" :model="model" :correct-answer="correctAnswer" @change="onChangeOpt"  />
+    <AnswerAnalysis v-if="model !== 2 && correctAnswer.length" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
 <script>
@@ -43,28 +43,30 @@ export default {
       checkedAnswer: '',
     };
   },
-  watch: {
-    isAnalysis(val) {
-      console.log('isAnalysis', val);
-    }
-  },
   created() {
-    if (this.options.user_answer.length) {
-    //   this.correctAnswer = this.options.true_answer.map(item => +item)
-      this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
-    //   console.log("single", this.options.user_answer, this.checkedAnswer)
-    } 
-    if (this.isAnalysis) {
+    if (this.model === 3) {
+      this.checkedAnswer = this.options.user_answer.map(item => +item)[0] 
       this.correctAnswer = this.options.true_answer.map(item => +item)
+    } else if (this.model === 2) {
+      if (this.options.user_answer.length) {
+        this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
+      }
+    } else {
+      if (this.options.user_answer.length) {
+        this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
+        this.correctAnswer = this.options.true_answer.map(item => +item)
+      }
     }
   },
   methods: {
     onChangeOpt(val) {
-        // console.log('single onChangeOpt', val);
-        this.checkedAnswer = val
-        // this.correctAnswer = this.options.true_answer.map(item => +item)
-        let data = { id: this.options.id, answer: [val] }
-        this.$emit("change", data);
+      // console.log('single onChangeOpt', val);
+      if (val && this.model === 1) {
+        this.correctAnswer = this.options.true_answer.map(item => +item);
+      }
+      this.checkedAnswer = val
+      let data = { id: this.options.id, answer: [val] }
+      this.$emit("change", data);
     }
   }
 };

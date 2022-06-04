@@ -77,7 +77,7 @@ export default {
   },
   mounted() {
     let userAnswer = this.userAnswer, right = this.question.true_answer, options = this.question.option, type = this.question.question_type    
-    console.log('answerAnalysis', userAnswer, right, options);
+    // console.log('answerAnalysis', userAnswer, right, options);
     if (!Array.isArray(userAnswer)) {
       userAnswer = [userAnswer]
     }

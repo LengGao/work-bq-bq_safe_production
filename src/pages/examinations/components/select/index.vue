@@ -39,10 +39,6 @@ export default {
       type: [Array, String, Number],
       default: "",
     },
-    isAnalysis: {
-      type: Boolean,
-      default: false,
-    },
     model: {
       type: Number,
       default: 1
@@ -65,9 +61,7 @@ export default {
       }
     },
   },
-  mounted() {
-    // console.log('options', this.options, this.checkedAnswer);
-  },
+  
   methods: {
     status(value) {
       // console.log('checkedAnswe status',value, this.checkedAnswer, this.correctAnswer);
@@ -104,8 +98,8 @@ export default {
     },
     onOptionChange(val) {
       // console.log('onOptionChange', val, this.checkedAnswer);
+      if (this.model === 3 || (this.model === 1 && this.correctAnswer.length)) return;
       
-      if (!!this.isAnalysis) return;
       if (this.multiple) {
         this.checkedAnswer.indexOf(val) !== -1
           ? this.checkedAnswer = this.checkedAnswer.filter(item => item !== val)

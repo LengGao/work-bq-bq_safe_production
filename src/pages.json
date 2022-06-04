@@ -180,9 +180,6 @@
 					"path": "answer/index"
 				},
 				{
-					"path": "analysis/index"
-				},
-				{
 					"path": "answerSheet/index",
 					"style": {
 						"navigationBarTitleText": "答题卡"

@@ -3,9 +3,9 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" multiple :value="checkedAnswer" :isAnalysis="isAnalysis" :correct-answer="correctAnswer" @change="onChangeOpt" />
-    <!-- <AnswerEye :correct-answer="correctAnswer" @change="handleEyeChange" /> -->
-    <AnswerAnalysis v-if="isAnalysis && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
+    <Select :options="options.option" multiple :value="checkedAnswer" :model="model" :correct-answer="correctAnswer" @change="onChangeOpt" />
+    <AnswerEye v-if="model !== 2" :correct-answer="correctAnswer" @change="handleEyeChange" />
+    <AnswerAnalysis v-if="model !== 2 && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
 <script>
@@ -30,10 +30,6 @@ export default {
         title: "",
       }),
     },
-    isAnalysis: {
-      type: Boolean,
-      default: false,
-    },
     model: {
       type: Number,
       default: 1
@@ -46,20 +42,27 @@ export default {
     };
   },
   created() {
-    if (this.options.user_answer.length) {
+    if (this.model === 3) {
       this.checkedAnswer = this.options.user_answer.map(item => +item)
-    } 
-    if (this.isAnalysis) {
       this.correctAnswer = this.options.true_answer.map(item => +item)
+    } else if (this.model === 2) {
+      if (this.options.user_answer.length) {
+        this.checkedAnswer = this.options.user_answer.map(item => +item)
+      }
+    } else {
+      if (this.options.user_answer.length) {
+        this.checkedAnswer = this.options.user_answer.map(item => +item)
+        this.correctAnswer = this.options.true_answer.map(item => +item)
+      }
     }
   },
   methods: {
     handleEyeChange(val) {
-      // if (val) {
-      //   this.correctAnswer = this.options.true_answer.map(item => +item);
-      // } else {
-      //   this.correctAnswer = "";
-      // }
+      if (val) {
+        this.correctAnswer = this.options.true_answer.map(item => +item);
+      } else {
+        this.correctAnswer = "";
+      }
     },
     onChangeOpt(val) {
       // console.log('indefinite', val);

@@ -9,10 +9,9 @@
       </template>
       <input type="text" class="input" :disabled="!!correctAnswer" v-model="item.value" placeholder="请输入"
              @blur="handlBlur" />
-             <!-- @confirm -->
     </IOption>
-    <!-- <AnswerEye :correct-answer="correctAnswer" @change="handleEyeChange" /> -->
-    <AnswerAnalysis v-if="isAnalysis && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
+    <AnswerEye v-if="model !== 2" :correct-answer="correctAnswer" @change="handleEyeChange" />
+    <AnswerAnalysis v-if="model !== 2 && correctAnswer" :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
 <script>
@@ -39,10 +38,6 @@ export default {
         title: "",
       }),
     },
-    isAnalysis: {
-      type: Boolean,
-      default: false,
-    },    
     model: {
       type: Number,
       default: 1
@@ -58,11 +53,11 @@ export default {
   },
   watch: {
     correctAnswer(val) {
-      // console.log(val);
+      console.log(val, this.checkedAnswer);
       if (val.length) {
         if (!this.options.reorder) {
           this.inputItem.forEach((item, index) => {
-            if (this.inputItem[index].value === val[index]) {
+            if (this.inputItem[index] === val[index]) {
               item.status = "success";
             } else {
               item.status = "error";
@@ -70,8 +65,8 @@ export default {
           });
         } else {
           this.inputItem.forEach((item) => {
-            if (val.includes(item.value)) {
-              val.splice(val.indexOf(item.value), 1);
+            if (val.includes(item.value.trim())) {
+              val.splice(val.indexOf(item.value.trim()), 1);
               item.status = "success";
             } else {
               item.status = "error";
@@ -86,33 +81,39 @@ export default {
     },
   },
   created() {
-    if (this.options.user_answer.length) {
+    if (this.model === 3) {
+      this.inputItem = this.options.option.map((item, index) => {
+        return {value: this.options.user_answer[index] || '', status: '' }
+      })
+      this.correctAnswer = this.options.true_answer.map(item => item.trim())
+    } else if (this.model === 2) {
       this.inputItem = this.options.option.map((item, index) => {
         return {value: this.options.user_answer[index] || '', status: '' }
       })
     } else {
-      this.inputItem = this.options.option.map(item => ({ value: '', status: '' }))
+      if (this.options.user_answer.length) {
+        this.inputItem = this.options.option.map((item, index) => {
+          return {value: this.options.user_answer[index].trim() || '', status: '' }
+        })
+        this.correctAnswer = this.options.true_answer.map(item => item.trim())
+      } else {
+        this.inputItem = this.options.option.map(item => ({ value: '', status: '' }))
+      }
     }
-
-    if (this.isAnalysis) {
-      this.correctAnswer = this.options.true_answer
-      this.checkedAnswer = this.options.user_answer.map(item => item)
-    } 
   },
   methods: {
     handlBlur() {
       const vals = this.inputItem.map((item) => { item.value.trim(); return item.value })
-      // console.log("completion", vals);
       this.checkedAnswer = vals
       let data = { id: this.options.id, answer: vals }
       this.$emit("change", data);
     },
     handleEyeChange(val) {
-      // if (val) {
-      //   this.correctAnswer = this.options.true_answer
-      // } else {
-      //   this.correctAnswer = "";
-      // }
+      if (val) {
+        this.correctAnswer = this.options.true_answer.map(item => item.trim())
+      } else {
+        this.correctAnswer = "";
+      }
     },
   },
 };

@@ -3,10 +3,9 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <!-- confirm="onInput -->
-    <textarea :disabled="!!correctAnswer" class="text" @blur="onInput" :value="value" placeholder="请输入" />
-    <!-- <AnswerEye :correctAnswer="correctAnswer" @change="handleEyeChange" /> -->
-    <AnswerAnalysis v-if="isAnalysis && correctAnswer" short :question="options" :userAnswer="value" />
+    <textarea :disabled="!!correctAnswer" class="text" @blur="onInput" :value="checkedAnswer" placeholder="请输入" />
+    <AnswerEye v-if="model !== 2" :correctAnswer="correctAnswer" @change="handleEyeChange" />
+    <AnswerAnalysis v-if="model !== 2 && correctAnswer" short :question="options" :userAnswer="checkedAnswer" />
   </div>
 </template>
 <script>
@@ -31,10 +30,6 @@ export default {
         title: "",
       }),
     },
-    isAnalysis: {
-      type: Boolean,
-      default: false,
-    },
     model: {
       type: Number,
       default: 1
@@ -43,32 +38,36 @@ export default {
   data() {
     return {
       correctAnswer: "",
-      value: "",
+      checkedAnswer: "",
     };
   },
   created() {
-    if (this.options.user_answer.length) {
-      this.value = this.options.user_answer[0]
-    }
-
-    if (this.isAnalysis) {
+    if (this.model === 3) {
+      this.checkedAnswer = this.options.user_answer[0]
       this.correctAnswer = this.options.true_answer
-      this.checkedAnswer = this.options.user_answer
+    } else if (this.model === 2) {
+      if (this.options.user_answer.length) {
+        this.checkedAnswer = this.options.user_answer[0]
+      }
+    } else {
+      if (this.options.user_answer.length) {
+        this.checkedAnswer = this.options.user_answer[0]
+        this.correctAnswer = this.options.true_answer
+      }
     }
   },
   methods: {
     onInput({ detail }) {
-      // console.log("short", detail);
-      this.value = detail.value
-      let data = { id: this.options.id, answer: this.value }
+      this.checkedAnswer = detail.value
+      let data = { id: this.options.id, answer: detail.value }
       this.$emit("change", data);
     },
     handleEyeChange(val) {
-      // if (val) {
-      //   this.correctAnswer = this.options.true_answer;
-      // } else {
-      //   this.correctAnswer = "";
-      // }
+      if (val) {
+        this.correctAnswer = this.options.true_answer;
+      } else {
+        this.correctAnswer = "";
+      }
     },
   },
 };

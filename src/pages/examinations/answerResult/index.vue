@@ -70,7 +70,7 @@ export default {
       exam_log_id: 0,
       question_bank_id: 0,
       source: '',
-      model: '',
+      model: 2,
       title: '',
 
       testResult: {},
@@ -145,12 +145,12 @@ export default {
     },
 
     onSelect(type, index) {
-      let url = `/pages/examinations/answer/index`
-      let question_id = this.getQuestionId(type, index)
-      let {exam_log_id, question_bank_id, model, source, title} = this.getQuery()
-      let query = { exam_log_id, last_question_id: question_id, question_bank_id, model, source, title }
-      let path = this.getPath(url, query)
-      uni.redirectTo({ url: path })
+      // let url = `/pages/examinations/answer/index`
+      // let question_id = this.getQuestionId(type, index)
+      // let {exam_log_id, question_bank_id, model, source, title} = this.getQuery()
+      // let query = { exam_log_id, last_question_id: question_id, question_bank_id, model, source, title }
+      // let path = this.getPath(url, query)
+      // uni.redirectTo({ url: path })
     },
     
     handleClick() {

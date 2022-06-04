@@ -24,7 +24,7 @@
       <uni-icons custom-prefix="iconfont" type="icon-jiaojuan" size="28rpx"></uni-icons>
       <view class="bar-text">交卷</view>
     </view>
-    <view class="answer-bar-item" v-else-if="model === 1 && isEnd" @click="onSubmitPaper">
+    <view class="answer-bar-item" v-else-if="model === 1 && isEnd" @click="endPractice">
       <uni-icons custom-prefix="iconfont" type="icon-jiaojuan" size="28rpx"></uni-icons>
       <view class="bar-text">结束练习</view>
     </view>
@@ -65,6 +65,9 @@ export default {
     },
     onSubmitPaper(e) {
       this.$emit("submit-paper", e);
+    },
+    endPractice(e) {
+      this.$emit("end-practice", e);
     },
     onClickNext(e) {
       !this.isEnd && this.$emit("next", e);

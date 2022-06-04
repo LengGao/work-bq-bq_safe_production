@@ -197,7 +197,7 @@ export default {
       }
 
       this.prevfetch()
-      this.$emit('submitAnswer')
+      this.$emit('submitanswe-case')
     },
 
     prevfetch() {
@@ -226,11 +226,12 @@ export default {
     cacheAnswer(answer) {
       let key = answer.id
       this.userAnswerMap[key] = answer
+      // console.log('cacheAnswer', this.userAnswerMap);
       if (this.isEnd && answer) {
-        this.$emit('onCaseChange', this.currentIndexCase, answer)
-        this.$emit('submitAnswer')
+        this.$emit('change', this.currentIndexCase, answer)
+        this.$emit('submitanswe-case')
       } else if (answer) {
-        this.$emit('onCaseChange', this.currentIndexCase, answer)
+        this.$emit('change', this.currentIndexCase, answer)
       }
     },
 
