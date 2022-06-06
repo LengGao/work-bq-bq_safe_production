@@ -46,8 +46,7 @@
             {{ comment.comment }}
           </view>
         </view>
-
-        <view v-if="isFinish" style="width: 100%; font-size: '24rpx'; text-align: center;">评论加载完成</view>
+        <view v-if="isFinish" style="margin-top: 40rpx; width: 100%; font-size: '24rpx'; text-align: center;">评论加载完成</view>
       </scroll-view>
     </view>
   </view>
