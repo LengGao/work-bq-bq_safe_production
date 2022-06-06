@@ -46,10 +46,17 @@ export default {
     }
   },
   methods: {
-    select({ tempFiles }) {
-      console.log(tempFiles);
+    async select({ tempFiles }) {
       let file = tempFiles[0]
-      this.form.images.push(file)
+      let token = this.$store.getters.token
+      let org = this.$store.getters.organizationCurrent
+      let header = {'token': token, 'org-id': org.id}
+      let ret = await uploadImage(file, header)
+      let res = JSON.parse(ret[1].data)
+      if (res.code === 0) {
+        let item = { id: file.uuid, url: res.data }
+        this.form.images.push(item)
+      }
     },
     ondel({ tempFiles }) {
       let file = tempFiles[0]
@@ -57,13 +64,13 @@ export default {
       this.form.images.splice(index, 1)
     },
     async onSubmit(e) {
-      console.log();
-      let params = { ...this.form }
+      let form = this.form
+      form.images = form.images.map(item => ( item.url ))
+      let params = { ...form }
       let res = await feedback(params)
       if (res.code === 0) {
         this.onReset()
         uni.showToast({ title: '提交陈功', icon: 'success'})
-        uni.navigateBack()
       }
     },
     onReset() {

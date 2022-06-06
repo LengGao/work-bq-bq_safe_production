@@ -1,4 +1,6 @@
 import request from '@/request/index'
+import { PREFIX } from '@/request/config'
+
 
 // 获取小程序信息
 export const getVersion = (data) => {
@@ -45,17 +47,9 @@ export function userCourseList(data) {
     })
 }
 
-export function uploadImage(data) {
-    return request({
-        url: 'user/uploadImage',
-        method: 'post',
-        data
-    })
-}
-
 export function feedback(data) {
     return request({
-        url: 'helpcenter/feedback',
+        url: 'HelpCenter/feedback',
         method: 'post',
         data
     })
@@ -63,8 +57,16 @@ export function feedback(data) {
 
 export function aboutUs(data) {
     return request({
-        url: 'helpcenter/aboutUs',
+        url: 'HelpCenter/aboutUs',
         method: 'post',
         data
     })
+}
+
+
+var base_url = process.env.VUE_APP_BASE_API
+var prefix = PREFIX
+export function uploadImage(data, header) {
+    let url = base_url + prefix + 'user/uploadImage'
+    return uni.uploadFile({ url: url, file: data, name: 'image', header })
 }

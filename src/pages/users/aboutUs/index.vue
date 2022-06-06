@@ -34,7 +34,8 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 .about-us {
-  width: 100%;
+  overflow: hidden;
+  padding: 40rpx;
   height: 100%;
 }
 
