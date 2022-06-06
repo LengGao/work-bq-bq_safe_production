@@ -346,9 +346,10 @@ export default {
       let region_id = this.currLocation.id
       let category_id = 0
       let price_type = -1
+      let recommend = 1
       let page = 1
       let page_size = 2
-      let param = { region_id, category_id, price_type, page, page_size }
+      let param = { region_id, category_id, price_type, recommend, page, page_size }
 
       let res = await courseList(param)
       if (res.code === 0) {

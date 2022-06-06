@@ -29,10 +29,11 @@
       <view class="fotter">
         <view class="left">
           <view class="avator">
-            <image class="avator-img" :src="info.teacher.avatar" mode="aspectFill" />
+            <image v-if="info.teacher && info.teacher.avatar" class="avator-img" :src="info.teacher.avatar" mode="aspectFill" />
+            <image v-else class="avator-img" :src="Avator" mode="aspectFill" style="background: #199fff;"/>
           </view>
           <view class="staff">
-            {{ info.teacher.name | empty }}
+            {{ info.teacher && info.teacher.name ? info.teacher.name : '--' }}
             <text style="margin: 0 30rpx;">|</text>
             <text class="staff-text"> {{ info.learn_count || 0 }}人在学</text>
           </view>
@@ -56,6 +57,7 @@
 <script>
 import uParse from "@/components/gaoyia-parse/parse";
 import { browser } from '@/mixins/index'
+import Avator from '@/static/img/user_avator.png'
 import { courseFavorites } from '@/api/course'
 // #ifdef H5
 // import { share_WeixinJSBridge } from '@/utils/api'
@@ -81,12 +83,18 @@ export default {
       default: false
     }
   },
-  mounted() {
+  data() {
+    return {
+      Avator
+    }
   },
   computed: {
     timeTotal() {
       return Math.imul(this.info.chapter_count, this.info.lesson_count)
     }
+  },
+  mounted() {
+    console.log('this.info',this.info);
   },
   methods: {
     onClick() {

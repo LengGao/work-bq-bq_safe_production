@@ -1,6 +1,6 @@
 <template>
   <view class="search">
-    <uni-search-bar @confirm="onSearch" v-model="keyword" :radius="24" placeholder="搜索您感兴趣的课程"></uni-search-bar>
+    <uni-search-bar @confirm="onSearch" v-model="keyword" :radius="24" placeholder="搜索您感兴趣的课程" @clear="onClear" @cancel="onCancel"></uni-search-bar>
     <view class="history" v-if="showRecond">
       <view class="head">
         <view class="title">搜索历史</view>
@@ -23,33 +23,35 @@
       </view>
     </view>
 
-    <view class="cources-list">
-      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="onDown" @up="onUp">
-        <CardRow v-for="course in cources" :key="course.id">
-          <template v-slot:cardBodyLeft>
-            <view class="logan-card-body-left">
-              <image class="logan-img-size-lg" :src="course.thumb" @click="() => previewImg(course.thumb)" mode="aspectFit" />
+    <view class="cources-list" v-if="!showRecond">
+      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
+                     :topbar="true" :safearea="true">
+        <view class="course-list-container">
+          <view class="course-item" v-for="item in cources" :key="item.id">
+            <view class="course-item-cover">
+              <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
+              <view class="course-tag" v-else>认证课</view>
+              <image class="course-img" :src="item.cover" mode="aspectFit" @click="() => previewImg(item.cover)" />
             </view>
-          </template>
-          <template v-slot:cardBodyRight>
-            <view class="logan-card-body-right" @click="() => onCourse(course.id)">
-              <view class="logan-card-right-top">
-                <text>{{ course.title }}</text>
+            <view class="course-item-content" @click="() => toDetails(item.id)">
+              <view class="course-name">{{ item.title }}</view>
+              <view class="course-time">
+                {{ item.chapter_count }}章
+                {{ item.lesson_count }}课时
               </view>
-              <view class="logan-card-right-center">{{ course.time }}</view>
-              <view class="logan-card-right-footer">
-                <view class="audience">{{ course.num }}人看过</view>
-                <view class="cost">
-                  <view v-if="course.money > 0">
-                    <text class="present-price">￥{{ course.money }}</text>
-                    <text class="original-price">{{ course.oldMoney }}</text>
-                  </view>
-                  <uni-tag v-else class="tag" type="warning" text="免费" inverted />
+              <view class="course-other">
+                <view class="course-other-count">
+                  <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons>
+                  {{ item.learn_count }} 人在学
+                </view>
+                <view v-if="item.price === 0" class="course-other-tag"> 免费</view>
+                <view v-else class="course-other-price">
+                  ￥{{ item.price }}
                 </view>
               </view>
             </view>
-          </template>
-        </CardRow>
+          </view>
+        </view>
       </mescroll-body>
     </view>
 
@@ -59,6 +61,9 @@
 <script>
 import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import {
+  courseList,
+} from '@/api/index'
 
 export default {
   mixins: [MescrollMixin],
@@ -69,7 +74,16 @@ export default {
     return {
       showRecond: true,
       keyword: '',
-
+      region_id: '',
+      up: {
+        page: {
+          num: 0,
+          size: 20,
+          time: 500,
+        },
+      },
+      
+      cources: [],
       historys: [
         { id: 1, name: '管理工程师', tag: 'hot', checked: false },
         { id: 2, name: '系统集成项目管理工程师', tag: 'hot', checked: false },
@@ -80,56 +94,87 @@ export default {
         { id: 3, name: '系统集成项目管理工程师', tag: '', checked: false },
         { id: 4, name: '系统集成项目管理工程师', tag: '', checked: false }
       ],
-      cources: [
-      ],
     }
+  },
+  onLoad() {
+    this.region_id = this.$store.getters.region.id
   },
   methods: {
     // 点击搜索历史
-    onCLickHistory() {
-      this.cources = [
-        { id: 26, name: "name1", money: 0, oldMoney: 0, thumb: "/static/img/index_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
-        { id: 27, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource1.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
-      ]
+    onCLickHistory(type, index) {
+      this.keyword = this.historys[index].name
       this.showRecond = false
+      this.reloadList()
     },
     // 清空搜索历史
-    onClearHistry() {
+    async onClearHistry() {
       this.historys = []
     },
     // 点击热门搜索
-    onCLickHot() {
-      this.cources = [
-        { id: 26, name: "name1", money: 0, oldMoney: 0, thumb: "/static/img/index_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
-        { id: 27, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource1.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
-      ]
+    onCLickHot(type, index) {
+      this.keyword = this.hots[index].name
       this.showRecond = false
+      this.reloadList()
     },
     previewImg(url) {
       uni.previewImage({
         urls: [url]
       })
     },
-    // 点击课程
-    onCourse(id) {
+    toDetails(id) {
       let url = '/pages/studys/courseDetail/index'
       let query = `?course_id=${id}`
       uni.navigateTo({ url: url + query })
     },
-    // 搜索
     onSearch(e) {
-      console.log(e);
+      this.keyword = e.value
+      this.reloadList()
     },
-    // 上拉加载
-    onUp() {
-      this.mescroll.endBySize(1, 1)
+    onCancel() {
+      this.showRecond = true
+      this.reloadList()
     },
-    // 下拉刷新
-    onDown() {
-      this.mescroll.endBySize(1, 1)
-    }
-
+    onClear() {
+      this.showRecond = true
+      this.reloadList()
+    },
+    reloadList(type, val) {
+      this.downCallback()
+    },
+    downCallback() {
+      if(this.mescroll) this.mescroll.resetUpScroll(true)
+    },
+    async upCallback(page) {
+      const data = {
+        keyword: this.keyword,
+        page: page.num,
+        page_size: page.size,
+        region_id: this.region_id
+      }
+      const res = await courseList(data)
+      if (res.code !== 0) return this.mescroll.endBySize(0, 0);
+      let curPageData = res.data.data;
+      let curPageLen = curPageData.length;
+      let totalSize = res.data.total;
+      if (page.num == 1) this.cources = [];
+      this.cources = this.cources.concat(curPageData);
+      this.mescroll.endBySize(curPageLen, totalSize);
+    },
+    
+    async getHistry() {
+      // let res = await 
+      // if (res.code === 0) {
+        // this.historys = []
+      // }
+    },
+    async getHot() {
+      // let res = await 
+      // if (res.code === 0) {
+        // this.hots = []
+      // }
+    },
   },
+
 
 }
 </script>
@@ -179,35 +224,110 @@ export default {
   color: $text-color-default;
 }
 
-.course-bar {
-  padding: 24rpx 0;
-  border-top: $logan-border-spacing-md;
-
-  .logan-card-right-footer {
-    align-items: baseline;
-    font-size: $font-size-base;
+.course-list {
+  background-color: #f8f8f8;
+  &-header {
+    z-index: 990;
+    position: sticky;
+    top: var(--window-top);
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    .picker {
+      flex: 1;
+    }
   }
+  &-container {
+    padding: 35rpx 20rpx 0;
+    .course-item {
+      background-color: #fff;
+      border-radius: 12rpx;
+      padding: 24rpx 16rpx;
+      display: flex;
+      margin-bottom: 20rpx;
+      &-cover {
+        position: relative;
+        line-height: 0;
 
-  .audience {
-    color: $color-primary;
-  }
+        .course-img {
+          width: 228rpx;
+          height: 130rpx;
+        }
 
-  .present-price {
-    font-size: $font-size-lg;
-    color: $color-warning;
-  }
-
-  .original-price {
-    margin-left: 8rpx;
-    font-size: $font-size-base;
-    text-decoration: line-through #999;
-  }
-
-  .tag {
-    position: relative;
-    bottom: 8rpx;
-    font-size: 24rpx;
-    font-weight: normal;
+        .course-tag {
+          line-height: initial;
+          position: absolute;
+          left: 0;
+          top: 0;
+          z-index: 1;
+          padding: 5rpx 24rpx;
+          background-color: $uni-color-primary;
+          color: #fff;
+          font-size: $uni-font-size-sm;
+          border-top-left-radius: 12rpx;
+          border-bottom-right-radius: 12rpx;
+          &--success {
+            background-color: $uni-color-success;
+          }
+        }
+        image {
+          border-radius: 12rpx;
+          width: 228rpx;
+          height: 132rpx;
+        }
+      }
+      &-content {
+        margin-left: 20rpx;
+        flex: 1;
+        display: flex;
+        line-height: 1;
+        flex-direction: column;
+        justify-content: space-between;
+        .course-name {
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          color: #444444;
+          font-size: $uni-font-size-base;
+        }
+        .course-time {
+          font-size: $uni-font-size-sm;
+          color: #bbbbbb;
+        }
+        .course-other {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: $uni-font-size-base;
+          .icon-person {
+            background-color: #dfecff;
+            border-radius: 50%;
+            margin-right: 16rpx;
+          }
+          &-count {
+            color: $uni-color-primary;
+            font-size: $uni-font-size-sm;
+          }
+          &-tag {
+            color: #f0ad4e;
+            border: 2rpx solid #f0ad4e;
+            border-radius: 8rpx;
+            padding: 4rpx 12rpx;
+          }
+          &-price {
+            color: #f0ad4e;
+            font-size: $uni-font-size-md;
+            .origin {
+              margin-left: 4rpx;
+              text-decoration: line-through;
+              color: #b1b1b1;
+              font-size: $uni-font-size-sm;
+            }
+          }
+        }
+      }
+    }
   }
 }
 

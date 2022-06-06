@@ -88,7 +88,7 @@ export default {
       console.log("lessonId", val, oldval);
       if (val) {
         this.resetChapterList()
-        this.toFlushBack(this.lessonId, this.chapterList)
+        this.toFlushBack(val, this.chapterList)
       }
     }
   },
@@ -109,7 +109,7 @@ export default {
       this.$emit('videoChange', args)
     },
     resetChapterList() {
-
+      this.checkeds = this.updateChapterList(this.checkeds, [])
     },
     // 回溯
     toFlushBack(id, list) {

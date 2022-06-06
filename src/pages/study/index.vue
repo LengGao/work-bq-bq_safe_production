@@ -47,7 +47,7 @@
             </view>
           </template>
           <template v-slot:cardBodyRight>
-            <view class="card-body-right" @click="() => onClickRecommend(course.id)">
+            <view class="card-body-right" @click="() => onClickCource(course.id)">
               <view class="card-right-top">
                 <text>{{ course.title }}</text>
               </view>
@@ -260,15 +260,86 @@ $padding: 16rpx 30rpx;
   }
 }
 
-.course-bar {
+.courses-list {
+  width: 100%;
   padding: 24rpx 0;
-  border-top: $logan-border-spacing-md;
+
+  .card-body-left {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 1 1 1;
+    height: 100%;
+    width: $img-size-width-md;
+  }
+
+  .img-size-lg {
+    height: 135rpx;
+    width: 230rpx;
+  }
+
+  .card-body-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex: 3 1 0;
+    height: 135rpx;
+    overflow: hidden;
+    margin-left: 20rpx;
+    font-size: $font-size-base;
+    letter-spacing: 1rpx;
+  }
+
+  .card-right-top {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    width: 100%;
+    color: $text-color;
+  }
+
+  .card-right-center {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;;
+    align-items: flex-start;
+    width: 100%;
+    font-size: $font-size-sm;
+    color: $text-color-grey;
+  }
+
+  .card-right-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; 
+    align-items: baseline;
+    width: 100%;
+    font-size: $font-size-sm;
+    color: $text-color-grey;
+  }
+
+  .audience {
+    color: $color-primary;
+    font-size: $font-size-sm;
+  }
+
+  .present-price {
+    font-size: $font-size-lg;
+    color: $color-warning;
+  }
+
+  .original-price {
+    margin-left: 8rpx;
+    font-size: $font-size-base;
+    text-decoration: line-through #999;
+  }
 
   .tag {
-    position: relative;
-    bottom: 8rpx;
     font-size: 24rpx;
-    font-weight: 700;
+    font-weight: normal;
   }
 
   .tag-one {

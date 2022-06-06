@@ -18,7 +18,7 @@
                              activeColor="#199fff" />
       <view class="segmented-content">
         <view v-show="current === 0" class="segmented-pane">
-          <Details v-if="courseInfo.teacher" :info="courseInfo" :courseId="course_id" />
+          <Details v-if="courseInfo" :info="courseInfo" :courseId="course_id" />
         </view>
         <view v-show="current === 1" class="segmented-pane">
           <Catalogue v-if="course_id && lesson_id" :courseId="course_id" :lessonId="lesson_id"
