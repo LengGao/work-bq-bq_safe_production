@@ -24,7 +24,16 @@ export function loginout(data) {
         url: 'login/out',
         method: 'post',
         data,
-        loading: true
+        loading: false
+    })
+}
+
+export function renewal(data) {
+    return request({
+        url: 'login/renewal',
+        method: 'get',
+        data,
+        loading: false
     })
 }
 

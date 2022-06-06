@@ -7,7 +7,8 @@ import {
 import {
     getVersion,
     login,
-    loginout
+    loginout,
+    renewal,
 } from "@/api/user";
 import {
     courseCommentHotWord
@@ -19,20 +20,6 @@ const questionBankInfo = uni.getStorageSync('questionBankInfo') || {}
 const region = uni.getStorageSync('region') || {}
 const version = process.env.VUE_APP_VERSION
 let appId = process.env.VUE_APP_APPID
-
-
-// console.log('mapGetters', store);
-// const header = {
-//   // 'org-id': 3,
-//   // Qin
-//   // token: 'eyJvcmdhbml6YXRpb25faWQiOjM0NiwiYXV0b2dyYXBoIjoiTitqOEpEZThUWVJkb0hhYXV6WDRCQlljSlNaRmM1eU5CeTdjeGszdW5mbjdYVytZazd0SUxIdGIzYUt0NWNMRWVFaFFtdXdxRnZpUjNuK0lScXZpUmFCYitmZndUSEtYRmVTY2lCajBSc0U9IiwicHJpdmF0ZV9rZXkiOiIyODQ4MTUxNTQxNTEwNzE4IiwidWlkIjo0NTkwMCwib3JpZ2luYWxfdXNlcl9rZXkiOiIyODQ4MTUxNTQxNTEwNzE4In0=',
-//   // Xie
-//   // token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzYWZldHkiLCJhdWQiOiIxNzIuMTYuMjM3LjkwIiwiaWF0IjoxNjUyNjgyOTU0LCJleHAiOjE2NTI3NjkzNTQsImRhdGEiOiJrRTBIOTY3KzArcDRLMml6OERHcDVhOUtyN3ErNjJuc3VIVFhFdkZwTHJRPSJ9.wNEaQrcGNLmcX5gGBugTLKVpf2x-C0SpZ6X4l2lowTA'
-//   // token: userInfo.token || '',
-//   // 'org-id': orgInfo.id || ''
-//   token: store.getters.token,
-//   'org-id': store.getters.organizationCurrent.id
-// }
 
 Vue.use(Vuex)
 
@@ -211,6 +198,18 @@ const actions = {
         keys.forEach(key => { uni.removeStorage({ key: key}) })
 
         return loginout()
+    },
+
+    async renewal({ commit }, data) {
+        let res = await renewal()
+        let old = state.user.userInfo
+        let orgInfo = state.user.organizationCurrent
+        if (res.code === 0) {
+            old.token = res.data.token
+            commit('SET_LOGIN_STATUS', true)
+            commit('SET_USER_INFO', old)
+            service.setHeader({ token: old.token || '',  'org-id': orgInfo.id || '' })
+        }
     },
     // 获取热评词
     async getCommentHotWord({ commit }, data) {

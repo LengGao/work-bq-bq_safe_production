@@ -219,6 +219,3 @@ export function getStudyReport(data) {
     data   
   })
 }
-
-
-

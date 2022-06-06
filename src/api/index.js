@@ -35,7 +35,7 @@ export function articleList(data) {
 export function articleDetail(data) {
   return request({
     url: 'article/detail',
-    method: 'get',
+    method: 'post',
     data
   })
 }
@@ -51,6 +51,14 @@ export function libraryList(data) {
 export function libraryDetail(data) {
   return request({
     url: 'library/detail',
+    method: 'post',
+    data
+  })
+}
+
+export function courseList(data) {
+  return request({
+    url: 'course/list',
     method: 'get',
     data
   })

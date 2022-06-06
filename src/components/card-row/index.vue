@@ -4,7 +4,7 @@
       <slot name="cardBodyLeft">
         <view class="card-body-left" @click="onClickLeft">
           <image @click="previewImg" @load="onLoadImage" @errr="onerrorImagee" class="card-row-image" :src="leftImage || errorImage"
-                 mode="scaleToFill" webp />
+                 mode="scaleToFill" />
         </view>
       </slot>
       <slot name="cardBodyRight">
@@ -82,8 +82,8 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
-$width: $img-size-width-sm;
-$height: $img-size-height-sm;
+$width: 230rpx;
+$height: 135rpx;
 
 .card-row {
   position: relative;
@@ -121,7 +121,7 @@ $height: $img-size-height-sm;
 .card-body-right {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: flex-start;
   flex: 3 1 0;
   height: 100%;
@@ -136,7 +136,6 @@ $height: $img-size-height-sm;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  flex: 1 1 1;
   width: 100%;
   color: $text-color;
 }
@@ -146,7 +145,6 @@ $height: $img-size-height-sm;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  flex: 1 1 1;
   width: 100%;
   font-size: $font-size-sm;
   color: $text-color-grey;
@@ -157,7 +155,6 @@ $height: $img-size-height-sm;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  flex: 2 1 1;
   width: 100%;
   font-size: $font-size-sm;
   color: $text-color-grey;

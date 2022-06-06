@@ -145,10 +145,8 @@ export default {
   onUnload() {
     clearInterval(this.intervalId)
     this.intervalId = null
-    // ifdef H5
-    if (this.player) {
-      this.player.dispose();
-    }
+    // #ifdef H5
+    if (this.player) { this.player.dispose();}
     // #endif
   },
   methods: {
@@ -542,16 +540,17 @@ export default {
         this.prev_time = +start_second
         this.duration = +duration
         this.is_practice = is_practice
-        /* #ifdef H5 */
+        // #ifdef H5
         this.createPlayer({ video_id, auth_data, start_second, cover, free_second, duration })
-        /* #endif */
-        /* #ifdef MP-WEIXIN */
+        // #endif
+
+        // #ifdef MP-WEIXIN
         this.settingPlayer({ video_id, auth_data, start_second, cover, free_second, duration })
-        /* #endif */
+        // #endif
       } else {
         // 其他异常
         this.pausePlay()
-        this.player.setCover(this.courseInfo.cover)
+        if (this.player) this.player.setCover(this.courseInfo.cover);
         uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
     },

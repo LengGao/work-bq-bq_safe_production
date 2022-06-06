@@ -5,7 +5,7 @@
       <view class="input-box">
         <uni-icons customPrefix="iconfont" type="icon-user-filling" size="36rpx" color="#ccc"
                    style="margin-left: 10rpx" />
-        <uni-easyinput class="input" v-model="username" placeholder="请输入手机号码" @focus="onFocus" @blur="onBlur"
+        <uni-easyinput class="input" v-model="username" placeholder="请输入身份证号" @focus="onFocus" @blur="onBlur"
                        placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false"
                        :clearable="false">
         </uni-easyinput>
@@ -39,16 +39,15 @@
 </template>
 
 <script>
-import { systemConfig } from "@/api/index";
 import logImag from "@/static/logo.png"
 
 export default {
   data() {
     return {
-      username: '13535019471',
-      password: '123456',
-      // username: '15673416691',
+      // username: '13535019471',
       // password: '123456',
+      username: '430481199706297215',
+      password: '123456',
       isRead: false,
       visibility: false,
       loading: false,
@@ -105,7 +104,7 @@ export default {
     },
     async onSubmit() {
       this.loading = true
-      let params = { mobile: this.username, password: this.password }
+      let params = { id_card: this.username, password: this.password }
       let res = await this.$store.dispatch('login', params)
       if (res.code === 0) {
         uni.showToast({ icon: 'success', title: '登录成功' })

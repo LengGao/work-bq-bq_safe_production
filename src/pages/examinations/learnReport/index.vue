@@ -14,36 +14,32 @@
             <image class="user-avatar" :src="userInfo.avatar_url" />
             <view>
               <view class="user-name">{{userInfo.real_name}}</view>
-              <view class="user-time">{{practiceData.first_time_study | dateFormat}} 开始学习</view>
+              <view class="user-time">{{practiceData.first_time_study}} 开始学习</view>
             </view>
           </view>
           <view class="statistics-top-day">
-            <p class="day-title">累计答题天数</p>
-            <p class="day-value">{{todyData.answer_days | dayFormat}}</p>
+            <p class="day-title">今日答题数</p>
+            <p class="day-value">{{practiceData.today_answer_num}}</p>
           </view>
         </view>
         <view class="statistics-data">
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">{{todyData.today_answer_num | empty}}</view>
-            <view class="statistics-data-item-title">今日答题数</view>
-          </view>
-          <view class="statistics-data-item">
-            <view class="statistics-data-item-value">{{todyData.today_correct_rate | empty}}<text>%</text></view>
+            <view class="statistics-data-item-value">{{practiceData.today_correct_rate | empty}}</view>
             <view class="statistics-data-item-title">今日正确率</view>
           </view>
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">{{todyData.wrong_num | empty}}</view>
-            <view class="statistics-data-item-title">总答题数</view>
+            <view class="statistics-data-item-value">{{practiceData.collect_num | empty}}<text>%</text></view>
+            <view class="statistics-data-item-title">收藏题数</view>
           </view>
-          <view class="statistics-data-item none">
-            <view class="statistics-data-item-value">{{customData.total_correct_rate | empty}}<text>%</text></view>
-            <view class="statistics-data-item-title">总正确率</view>
+          <view class="statistics-data-item">
+            <view class="statistics-data-item-value">{{practiceData.wrong_num | empty}}</view>
+            <view class="statistics-data-item-title">答错题数</view>
           </view>
         </view>
       </view>
       <view class="learn-report-card">
         <view class="learn-report-card-header">
-          <view class="card-title">章节练习</view>
+          <view class="card-title">人工组卷</view>
           <view class="card-icon">
             <view class="card-icon-radio c-1"></view>
             <view class="card-icon-radio c-2"></view>
@@ -57,30 +53,26 @@
         </view>
         <view class="learn-report-card-statistics statistics-data">
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">{{practiceData.today_answer_num | empty}}</view>
+            <view class="statistics-data-item-value">{{customData.today_answer_num | empty}}</view>
             <view class="statistics-data-item-title">答题总数</view>
           </view>
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">{{practiceData.answer_progress | empty}}<text>%</text></view>
+            <view class="statistics-data-item-value">{{customData.answer_progress | empty}}<text>%</text></view>
             <view class="statistics-data-item-title">答题进度</view>
           </view>
           <view class="statistics-data-item">
-            <!-- <view class="statistics-data-item-value">{{customData.total_exam_num | empty}}</view>
-            <view class="statistics-data-item-title">总考试次数</view> -->
-            <view class="statistics-data-item-value">{{practiceData.collect_num | empty}}</view>
-            <view class="statistics-data-item-title">收藏题数</view>
+            <view class="statistics-data-item-value">{{customData.total_exam_num | empty}}</view>
+            <view class="statistics-data-item-title">总考试次数</view>
           </view>
           <view class="statistics-data-item none">
-            <!-- <view class="statistics-data-item-value">{{customData.top_score | empty}}</view>
-            <view class="statistics-data-item-title">最高得分</view> -->
-            <view class="statistics-data-item-value">{{practiceData.wrong_num | empty}}</view>
-            <view class="statistics-data-item-title">答错题数</view>
+            <view class="statistics-data-item-value">{{customData.top_score | empty}}</view>
+            <view class="statistics-data-item-title">最高得分</view>
           </view>
         </view>
       </view>
       <view class="learn-report-card">
         <view class="learn-report-card-header">
-          <view class="card-title">模拟考试</view>
+          <view class="card-title">随机考试</view>
           <view class="card-icon">
             <view class="card-icon-radio c-1"></view>
             <view class="card-icon-radio c-2"></view>
@@ -90,7 +82,7 @@
         <view class="learn-report-card-contetn">
           <view class="charts-line-title">最近7次模拟考试成绩</view>
           <view class="charts-line-box">
-            <qiun-data-charts type="line" :chartData="chartLineData" :opts="chartLineData" />
+            <qiun-data-charts type="line" :chartData="chartLineData" :opts="chartsLineOpts" />
           </view>
         </view>
         <view class="learn-report-card-statistics statistics-data">
@@ -182,6 +174,11 @@ export default {
         }
       },
 
+      chartLineData: {
+        categories: [],
+        series: [{ name: '考试成绩', data: [] }],
+      },
+
       chartsLineOpts: {
         legend: {
           show: false,
@@ -189,10 +186,6 @@ export default {
         extra: {
           line: { type: "curve", width: 2 },
         }
-      },
-      chartLineData: {
-        categories: [],
-        series: [{ name: '考试成绩', data: [] }],
       },
     };
   },

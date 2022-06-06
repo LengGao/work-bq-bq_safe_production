@@ -84,7 +84,7 @@ export default {
       const data = {
         page: page.num,
         page_size: page.size,
-        region_id: this.region_id,
+        // region_id: this.region_id,
         category_id: this.category_id,
         price_type: this.type_id
       }

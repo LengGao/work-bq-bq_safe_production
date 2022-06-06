@@ -1,6 +1,6 @@
 <template>
-  <view class="no-data" :style="{ top }">
-    <image class="img" src="@/static/no-data.png"></image>
+  <view class="no-data" :style="{ top, position }">
+    <image class="img" src="@/static/no-data.png" :style="{width, height} " ></image>
     <view class="text">
       <slot>暂无数据</slot>
     </view>
@@ -14,6 +14,18 @@ export default {
       type: String,
       default: "30%",
     },
+    position: {
+      type: String,
+      default: "absolute",
+    },
+    width: {
+      type: String,
+      default: "280rpx",
+    },
+    height: {
+      type: String,
+      default: "264rpx",
+    }
   },
 };
 </script>

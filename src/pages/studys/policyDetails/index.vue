@@ -1,6 +1,6 @@
 <template>
   <view class="policy-details">
-    <view class="title">{{ index.title || '--'}}</view>
+    <view class="title">{{ info.title || '--'}}</view>
     <view class="subtitle">
       <view class="left">
         <text class="school">{{ info.source || '--' }}</text>
@@ -25,21 +25,19 @@ export default {
   },
   data() {
     return {
-      policy_id: '',
+      article_id: '',
       info: {
         content: ''
       }
     }
   },
   onLoad(query) {
-    this.policy_id = query.policy_id
-  },
-  mounted() {
+    this.article_id = query.article_id
     this.getData()
   },
   methods: {
    async getData() {
-    const res = await articleDetail({ article_id: this.policy_id }) 
+    const res = await articleDetail({ article_id: this.article_id }) 
       if (res.code == 0) {
         this.info = res.data
       }

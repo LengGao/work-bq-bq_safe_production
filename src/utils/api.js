@@ -17,6 +17,18 @@ export const download_file_common = async (url, name = '', header = {}) => {
   }
 }
 
+
+export const download_file_h5 = async (url, type, name = '', header = {}) => {  
+  let a = document.createElement('a')
+  let e = new MouseEvent('click')
+  // let blob = new Blob([url], { type: 'image/jpeg' })
+  // let href = URL.createObjectURL(blob)
+  let href = url
+  a.setAttribute('href', href)
+  a.setAttribute('downloads', `${name}.${type}`)
+  a.dispatchEvent(e)
+}
+
 /**
  * 
  * @param {*} url { url“ 后端接口 }

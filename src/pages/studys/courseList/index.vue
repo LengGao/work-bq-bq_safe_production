@@ -20,7 +20,7 @@
               <view class="course-name">{{ item.title }}</view>
               <view class="course-time">
                 {{ item.chapter_count }}章
-                {{ item.learn_count }}课时
+                {{ item.lesson_count }}课时
               </view>
               <view class="course-other">
                 <view class="course-other-count">

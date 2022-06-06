@@ -17,8 +17,8 @@
 
     <view class="swiper-bar">
       <swiper :interval="2000" autoplay circular disable-touch class="swiper">
-        <swiper-item v-for="swiper in swipers" :key="swiper.id" @click="() => onClickSwiperImg(swiper)" :current-item-id="swiper.id"
-                     class="swiper-item">
+        <swiper-item v-for="swiper in swipers" :key="swiper.id" @click="() => onClickSwiperImg(swiper)"
+                     :current-item-id="swiper.id" class="swiper-item">
           <image @click="() => previewImg(swiper.thumb)" :src="swiper.banner" class="swiper-image" mode="scaleToFill" />
         </swiper-item>
       </swiper>
@@ -28,7 +28,7 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left">安全生产资格培训</view>
         <view class="logan-list-head-right" @click="() => onClickAll(1)">
-          <text>查看全部</text>
+          <text>全部课程</text>
           <uni-icons type="forward" size="28rpx" />
         </view>
       </view>
@@ -50,10 +50,11 @@
       </view>
 
       <view class="courses-list">
+        <template v-if="courses.length">
         <CardRow v-for="course in courses" :key="course.id">
           <template v-slot:cardBodyLeft>
             <view class="logan-card-body-left">
-              <image @click="() => previewImg(course.thumb)" :src="course.thumb" class="logan-img-size-lg"
+              <image @click="() => previewImg(course.cover)" :src="course.cover" class="logan-img-size-lg"
                      mode="aspectFit" />
             </view>
           </template>
@@ -62,16 +63,18 @@
               <view class="logan-card-right-top">
                 <text>{{ course.title }}</text>
               </view>
-              <view class="logan-card-right-center">{{ course.time }}</view>
+              <view class="logan-card-right-center">
+                {{ course.chapter_count }}章
+                {{ course.lesson_count }}课时
+              </view>
               <view class="logan-card-right-footer">
                 <view class="audience">
                   <uni-icons type="person-filled" color="#fff" class="icon-person" size="24rpx"></uni-icons>
-                  <text style="margin-left: 10rpx">{{ course.num }}人看过</text>
+                  <text style="margin-left: 10rpx">{{ course.learn_count }}人看过</text>
                 </view>
                 <view class="cost">
-                  <view v-if="course.money > 0">
-                    <text class="present-price">￥{{ course.money }}</text>
-                    <text class="original-price">{{ course.oldMoney }}</text>
+                  <view v-if="parseFloat(course.price) > 0">
+                    <text class="present-price">￥{{ course.price }}</text>                    
                   </view>
                   <uni-tag v-else class="tag" type="warning" size="small" text="免费" inverted />
                 </view>
@@ -79,14 +82,18 @@
             </view>
           </template>
         </CardRow>
+        </template>
+        <template v-else>
+          <NoData position="static" />
+        </template>
       </view>
     </view>
 
-    <view class="policy-bar">
+    <view class="policy-bar" v-if="policys.length">
       <view class="logan-list-head">
         <view class="logan-list-head-left">政策专栏</view>
         <view class="logan-list-head-right" @click="() => onClickAll(3)">
-          <text>查看全部</text>
+          <text>全部政策</text>
           <uni-icons type="forward" size="28rpx" />
         </view>
       </view>
@@ -94,7 +101,7 @@
       <view class="policy-swiper">
         <swiper @change="onChangeSwiper" :display-multiple-items="3" :autoplay="false" circular class="swiper">
           <swiper-item v-for="policy in policys" :key="policy.id" :current-item-id="policy.id">
-            <view class="swiper-item-box" @click="() => onClickPolicy()">
+            <view class="swiper-item-box" @click="() => onClickPolicy(policy.id)">
               <image :src="policy.cover" class="swiper-image" mode="scaleToFill" />
               <view class="swiper-text">{{ policy.title }}</view>
             </view>
@@ -107,21 +114,30 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left">文库资料</view>
         <view class="logan-list-head-right" @click="onClickAll(4)">
-          <text>查看全部</text>
+          <text>全部资料</text>
           <uni-icons type="forward" size="28rpx" />
         </view>
       </view>
 
       <view class="library-list">
-        <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.cover" :rightFooter="library.time || '--'"
-                 @clickRight="() => onClickLibrary()" @previewImg="previewImg">
-          <template v-slot:rightTop>
-            <view class="logan-card-right-top">
-              <uni-icons custom-prefix="iconfont" type="icon-file-pdf-fill" size="28rpx" color="#dd524d" />
-              <text class="library-text">{{ library.title }}</text>
-            </view>
-          </template>
-        </CardRow>
+        <template v-if="librarys.length">
+          <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.cover" @previewImg="previewImg">
+            <template v-slot:cardBodyRight>
+              <view class="card-body-right" @click="() => onClickLibrary(library.id)">
+                <view class="card-right-top">
+                  <uni-icons custom-prefix="iconfont" type="icon-file-pdf-fill" size="28rpx" color="#dd524d" />
+                  <text class="library-text">{{ library.title || '--' }}</text>
+                </view>
+                <view class="card-right-top">
+                  <text class="card-right-footer">{{ library.time || '--' }}</text>
+                </view>
+              </view>
+            </template>
+          </CardRow>
+        </template>
+        <template v-else>
+          <NoData position="static" />
+        </template>
       </view>
     </view>
 
@@ -143,86 +159,87 @@
 
 <script>
 import CardRow from "@/components/card-row/index";
+import NoData from '@/components/noData/index'
 import RegionChange from './components/RegionChange'
 import { mapGetters } from 'vuex'
 import {
   systemRegion,
   banner,
+  courseList,
   articleList,
   libraryList
-} from  '@/api/index'
+} from '@/api/index'
 
 
 export default {
   components: {
     CardRow,
+    NoData,
     RegionChange
   },
   data() {
     return {
       isHidden: false,
       showRegionChange: false,
-      // 地区数据
+
       currLocation: {},
       regions: [],
-      // 文库资料
-      librarys: [
-        { id: 1, name: "name1", thumb: "/static/img/index_library1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "2022-03-18 18:30" },
-        { id: 2, name: "name1", thumb: "/static/img/index_library1.png", title: "建筑设计防火规范标准", time: "2022-03-18 18:30" },
-      ],
-      // 政策专栏
-      policys: [
-        { id: 1, cover: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
-        { id: 2, cover: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
-        { id: 3, cover: "/static/img/index_policy1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准" },
-      ],
-      // 推荐课程
-      courses: [
-        { id: 26, name: "name1", money: 0, oldMoney: 0, thumb: '/static/img/index_cource1.png', title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", num: 897, tag: "免费" },
-        { id: 27, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource1.png", title: "特种作业低压电工实操课", time: "12章24课时", num: 987, tag: "" },
-      ],
-      // 业务板块
+
+      courses: [],
+      policys: [],
+      librarys: [],
+
       businesses: [
         { id: 1, type: "one", title: "特种作业上岗正", url: "" },
         { id: 2, type: "two", title: "两类人员安全正", url: "" },
         { id: 3, type: "three", title: "其他从业人员", url: "" },
       ],
-      // 轮播
-      swipers: [
-        { id: 26, thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/index_swiper.png', url: "" },
-        { id: 27, thumb: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/index_swiper.png', url: "" }
-      ],
+      swipers: []
     };
-  },
-  onLoad() {
-    this.banner()
-    this.getSystemRegion()
   },
   computed: {
     ...mapGetters(['organizationList'])
   },
+  watch: {
+    currLocation() {
+      this.init()
+    }
+  },
+  onLoad() {
+    this.banner()
+    this.getSystemRegion()
+    this.libraryList()
+  },
   onReady() {
-    let orgInfo = uni.getStorageSync('orgInfo')
-    let userInfo = uni.getStorageSync('userInfo')
+    let orgInfo = uni.getStorageSync('orgInfo'), userInfo = uni.getStorageSync('userInfo')
     if (userInfo.token) {
-      if (!orgInfo.id) this.openPopup(this.organizationList);
+      if (!orgInfo.id) {
+        this.openPopup(this.organizationList)
+      }
     }
   },
   onShow() {
     if (this.$refs['popup-org']) {
-      let orgInfo = uni.getStorageSync('orgInfo')
-      let userInfo = uni.getStorageSync('userInfo')
+      let orgInfo = uni.getStorageSync('orgInfo'), userInfo = uni.getStorageSync('userInfo')
       if (userInfo.token) {
         if (!orgInfo.id) {
-          this.openPopup(this.organizationList);
+          this.openPopup(this.organizationList)
         }
       }
     }
   },
   methods: {
     init() {
+      this.courseList()
       this.articleList()
-      this.libraryList()
+    },
+    checkLogin() {
+      let userInfo = uni.getStorageSync('userInfo')
+      return userInfo
+    },
+    checkOrgInfo() {
+      let orgInfo = uni.getStorageSync('orgInfo')
+      return orgInfo
     },
     openPopup(list) {
       if (list && list.length) {
@@ -238,7 +255,7 @@ export default {
     },
     // 选择机构s
     onChoiceOrg(item) {
-      uni.showToast({ title: `欢迎进入${item.name}`, icon: 'none'})
+      uni.showToast({ title: `欢迎进入${item.name}`, icon: 'none' })
       this.$store.dispatch('setOrgCurrent', item)
       this.$refs['popup-org'].close()
       uni.showTabBar()
@@ -263,9 +280,8 @@ export default {
     },
     // 轮播图点击事件
     onClickSwiperImg(swiper) {
-      let url = '/pages/studys/courseDetail/index'
-      let query = `?course_id=${swiper.url}`
-      uni.navigateTo({ url: url + query })
+      let url = `/pages/studys/courseDetail/index?course_id=${swiper.url}`
+      uni.navigateTo({ url })
     },
     // 查看全部
     onClickAll(type) {
@@ -297,12 +313,12 @@ export default {
       uni.navigateTo({ url: `/pages/studys/courseDetail/index?course_id=${id}` })
     },
     // 点击政策栏
-    onClickPolicy() {
-      uni.navigateTo({ url: '/pages/studys/policyDetails/index' })
+    onClickPolicy(id) {
+      uni.navigateTo({ url: `/pages/studys/policyDetails/index?article_id=${id}` })
     },
     // 点击资料
-    onClickLibrary() {
-      uni.navigateTo({ url: '/pages/studys/libraryDetails/index' })
+    onClickLibrary(id) {
+      uni.navigateTo({ url: `/pages/studys/libraryDetails/index?library_id=${id}` })
     },
     // 图片预览
     previewImg(url) {
@@ -320,37 +336,45 @@ export default {
     onbinderror(e) {
       this.isHidden = true
     },
-    // 数据获取
-    getData() {
-    },
-
-    reloadData() {
-    },
     async banner() {
       let res = await banner()
       if (res.code === 0) {
         this.swipers = res.data
       }
     },
-    async articleList() {
-      console.log('region_id',this.currLocation);
+    async courseList() {
       let region_id = this.currLocation.id
       let category_id = 0
-      let is_recommend = 0
+      let price_type = -1
       let page = 1
-      let pageSize = 3
-      let param = {region_id, is_recommend, page, pageSize}
+      let page_size = 2
+      let param = { region_id, category_id, price_type, page, page_size }
+
+      let res = await courseList(param)
+      if (res.code === 0) {
+        this.courses = res.data.data
+      }
+    },
+    async articleList() {
+      let region_id = this.currLocation.id
+      let category_id = 0
+      let is_recommend = 1
+      let page = 1
+      let pageSize = 10
+      let param = { region_id, category_id, is_recommend, page, pageSize }
+
       let res = await articleList(param)
       if (res.code === 0) {
-        this.policys = res.data.total ? res.data.list : this.policys
+        this.policys = res.data.list
       }
     },
     async libraryList() {
       let region_id = this.currLocation.id
       let is_recommend = 1
       let page = 1
-      let pageSize = 3
-      let param = { region_id, is_recommend, page, pageSize}
+      let pageSize = 10
+      // region_id，
+      let param = { is_recommend, page, pageSize }
       let res = await libraryList(param)
       if (res.code === 0) {
         this.librarys = res.data.list
@@ -579,6 +603,38 @@ $padding-lr: 30rpx;
   border-top: $logan-border-spacing-md;
   .library-text {
     margin-left: 8rpx;
+  }
+
+  .card-body-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex: 3 1 0;
+    height: 100%;
+    overflow: hidden;
+    margin-left: 20rpx;
+    font-size: $font-size-base;
+    letter-spacing: 1rpx;
+  }
+
+  .card-right-top {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    width: 100%;
+    color: $text-color;
+  }
+
+  .card-right-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: $font-size-sm;
+    color: $text-color-grey;
   }
 }
 
