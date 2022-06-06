@@ -38,15 +38,45 @@
       </view>
 
       <view class="courses-list">
+      <template v-if="courseData.length">
       <scroll-view scroll-y @scrolltolower="() => upCallback(page)" style="height: 1000rpx">
-          <CardRow v-for="course in courses" :key="course.id" :leftImage="course.thumb" :rightTop="course.title"
-                   :rightFooter="course.time" @clickRight="() => onClickCource(course.id)" @previewImg="previewImg">
-            <template v-slot:rightFooterIcon>
-              <uni-tag type="primary" class="tag" :class="course.type" :text="course.tag" inverted />
-            </template>
-          </CardRow>
+        <CardRow v-for="course in courseData" :key="course.id">
+          <template v-slot:cardBodyLeft>
+            <view class="card-body-left">
+              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" mode="aspectFit" />
+            </view>
+          </template>
+          <template v-slot:cardBodyRight>
+            <view class="card-body-right" @click="() => onClickRecommend(course.id)">
+              <view class="card-right-top">
+                <text>{{ course.title }}</text>
+              </view>
+
+              <view class="card-right-center">
+                <view class="time">
+                  {{ course.chapter_count }}章
+                  {{ course.lesson_count }}课时
+                  <text style="margin: 0 8rpx;"> | </text>
+                  共{{ course.duration_count }}课时
+                </view>
+              </view>
+
+              <view class="card-right-footer">
+                <view class="cost">
+                  <view class="tag tag-two" v-if="course.learning_progress >= 100">已学完</view>
+                  <view class="tag tag-three" v-else-if="course.learning_progress <= 0" >未开始</view>
+                  <view class="tag tag-one" v-else >已学习 {{ course.learning_progress }}%</view>
+                </view>
+              </view>
+            </view>
+          </template>
+        </CardRow>
          <view v-if="isFinish" style="width: 100%; font-size: '24rpx'; text-align: center;"> 没有更多了</view>
       </scroll-view>
+      </template>
+      <template v-else>
+        <NoData position="relative"  style="margin-top: 25%;" />
+      </template>
       </view>
     </view>
   </view>
@@ -54,12 +84,15 @@
 
 <script>
 import CardRow from "@/components/card-row/index";
+import NoData from "@/components/noData/index"
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import { userCourseList } from '@/api/user'
 
 export default {
   mixins: [MescrollMixin],
   components: {
     CardRow,
+    NoData,
   },
   data() {
     return {
@@ -69,13 +102,10 @@ export default {
       titleBg: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/study_swiper.png',
       dataIcon: '/static/img/study_iicon_data.png',
       voucherIcon: '/static/img/study_icon_voucher.png',
-
       // 推荐课程
-      courses: [
-        { id: 26, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "已完成", prpress: 800, type: 'tag-one' },
-        { id: 27, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 100, type: 'tag-two' },
-        { id: 28, thumb: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", prpress: 0, type: 'tag-three' }
-      ],
+      courseData: [],
+
+      needLogin: false
     };
   },
   mounted() {
@@ -83,6 +113,10 @@ export default {
   },
   methods: {
     toLearn(val) {
+      if (this.needLogin) {
+        uni.showToast({ title: '请登录', icon: 'none' })
+        return;
+      }
       if (val === 1) {
         uni.navigateTo({ url: '/pages/studys/learnData/index' })
       } else {
@@ -106,31 +140,38 @@ export default {
     // 上拉
     async upCallback(page) {
       console.log('upCallback', page);
-      // if (this.isFinish) return;
-      // page.num++;
-      // const data = {
-      //   page: page.num,
-      //   page_size: page.size,
-      //   course_id: this.courseId
-      // }
-      // const res = await courseGetCommentList(data)
-      // if (res.code !== 0) return page.num -= 1;
+      if (this.isFinish) return;
+      page.num++;
+      const data = {
+        page: page.num,
+        page_size: 3,
+      }
+      const res = await userCourseList(data)
+      if (res.code === 1000 || res.code === 1008) {
+        page.num -= 1;
+        this.needLogin = true
+        return;
+      } else if (res.code !== 0) {
+        page.num -= 1;
+        this.needLogin = true
+        return;
+      }
 
-      // let curPageData = res.data.data
-      // let totalSize = res.data.total;
-      // let curPageLen = curPageData.length + this.comments.length
-      // if (page.num == 1) this.comments = [];
-      // this.comments = this.comments.concat(curPageData);
-      // this.endBySize(curPageLen, totalSize);
+      let curPageData = res.data.data
+      let totalSize = res.data.total;
+      let curPageLen = curPageData.length + this.courseData.length
+      if (page.num == 1) this.courseData = [];
+      this.courseData = this.courseData.concat(curPageData);
+      this.endBySize(curPageLen, totalSize);
     },
     // 技术判断
     endBySize(curPageLen, totalSize) {
-      // if (curPageLen >= totalSize) {
-      //   this.isFinish = true
-      // } else {
-      //   this.isFinish = false
-      // }
-      // return this.isFinish
+      if (curPageLen >= totalSize) {
+        this.isFinish = true
+      } else {
+        this.isFinish = false
+      }
+      return this.isFinish
     },
     // 图片预览
     previewImg(url) {

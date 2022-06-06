@@ -227,6 +227,12 @@
 					}
 				},
 				{
+					"path": "aboutUs/index",
+					"style": {
+						"navigationBarTitleText": "关于我们"
+					}
+				},
+				{
 					"path": "feedback/index",
 					"style": {
 						"navigationBarTitleText": "意见反馈"

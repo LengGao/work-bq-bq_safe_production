@@ -22,7 +22,7 @@
         </view>
         <view v-show="current === 1" class="segmented-pane">
           <Catalogue v-if="course_id && lesson_id" :courseId="course_id" :lessonId="lesson_id"
-                     @videoChange="onChangeVideo" />
+                     @videoChange="onChangeVideo" :needLogin="needLogin" />
         </view>
         <view v-show="current === 2" class="segmented-pane">
           <Rate ref="rate" :courseId="course_id" @openComment="onComment" />
@@ -118,6 +118,9 @@ export default {
       player: null,
       disableChange: false,
       is_practice: false,
+
+      needLogin: false,
+      needBuy: false,
     }
   },
   computed: {
@@ -150,6 +153,12 @@ export default {
     // #endif
   },
   methods: {
+    async toLogin () {
+      let res = await uni.showModal({ title: '提示', content: "该功能需要登录后才能使用" })
+      if (res[1].confirm) {
+        uni.navigateTo({ url: '/pages/login/index' })
+      }
+    },
     // 加载完成
     onLoadedmetadata() {
       wx.createSelectorQuery().select('#course-video').context((res) => {
@@ -260,6 +269,14 @@ export default {
     },
     // 我要评价
     onComment() {
+      if (this.needLogin) {
+        uni.showToast({ title: '请登录', icon: 'none' });
+        return;
+      }
+      if (this.needBuy) {
+        uni.showToast({ title: '请联系管理员开通课程', icon: 'none' });
+        return
+      }
       this.resetForm()
       this.$refs.popup.open()
     },
@@ -286,6 +303,10 @@ export default {
 
     // 发表评论
     async onPublish() {
+      if (this.needLogin) {
+        uni.showToast({ title: '请登录', icon: 'none' });
+        return;
+      } 
       let { star, comment } = this.rateForm
       let hot_word = this.tags.filter(filterItem => filterItem.checked).map(mapItem => mapItem.label)
       let params = {
@@ -314,7 +335,7 @@ export default {
         this.courseInfo = res.data
         this.videoCover = res.data.cover
         let lesson_id = this.lesson_id || res.data.learning_lesson_id
-        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: lesson_id })
+        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: lesson_id }) 
       }
     },
 
@@ -507,6 +528,7 @@ export default {
         }
         this.finish_second = +res.data.finish_second
         this.prev_time = +res.data.last_second
+        this.needLogin = false
       } else if (res.code === 2201) {
         this.prev_time = +res.data.last_second
         this.finish_second = +res.data.finish_second
@@ -516,15 +538,31 @@ export default {
         this.lesson_id = res.data.lesson_id
         this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: res.data.lesson_id })
         uni.showToast({ title: `${res.message}`, icon: 'none', duration: 2000 })
-      } else {
-          this.prev_time = +res.data.last_second
-          this.finish_second = +res.data.finish_second
-          this.pausePlay()
-          uni.showToast({ title: `${res.message}`, icon: 'none' })
+      } else if (res.code === 1000 || res.code === 1008) {      
+        this.needLogin = true
+        this.prev_time = +res.data.last_second
+        this.finish_second = +res.data.finish_second
+        this.pausePlay()
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
+      } else if (res.code === 2001) { 
+        this.needBuy = true
+        this.prev_time = +res.data.last_second
+        this.finish_second = +res.data.finish_second
+        this.pausePlay()
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
+      }else {
+        this.prev_time = +res.data.last_second
+        this.finish_second = +res.data.finish_second
+        this.pausePlay()
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
     },
     // 获取视频凭证
     async getCourseGetVideoAuth(params) {
+      if (this.needLogin) {
+        uni.showToast({ title: '请登录', icon: 'none' });
+        return;
+      }
       let res = await courseGetVideoAuth(params)
       let { video_id, auth_data, start_second, duration, lesson_id, title, cover,
         free_second, finish_second, is_forward, is_free, is_practice} = res.data
@@ -540,13 +578,25 @@ export default {
         this.prev_time = +start_second
         this.duration = +duration
         this.is_practice = is_practice
+
+        this.needLogin = false
+        this.needBuy = false
         // #ifdef H5
         this.createPlayer({ video_id, auth_data, start_second, cover, free_second, duration })
         // #endif
-
         // #ifdef MP-WEIXIN
         this.settingPlayer({ video_id, auth_data, start_second, cover, free_second, duration })
         // #endif
+      } else if (res.code === 1000 || res.code === 1008) {
+        this.needLogin = true
+        this.pausePlay()
+        if (this.player) this.player.setCover(this.courseInfo.cover);
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
+      } else if (res.code === 2001) {
+        this.needBuy = true
+        this.pausePlay()
+        if (this.player) this.player.setCover(this.courseInfo.cover);
+        uni.showToast({ title: `请联系管理员开通课程`, icon: 'none' })    
       } else {
         // 其他异常
         this.pausePlay()

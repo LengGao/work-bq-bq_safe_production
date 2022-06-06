@@ -71,14 +71,14 @@ service.useResponseInterceptor((response) => {
 service.useResponseInterceptor((response) => {
   let body = response.data
   // console.log('response', service);
-  if (body.code === 1 && !service.$config.nocatch) {
-    uni.showToast({ icon: 'none', title: `${body.message}` })
-  } else {
+  // if (body.code === 1 && !service.$config.nocatch) {
+  //   uni.showToast({ icon: 'none', title: `${body.message}` })
+  // } else if (body.code === 1000) {
     // handlerError[body.code](body)
-  }
-
+  // }
   return response
 })
+
 
 
 export { service }

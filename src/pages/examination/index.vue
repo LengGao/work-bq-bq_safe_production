@@ -112,6 +112,7 @@ export default {
       ],
       isReady: false,
       questionInfoId: '',
+      needLogin: false,
 
       statistics: {
         answer_days: 0,
@@ -136,11 +137,25 @@ export default {
   },
   methods: {
     to(url) {
-      if (!this.questionInfoId) return uni.showToast({ title: '请选择题库', icon: 'none' });
+      if (this.needLogin) {
+        uni.showToast({ title: '请登录', icon: 'none' });
+        // this.toLogin()
+        return;
+      }
+      if (!this.questionInfoId) {
+        return uni.showToast({ title: '请选择题库', icon: 'none' });
+      }
       uni.navigateTo({ url })
     },
     goStudy() {
-      if (!this.questionInfoId) return uni.showToast({ title: '请选择题库', icon: 'none' });
+      if (this.needLogin) {
+        uni.showToast({ title: '请登录', icon: 'none' });
+        // this.toLogin()
+        return;
+      }
+      if (!this.questionInfoId) {
+        return uni.showToast({ title: '请选择题库', icon: 'none' });
+      }
       uni.navigateTo({ url: '/pages/examinations/chapterList/index' })
     },
     onCandidates(e) {
@@ -150,16 +165,20 @@ export default {
       if (show) {
         uni.hideTabBar()
       } else {
-
         uni.showTabBar()
       }
-
     },
     onClickItem(index) {
       this.currentCandidates = index
       let questionInfo = this.candidates[index]
       this.$store.dispatch('setQuestionBankInfo', questionInfo)
       this.$refs.popupRef.close()
+    },
+    async toLogin () {
+      let res = await uni.showModal({ title: '提示', content: "该功能需要登录后才能使用" })
+      if (res[1].confirm) {
+        uni.navigateTo({ url: '/pages/login/index' })
+      }
     },
     async getQuestionBankList() {
       let res = await getQuestionBankList()
@@ -175,8 +194,10 @@ export default {
       let params = { question_bank_id }
       let res = await getDailyStatistics(params)
       if (res.code === 0) {
-        console.log('res', res);
         this.statistics = res.data
+        this.needLogin = false
+      } else if (res.code === 1000 || res.code === 1008) {
+        this.needLogin = true
       }
     }
   },

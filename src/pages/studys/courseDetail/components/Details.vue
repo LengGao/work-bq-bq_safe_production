@@ -75,6 +75,10 @@ export default {
     courseId: {
       type: [String, Number],
       default: ''
+    },
+    needLogin: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
@@ -105,7 +109,6 @@ export default {
         } else {
           uni.showToast({ title: '收藏陈功', icon: 'success' })
         }
-        console.log('res.data.status', );
         this.info.favorites = !!res.data.status
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none'})

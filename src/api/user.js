@@ -60,3 +60,11 @@ export function feedback(data) {
         data
     })
 }
+
+export function aboutUs(data) {
+    return request({
+        url: 'helpcenter/aboutUs',
+        method: 'post',
+        data
+    })
+}
