@@ -588,6 +588,7 @@ $padding-lr: 30rpx;
     .swiper-image {
       width: 200rpx;
       height: 120rpx;
+      border-radius: 12rpx;
     }
 
     .swiper-text {

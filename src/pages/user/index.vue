@@ -56,8 +56,9 @@ export default {
       ],
       listIndex: 0,
       links: [
-        { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list1.png", title: "关于我们", url: "/pages/users/aboutUs/index" },
-        { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list2.png", title: "意见反馈", url: "/pages/users/feedback/index" },
+        { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list1.png", title: "关于我们", url: "/pages/users/userCollectCource/index" },
+        { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list1.png", title: "关于我们", url: "/pages/users/aboutUs/index" },
+        { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list2.png", title: "意见反馈", url: "/pages/users/feedback/index" },
         { id: 4, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list4.png", title: "联系客服", url: "/pages/users/contactService/index" },
       ],
       isLogin: false,

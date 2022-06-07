@@ -227,6 +227,12 @@
 					}
 				},
 				{
+					"path": "userCollectCource/index",
+					"style": {
+						"navigationBarTitleText": "课程收藏"
+					}
+				},
+				{
 					"path": "aboutUs/index",
 					"style": {
 						"navigationBarTitleText": "关于我们"
