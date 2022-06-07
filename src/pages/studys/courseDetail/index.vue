@@ -133,9 +133,9 @@ export default {
 
   },
   onLoad(query) {
-    let { course_id, lesson_id = 0 } = query
-    this.course_id = course_id
-    this.lesson_id = lesson_id
+    let { course_id, lesson_id } = query
+    this.course_id = +course_id
+    this.lesson_id = +lesson_id
     this.region_id = this.$store.getters.region.id
     uni.setStorageSync('course_id', course_id)
     this.getCourseInfo()
@@ -334,7 +334,7 @@ export default {
       let param = { region_id: this.region_id, course_id: this.course_id }
       let res = await courseInfo(param)
       if (res.code === 0) {
-        this.lesson_id = res.data.learning_lesson_id
+        this.lesson_id = this.lesson_id ? lesson_id : res.data.learning_lesson_id
         this.courseInfo = res.data
         this.videoCover = res.data.cover
         let lesson_id = this.lesson_id || res.data.learning_lesson_id
@@ -360,11 +360,12 @@ export default {
     showModal() {
       let url = `/pages/studys/classTestMode/answer/index`,
         query = `?course_id=${this.course_id}&lesson_id=${this.lesson_id}`
-      if (this.free_second && Math.abs(this.free_second, this.start_second) <= 2) {
+      if (this.free_second && Math.abs(this.free_second - this.start_second) <= 2) {
         this.is_free = false
         uni.showToast({ title: `试看结束`, icon: 'none'})
       } else {
-        if (this.is_practice && this.is_free) {
+        // && this.is_done
+        if (this.is_practice ) {
           uni.showModal({
             title: '提示',
             content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',

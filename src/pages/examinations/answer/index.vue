@@ -426,6 +426,7 @@ export default {
     async getQuestionDetail(question_id, index) {
       let params = { question_id, question_bank_id: this.question_bank_id }
       let source = this.source
+      console.log(question_id, index, this.questionList);
 
       if (source === 'wrong') {
         params.type = 1
@@ -477,7 +478,7 @@ export default {
         this.last_question_id = lastId
         this.answerSheetArr = arr
         this.total = total
-        this.currentIndex = (index !== -1 ? index : 0)
+        this.currentIndex = (index > 0 ? index : 0)
         this.time = res.data.expires_time || 0
         this.initQuestion(prev, curr, next)
       }
@@ -521,7 +522,8 @@ export default {
         this.last_question_id = lastId
         this.answerSheetArr = arr
         this.total = total
-        this.currentIndex = (index !== -1 ? index : 0)
+        this.currentIndex = (index > 0 ? index : 0)
+        console.log("1", index);
         this.time = res.data.expires_time || 0
         this.initQuestion(prev, curr, next)
       }
@@ -552,8 +554,11 @@ export default {
         arr[index - 1] = list[0]
         arr[index] = list[1]
         arr[index + 1] = list[2]
-
       } else if (index === total - 1 && total > 3) {
+        arr[index - 2] = list[0]
+        arr[index - 1] = list[1]
+        arr[index] = list[2]
+      } else if (index === total - 1) {
         arr[index - 2] = list[0]
         arr[index - 1] = list[1]
         arr[index] = list[2]
@@ -562,6 +567,7 @@ export default {
         arr[index + 1] = list[1]
         arr[index + 2] = list[2]
       }
+      console.log(total, arr, index);
 
       this.questionList = JSON.parse(JSON.stringify(arr))
     },

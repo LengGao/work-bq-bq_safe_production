@@ -41,11 +41,11 @@ export default {
   },
   created() {
     if (this.options.answer.length) {
-      this.checkedAnswer = this.options.answer
+      this.checkedAnswer = this.options.answer.map(item => +item)
     }
     if (this.analysis) {
       this.correctAnswer = this.options.right.map(item => +item)
-      this.checkedAnswer = this.options.answer
+      this.checkedAnswer = this.options.answer.map(item => +item)
     }
   },
   methods: {

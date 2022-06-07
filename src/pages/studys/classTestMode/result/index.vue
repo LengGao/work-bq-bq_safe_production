@@ -96,7 +96,7 @@ export default {
     },
     onNext() {
       let url = `/pages/studys/courseDetail/index`
-      let query = `?lesson_id=${this.next_lesson_id}&course_id=${course_id}`
+      let query = `?lesson_id=${this.next_lesson_id}&course_id=${this.course_id}`
       uni.reLaunch({ url: url + query })
     },
     onRestart(type) {
@@ -108,7 +108,7 @@ export default {
         uni.redirectTo({ url: url + query })
       } else {
         url = `/pages/studys/classTestMode/answer/index`
-        query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${course_id}`
+        query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${this.course_id}`
         uni.redirectTo({ url: url + query})
       }
     },
@@ -197,9 +197,8 @@ export default {
 }
 
 .footer {
-  position: absolute;
-  bottom: var(--window-bottom);
-  padding: 0 60rpx;
+  position: absolute;  
+  bottom: calc(20rpx + var(--window-bottom));
   width: 100%;
   box-sizing: border-box;
 
