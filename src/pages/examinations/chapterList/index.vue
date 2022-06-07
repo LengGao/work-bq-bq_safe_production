@@ -34,9 +34,11 @@
 import NoData from "@/components/noData";
 import CustomHeader from '@/components/custom-header'
 import { getChapterList, restartPractice } from "@/api/question";
+import { browser } from '@/mixins/index'
 
 export default {
   name: "chapter",
+  mixins: [browser],
   components: {
     NoData,
     CustomHeader

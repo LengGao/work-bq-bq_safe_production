@@ -37,9 +37,11 @@
 
 <script>
 import UserInfo from "./components/userInfo";
+import { browser } from '@/mixins/index'
 import { mapGetters } from 'vuex'
 
 export default {
+  mixins: [browser],
   components: {
     UserInfo,
   },

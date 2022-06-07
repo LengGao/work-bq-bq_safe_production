@@ -1,6 +1,6 @@
 <template>
   <view class="search">
-    <uni-search-bar @confirm="onSearch" v-model="keyword" :radius="24" placeholder="搜索您感兴趣的课程" @clear="onClear" @cancel="onCancel"></uni-search-bar>
+    <uni-search-bar v-model="keyword" :radius="24" placeholder="搜索您感兴趣的课程" @confirm="onSearch" @clear="onClear" @cancel="onCancel"></uni-search-bar>
     <view class="history" v-if="showRecond">
       <view class="head">
         <view class="title">搜索历史</view>
@@ -61,12 +61,13 @@
 <script>
 import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import { browser } from '@/mixins/index'
 import {
   courseList,
 } from '@/api/index'
 
 export default {
-  mixins: [MescrollMixin],
+  mixins: [browser, MescrollMixin],
   components: {
     CardRow
   },
@@ -126,8 +127,9 @@ export default {
       let query = `?course_id=${id}`
       uni.navigateTo({ url: url + query })
     },
-    onSearch(e) {
-      this.keyword = e.value
+    onSearch({ value }) {
+      this.showRecond = false
+      this.keyword = value
       this.reloadList()
     },
     onCancel() {

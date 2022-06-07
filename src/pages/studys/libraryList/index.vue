@@ -25,13 +25,14 @@
 <script>
 import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import { browser } from '@/mixins/index'
 import {
   libraryList
 } from '@/api/index'
 
 export default {
+  mixins: [browser,MescrollMixin],
   components: { CardRow },
-  mixins: [MescrollMixin],
   data() {
     return {
       keyword: '',

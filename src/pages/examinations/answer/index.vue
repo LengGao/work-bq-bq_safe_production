@@ -45,6 +45,7 @@ import Indefinite from "../components/indefinite";
 import Completion from "../components/completion";
 import Short from "../components/short";
 import Case from "../components/case";
+import { browser } from '@/mixins/index'
 
 import {
   getQuestionDetail,
@@ -60,6 +61,7 @@ import {
 
 export default {
   name: "answer",
+  mixins: [browser],
   components: {
     AnswerHead,
     AnswerBar,
@@ -71,7 +73,6 @@ export default {
     Short,
     Case,
   },
-
   data() {
     return {
       prevIndex: -1,
@@ -535,6 +536,11 @@ export default {
       let params1 = { question_bank_id, exam_log_id, question_id: prev }
       let params2 = { question_bank_id, exam_log_id, question_id: curr }
       let params3 = { question_bank_id, exam_log_id, question_id: next }
+      if (source === 'wrong') {
+        params1.type = 1
+        params2.type = 1
+        params3.type = 1
+      }
       let res = await Promise.all([getQuestionDetail(params1), getQuestionDetail(params2), getQuestionDetail(params3)])
       if (res.length) {
         let list = res.map(item => item.data)

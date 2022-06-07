@@ -14,8 +14,10 @@
 <script>
 import { libraryDetail } from "@/api/index";
 import { download_file_common, download_file_h5 } from '@/utils/api'
+import { browser } from '@/mixins/index'
 
 export default {
+  mixins: [browser],
   data() {
     return {
       library_id: '',

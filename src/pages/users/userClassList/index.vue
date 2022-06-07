@@ -27,10 +27,11 @@
 <script>
 import uSection from "@/components/uSection/index"
 import CardRow from "@/components/card-row/index";
+import { browser } from '@/mixins/index'
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 export default {
+  mixins: [browser, MescrollMixin],
   components: { CardRow, uSection },
-  mixins: [MescrollMixin], // 使用mixin
   data() {
     return {
       classList: [

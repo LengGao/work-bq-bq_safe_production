@@ -70,9 +70,10 @@
 import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import NoData from "@/components/noData/index"
+import { browser } from '@/mixins/index'
 
 export default {
-  mixins: [MescrollMixin],
+  mixins: [browser, MescrollMixin],
   components: {
     CardRow,
     NoData

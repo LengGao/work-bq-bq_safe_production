@@ -6,8 +6,10 @@
 
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
+import { browser } from '@/mixins/index'
 import { aboutUs } from "@/api/user"
 export default {
+  mixins: [browser],
   components: {
     uParse
   },

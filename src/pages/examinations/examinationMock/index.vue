@@ -31,8 +31,10 @@
 
 <script>
 import CustomHeader from '@/components/custom-header'
+import { browser } from '@/mixins/index'
 
 export default {
+  mixins: [browser],
   components: {
     CustomHeader
   },

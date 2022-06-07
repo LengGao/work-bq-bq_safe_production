@@ -85,7 +85,10 @@
 
 <script>
 import qiunDataCharts from "@/uni_modules/ucharts/components/qiun-data-charts/qiun-data-charts.vue";
+import { browser } from '@/mixins/index'
+
 export default {
+  mixins: [browser],
   components: {
     qiunDataCharts,
   },

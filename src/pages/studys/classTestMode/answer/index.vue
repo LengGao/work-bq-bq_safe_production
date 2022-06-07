@@ -31,6 +31,7 @@ import Indefinite from "../components/indefinite/index";
 import Completion from "../components/completion/index";
 import Short from "../components/short/index";
 import AnswerBar from "../components/answerBar/index"
+import { browser } from '@/mixins/index'
 
 import {
   practiceStart,
@@ -39,6 +40,7 @@ import {
 
 export default {
   name: "answer",
+  mixins: [browser],
   components: {
     AnswerHead,
     Single,

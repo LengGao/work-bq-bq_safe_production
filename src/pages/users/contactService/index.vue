@@ -19,8 +19,9 @@
 </template>
 
 <script>
+import { browser } from '@/mixins/index'
 export default {
-
+  mixins: [browser]
 }
 </script>
 

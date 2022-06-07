@@ -17,9 +17,10 @@
 
 <script>
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import { browser } from '@/mixins/index'
 
 export default {
-  mixins: [MescrollMixin],
+  mixins: [browser, MescrollMixin],
   data() {
     const src = '/pages/studys/static/learnCertificate.png'
     // const src = 'https://img0.baidu.com/it/u=4186264322,2530549324&fm=253&fmt=auto&app=138&f=JPG?w=707&h=500'

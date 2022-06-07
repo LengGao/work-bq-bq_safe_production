@@ -27,8 +27,10 @@
 
 <script>
 import { feedback, uploadImage } from "@/api/user"
+import { browser } from '@/mixins/index'
 
 export default {
+  mixins: [browser],
   data() {
     return {
       types: [

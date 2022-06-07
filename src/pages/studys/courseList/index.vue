@@ -44,6 +44,7 @@
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import DropdownFilter from '@/components/dropdown-filter'
 import DropdownSelect from '@/components/dropdown-select'
+import { browser } from '@/mixins/index'
 import {
   courseCategory,
   courseList,
@@ -51,11 +52,11 @@ import {
 } from '@/api/course'
 
 export default {
+  mixins: [browser, MescrollMixin],
   components: {
     DropdownFilter,
     DropdownSelect
   },
-  mixins: [MescrollMixin], // 使用mixin
   data() {
     return {
       // mescroll

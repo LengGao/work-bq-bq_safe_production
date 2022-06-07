@@ -37,9 +37,11 @@
 
 <script>
 import { getCustomExamInfo, getMockExamInfo, getMockExamLog, createExamLog } from "@/api/question";
+import { browser } from '@/mixins/index'
 
 export default {
   name: "testPaperIntroduce",
+  mixins: [browser],
   data() {
     return {
       exam_id: 0,

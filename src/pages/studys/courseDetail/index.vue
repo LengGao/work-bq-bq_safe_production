@@ -63,6 +63,7 @@ import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
 import { mapGetters } from 'vuex'
+import { browser } from '@/mixins/index'
 import {
   courseInfo,
   courseCommentSubmit,
@@ -72,6 +73,7 @@ import {
 } from '@/api/course'
 
 export default {
+  mixins: [browser],
   components: {
     Details,
     Catalogue,

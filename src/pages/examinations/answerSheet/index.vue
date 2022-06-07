@@ -31,6 +31,7 @@ import Header from "../components/header/index";
 import Footer from "../components/footer/index";
 import Title from "../components/title/index";
 import Circular from "../components/circular/index";
+import { browser } from '@/mixins/index'
 import { 
   wrongAnswerSheet,
   collectAnswerSheet,
@@ -41,6 +42,7 @@ import {
 
 export default {
   name: "answerSheet",
+  mixins: [browser],
   components: {
     Title,
     Header,

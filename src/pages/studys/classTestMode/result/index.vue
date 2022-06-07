@@ -44,9 +44,11 @@
 
 <script>
 import { practiceSubmit } from "@/api/question";
+import { browser } from '@/mixins/index'
 
 export default {
   name: 'result',
+  mixins: [browser],
   data() {
     return {
       victoryText: '恭喜您，成功通过本次考试！',

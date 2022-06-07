@@ -37,9 +37,11 @@
 <script>
 import NoData from "@/components/noData";
 import { customExamList } from "@/api/question";
+import { browser } from '@/mixins/index'
 
 export default {
   name: "independentPaper",
+  mixins: [browser],
   components: {
     NoData,
   },

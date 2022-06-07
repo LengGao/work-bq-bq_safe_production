@@ -40,11 +40,11 @@
 <script>
 import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
+import { browser } from '@/mixins/index'
 import { userCourseList } from '@/api/user'
-
 export default {
+  mixins: [browser, MescrollMixin],
   components: { CardRow },
-  mixins: [MescrollMixin], // 使用mixin
   data() {
     return {
       up: {

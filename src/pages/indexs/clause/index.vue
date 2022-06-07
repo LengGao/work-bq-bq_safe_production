@@ -83,7 +83,10 @@
 </template>
 
 <script>
+import { browser } from '@/mixins/index'
+
 export default {  
+  mixins: [browser],
   methods: {
     onRead() {
       uni.redirectTo({url: '/pages/login/index?isRead=1'})

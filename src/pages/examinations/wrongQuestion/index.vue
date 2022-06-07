@@ -17,10 +17,12 @@
 
 <script>
 import NoData from "@/components/noData/index";
+import { browser } from '@/mixins/index'
 import { wrongChapterList, restartPractice } from "@/api/question";
 
 export default {
   name: "wrongQuestion",
+  mixins: [browser],
   components: {
     NoData
   },

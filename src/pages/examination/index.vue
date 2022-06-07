@@ -79,12 +79,14 @@
 
 <script>
 import ExaminationCard from './components/ExaminationCard'
+import { browser } from '@/mixins/index'
 import {
   getQuestionBankList,
   getDailyStatistics
 } from '@/api/question'
 
 export default {
+  mixins: [browser],
   components: {
     ExaminationCard
   },

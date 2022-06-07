@@ -53,7 +53,7 @@
         </view>
         <view class="learn-report-card-statistics statistics-data">
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">{{customData.today_answer_num | empty}}</view>
+            <view class="statistics-data-item-value">{{customData.total_answer_num | empty}}</view>
             <view class="statistics-data-item-title">答题总数</view>
           </view>
           <view class="statistics-data-item">

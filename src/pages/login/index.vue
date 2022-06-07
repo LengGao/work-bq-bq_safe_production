@@ -40,8 +40,10 @@
 
 <script>
 import logImag from "@/static/logo.png"
+import { browser } from '@/mixins/index'
 
 export default {
+  mixins: [browser],
   data() {
     return {
       // username: '13535019471',

@@ -16,8 +16,11 @@
 
 import NoData from "@/components/noData/index";
 import { collectChapterList, restartPractice } from "@/api/question";
+import { browser } from '@/mixins/index'
+
 export default {
   name: "favorites",
+  mixins: [browser],
   components: {
     NoData
   },

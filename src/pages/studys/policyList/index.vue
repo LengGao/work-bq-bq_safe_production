@@ -35,13 +35,14 @@
 import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import defaultCover from '@/static/no-data.png'
+import { browser } from '@/mixins/index'
 import {
   articleList
 } from  '@/api/index'
 
 export default {
+  mixins: [browser, MescrollMixin],
   components: { CardRow },
-  mixins: [MescrollMixin], // 使用mixin
   data() {
     return {
       up: {

@@ -162,6 +162,7 @@ import CardRow from "@/components/card-row/index";
 import NoData from '@/components/noData/index'
 import RegionChange from './components/RegionChange'
 import { mapGetters } from 'vuex'
+import { browser } from '@/mixins/index'
 import {
   systemRegion,
   banner,
@@ -172,6 +173,7 @@ import {
 
 
 export default {
+  mixins: [browser],
   components: {
     CardRow,
     NoData,
@@ -190,9 +192,9 @@ export default {
       librarys: [],
 
       businesses: [
-        { id: 1, type: "one", title: "特种作业上岗正", url: "" },
-        { id: 2, type: "two", title: "两类人员安全正", url: "" },
-        { id: 3, type: "three", title: "其他从业人员", url: "" },
+        { id: 1, type: "one", title: "特种作业上岗证", url: "" },
+        { id: 2, type: "two", title: "两类人员安全证", url: "" },
+        { id: 3, type: "three", title: "其他从业人操作证", url: "" },
       ],
       swipers: []
     };

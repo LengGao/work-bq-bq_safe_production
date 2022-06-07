@@ -30,9 +30,11 @@
 <script>
 import NoData from "@/components/noData";
 import { mockExamList } from "@/api/question";
+import { browser } from '@/mixins/index'
 
 export default {
   name: "examinationRecord",
+  mixins: [browser],
   components: {
     NoData,
   },
