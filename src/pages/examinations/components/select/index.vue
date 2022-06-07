@@ -49,6 +49,7 @@ export default {
       // 选中的答案
       checkedAnswer: this.value,
       selectLabel: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+      hasError: false,
     };
   },
   watch: {
@@ -67,15 +68,18 @@ export default {
       // console.log('checkedAnswe status',value, this.checkedAnswer, this.correctAnswer);
       if (this.multiple) {
         if (this.correctAnswer.length) {
-          if (this.correctAnswer.includes(value) && !this.checkedAnswer.includes(value)) {
-            return 'omission'
-          }
+          let res = ''
           if (this.correctAnswer.includes(value)) {
-            return "success";
+            res = "success";
           }
           if (this.checkedAnswer.includes(value) && !this.correctAnswer.includes(value)) {
-            return "error";
+            this.hasError = true
+            res = "error";
           }
+          if (this.correctAnswer.includes(value) && !this.checkedAnswer.includes(value)) {
+            res = this.hasError ? 'success' : 'omission'
+          }
+          return res 
         }
         if (this.checkedAnswer.includes(value)) {
           return "active";

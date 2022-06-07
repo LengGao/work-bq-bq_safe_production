@@ -120,6 +120,7 @@ export default {
       player: null,
       disableChange: false,
       is_practice: false,
+      is_done: false,
 
       needLogin: false,
       needBuy: false,
@@ -363,8 +364,7 @@ export default {
         this.is_free = false
         uni.showToast({ title: `试看结束`, icon: 'none'})
       } else {
-        this.is_free = true
-        if (this.is_practice) {
+        if (this.is_practice && this.is_free) {
           uni.showModal({
             title: '提示',
             content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
@@ -567,7 +567,7 @@ export default {
       }
       let res = await courseGetVideoAuth(params)
       let { video_id, auth_data, start_second, duration, lesson_id, title, cover,
-        free_second, finish_second, is_forward, is_free, is_practice} = res.data
+        free_second, finish_second, is_forward, is_free, is_practice, is_done} = res.data
 
       if (res.code === 0) {
         this.title = title
@@ -580,6 +580,7 @@ export default {
         this.prev_time = +start_second
         this.duration = +duration
         this.is_practice = is_practice
+        this.is_done = is_done
 
         this.needLogin = false
         this.needBuy = false

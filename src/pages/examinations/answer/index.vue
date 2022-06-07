@@ -483,8 +483,6 @@ export default {
       }
     },
 
-    
-
     async getPracticeAnswerSheet() {
       let source = this.source
       let chapter_id = this.chapter_id

@@ -130,18 +130,16 @@ export default {
     }
   },
   onLoad() {
-    this.getQuestionBankList()
   },
   onReady() {
   },
   onShow() {
-    this.getDailyStatistics()
+    this.getQuestionBankList()
   },
   methods: {
     to(url) {
       if (this.needLogin) {
         uni.showToast({ title: '请登录', icon: 'none' });
-        // this.toLogin()
         return;
       }
       if (!this.questionInfoId) {
@@ -152,7 +150,6 @@ export default {
     goStudy() {
       if (this.needLogin) {
         uni.showToast({ title: '请登录', icon: 'none' });
-        // this.toLogin()
         return;
       }
       if (!this.questionInfoId) {
@@ -190,9 +187,10 @@ export default {
         if (questionInfo.id) this.questionInfoId = questionInfo.id
         this.$store.dispatch('setQuestionBankInfo', questionInfo)
       }
+      this.getDailyStatistics()
     },
     async getDailyStatistics() {
-      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let question_bank_id = this.questionInfoId
       let params = { question_bank_id }
       let res = await getDailyStatistics(params)
       if (res.code === 0) {

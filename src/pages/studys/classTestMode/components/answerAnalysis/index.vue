@@ -22,7 +22,7 @@
 
     <view class="title">答案解析</view>
     <view>
-      <u-parse :content="question.analysis || '无'" />
+      <u-parse :content="question.analyse || '无'" />
     </view>
   </view>
 </template>

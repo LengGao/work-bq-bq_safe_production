@@ -3,7 +3,7 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" @change="onChangeOpt" />
+    <Select :options="options.option" :value="checkedAnswer" :analysis="analysis" :correct-answer="correctAnswer" @change="onChangeOpt" />
     <AnswerAnalysis v-if="analysis" :question="options" />
   </view>
 </template>

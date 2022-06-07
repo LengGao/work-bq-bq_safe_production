@@ -101,7 +101,6 @@ export default {
     },
     // 上拉
     async upCallback(page) {
-      if (this.isFinish) return;
       page.num++;
       const data = {
         page: page.num,

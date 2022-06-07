@@ -4,6 +4,7 @@
       <u-parse :content="options.title" />
     </view>
     <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" multiple
+            :analysis="analysis"
             @change="onChangeOpt" />
     <AnswerAnalysis v-if="analysis" :question="options" />
   </view>
