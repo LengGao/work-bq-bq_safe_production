@@ -536,7 +536,7 @@ export default {
       let params1 = { question_bank_id, exam_log_id, question_id: prev }
       let params2 = { question_bank_id, exam_log_id, question_id: curr }
       let params3 = { question_bank_id, exam_log_id, question_id: next }
-      if (source === 'wrong') {
+      if (this.source === 'wrong') {
         params1.type = 1
         params2.type = 1
         params3.type = 1

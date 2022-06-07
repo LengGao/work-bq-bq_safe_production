@@ -63,6 +63,8 @@ import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import { browser } from '@/mixins/index'
 import {
+  hotWord,
+  delHistoryWord,
   courseList,
 } from '@/api/index'
 
@@ -99,6 +101,7 @@ export default {
   },
   onLoad() {
     this.region_id = this.$store.getters.region.id
+    this.getHotWord()
   },
   methods: {
     // 点击搜索历史
@@ -110,6 +113,7 @@ export default {
     // 清空搜索历史
     async onClearHistry() {
       this.historys = []
+      delHistoryWord()
     },
     // 点击热门搜索
     onCLickHot(type, index) {
@@ -163,17 +167,12 @@ export default {
       this.mescroll.endBySize(curPageLen, totalSize);
     },
     
-    async getHistry() {
-      // let res = await 
-      // if (res.code === 0) {
-        // this.historys = []
-      // }
-    },
-    async getHot() {
-      // let res = await 
-      // if (res.code === 0) {
-        // this.hots = []
-      // }
+    async getHotWord() {
+      let res = await hotWord()
+      if (res.code === 0) {
+        this.hots = res.data.hot_word
+        this.historys = res.data.historys
+      }
     },
   },
 

@@ -63,3 +63,19 @@ export function courseList(data) {
     data
   })
 }
+
+export function hotWord(data) {
+  return request({
+    url: 'course/hotWord',
+    method: 'get',
+    data
+  })
+}
+
+export function delHistoryWord(data) {
+  return request({
+    url: 'course/delHistoryWord',
+    method: 'post',
+    data
+  })
+}

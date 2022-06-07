@@ -181,7 +181,7 @@ export default {
     },
 
     async submitExamPaper() {
-      let url = `/pages/examinations/result/index`
+      let url = `/pages/examinations/answerResult/index`
       let {exam_log_id, chapter_id, question_id, question_bank_id, model, source, title} = this.getQuery()
       let query = { exam_log_id, chapter_id, question_bank_id, model, source, title}
       let path = this.getPath(url, query)
