@@ -1,7 +1,8 @@
 <template>
   <view class="answer">
-    <uni-notice-bar v-if="notice" scrollable single showIcon color="#E2E227" background-color="#000"
-                    text="答完当前题，可左右滑动。"></uni-notice-bar>
+    <uni-notice-bar v-if="notice" scrollable single showIcon color="#E2E227" background-color="#f8f8f8"
+                    text="在考试过程中不得弄虚作假，严禁采用任何作弊手段，遵纪守法，保证考试数据真实可信。"></uni-notice-bar>
+                    
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" :current="currentIndex" :disable-touch="disableTouch"

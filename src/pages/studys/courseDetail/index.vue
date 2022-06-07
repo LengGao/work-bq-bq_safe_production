@@ -124,6 +124,7 @@ export default {
 
       needLogin: false,
       needBuy: false,
+      first: false
     }
   },
   computed: {
@@ -365,7 +366,7 @@ export default {
         uni.showToast({ title: `试看结束`, icon: 'none'})
       } else {
         // && this.is_done
-        if (this.is_practice ) {
+        if (this.is_practice && this.is_done) {
           uni.showModal({
             title: '提示',
             content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
@@ -566,6 +567,7 @@ export default {
         uni.showToast({ title: '请登录', icon: 'none' });
         return;
       }
+      this.first = true
       let res = await courseGetVideoAuth(params)
       let { video_id, auth_data, start_second, duration, lesson_id, title, cover,
         free_second, finish_second, is_forward, is_free, is_practice, is_done} = res.data
@@ -595,16 +597,17 @@ export default {
         this.needLogin = true
         this.pausePlay()
         if (this.player) this.player.setCover(this.courseInfo.cover);
-        uni.showToast({ title: `${res.message}`, icon: 'none' })
+        uni.showToast({ title: `${res.message}`, icon: 'none' });
       } else if (res.code === 2001) {
         this.needBuy = true
         this.pausePlay()
         if (this.player) this.player.setCover(this.courseInfo.cover);
-        uni.showToast({ title: `请联系管理员开通课程`, icon: 'none' })    
+        if (!first) uni.showToast({ title: `请联系机构开通课程`, icon: 'none' }) ;
       } else {
         // 其他异常
         this.pausePlay()
         if (this.player) this.player.setCover(this.courseInfo.cover);
+        if (first)
         uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
     },
