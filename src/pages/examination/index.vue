@@ -105,8 +105,8 @@ export default {
       ],
       // 推荐课程
       examinations: [
-        { id: 1, name: "章节练习", desc: '这是描述文案', bgColor: '#FFFAF4', arrow: '/static/img/examination_bg_list1.png', thumb: '/static/img/examination_icon_list2.png', url: "/pages/examinations/chapterList/index" },
-        { id: 2, name: "模拟考试", desc: '这是描述文案', bgColor: '#FFF7F7', arrow: '/static/img/examination_bg_list2.png', thumb: '/static/img/examination_icon_list1.png', url: '/pages/examinations/examinationMock/index' },
+        { id: 1, name: "章节练习", desc: '章节阶段练习，提升自身能力', bgColor: '#FFFAF4', arrow: '/static/img/examination_bg_list1.png', thumb: '/static/img/examination_icon_list2.png', url: "/pages/examinations/chapterList/index" },
+        { id: 2, name: "模拟考试", desc: '仿真考试训练，智能组卷测评', bgColor: '#FFF7F7', arrow: '/static/img/examination_bg_list2.png', thumb: '/static/img/examination_icon_list1.png', url: '/pages/examinations/examinationMock/index' },
       ],
       // 轮播
       swipers: [

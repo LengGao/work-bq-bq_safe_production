@@ -188,7 +188,7 @@ export default {
       let params = { exam_log_id, question_bank_id }
       let res = await submitExamPaper(params)
       if (res.code === 0) {
-        uni.showToast({ title: '提交陈功' , icon: 'success' })
+        uni.showToast({ title: '提交成功' , icon: 'success' })
         uni.redirectTo({ url: path })
       }
     },

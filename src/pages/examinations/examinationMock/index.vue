@@ -42,13 +42,13 @@ export default {
     return {
       examinations: [
         { 
-          name: "人工组卷", desc: '这是描述文案', 
+          name: "人工组卷", desc: '自主出题，精准掌握，考前押题', 
           arrow: '/pages/examinations/static/examinationMock_bg_list1.png', 
           thumb: '/pages/examinations/static/examinationMock_icon1.png', 
           url: "/pages/examinations/independentPaper/index"
         },
         {
-          name: "随机考试", desc: '这是描述文案', 
+          name: "随机考试", desc: '上千题库随机考试，考点逐个击破', 
           arrow: '/pages/examinations/static/examinationMock_bg_list2.png', 
           thumb: '/pages/examinations/static/examinationMock_icon2.png', 
           url: '/pages/examinations/testPaperIntroduce/index?source=examRandom'

@@ -79,7 +79,7 @@ export default {
     }
   },
   onReady() {
-    setTimeout(() => { this.notice = false }, 1000)
+    setTimeout(() => { this.notice = false }, 6000)
   },
   onLoad(query) {
     let { course_id, lesson_id } = query

@@ -218,7 +218,7 @@ $padding: 16rpx 30rpx;
   align-items: center;
   margin-top: 30rpx;
   width: 100%;
-  height: 200rpx;
+  height: 160rpx;
 
   &-box {
     width: 48%;
