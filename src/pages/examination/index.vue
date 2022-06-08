@@ -30,10 +30,10 @@
       <view class="report-bottom">
         <view class="report-bottom-left">
           <image src="/static/img/examination_icon_person.png" mode="aspectFit" class="icon-person" />
-          <text class="text-person">{{statistics.learning_num | empty}}人正在学习</text>
+          <text class="text-person">{{statistics.learning_num | empty}}人正在练习</text>
         </view>
         <view class="report-bottom-right">
-          <button class="report-bottom-btn" @click="goStudy">今日未学习</button>
+          <button class="report-bottom-btn" @click="goStudy">今日未练习</button>
         </view>
       </view>
     </view>
@@ -146,12 +146,12 @@ export default {
       this.getQuestionBankList()
     },
     to(url) {
-      if (this.authority()) {
+      if (this.authority({ checkBlank: true })) {
         uni.navigateTo({ url })
       }
     },
     goStudy() {
-      if (this.authority()) {
+      if (this.authority({ checkBlank: true })) {
         uni.navigateTo({ url: '/pages/examinations/chapterList/index' })
       }
     },

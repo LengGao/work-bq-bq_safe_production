@@ -124,6 +124,10 @@ export default {
       return this.currentIndex > this.prevIndex
     },
   },
+  onBackPress() {
+    console.log('onBackPress');
+  },
+  
   onLoad(query) {
     this.init(query)
     this.injectApi()

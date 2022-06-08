@@ -53,7 +53,7 @@ export default {
 @import "@/styles/logan.scss";
 
 .library-details {
-  padding: 30rpx;
+  padding: 20rpx 30rpx;
 }
 
 .content {
@@ -63,14 +63,17 @@ export default {
   .title {
     font-size: 32rpx;
     font-weight: bold;
-    color: #333;
+    height: 96rpx;
+    line-height: 96rpx;
+    color: #000;
+    border-bottom: 2rpx dashed #c8c7cc;
   }
-}
 
-.img {
-  margin-top: 60rpx;
-  width: 690rpx;
-  height: 690rpx;
+  .img {
+    margin-top: 30rpx;
+    width: 690rpx;
+    height: 690rpx;
+  }
 }
 
 .footer {

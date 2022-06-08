@@ -32,7 +32,7 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left"> 学习课程 </view>
         <view class="logan-list-head-right" @click="onClickAll">
-          <text>全部</text>
+          <text>查看全部课程</text>
           <uni-icons type="forward" size="32rpx" />
         </view>
       </view>
@@ -75,7 +75,7 @@
       </scroll-view>
       </template>
       <template v-else>
-        <NoData position="relative"  style="margin-top: 25%;" />
+        <NoData position="relative"  style="margin-top: 25%;" >您暂时没有学习任何课程</NoData>
       </template>
       </view>
     </view>
@@ -86,11 +86,11 @@
 import CardRow from "@/components/card-row/index";
 import NoData from "@/components/noData/index"
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
-import { browser } from '@/mixins/index'
+import { browser, userStatus } from '@/mixins/index'
 import { userCourseList } from '@/api/user'
 
 export default {
-  mixins: [MescrollMixin, browser],
+  mixins: [MescrollMixin, browser, userStatus],
   components: {
     CardRow,
     NoData,
@@ -114,14 +114,12 @@ export default {
   },
   methods: {
     toLearn(val) {
-      if (this.needLogin) {
-        uni.showToast({ title: '请登录', icon: 'none' })
-        return;
-      }
-      if (val === 1) {
-        uni.navigateTo({ url: '/pages/studys/learnData/index' })
-      } else {
-        uni.navigateTo({ url: '/pages/studys/certificateList/index' })
+      if (this.authority()) {
+        if (val === 1) {
+          uni.navigateTo({ url: '/pages/studys/learnData/index' })
+        } else {
+          uni.navigateTo({ url: '/pages/studys/certificateList/index' })
+        }
       }
     },
     onClickAll() {

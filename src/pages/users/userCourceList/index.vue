@@ -27,7 +27,7 @@
                 <view class="cost">
                   <view class="tag tag-two" v-if="course.learning_progress >= 100">已学完</view>
                   <view class="tag tag-three" v-else-if="course.learning_progress <= 0" >未开始</view>
-                  <view class="tag tag-one" v-else >已学习 {{ course.learning_progress }}%</view>
+                  <view class="tag tag-one" v-else >已学习 {{ course.learning_progress || 0 }}%</view>
                 </view>
               </view>
             </view>

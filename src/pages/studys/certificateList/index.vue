@@ -19,11 +19,10 @@
               </view>
             </template>
             <template v-slot:cardBodyRight>
-              <view class="card-body-right" @click="() => onClickRecommend(course.id)">
+              <view class="card-body-right">
                 <view class="card-right-top">
                   <text>{{ course.title }}</text>
                 </view>
-
                 <view class="card-right-footer">
                   <view class="time">
                     <view class="tag tag-two" v-if="course.learning_progress >= 100">已学完</view>
@@ -31,9 +30,10 @@
                     <view class="tag tag-one" v-else>已学习 {{ course.learning_progress }}%</view>
                   </view>
                   <view class="cost">
-                    <view class="tag tag-two-full" v-if="course.learning_progress >= 100">生成证书</view>
+                    <view class="tag tag-two-full" v-if="course.learning_progress >= 100"
+                          @click="() => onClickRecommend(source)">生成证书</view>
                     <view class="tag tag-three-full" v-else-if="course.learning_progress <= 0"></view>
-                    <view class="tag tag-one-full" v-else>查看证书</view>
+                    <view class="tag tag-one-full" v-else @click="() => previewImg(course.cover)">查看证书</view>
                   </view>
                 </view>
               </view>
@@ -48,14 +48,17 @@
 
     <view v-else class="learn-certificate">
       <template v-if="certificateData.length">
-        <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="onDown" @up="onUp" :height="1000">
+        <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up"
+                       :fixed="true" :topbar="true" :safearea="true">
           <view class="list-item" v-for="item in certificateData" :key="item.id">
             <view class="list-item-title">{{ item.name }}</view>
             <view class="list-item-time">获取时间：{{ item.time }}</view>
             <view class="list-item-image-box">
               <image class="image" @click="() => previewImg(item.thumb)" :src="item.thumb" mode="aspectFit" />
             </view>
-            <view class="list-item-save">长按证书保存</view>
+            <view class="list-item-save">
+              <button class="btn-primary" @click="() => previewImg(item.thumb)" >点此长安保存证书</button>
+            </view>
           </view>
         </mescroll-body>
       </template>
@@ -63,6 +66,29 @@
         <NoData />
       </template>
     </view>
+
+    <popup ref="popup-progress" class="certificate-detail" >
+      <view class="main">
+        <view>您的证书正在生成</view>        
+      </view>
+    </popup>
+
+    <popup ref="popup-certificate" class="certificate-detail" >
+      <view class="main">
+        <view class="section">
+          <view class="hader"></view>
+          <view class="certificate"></view>
+          <view class="close-icon"></view>
+        </view>
+        <view class="">
+          <button class="btn-primary" >请长安图片保存 </button>
+        </view>
+      </view>
+    </popup>
+
+
+
+
   </view>
 </template>
 
@@ -104,23 +130,21 @@ export default {
       this.active = index
       this.reloadList()
     },
-    onClickRecommend(id) {
-      uni.showToast({ title: '尽情期待', icon: 'none' })
+    // 生成证书
+    onGenerator(item) {
+      console.log("item", item);
     },
     reloadList(type) {
-      this.downCallback()
+      this.mescroll.resetUpScroll(true)
     },
     downCallback() {
-      this.mescroll.endBySize(1, 1);
-      // this.mescroll.resetUpScroll(true)
+      this.page.num = 0
+      this.upCallback(this.page)
     },
     async upCallback(page) {
       // const data = {
       //   page: page.num,
       //   page_size: page.size,
-      //   region_id: this.region_id,
-      //   category_id: this.category_id,
-      //   price_type: this.type_id
       // }
       // const api = this.active ? courseList : courseList
       // const res = await api(data)
@@ -172,6 +196,7 @@ export default {
   .cardrow-color {
     margin-top: 20rpx;
     background-color: #fff;
+    padding: 30rpx;
   }
 
   .card-body-left {
@@ -185,8 +210,8 @@ export default {
   }
 
   .img-size-lg {
-    height: 140rpx;
     width: 230rpx;
+    height: 140rpx;
   }
 
   .card-body-right {
@@ -196,7 +221,6 @@ export default {
     align-items: flex-start;
     flex: 3 1 0;
     height: 140rpx;
-    overflow: hidden;
     margin-left: 20rpx;
     font-size: $font-size-base;
     letter-spacing: 1rpx;
@@ -259,12 +283,12 @@ export default {
 
   .tag-two {
     color: $color-success;
-    border: 2rpx solid $color-success;
+    // border: 2rpx solid $color-success;
   }
 
   .tag-three {
     color: $text-color-grey;
-    border: 2rpx solid $text-color-grey;
+    // border: 2rpx solid $text-color-grey;
   }
 
   .tag-one-full {
@@ -337,7 +361,19 @@ export default {
         width: 100%;
         height: 446rpx;
       }
+
+      .btn-primary {
+        font-size: 28rpx;
+        color: #fff;
+        background-color: #199fff;
+      }
     }
+  }
+
+  .btn-primary {
+    font-size: 28rpx;
+    color: #fff;
+    background-color: #199fff;
   }
 }
 </style>

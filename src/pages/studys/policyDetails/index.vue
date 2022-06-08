@@ -83,5 +83,6 @@ export default {
 
 .textarea {
   margin-top: 20rpx;
+  line-height: 2;
 }
 </style>

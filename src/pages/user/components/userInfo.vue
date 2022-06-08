@@ -6,7 +6,6 @@
     <view class="infos" v-if="isLogin">
       <view class="user">
         <text class="name"> {{ info.real_name || '--' }} </text>
-        <text class="phone"> {{ info.mobile || '--'}} </text>
       </view>
       <view v-if="orgInfo.name" class="days">所属机构：{{ orgInfo.name }}</view>
       <view v-else class="days">加入东培学堂 {{ info.org_join_day }} 天</view>

@@ -1,6 +1,7 @@
 <template>
   <view class="user-class-list">
     <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="onDown" @up="onUp">
+      <template v-if="classList.length">
       <u-section v-for="item in classList" :key="item.id" :title="item.join" type="line" padding="30rpx" color="#999">
         <CardRow :leftImage="item.thumb" @clickRight="onClickCource" @previewImg="previewImg">
           <template v-slot:rightTop>
@@ -20,6 +21,10 @@
           </template>
         </CardRow>
       </u-section>
+      </template>
+      <template v-else>
+        <noData>您暂时没有任何班级数据</noData>
+      </template>
     </mescroll-body>
   </view>
 </template>
@@ -27,11 +32,16 @@
 <script>
 import uSection from "@/components/uSection/index"
 import CardRow from "@/components/card-row/index";
+import noData from "@/components/noData/index"
 import { browser } from '@/mixins/index'
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 export default {
   mixins: [browser, MescrollMixin],
-  components: { CardRow, uSection },
+  components: { 
+    CardRow, 
+    uSection,
+    noData,
+  },
   data() {
     return {
       classList: [

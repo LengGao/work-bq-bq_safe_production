@@ -17,16 +17,20 @@
         <text class="desc-title">及格分数：</text>
         <text class="desc-value">{{ configData.pass_score || 0 }}分</text>
       </view>
-      <view class="desc">
+      <view class="desc" v-if="configData.question_type_info && configData.question_type_info.length">
         <text class="iconfont">&#xe61b;</text>
         <text class="desc-title">题型分布：</text>
       </view>
       <view class="question-type">
-        <view v-for="(item, index) in configData.question_type_info" :key="index">
-          <text>{{ questionTypes[item.question_type] }}题</text>
-          <text>{{ item.question_num }}题，</text>
-          <text>一题{{ item.score }}分</text>
-        </view>
+        <template v-if="configData.question_type_info">
+          <view v-for="(item, index) in configData.question_type_info" :key="index">
+            <template v-if="!!item.question_num && !!item.score ">
+              <text>{{ questionTypes[item.question_type] }}题</text>
+              <text>{{ item.question_num }}题，</text>
+              <text>一题{{ item.score }}分</text>
+            </template>
+          </view>
+        </template>
       </view>
     </view>
     <view class="btns">
@@ -52,7 +56,7 @@ export default {
     };
   },
   onLoad({ exam_id, source }) {
-    this.exam_id = exam_id || 0
+    this.exam_id = exam_id
     this.source = source
     this.question_bank_id = this.$store.getters.questionBankInfo.id
     this.getConfig();
@@ -69,10 +73,10 @@ export default {
       let api = {}
 
       if (source === 'examRandom') {
-        params = {question_bank_id}
+        params = { question_bank_id }
         api = getMockExamLog
       } else {
-        params = {exam_id, question_bank_id}
+        params = { exam_id, question_bank_id }
         api = createExamLog
       }
 
@@ -88,7 +92,7 @@ export default {
       let question_bank_id = this.question_bank_id
       let params = { exam_id: this.exam_id, question_bank_id: question_bank_id }
       let source = this.source
-      let api =  source === 'examRandom' ? getMockExamInfo : getCustomExamInfo
+      let api = source === 'examRandom' ? getMockExamInfo : getCustomExamInfo
       const res = await api(params)
       if (res.code === 0) {
         this.configData = res.data
