@@ -41,7 +41,7 @@ export function renewal(data) {
 
 export function userCourseList(data) {
     return request({
-        url: 'user/courseList',
+        url: 'user/courseFavorite',
         method: 'get',
         data
     })

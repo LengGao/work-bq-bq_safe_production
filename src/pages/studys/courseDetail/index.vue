@@ -365,8 +365,7 @@ export default {
         this.is_free = false
         uni.showToast({ title: `试看结束`, icon: 'none'})
       } else {
-        // && this.is_done
-        if (this.is_practice && this.is_done) {
+        if (this.is_practice && !this.is_done) {
           uni.showModal({
             title: '提示',
             content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',

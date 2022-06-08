@@ -1,10 +1,9 @@
 <template>
   <view class="library-list">
     <view class="search-bar">
-      <uni-search-bar @confirm="onSearch" @clear="onClear" v-model="keyword" placeholder="请输入您想要搜索的关键词" bgColor="#fff"
-                      cancelButton="none" />
+      <uni-search-bar v-model="keyword" placeholder="请输入您想要搜索的关键词" bgColor="#fff" cancelButton="none" 
+        @confirm="onSearch" @clear="onClear"  @cancel="onCancel" />
     </view>
-
     <view class="list">
       <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
                      :topbar="true" :safearea="true">
@@ -35,7 +34,6 @@ export default {
   components: { CardRow },
   data() {
     return {
-      keyword: '',
       up: {
         page: {
           num: 0,
@@ -43,6 +41,8 @@ export default {
           time: 500,
         },
       },
+      keyword: '',
+      region_id: '',
       librarys: [],
     }
   },
@@ -51,31 +51,27 @@ export default {
   },
   methods: {
     // 清空搜索
-    onClear(e) {
-      console.log('onClear', e);
+    onClear() {
       this.keyword = ''
+      this.reloadList()
+    },
+    onCancel() {
+      this.reloadList()
     },
     // 搜索
-    onSearch(e) {
-      console.log('onSearch', e)
+    onSearch({ value }) {
+      this.keyword = value
+      this.reloadList()
     },
     // 点击政策栏
     onClickLibrary(item) {
-      let url = `/pages/studys/libraryDetails/index`,
-        query = `?library_id=${item.id}`
-      uni.navigateTo({ url: url + query })
+      let url = `/pages/studys/libraryDetails/index?library_id=${item.id}`
+      uni.navigateTo({ url: url })
     },
     previewImg(url) {
-      uni.previewImage({
-        urls: [url]
-      })
+      uni.previewImage({ urls: [url] })
     },
     reloadList(type, val) {
-      if (type === 'category') {
-        this.category_id = val
-      } else {
-        this.type_id = val
-      }
       this.downCallback()
     },
     downCallback() {
@@ -85,9 +81,7 @@ export default {
       const data = {
         page: page.num,
         page_size: page.size,
-        // region_id: this.region_id,
-        category_id: this.category_id,
-        price_type: this.type_id
+        keyword: this.keyword,
       }
       const res = await libraryList(data)
       if (res.code !== 0) return this.mescroll.endBySize(0, 0);

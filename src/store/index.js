@@ -18,10 +18,10 @@ import {
     getQuestionBankList
 } from '@/api/question'
 
-
 const region = uni.getStorageSync('region') || {}
 const orgInfo = uni.getStorageSync('orgInfo') || {}
 const userInfo = uni.getStorageSync('userInfo') || {}
+const userStatus = uni.getStorageSync('userStatus') || 0
 const questionBankInfo = uni.getStorageSync('questionBankInfo') || {}
 
 Vue.use(Vuex)
@@ -32,7 +32,7 @@ const state = {
         userInfo: userInfo,
         orgInfo: orgInfo,
         questionBankInfo: questionBankInfo,
-        userStatus: 0, // 0 1 1000 1008
+        userStatus: userStatus, // 0 1 1000 1008
         is_examination: false,
         is_practice: false,
     },
@@ -68,9 +68,9 @@ const getters = {
     question_bank_id: state => state.user.questionBankInfo.question_bank_id,
     
     questionBankInfo: state =>  {
-        if (!state.user.questionBankInfo.length) {
-            store.dispatch('getQuestionBankInfo')
-        }
+        // if (!state.user.questionBankInfo.length) {
+        //     store.dispatch('getQuestionBankInfo')
+        // }
         return state.user.questionBankInfo
     },
     
@@ -112,6 +112,7 @@ const mutations = {
 
     SET_LOGIN_STATUS(state, data) {
         state.user.userStatus = data
+        uni.setStorageSync('userStatus', data)
     },
 
     SET_EXAMINATION(state, data) {
@@ -142,7 +143,7 @@ const mutations = {
         state.user.questionBankInfo = data
         uni.setStorageSync('questionBankInfo', data)
     },
-    
+
     SET_QUESTION_LIST(state, list) {
         state.questionList.list = list
     },
@@ -175,7 +176,7 @@ const actions = {
         return res
     },
     async loginout({ commit }, data) {
-        commit('SET_LOGIN_STATUS', 0)
+        commit('SET_LOGIN_STATUS', data || 0)
         commit('SET_ORG_LIST', [])
         let keys = ['userInfo', 'orgInfo','region', 'questionBankInfo']
         keys.forEach(key => { uni.removeStorage({ key: key}) })
@@ -217,7 +218,7 @@ const actions = {
     async getQuestionBankInfo({ commit }) {
         let res = await getQuestionBankList()
         if (res.code === 0) {
-            commit('SET_QUESTION_BANK_INFO', res.data)
+            commit('SET_QUESTION_LIST', res.data)
         }
     },  
     setQusetionList({ commit }, list) {

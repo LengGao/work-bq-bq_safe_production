@@ -6,25 +6,25 @@
         <view class="course-list-container">
           <view class="course-item" v-for="item in courseData" :key="item.id">
             <view class="course-item-cover">
-              <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
-              <view class="course-tag" v-else>认证课</view>
+              <!-- <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
+              <view class="course-tag" v-else>认证课</view> -->
               <image class="course-img" :src="item.cover" mode="aspectFit" @click="() => previewImg(item.cover)" />
             </view>
             <view class="course-item-content" @click="() => toDetails(item.id)">
               <view class="course-name">{{ item.title }}</view>
-              <view class="course-time">
+              <!-- <view class="course-time">
                 {{ item.chapter_count }}章
                 {{ item.lesson_count }}课时
-              </view>
+              </view> -->
               <view class="course-other">
                 <view class="course-other-count">
                   <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons>
                   {{ item.learn_count }} 人在学
                 </view>
-                <view v-if="item.price === 0" class="course-other-tag"> 免费</view>
+                <!-- <view v-if="item.price === 0" class="course-other-tag"> 免费</view>
                 <view v-else class="course-other-price">
                   ￥{{ item.price }}
-                </view>
+                </view> -->
               </view>
             </view>
           </view>
@@ -37,17 +37,15 @@
 <script>
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import { browser } from '@/mixins/index'
-
 import {
-  courseList,
-} from '@/api/course'
+  userCourseList,
+} from '@/api/user'
 
 export default {
   mixins: [browser, MescrollMixin],
   components: { },
   data() {
     return {
-      // mescroll
       up: {
         page: {
           num: 0,
@@ -58,20 +56,10 @@ export default {
 
       region_id: 0,
       courseData: [],
-
-      // 分类
-      category_id: 0, // 0 全部
-      categoryData: [],
-
-      // 类型
-      type_id: -1, // -1 全部
-      typeData: [],
     };
   },
   onLoad() {
     this.region_id = this.$store.getters.region.id
-    this.courseCategory()
-    this.coursePriceType()
   },
   methods: {
     toDetails(id) {
@@ -85,11 +73,6 @@ export default {
       })
     },
     reloadList(type, val) {
-      if (type === 'category') {
-        this.category_id = val
-      } else {
-        this.type_id = val
-      }
       this.downCallback()
     },
     downCallback() {
@@ -99,9 +82,8 @@ export default {
       const data = {
         page: page.num,
         page_size: page.size,
-        region_id: this.region_id,
       }
-      const res = await courseList(data)
+      const res = await userCourseList(data)
       if (res.code !== 0) return this.mescroll.endBySize(0, 0);
       let curPageData = res.data.data;
       let curPageLen = curPageData.length;

@@ -54,6 +54,8 @@
         <CardRow v-for="course in courses" :key="course.id">
           <template v-slot:cardBodyLeft>
             <view class="logan-card-body-left">
+              <view class="cover-tag cover-tag--success" v-if="!course.price">免费课</view>
+              <view class="cover-tag" v-else>认证课</view>
               <image @click="() => previewImg(course.cover)" :src="course.cover" class="logan-img-size-lg"
                      mode="aspectFit" />
             </view>
@@ -521,6 +523,27 @@ $padding-lr: 30rpx;
 .course-bar {
   padding: 24rpx 0;
   border-top: $logan-border-spacing-md;
+
+  .logan-card-body-left {
+    position: relative;
+
+    .cover-tag {
+      line-height: initial;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 1;
+      padding: 5rpx 24rpx;
+      background-color: $uni-color-primary;
+      color: #fff;
+      font-size: $uni-font-size-sm;
+      border-top-left-radius: 12rpx;
+      border-bottom-right-radius: 12rpx;
+      &--success {
+        background-color: $uni-color-success;
+      }
+    }
+  }
 
   .logan-card-right-center {
     font-size: $font-size-sm;

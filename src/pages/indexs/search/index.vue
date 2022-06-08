@@ -7,8 +7,8 @@
         <uni-icons type="trash-filled" size="48rpx" color="#999" @click="onClearHistry" />
       </view>
       <view class="history-list">
-        <button @click="onCLickHistory('his', index)" v-for="(history,index) in historys" :key="index" class="btn">
-          <text>{{ history.name }}</text>
+        <button @click="onCLickHistory('his', index)" v-for="(history, index) in historys" :key="index" class="btn">
+          <text>{{ history }}</text>
         </button>
       </view>
     </view>
@@ -18,7 +18,7 @@
       </view>
       <view class="hot-list">
         <button @click="onCLickHot('hot', index)" v-for="(hot, index) in hots" :key="index" class="btn">
-          <text>{{ hot.name }}</text>
+          <text>{{ hot }}</text>
         </button>
       </view>
     </view>
@@ -106,7 +106,7 @@ export default {
   methods: {
     // 点击搜索历史
     onCLickHistory(type, index) {
-      this.keyword = this.historys[index].name
+      this.keyword = this.historys[index]
       this.showRecond = false
       this.reloadList()
     },
@@ -146,15 +146,18 @@ export default {
     },
     reloadList(type, val) {
       this.downCallback()
+      this.getHotWord()
     },
     downCallback() {
-      if(this.mescroll) this.mescroll.resetUpScroll(true)
+      if(this.mescroll) {
+        this.mescroll.resetUpScroll(true)
+      }
     },
     async upCallback(page) {
       const data = {
-        keyword: this.keyword,
         page: page.num,
         page_size: page.size,
+        keyword: this.keyword,
         region_id: this.region_id
       }
       const res = await courseList(data)
@@ -171,12 +174,10 @@ export default {
       let res = await hotWord()
       if (res.code === 0) {
         this.hots = res.data.hot_word
-        this.historys = res.data.historys
+        this.historys = res.data.history_word
       }
     },
   },
-
-
 }
 </script>
 

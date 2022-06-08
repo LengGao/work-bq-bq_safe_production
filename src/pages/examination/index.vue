@@ -79,14 +79,14 @@
 
 <script>
 import ExaminationCard from './components/ExaminationCard'
-import { browser } from '@/mixins/index'
+import { browser, userStatus } from '@/mixins/index'
 import {
   getQuestionBankList,
   getDailyStatistics
 } from '@/api/question'
 
 export default {
-  mixins: [browser],
+  mixins: [browser, userStatus],
   components: {
     ExaminationCard
   },
@@ -113,22 +113,18 @@ export default {
         { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination-swiper.png", url: "" }
       ],
       isReady: false,
-      questionInfoId: '',
-      needLogin: false,
+      question_bank_id: '',
+      questionBankInfo: '请选择题库',
+      activeQuestionBank: '',
 
       statistics: {
         answer_days: 0,
         today_answer_num: 0,
         today_correct_rate: 0,
-        learning_num: 0
+        learning_num: 0,
       },
       isLoad: false
     };
-  },
-  computed: {
-    activeQuestionBank() {
-      return this.candidates.length ? this.candidates[this.currentCandidates].title : '请选择题库'
-    }
   },
   onLoad() {
     if (!this.isLoad) {
@@ -141,32 +137,23 @@ export default {
     } else {  
       this.isLoad = true
     }
-  },
+  },  
   methods: {
     init() {
-      this.question_bank_id = this.$store.getters.questionBankInfo.id
+      this.questionBankInfo = this.$store.getters.questionBankInfo
+      this.question_bank_id = this.questionBankInfo.id
+      this.setActiveQuestionBank()
       this.getQuestionBankList()
-      this.getDailyStatistics()
     },
     to(url) {
-      if (this.needLogin) {
-        uni.showToast({ title: '请登录', icon: 'none' });
-        return;
+      if (this.authority()) {
+        uni.navigateTo({ url })
       }
-      if (!this.questionInfoId) {
-        return uni.showToast({ title: '请选择题库', icon: 'none' });
-      }
-      uni.navigateTo({ url })
     },
     goStudy() {
-      if (this.needLogin) {
-        uni.showToast({ title: '请登录', icon: 'none' });
-        return;
+      if (this.authority()) {
+        uni.navigateTo({ url: '/pages/examinations/chapterList/index' })
       }
-      if (!this.questionInfoId) {
-        return uni.showToast({ title: '请选择题库', icon: 'none' });
-      }
-      uni.navigateTo({ url: '/pages/examinations/chapterList/index' })
     },
     onCandidates(e) {
       this.$refs.popupRef.open()
@@ -179,15 +166,20 @@ export default {
       }
     },
     onClickItem(index) {
-      let questionInfo = this.candidates[index]
+      let questionBankInfo = this.candidates[index]
       this.currentCandidates = index
-      this.$store.commit('SET_QUESTION_BANK_INFO', questionInfo)
+      this.questionBankInfo = questionBankInfo
+      this.$store.commit('SET_QUESTION_BANK_INFO', questionBankInfo)
+      this.setActiveQuestionBank()
       this.$refs.popupRef.close()
     },
-    async toLogin () {
-      let res = await uni.showModal({ title: '提示', content: "该功能需要登录后才能使用" })
-      if (res[1].confirm) {
-        uni.navigateTo({ url: '/pages/login/index' })
+    setActiveQuestionBank() {
+      let questionBankInfo = this.questionBankInfo
+      if (questionBankInfo.id) {
+        this.question_bank_id = questionBankInfo.id
+        this.activeQuestionBank = questionBankInfo.title
+      } else {
+        this.activeQuestionBank = '请选择题库'
       }
     },
     async getQuestionBankList() {
@@ -195,16 +187,14 @@ export default {
       if (res.code === 0) {
         this.candidates = res.data
       }
+      this.getDailyStatistics()
     },
     async getDailyStatistics() {
-      let question_bank_id = this.questionInfoId
+      let question_bank_id = this.question_bank_id
       let params = { question_bank_id }
       let res = await getDailyStatistics(params)
       if (res.code === 0) {
         this.statistics = res.data
-        this.needLogin = false
-      } else if (res.code === 1000 || res.code === 1008) {
-        this.needLogin = true
       }
     }
   },
@@ -312,7 +302,7 @@ $padding-lr: 30rpx;
 }
 
 .examinationcard-bar {
-  padding: 16rpx 30rpx;
+  padding: 0 30rpx;
 }
 
 .examinationcard-list-item {
@@ -337,7 +327,8 @@ $padding-lr: 30rpx;
 }
 
 .grids {
-  padding: 20rpx 0;
+  margin-top: 40rpx;
+  padding: 20rpx;
 }
 
 .grid {
