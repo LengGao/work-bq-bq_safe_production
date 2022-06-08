@@ -30,7 +30,6 @@ export default {
   },
   methods: {
     init(location) {
-      console.log('val', location);
       this.buttons.forEach(button => {
         if (button.id === location.id) button.checked = true
       })

@@ -19,7 +19,7 @@
       <swiper :interval="2000" autoplay circular disable-touch class="swiper">
         <swiper-item v-for="swiper in swipers" :key="swiper.id" @click="() => onClickSwiperImg(swiper)"
                      :current-item-id="swiper.id" class="swiper-item">
-          <image @click="() => previewImg(swiper.thumb)" :src="swiper.banner" class="swiper-image" mode="scaleToFill" />
+          <image :src="swiper.banner" class="swiper-image" mode="scaleToFill" />
         </swiper-item>
       </swiper>
     </view>
@@ -182,21 +182,19 @@ export default {
   data() {
     return {
       isHidden: false,
-      showRegionChange: false,
 
-      currLocation: {},
-      regions: [],
-
-      courses: [],
-      policys: [],
-      librarys: [],
-
+      swipers: [],
       businesses: [
         { id: 1, type: "one", title: "特种作业上岗证", url: "" },
         { id: 2, type: "two", title: "两类人员安全证", url: "" },
         { id: 3, type: "three", title: "其他从业人操作证", url: "" },
       ],
-      swipers: []
+      currLocation: {},
+      regions: [],
+      courses: [],
+      policys: [],
+      librarys: [],
+
     };
   },
   computed: {

@@ -1,6 +1,6 @@
 <template>
   <view class="chapter">
-    <CustomHeader></CustomHeader>
+    <CustomHeader backgroundColor="transparent"></CustomHeader>
     <image class="b-img" src="../static/chapter-background2.png" mode="aspectFit"></image>
     <view class="chapter-box">
       <scroll-view class="record-list" scroll-y @scrolltolower="onScrolltolower">

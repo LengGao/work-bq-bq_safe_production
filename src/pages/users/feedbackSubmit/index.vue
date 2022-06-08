@@ -51,7 +51,7 @@ export default {
     async select({ tempFiles }) {
       let file = tempFiles[0]
       let token = this.$store.getters.token
-      let org = this.$store.getters.organizationCurrent
+      let org = this.$store.getters.orgInfo
       let header = {'token': token, 'org-id': org.id}
       let ret = await uploadImage(file, header)
       let res = JSON.parse(ret[1].data)

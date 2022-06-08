@@ -2,7 +2,7 @@
   <view class="user">
     <view class="user-header">
       <view class="user-card">
-        <UserInfo :info="userInfo" :orgInfo="organizationCurrent" :isLogin="isLogin" @login="login" />
+        <UserInfo :info="userInfo" :orgInfo="orgInfo" :isLogin="isLogin" @login="login" />
         <view class="card-setting">
           <!-- <uni-icons customPrefix="iconfont" type="icon-xiaoxi" color="#fff" size="42rpx" /> -->
           <uni-icons v-if="isLogin" customPrefix="iconfont" type="icon-tuichu" color="#fff" size="40rpx" class="card-setting-icon"
@@ -65,7 +65,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['userInfo', 'organizationCurrent'])
+    ...mapGetters(['userInfo', 'orgInfo'])
   },
   onLoad() {
     console.log('onLoad');    

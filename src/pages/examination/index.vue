@@ -121,7 +121,8 @@ export default {
         today_answer_num: 0,
         today_correct_rate: 0,
         learning_num: 0
-      }
+      },
+      isLoad: false
     };
   },
   computed: {
@@ -130,13 +131,23 @@ export default {
     }
   },
   onLoad() {
-  },
-  onReady() {
+    if (!this.isLoad) {
+      this.init()
+    }
   },
   onShow() {
-    this.getQuestionBankList()
+    if (this.isLoad) {
+      this.init()
+    } else {  
+      this.isLoad = true
+    }
   },
   methods: {
+    init() {
+      this.question_bank_id = this.$store.getters.questionBankInfo.id
+      this.getQuestionBankList()
+      this.getDailyStatistics()
+    },
     to(url) {
       if (this.needLogin) {
         uni.showToast({ title: '请登录', icon: 'none' });
@@ -168,9 +179,9 @@ export default {
       }
     },
     onClickItem(index) {
-      this.currentCandidates = index
       let questionInfo = this.candidates[index]
-      this.$store.dispatch('setQuestionBankInfo', questionInfo)
+      this.currentCandidates = index
+      this.$store.commit('SET_QUESTION_BANK_INFO', questionInfo)
       this.$refs.popupRef.close()
     },
     async toLogin () {
@@ -183,11 +194,7 @@ export default {
       let res = await getQuestionBankList()
       if (res.code === 0) {
         this.candidates = res.data
-        let questionInfo = res.data[0] || {}
-        if (questionInfo.id) this.questionInfoId = questionInfo.id
-        this.$store.dispatch('setQuestionBankInfo', questionInfo)
       }
-      this.getDailyStatistics()
     },
     async getDailyStatistics() {
       let question_bank_id = this.questionInfoId

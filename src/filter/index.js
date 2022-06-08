@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import moment from '@/utils/date'
 import avator from '@/static/img/user_avator.png'
 
 const systems = uni.getSystemInfoSync()
@@ -18,67 +17,10 @@ const filters = {
         return `￥${number}`
     },
     empty(val) {
-        if (val === undefined  || val === null  || val === '') {
-           return '--'
-        }
-        return val
-    },
-    secondsFormat(val) {
-        if (systems.platform.indexOf('ios') !== -1) {}
-        return val
+        return val === undefined || val === null || val === '' ? '--' : val
     },
     avatorFormat(url) {
         return url || avator
-    },
-    orderStatus(status) {
-        const statusMap = {
-            0: "未付款",
-            1: "新订单",
-            2: "部分付款",
-            3: "已付款",
-            4: "已作废",
-            5: "已退款",
-        }
-        return statusMap[status]
-    },
-    orderTagColor(status) {
-        const tagTypeMap = {
-            0: "#888",
-            1: "#888",
-            2: "#ff976a",
-            3: "#07c160",
-            4: "#ee0a24",
-            5: "#ee0a24",
-        }
-        return tagTypeMap[status]
-    },
-    orderApplyStatus(status, isText) {
-        const applyStatusMap = {
-            1: {
-                text: "待审核",
-                color: "#fdc400",
-            },
-            2: {
-                text: "审核中",
-                color: "#199fff",
-            },
-            3: {
-                text: "已通过",
-                color: "#59D234",
-            },
-            8: {
-                text: "已撤销",
-                color: "#c0c4cc",
-            },
-            9: {
-                text: "已驳回",
-                color: "#fd6500",
-            },
-        }
-        if (isText) {
-            return applyStatusMap[status].text || '--'
-        }
-        return applyStatusMap[status].color || ''
     },
 }
 
