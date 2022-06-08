@@ -510,20 +510,19 @@ export default {
           curr = arr[index].id
           next = arr[index + 1].id
         } else if (index === total - 1 && total > 3) {
-          prev = arr[index - 2].id
-          curr = arr[index - 1].id
-          next = arr[index].id
+          prev = arr[index - 2]?.id
+          curr = arr[index - 1]?.id
+          next = arr[index]?.id
         } else {
-          prev = arr[0].id
-          curr = arr[1].id
-          next = arr[2].id
+          prev = arr[0]?.id
+          curr = arr[1]?.id
+          next = arr[2]?.id
         }
 
         this.last_question_id = lastId
         this.answerSheetArr = arr
         this.total = total
         this.currentIndex = (index > 0 ? index : 0)
-        console.log("1", index);
         this.time = res.data.expires_time || 0
         this.initQuestion(prev, curr, next)
       }
@@ -567,7 +566,7 @@ export default {
         arr[index + 1] = list[1]
         arr[index + 2] = list[2]
       }
-      console.log(total, arr, index);
+      // console.log(total, arr, index);
 
       this.questionList = JSON.parse(JSON.stringify(arr))
     },

@@ -1,21 +1,21 @@
 <template>
   <view class="user-class-list">
     <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="onDown" @up="onUp">
-      <u-section v-for="item in classList" :key="item.id"  :title="item.join" type="line" class="section" color="#999">
-        <CardRow :leftImage="item.thumb" :rightTop="item.title"
-                 :rightFooter="item.time" @clickRight="onClickCource" @previewImg="previewImg">
+      <u-section v-for="item in classList" :key="item.id" :title="item.join" type="line" padding="30rpx" color="#999">
+        <CardRow :leftImage="item.thumb" @clickRight="onClickCource" @previewImg="previewImg">
+          <template v-slot:rightTop>
+            <view class="logan-card-right-top">
+              班级类型：<text class="content">{{ item.title }}</text>
+            </view>
+          </template>
           <template v-slot:rightCenter>
             <view class="logan-card-right-center">
-              <text>班级人数：60人</text>
-              <text style="margin-left: 30rpx;">视频数量：16</text>
+              班级人数：<text class="content">82人</text>
             </view>
           </template>
           <template v-slot:rightFooter>
             <view class="logan-card-right-footer">
-              <view>
-                <uni-icons customPrefix="iconfont" type="icon-user-filling" color="#0387FB" size="28rpx" />
-                <text class="staff">朱老师</text>
-              </view>
+              {{ item.join }}加入班级
             </view>
           </template>
         </CardRow>
@@ -37,13 +37,13 @@ export default {
       classList: [
         { 
           id: 1, name: "name1", money: 0, oldMoney: 0, thumb: '/static/img/index_cource1.png', 
-          title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", progress: "30", 
-          join: '2022年4月20日 16:30:30 加入班级'
+          title: "建筑设计防火规范标准", progress: "30", 
+          join: '2022年4月20日'
         },
         { 
           id: 2, name: "name2", money: 998, oldMoney: 1998, thumb: "/static/img/index_cource1.png", 
           title: "特种作业低压电工实操课", time: "12章24课时", progress: "30",
-          join: '2022年4月20日 16:30:30 加入班级' 
+          join: '2022年4月20日' 
         }
       ]
     }
@@ -77,15 +77,15 @@ export default {
 .user-class-list {
   padding: 0 30rpx;
   width: calc(750rpx - 60rpx);
+  background-color: #f8f8f8;
 }
 
 .section {
   margin-top: 40rpx;
-  border: $logan-border-spacing-md-sm
 }
 
 ::v-deep .uni-section-header {
-  padding: 0;
+  padding-bottom: 0;
 }
 
 ::v-deep .uni-section__content {
@@ -96,16 +96,29 @@ export default {
   padding: 16rpx 0;
 }
 
+.logan-card-right-top {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  width: 100%;
+  font-size: $font-size-sm;
+  color: #666666;
+}
+
 .logan-card-right-center {
   justify-content: flex-start;
+  font-size: $font-size-sm;
+  color: #666666;
 }
 
 .logan-card-right-footer {
-  color: #0387FB;
+  font-size: $font-size-sm;
+  color: #999999;
 }
 
-.staff {
+.content {
   margin-left: 10rpx; 
-  font-size: $font-size-sm;
+  color: #199fff;
 }
 </style>
