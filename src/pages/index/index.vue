@@ -56,8 +56,7 @@
               <view class="logan-card-body-left">
                 <view class="cover-tag cover-tag--success" v-if="!course.price">免费课</view>
                 <view class="cover-tag" v-else>认证课</view>
-                <image @click="() => previewImg(course.cover)" :src="course.cover" class="logan-img-size-lg"
-                       mode="aspectFit" />
+                <image @click="() => previewImg(course.cover)" :src="course.cover" class="logan-img-size-lg" />
               </view>
             </template>
             <template v-slot:cardBodyRight>

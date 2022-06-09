@@ -108,6 +108,7 @@ export default {
   .img-size-lg {
     height: 135rpx;
     width: 230rpx;
+    border-radius: 12rpx;
   }
 
   .card-body-right {

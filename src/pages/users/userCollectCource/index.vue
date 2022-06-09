@@ -38,7 +38,7 @@
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import { browser } from '@/mixins/index'
 import {
-  userCourseList,
+  userCourseFavorite,
 } from '@/api/user'
 
 export default {
@@ -83,7 +83,7 @@ export default {
         page: page.num,
         page_size: page.size,
       }
-      const res = await userCourseList(data)
+      const res = await userCourseFavorite(data)
       if (res.code !== 0) return this.mescroll.endBySize(0, 0);
       let curPageData = res.data.data;
       let curPageLen = curPageData.length;

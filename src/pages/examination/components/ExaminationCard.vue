@@ -68,6 +68,7 @@ $size: 80rpx;
 .xamination-card {
   position: relative;
   height: 146rpx;
+  border-radius: 12rpx;
 }
 
 .logan-card-body-row {

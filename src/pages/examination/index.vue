@@ -179,6 +179,11 @@ export default {
       if (questionBankInfo.id) {
         this.question_bank_id = questionBankInfo.id
         this.activeQuestionBank = questionBankInfo.title
+      } else if (this.candidates.length) {
+        let candidate = this.candidates[0]
+        this.question_bank_id = candidate.id
+        this.activeQuestionBank = candidate.title
+        this.$store.commit('SET_QUESTION_BANK_INFO', candidate)
       } else {
         this.activeQuestionBank = '请选择题库'
       }
@@ -187,8 +192,10 @@ export default {
       let res = await getQuestionBankList()
       if (res.code === 0) {
         this.candidates = res.data
+        if (res.data.length) {
+          this.setActiveQuestionBank()
+        }
       }
-      this.getDailyStatistics()
     },
     async getDailyStatistics() {
       let question_bank_id = this.question_bank_id
@@ -309,6 +316,7 @@ $padding-lr: 30rpx;
 .examinationcard-list-item {
   margin-top: 20rpx;
   border: 2rpx solid $border-color-spacing;
+  border-radius: 12rpx;
 }
 
 .bg-1 {

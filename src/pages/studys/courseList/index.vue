@@ -14,7 +14,7 @@
             <view class="course-item-cover">
               <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
               <view class="course-tag" v-else>认证课</view>
-              <image class="course-img" :src="item.cover" mode="aspectFit" @click="() => previewImg(item.cover)" />
+              <image class="course-img" :src="item.cover" @click="() => previewImg(item.cover)" />
             </view>
             <view class="course-item-content" @click="() => toDetails(item.id)">
               <view class="course-name">{{ item.title }}</view>
@@ -27,9 +27,8 @@
                   <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons>
                   {{ item.learn_count }} 人在学
                 </view>
-                <view v-if="item.price === 0" class="course-other-tag"> 免费</view>
-                <view v-else class="course-other-price">
-                  ￥{{ item.price }}
+                <view class="cost">
+                  <uni-tag class="tag" v-if="item.duration" size="small" :text="item.duration + '分钟'" inverted />
                 </view>
               </view>
             </view>
@@ -247,6 +246,15 @@ export default {
               text-decoration: line-through;
               color: #b1b1b1;
               font-size: $uni-font-size-sm;
+            }
+          }
+          .cost {
+            .tag {
+              position: relative;
+              top: -4rpx;
+              color:  #fff;
+              background-color: #b23145;
+              border-color: #b23145;
             }
           }
         }

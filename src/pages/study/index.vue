@@ -71,7 +71,7 @@
             </view>
           </template>
         </CardRow>
-         <view v-if="isFinish" style="width: 100%; font-size: '24rpx'; text-align: center;"> 没有更多了</view>
+         <view v-if="isFinish" style="width: 100%; font-size: '24rpx'; text-align: center;"> </view>
       </scroll-view>
       </template>
       <template v-else>
@@ -276,6 +276,7 @@ $padding: 16rpx 30rpx;
   .img-size-lg {
     height: 135rpx;
     width: 230rpx;
+    border-radius: 12rpx;
   }
 
   .card-body-right {

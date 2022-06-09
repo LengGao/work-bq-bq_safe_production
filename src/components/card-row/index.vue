@@ -115,7 +115,7 @@ $height: 135rpx;
 .card-row-image {
   width: $width;
   height: $height;
-  border-radius: 10rpx;
+  border-radius: 12rpx;
 }
 
 .card-body-right {

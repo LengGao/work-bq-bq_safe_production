@@ -39,7 +39,7 @@ export function renewal(data) {
     })
 }
 
-export function userCourseList(data) {
+export function userCourseFavorite(data) {
     return request({
         url: 'user/courseFavorite',
         method: 'get',
@@ -50,6 +50,14 @@ export function userCourseList(data) {
 export function userClasses(data) {
     return request({
         url: 'user/classes',
+        method: 'get',
+        data
+    })
+}
+
+export function userCourseList(data) {
+    return request({
+        url: 'user/courseList',
         method: 'get',
         data
     })
