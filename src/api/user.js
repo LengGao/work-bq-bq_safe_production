@@ -47,6 +47,14 @@ export function userCourseList(data) {
     })
 }
 
+export function userClasses(data) {
+    return request({
+        url: 'user/classes',
+        method: 'get',
+        data
+    })
+}
+
 export function feedback(data) {
     return request({
         url: 'HelpCenter/feedback',

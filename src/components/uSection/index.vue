@@ -48,7 +48,7 @@
 				default: ''
 			},
 			padding: {
-				type: Boolean,
+				type: [String],
 				default: false
 			}
 		},

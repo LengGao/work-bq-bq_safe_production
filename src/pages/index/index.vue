@@ -33,8 +33,8 @@
         </view>
       </view>
       <view class="business">
-        <view v-for="business in businesses" :key="business.id" @click="() => onClickCource(business.id)"
-              :class="'block ' + business.type">
+        <view v-for="business in businesses" :key="business.id" :class="'block ' + business.type"
+              @click="() => onClickCource(business.id)">
           <text class="business-text"> {{ business.title }} </text>
         </view>
       </view>
@@ -51,36 +51,36 @@
 
       <view class="courses-list">
         <template v-if="courses.length">
-        <CardRow v-for="course in courses" :key="course.id">
-          <template v-slot:cardBodyLeft>
-            <view class="logan-card-body-left">
-              <view class="cover-tag cover-tag--success" v-if="!course.price">免费课</view>
-              <view class="cover-tag" v-else>认证课</view>
-              <image @click="() => previewImg(course.cover)" :src="course.cover" class="logan-img-size-lg"
-                     mode="aspectFit" />
-            </view>
-          </template>
-          <template v-slot:cardBodyRight>
-            <view class="logan-card-body-right" @click="() => onClickRecommend(course.id)">
-              <view class="logan-card-right-top">
-                <text>{{ course.title }}</text>
+          <CardRow v-for="course in courses" :key="course.id">
+            <template v-slot:cardBodyLeft>
+              <view class="logan-card-body-left">
+                <view class="cover-tag cover-tag--success" v-if="!course.price">免费课</view>
+                <view class="cover-tag" v-else>认证课</view>
+                <image @click="() => previewImg(course.cover)" :src="course.cover" class="logan-img-size-lg"
+                       mode="aspectFit" />
               </view>
-              <view class="logan-card-right-center">
-                {{ course.chapter_count }}章
-                {{ course.lesson_count }}课时
-              </view>
-              <view class="logan-card-right-footer">
-                <view class="audience">
-                  <uni-icons type="person-filled" color="#fff" class="icon-person" size="24rpx"></uni-icons>
-                  <text style="margin-left: 10rpx">{{ course.learn_count }}人看过</text>
+            </template>
+            <template v-slot:cardBodyRight>
+              <view class="logan-card-body-right" @click="() => onClickRecommend(course.id)">
+                <view class="logan-card-right-top">
+                  <text>{{ course.title }}</text>
                 </view>
-                <view class="cost">                  
-                  <uni-tag class="tag" type="warning" size="small" :text="course.duration || '--'" inverted />
+                <view class="logan-card-right-center">
+                  {{ course.chapter_count }}章
+                  {{ course.lesson_count }}课时
+                </view>
+                <view class="logan-card-right-footer">
+                  <view class="audience">
+                    <uni-icons type="person-filled" color="#fff" class="icon-person" size="24rpx"></uni-icons>
+                    <text style="margin-left: 10rpx">{{ course.learn_count }}人看过</text>
+                  </view>
+                  <view class="cost">
+                    <uni-tag class="tag" v-if="course.duration" size="small" :text="course.duration + '分钟'" inverted />
+                  </view>
                 </view>
               </view>
-            </view>
-          </template>
-        </CardRow>
+            </template>
+          </CardRow>
         </template>
         <template v-else>
           <NoData position="static" />
@@ -560,23 +560,14 @@ $padding-lr: 30rpx;
       border-radius: 50%;
     }
   }
-
-  .present-price {
-    font-size: $font-size-md;
-    color: $color-warning;
-  }
-
-  .original-price {
-    margin-left: 8rpx;
-    font-size: $font-size-sm;
-    text-decoration: line-through #999;
-  }
-
-  .tag {
-    position: relative;
-    bottom: 8rpx;
-    font-size: 24rpx;
-    font-weight: 700;
+  .cost {
+    .tag {
+      position: relative;
+      top: -4rpx;
+      color:  #fff;
+      background-color: #b23145;
+      border-color: #b23145;
+    }
   }
 }
 
