@@ -149,3 +149,13 @@ export function courseFavorites(data) {
   })
 }
 
+
+export function faceUpload(data) {
+  return request({
+    url: 'course/faceUpload',
+    method: 'post',
+    data,
+    loading: false,
+    nocatch: true
+  })
+}

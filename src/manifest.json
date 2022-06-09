@@ -52,6 +52,9 @@
 	},
 	"h5": {
 		"publickPath": "./static",
+		"devServer": {
+			"https": false
+		},
 		"optimization": {
 			"prefetch": true,
 			"preload": true

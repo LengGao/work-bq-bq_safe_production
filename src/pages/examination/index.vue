@@ -25,6 +25,7 @@
             <text class="data-number">{{statistics.today_correct_rate | empty}}%</text>
             <text class="data-desc">今日正确率</text>
           </view>
+          
         </view>
       </view>
       <view class="report-bottom">

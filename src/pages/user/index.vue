@@ -95,7 +95,7 @@ export default {
     },
     async loginlout() {
       if (!this.isLogin) return false;
-      let modal = await uni.showModal({ title: '提示', content: '确定要推出登录吗' })
+      let modal = await uni.showModal({ title: '提示', content: '确定要退出登录吗' })
       if (!modal[1].confirm) return;
       let res = await this.$store.dispatch('loginout')
       if (res.code === 0) {
