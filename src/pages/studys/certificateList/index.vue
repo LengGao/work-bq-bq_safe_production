@@ -33,7 +33,7 @@
                   <view class="tag tag-two-full" v-if="course.learning_progress >= 100"
                         @click="() => buildLearnCert(course.id)">生成证书</view>
                   <view class="tag tag-three-full" v-else-if="course.learning_progress <= 0"></view>
-                  <view class="tag tag-one-full" v-else @click="() => previewImg(course.cover)">查看证书</view>
+                  <view class="tag tag-one-full" v-else @click="() => onViewCertificate(cert_url)">查看证书</view>
                 </view>
               </view>
             </view>
@@ -52,7 +52,7 @@
             <image class="image" @click="() => previewImg(item.url)" :src="item.url" mode="aspectFit" />
           </view>
           <view class="list-item-save">
-            <button class="btn-primary" @click="() => previewImg(item.url)">点此长安保存证书</button>
+            <button class="btn-primary" @click="() => onViewCertificate(item.url)">查看证书</button>
           </view>
         </view>
       </mescroll-body>
@@ -129,7 +129,7 @@ export default {
       this.reloadList()
     },
     onViewCertificate(url) {
-      if (url) this.downloadUrl = uni
+      if (url) this.downloadUrl = url
       this.$refs['popup-certificate'].open('center')
     },
     onClose(target) {
