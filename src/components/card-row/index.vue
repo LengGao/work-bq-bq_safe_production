@@ -83,7 +83,7 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 $width: 230rpx;
-$height: 135rpx;
+$height: 140rpx;
 
 .card-row {
   position: relative;

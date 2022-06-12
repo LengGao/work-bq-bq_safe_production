@@ -71,6 +71,14 @@ export function userCourseList(data) {
     })
 }
 
+export function userCertList(data) {
+    return request({
+        url: 'user/certList',
+        method: 'get',
+        data
+    })
+}
+
 export function feedback(data) {
     return request({
         url: 'HelpCenter/feedback',

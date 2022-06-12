@@ -1,32 +1,6 @@
 import request from '@/request/index';
 
-export function submitcomment(data) {
-  return reqest({
-    url: '/comment/submitcomment',
-    method: 'get',
-    data,
-    headers: {
-      uid: 1,
-      token: {}
-    }
-  })
-}
-
-// 测试接口
-export function StaffNotice(param) {
-  return request({
-    url: 'http://testadmin.beiqujy.com/apidata/admin/v2/StaffNotice/index',
-    data: {
-      question_bank_id: 14
-    },
-    header: {
-      token: 'eyJzdGFmZl9pZCI6MTY1LCJoZWFkX3Bob3RvIjoiIiwic3RhZmZfbmFtZSI6Ilx1NzllNlx1OWU0Zlx1N2EwYiIsImlzX3N1cGVyIjoxLCJkZXBhcnRtZW50X2lkIjoyMCwiaXNfZGlyZWN0b3IiOjAsInRpbWVfb3V0IjoxNjUwODY4OTY2fQ=='
-    },
-  })
-}
-
-// API docs http://showdoc.beiqujy.com/web/#/44
- 
+// API docs http://showdoc.beiqujy.com/web/#/44 
 
 // 课程分类
  export function courseCategory(data) {
@@ -120,6 +94,7 @@ export function courseCommentSubmit(data) {
   })
 }
 
+// 获取视频播放凭证
 export function courseGetVideoAuth(data) {
   return request({
     url: 'course/getVideoAuth',
@@ -130,6 +105,7 @@ export function courseGetVideoAuth(data) {
   })
 }
 
+// 学习记录 
 export function courseRecordLearn(data) {
   return request({
     url: 'course/learn',
@@ -140,6 +116,7 @@ export function courseRecordLearn(data) {
   })
 }
 
+// 收藏课程
 export function courseFavorites(data) {
   return request({
     url: 'course/favorites',
@@ -149,7 +126,7 @@ export function courseFavorites(data) {
   })
 }
 
-
+// 人脸验证
 export function faceUpload(data) {
   return request({
     url: 'course/faceUpload',
@@ -159,3 +136,14 @@ export function faceUpload(data) {
     nocatch: true
   })
 }
+
+// 生成证书
+export function buildLearnCert(data) {
+  return request({
+    url: 'course/buildLearnCert',
+    method: 'post',
+    data,
+    loading: false,
+  })
+}
+

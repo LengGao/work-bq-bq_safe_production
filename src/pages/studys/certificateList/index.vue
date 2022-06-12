@@ -10,84 +10,78 @@
     </view>
 
     <view class="cource-list" v-if="active === 0">
-      <template v-if="courseData.length">
-        <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up"
-                       :fixed="true" :topbar="true" :safearea="true">
-          <CardRow v-for="course in courseData" :key="course.id" class="cardrow-color">
-            <template v-slot:cardBodyLeft>
-              <view class="card-body-left">
-                <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg"
-                       mode="aspectFit" />
+      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
+                     :topbar="true" :safearea="true">
+        <CardRow v-for="course in courseData" :key="course.id" class="cardrow-color">
+          <template v-slot:cardBodyLeft>
+            <view class="card-body-left">
+              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" mode="aspectFit" />
+            </view>
+          </template>
+          <template v-slot:cardBodyRight>
+            <view class="card-body-right">
+              <view class="card-right-top">
+                <text>{{ course.title }}</text>
               </view>
-            </template>
-            <template v-slot:cardBodyRight>
-              <view class="card-body-right">
-                <view class="card-right-top">
-                  <text>{{ course.title }}</text>
+              <view class="card-right-footer">
+                <view class="time">
+                  <view class="tag tag-two" v-if="course.learning_progress >= 100">已学完</view>
+                  <view class="tag tag-three" v-else-if="course.learning_progress <= 0">未开始</view>
+                  <view class="tag tag-one" v-else>已学习 {{ course.learning_progress }}%</view>
                 </view>
-                <view class="card-right-footer">
-                  <view class="time">
-                    <view class="tag tag-two" v-if="course.learning_progress >= 100">已学完</view>
-                    <view class="tag tag-three" v-else-if="course.learning_progress <= 0">未开始</view>
-                    <view class="tag tag-one" v-else>已学习 {{ course.learning_progress }}%</view>
-                  </view>
-                  <view class="cost">
-                    <view class="tag tag-two-full" v-if="course.learning_progress >= 100"
-                          @click="() => onClickRecommend(source)">生成证书</view>
-                    <view class="tag tag-three-full" v-else-if="course.learning_progress <= 0"></view>
-                    <view class="tag tag-one-full" v-else @click="() => previewImg(course.cover)">查看证书</view>
-                  </view>
+                <view class="cost">
+                  <view class="tag tag-two-full" v-if="course.learning_progress >= 100"
+                        @click="() => buildLearnCert(course.id)">生成证书</view>
+                  <view class="tag tag-three-full" v-else-if="course.learning_progress <= 0"></view>
+                  <view class="tag tag-one-full" v-else @click="() => previewImg(course.cover)">查看证书</view>
                 </view>
               </view>
-            </template>
-          </CardRow>
-        </mescroll-body>
-      </template>
-      <template v-else>
-        <NoData />
-      </template>
+            </view>
+          </template>
+        </CardRow>
+      </mescroll-body>
     </view>
 
     <view v-else class="learn-certificate">
-      <template v-if="certificateData.length">
-        <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up"
-                       :fixed="true" :topbar="true" :safearea="true">
-          <view class="list-item" v-for="item in certificateData" :key="item.id">
-            <view class="list-item-title">{{ item.name }}</view>
-            <view class="list-item-time">获取时间：{{ item.time }}</view>
-            <view class="list-item-image-box">
-              <image class="image" @click="() => previewImg(item.thumb)" :src="item.thumb" mode="aspectFit" />
-            </view>
-            <view class="list-item-save">
-              <button class="btn-primary" @click="() => previewImg(item.thumb)" >点此长安保存证书</button>
-            </view>
+      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
+                     :topbar="true" :safearea="true">
+        <view class="list-item" v-for="item in certificateData" :key="item.id">
+          <view class="list-item-title">{{ item.title }}</view>
+          <view class="list-item-time">获取时间：{{ item.time }}</view>
+          <view class="list-item-image-box">
+            <image class="image" @click="() => previewImg(item.url)" :src="item.url" mode="aspectFit" />
           </view>
-        </mescroll-body>
-      </template>
-      <template v-else>
-        <NoData />
-      </template>
+          <view class="list-item-save">
+            <button class="btn-primary" @click="() => previewImg(item.url)">点此长安保存证书</button>
+          </view>
+        </view>
+      </mescroll-body>
     </view>
 
-    <popup ref="popup-progress" class="certificate-detail" >
+    <uni-popup ref="popup-progress" class="certificate-detail" :is-mask-click="false">
       <view class="main">
-        <view>您的证书正在生成</view>        
+        <view class="progress-title">您的证书正在生成</view>
+        <progress class="progress" :percent="percent" activeColor="#199fff" :border-radius="6" :duration="10" show-info
+                   @activeend="activeend" />
       </view>
-    </popup>
+    </uni-popup>
 
-    <popup ref="popup-certificate" class="certificate-detail" >
+    <uni-popup ref="popup-certificate" class="certificate-detail" :is-mask-click="false">
       <view class="main">
         <view class="section">
-          <view class="hader"></view>
-          <view class="certificate"></view>
-          <view class="close-icon"></view>
+          <view class="hader">太好啦，您的证书已生成</view>
+          <view class="certificate">
+            <image class="certificate" :src="downloadUrl" />
+          </view>
+          <view class="close-icon">
+            <uni-icons type="clear" size="56rpx" @click="onClose(2)"/>
+          </view>
         </view>
-        <view class="">
-          <button class="btn-primary" >请长安图片保存 </button>
+        <view class="footer">
+          <button class="btn-primary">请长安图片保存 </button>
         </view>
       </view>
-    </popup>
-
+    </uni-popup>
 
   </view>
 </template>
@@ -97,6 +91,9 @@ import CardRow from "@/components/card-row/index";
 import CustomHeader from "@/components/custom-header"
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import NoData from "@/components/noData/index"
+import { buildLearnCert } from "@/api/course"
+import { userCourseList, userCertList } from '@/api/user'
+
 
 export default {
   mixins: [MescrollMixin],
@@ -111,15 +108,14 @@ export default {
       active: 0,
       actives: [{ name: '学习课程', value: 0 }, { name: '我的证书', value: 1 }],
       up: { page: { num: 0, size: 1 } },
-      courseData: [
-        { id: 26, cover: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "已完成", learning_progress: 80, type: 'tag-one' },
-        { id: 27, cover: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", learning_progress: 100, type: 'tag-two' },
-        { id: 28, cover: "/static/img/study_cource1.png", title: "建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准 建筑设计防火规范标准", time: "12章24课时", tag: "未开始", learning_progress: 0, type: 'tag-three' }
-      ],
-      certificateData: [
-        { id: 1, name: '2022年复工复产线上培训', time: '2022-04-20 21:00:00', thumb: '../static/learnCertificate.png' },
-        { id: 2, name: '2021年安全管理员线上培训', time: '2022-04-20 21:00:00', thumb: '../static/learnCertificate.png' }
-      ]
+
+      courseData: [],
+      certificateData: [],
+
+      percent: 0,
+      timer: 0,
+      downloadTask: null,
+      downloadUrl: ''
     }
   },
   methods: {
@@ -132,34 +128,75 @@ export default {
       this.active = index
       this.reloadList()
     },
-    // 生成证书
-    onGenerator(item) {
-      console.log("item", item);
+    onViewCertificate(url) {
+      if (url) this.downloadUrl = uni
+      this.$refs['popup-certificate'].open('center')
+    },
+    onClose(target) {
+      if (target === 1) {
+        this.$refs['popup-progress'].close()
+      } else {
+        this.$refs['popup-certificate'].close()
+      }
+    },
+    generator(url) {
+      this.timer = setInterval(() => {
+        this.percent = this.percent + 10
+        if (this.percent >= 100) this.onActiveend();
+      }, 100)
+    },
+    onActiveend() {
+      if (this.percent >= 100) {
+        clearInterval(this.timer)
+        this.timer = null
+      }
+      this.onClose(1)
+      this.onViewCertificate()
     },
     reloadList(type) {
       this.mescroll.resetUpScroll(true)
     },
     downCallback() {
-      this.page.num = 0
-      this.upCallback(this.page)
+      this.mescroll.resetUpScroll(true)
     },
     async upCallback(page) {
-      // const data = {
-      //   page: page.num,
-      //   page_size: page.size,
-      // }
-      // const api = this.active ? courseList : courseList
-      // const res = await api(data)
-      // if (res.code !== 0) return this.mescroll.endBySize(0, 0);
-      // let curPageData = res.data.data;
-      // let curPageLen = curPageData.length;
-      // let totalSize = res.data.total;
-      // if (page.num == 1) this.courseData = [];
-      // this.courseData = this.courseData.concat(curPageData);
-      // this.mescroll.endBySize(curPageLen, totalSize);
-      this.mescroll.endBySize(1, 1);
-    },
+      const data = {
+        page: page.num,
+        page_size: page.size,
+      }
 
+      let curPageData, curPageLen, totalSize, res
+      if (this.active) {
+        res = await userCertList(data)
+        curPageData = res.data.data;
+        curPageLen = curPageData.length;
+        totalSize = res.data.total;
+        if (page.num == 1) this.certificateData = [];
+        this.certificateData = this.certificateData.concat(curPageData);
+      } else {
+        res = await userCourseList(data)
+        if (res.code !== 0) return this.mescroll.endBySize(0, 0);
+        curPageData = res.data.data;
+        curPageLen = curPageData.length;
+        totalSize = res.data.total;
+        if (page.num == 1) this.courseData = [];
+        this.courseData = this.courseData.concat(curPageData);
+      }
+
+      this.mescroll.endBySize(curPageLen, totalSize);
+    },
+    // 生成证书
+    async buildLearnCert(id) {
+      this.$refs['popup-progress'].open('center')
+      let res = await buildLearnCert({ course_id: id })
+      if (res.code === 0) {
+        this.downloadUrl = res.data.url
+        this.generator()
+      } else {
+        uni.showToast({ title: '证书生成失败', icon: 'name' })
+        this.onClose(1)
+      }
+    },
   }
 }
 </script>
@@ -192,13 +229,13 @@ export default {
 
 .cource-list {
   width: 100%;
-  padding: 24rpx 0;
+  padding: 20rpx 0;
   background-color: $bg-color-grey;
 
   .cardrow-color {
     margin-top: 20rpx;
-    background-color: #fff;
     padding: 30rpx;
+    background-color: #fff;
   }
 
   .card-body-left {
@@ -206,8 +243,8 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
-    flex: 1 1 1;
     height: 100%;
+    flex: 1;
     width: $img-size-width-md;
   }
 
@@ -222,7 +259,7 @@ export default {
     justify-content: space-between;
     align-items: flex-start;
     flex: 3 1 0;
-    height: 140rpx;
+    height: 100%;
     margin-left: 20rpx;
     font-size: $font-size-base;
     letter-spacing: 1rpx;
@@ -251,10 +288,14 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     width: 100%;
     font-size: $font-size-sm;
     color: $text-color-grey;
+
+    .cost {
+      font-size: $font-size-sm;
+    }
   }
 
   .audience {
@@ -274,8 +315,10 @@ export default {
   }
 
   .tag {
-    font-size: $font-size-sm;
+    position: relative;
+    top: -4rpx;
     padding: 6rpx;
+    font-size: $font-size-sm;
   }
 
   .tag-one {
@@ -371,11 +414,36 @@ export default {
       }
     }
   }
+}
 
-  .btn-primary {
-    font-size: 28rpx;
-    color: #fff;
-    background-color: #199fff;
+.progress {
+  width: 600rpx;
+}
+
+.progress-title {
+  font-size: 28rpx;
+  color: #fff;
+}
+
+::v-deep .uni-progress-info {
+  color: #fff;
+}
+.certificate-detail {
+
+  .close-icon {
+    margin-top: 20rpx;
+    text-align: center;
+  }
+
+  .footer {
+    position: relative;
+    top: 20vh;
+
+    .btn-primary {
+      font-size: 28rpx;
+      color: #fff;
+      background-color: #199fff;
+    }
   }
 }
 </style>
