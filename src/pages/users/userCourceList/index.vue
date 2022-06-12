@@ -1,11 +1,14 @@
 <template>
   <view class="user-cource-list">
+    <custom-header :title="defaultTitle"></custom-header>
+
+    <view class="list">
       <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
-                    :safearea="true">
-        <CardRow v-for="course in courseData" :key="course.id">
+                     :safearea="true">
+        <CardRow v-for="course in courseData" :key="course.id" class="card-row">
           <template v-slot:cardBodyLeft>
             <view class="card-body-left">
-              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" mode="aspectFit" />
+              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" />
             </view>
           </template>
           <template v-slot:cardBodyRight>
@@ -26,25 +29,30 @@
               <view class="card-right-footer">
                 <view class="cost">
                   <view class="tag tag-two" v-if="course.learning_progress >= 100">已学完</view>
-                  <view class="tag tag-three" v-else-if="course.learning_progress <= 0" >未开始</view>
-                  <view class="tag tag-one" v-else >已学习 {{ course.learning_progress || 0 }}%</view>
+                  <view class="tag tag-three" v-else-if="course.learning_progress <= 0">未开始</view>
+                  <view class="tag tag-one" v-else>已学习 {{ course.learning_progress || 0 }}%</view>
                 </view>
               </view>
             </view>
           </template>
         </CardRow>
-    </mescroll-body>
+      </mescroll-body>
+    </view>
   </view>
 </template>
 
 <script>
 import CardRow from "@/components/card-row/index";
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
-import { browser } from '@/mixins/index'
+import CustomHeader from "@/components/custom-header"
 import { userCourseList } from '@/api/user'
+
 export default {
-  mixins: [browser, MescrollMixin],
-  components: { CardRow },
+  mixins: [MescrollMixin],
+  components: {
+    CardRow,
+    CustomHeader
+  },
   data() {
     return {
       up: {
@@ -54,6 +62,7 @@ export default {
           time: 500,
         },
       },
+      defaultTitle: '我的课程',
       courseData: [],
     }
   },
@@ -79,7 +88,7 @@ export default {
       let curPageData = res.data.data;
       let curPageLen = curPageData.length;
       let totalSize = res.data.total;
-      if (page.num == 1) this.courseData = []; 
+      if (page.num == 1) this.courseData = [];
       this.courseData = this.courseData.concat(curPageData);
       this.mescroll.endBySize(curPageLen, totalSize);
     },
@@ -90,10 +99,18 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 
-
 .user-cource-list {
-  width: 100%;
-  padding: 24rpx 0;
+ width: 100%;
+ background-color: #f8f8f8;
+}
+
+.list {
+  padding: 0 30rpx;
+  
+  .card-row {
+    background-color: #fff;
+    margin-top: 20rpx;
+  }
 
   .card-body-left {
     position: relative;
@@ -131,22 +148,27 @@ export default {
     -webkit-box-orient: vertical;
     width: 100%;
     color: $text-color;
+    font-size: $font-size-base;
   }
 
   .card-right-center {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;;
+    justify-content: space-between;
     align-items: flex-start;
     width: 100%;
     font-size: $font-size-sm;
     color: $text-color-grey;
+    .time {
+      font-size: $font-size-sm;
+      color: $text-color-grey;
+    }
   }
 
   .card-right-footer {
     display: flex;
     flex-direction: row;
-    justify-content: space-between; 
+    justify-content: space-between;
     align-items: baseline;
     width: 100%;
     font-size: $font-size-sm;
@@ -189,5 +211,4 @@ export default {
     border-color: $text-color-grey;
   }
 }
-
 </style>

@@ -1,5 +1,7 @@
 <template>
   <view class="library-details">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="content">
       <view class="title">{{libraryData.title}}</view>
       <image v-if="libraryData.preview" :src="libraryData.preview" mode="scaleToFill" class="img" />
@@ -12,14 +14,17 @@
 </template>
 
 <script>
+import CustomHeader from "@/components/custom-header"
 import { libraryDetail } from "@/api/index";
 import { download_file_common, download_file_h5 } from '@/utils/api'
-import { browser } from '@/mixins/index'
 
 export default {
-  mixins: [browser],
+  components: {
+    CustomHeader
+  },
   data() {
     return {
+      defaultTitle: '资料详情',
       library_id: '',
       libraryData: {},
       open: false,

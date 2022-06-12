@@ -1,5 +1,6 @@
 <template>
   <view class="answer">
+    <custom-header :title="defaultTitle"></custom-header>
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex" :disable-touch="false"
@@ -45,6 +46,7 @@ import Indefinite from "../components/indefinite";
 import Completion from "../components/completion";
 import Short from "../components/short";
 import Case from "../components/case";
+import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
 
 import {
@@ -72,9 +74,12 @@ export default {
     Completion,
     Short,
     Case,
+    CustomHeader,
   },
   data() {
     return {
+      defaultTitle: '',
+
       prevIndex: -1,
       currentIndex: 0,
       duration: 300,
@@ -154,7 +159,7 @@ export default {
       this.source = source
       this.model = !!model ? +model : this.sourceMap[source]
 
-      uni.setNavigationBarTitle({ title })
+      this.defaultTitle = title
     },
 
     injectApi() {

@@ -1,36 +1,38 @@
 <template>
   <view class="policy-details">
-    <view class="title">{{ info.title || '--'}}</view>
-    <view class="subtitle">
-      <view class="left">
-        <text class="school">{{ info.source || '--' }}</text>
-        <text class="time">{{ info.create_time || '--' }}}</text>
+    <custom-header :title="defaultTitle"></custom-header>
+
+    <view class="main">
+      <view class="title">{{ info.title || '--'}}</view>
+      <view class="subtitle">
+        <view class="left">
+          <text class="school">{{ info.source || '--' }}</text>
+          <text class="time">{{ info.create_time || '--' }}}</text>
+        </view>
+        <view class="right">阅读{{ info.virtual_num}}</view>
       </view>
-      <view class="right">阅读{{ info.virtual_num}}</view>
     </view>
 
     <view class="textarea">
       <u-parse :content="info.content || '--'" />
     </view>
-
   </view>
 </template>
 
 <script>
 import uParse from "@/components/gaoyia-parse/parse.vue";
-import { browser } from '@/mixins/index'
+import CustomHeader from "@/components/custom-header"
 import { articleDetail } from "@/api/index";
 export default {
-  mixins: [browser],
   components: {
-    uParse
+    uParse,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '政策详情',
       article_id: '',
-      info: {
-        content: ''
-      }
+      info: { content: '' }
     }
   },
   onLoad(query) {
@@ -38,8 +40,8 @@ export default {
     this.getData()
   },
   methods: {
-   async getData() {
-    const res = await articleDetail({ article_id: this.article_id }) 
+    async getData() {
+      const res = await articleDetail({ article_id: this.article_id })
       if (res.code == 0) {
         this.info = res.data
       }
@@ -51,7 +53,11 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 .policy-details {
+  width: 100%;
   overflow: hidden;
+}
+
+.main {
   padding: 30rpx;
 }
 
@@ -83,6 +89,7 @@ export default {
 
 .textarea {
   margin-top: 20rpx;
+  padding: 0 30rpx;
   line-height: 2;
 }
 </style>

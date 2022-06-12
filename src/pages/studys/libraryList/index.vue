@@ -1,5 +1,7 @@
 <template>
   <view class="library-list">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="search-bar">
       <uni-search-bar v-model="keyword" placeholder="请输入您想要搜索的关键词" bgColor="#fff" cancelButton="none" 
         @confirm="onSearch" @clear="onClear"  @cancel="onCancel" />
@@ -23,17 +25,19 @@
 
 <script>
 import CardRow from "@/components/card-row/index";
+import CustomHeader from "@/components/custom-header"
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
-import { browser } from '@/mixins/index'
-import {
-  libraryList
-} from '@/api/index'
+import { libraryList } from '@/api/index'
 
 export default {
-  mixins: [browser,MescrollMixin],
-  components: { CardRow },
+  mixins: [MescrollMixin],
+  components: { 
+    CardRow,
+    CustomHeader,
+  },
   data() {
     return {
+      defaultTitle: '文库列表',
       up: {
         page: {
           num: 0,
@@ -99,19 +103,21 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
-$page-padding: 16rpx 20rpx 0;
-
 .library-list {
-  padding: $page-padding;
   height: 100%;
   background-color: #f8f8f8;
 }
 
+.search-bar {
+  margin: 10rpx 14rpx;
+}
+
 .list {
+  padding: 0 30rpx;
   height: 100%;
 
   &-item {
-    margin-top: 26rpx;
+    margin-top: 20rpx;
     background-color: #fff;
   }
 

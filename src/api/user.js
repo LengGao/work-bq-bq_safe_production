@@ -39,6 +39,14 @@ export function renewal(data) {
     })
 }
 
+export function agreement(data) {
+    return request({
+        url: 'HelpCenter/agreement',
+        method: 'post',
+        data
+    })
+}
+
 export function userCourseFavorite(data) {
     return request({
         url: 'user/courseFavorite',

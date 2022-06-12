@@ -1,5 +1,7 @@
 <template>
   <view class="answer-sheet">
+    <custom-header :title="defaultTitle"></custom-header>
+    
     <Header :model="model" />
     <view class="content">
       <view v-for="(item, type) in list" :key="type">
@@ -31,6 +33,7 @@ import Header from "../components/header/index";
 import Footer from "../components/footer/index";
 import Title from "../components/title/index";
 import Circular from "../components/circular/index";
+import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
 import { 
   wrongAnswerSheet,
@@ -48,9 +51,12 @@ export default {
     Header,
     Footer,
     Circular,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '答题卡',
+      
       chapter_id: 0, 
       exam_log_id: 0,
       question_id: 0,

@@ -1,5 +1,7 @@
 <template>
   <view class="answer">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <uni-notice-bar v-if="notice" scrollable single showIcon color="#E2E227" background-color="#f8f8f8"
                     text="在考试过程中不得弄虚作假，严禁采用任何作弊手段，遵纪守法，保证考试数据真实可信。"></uni-notice-bar>
                     
@@ -32,6 +34,7 @@ import Indefinite from "../components/indefinite/index";
 import Completion from "../components/completion/index";
 import Short from "../components/short/index";
 import AnswerBar from "../components/answerBar/index"
+import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
 
 import {
@@ -51,9 +54,11 @@ export default {
     Completion,
     Short,
     AnswerBar,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '随堂练习',
       lesson_id: 0,
       course_id: 0,
 
@@ -225,9 +230,10 @@ export default {
 <style lang="scss" scoped>
 .answer {
   height: 100%;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+
   .swiper {
     width: 100%;
     height: 100%;

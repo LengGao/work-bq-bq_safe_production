@@ -1,5 +1,7 @@
 <template>
   <view class="feedback">
+    <custom-header :title="defaultTitle"></custom-header>
+    
     <view class="head">
       <image src="https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/feedback_bg_head.png" mode="aspectFit" class="head-bg_img" />
     </view>
@@ -21,11 +23,15 @@
 </template>
 
 <script>
-import { browser } from '@/mixins/index'
+import CustomHeader from "@/components/custom-header"
+
 export default {
-  mixins: [browser],
+  components: {
+    CustomHeader
+  },
   data() {
     return {
+      defaultTitle: '意见反馈',
       list: [
         { id: 1, title: '找不到已经购买的课程？', url: "" },
         { id: 2, title: '手机听课出现卡顿怎么办？', url: "" },

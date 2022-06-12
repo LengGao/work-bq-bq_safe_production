@@ -1,5 +1,7 @@
 <template>
   <view class="result">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="header">
       <view v-if="pass" class="header-row-one success">
         <uni-icons custom-prefix="iconfont" type="icon-gou" color="#49D204" size="64rpx" style="margin-bottom: 20rpx" />
@@ -37,20 +39,23 @@
         <button class="footer-second-btn" @click="() => onRestart('examination')">再考一次</button>
       </view>
     </view>
-
   </view>
-
 </template>
 
 <script>
+import CustomHeader from "@/components/custom-header"
 import { practiceSubmit } from "@/api/question";
 import { browser } from '@/mixins/index'
 
 export default {
   name: 'result',
   mixins: [browser],
+  components: {
+    CustomHeader
+  },
   data() {
     return {
+      defaultTitle: '随堂考试',
       victoryText: '恭喜您，成功通过本次考试！',
       defeatText: '很遗憾，您并没有通过本次考试！',
 

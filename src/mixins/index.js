@@ -5,7 +5,7 @@ export const browser = {
       isMiniapp: false,
     }
   },
-  beforeCreate() {
+  created() {
     if (navigator) {
       let browser = navigator.userAgent.toLowerCase()
       if (browser.indexOf('micromessenger') !== -1 ) {

@@ -3,6 +3,7 @@
     <!-- #ifdef MP-WEIXIN -->
     <official-account @load="onbindload" @error="onbinderror" :hidden="isHidden"></official-account>
     <!-- #endif -->
+    <custom-header :title="defaultTitle"></custom-header>
 
     <view class="filter">
       <view class="filter-left" @click="onOpenFilter">
@@ -11,7 +12,7 @@
         <uni-icons type="bottom" size="32rpx" />
       </view>
       <view class="filter-right">
-        <uni-icons type="search" size="40rpx" @click="onOpenSearch" />
+        <uni-icons type="search" size="36rpx" @click="onOpenSearch" />
       </view>
     </view>
 
@@ -157,10 +158,12 @@
 
 <script>
 import CardRow from "@/components/card-row/index";
+import CustomHeader from "@/components/custom-header"
 import NoData from '@/components/noData/index'
 import RegionChange from './components/RegionChange'
 import { mapGetters } from 'vuex'
 import { browser } from '@/mixins/index'
+
 import {
   systemRegion,
   banner,
@@ -175,11 +178,13 @@ export default {
   components: {
     CardRow,
     NoData,
+    CustomHeader,
     RegionChange
   },
   data() {
     return {
       isHidden: false,
+      defaultTitle: '安培课堂',
 
       swipers: [],
       businesses: [
@@ -246,7 +251,7 @@ export default {
           uni.hideTabBar()
           this.$refs['popup-org'].open('bottom')
         } else {
-          uni.setNavigationBarTitle({ title: list[0].name })
+          this.defaultTitle = list[0].name
           this.$store.dispatch('setOrgCurrent', list[0])
         }
       }
@@ -257,7 +262,7 @@ export default {
       this.$store.dispatch('setOrgCurrent', item)
       this.$refs['popup-org'].close()
       uni.showTabBar()
-      uni.setNavigationBarTitle({ title: item.name })
+      this.defaultTitle = item.name
     },
     // 点击筛选
     onOpenFilter() {
@@ -372,7 +377,6 @@ export default {
       let is_recommend = 1
       let page = 1
       let pageSize = 10
-      // region_id，
       let param = { is_recommend, page, pageSize }
       let res = await libraryList(param)
       if (res.code === 0) {
@@ -407,7 +411,6 @@ $padding-lr: 30rpx;
   height: 100%;
   overflow: hidden;
   overflow-y: scroll;
-  padding: $padding-tb 0;
 }
 
 .filter {
@@ -416,6 +419,7 @@ $padding-lr: 30rpx;
   align-items: flex-start;
   padding: $padding-tb $padding-lr;
   font-size: $font-size-base;
+  line-height: 56rpx;
   color: $text-color;
 
   &-left {
@@ -654,7 +658,6 @@ $padding-lr: 30rpx;
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  // padding-bottom: var(--window-bottom);
   z-index: 999;
 
   &-title {

@@ -1,5 +1,7 @@
 <template>
   <view class="course-list">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="mescroll-box">
       <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
                      :topbar="true" :safearea="true">
@@ -36,14 +38,14 @@
 
 <script>
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
-import { browser } from '@/mixins/index'
-import {
-  userCourseFavorite,
-} from '@/api/user'
+import CustomHeader from "@/components/custom-header"
+import { userCourseFavorite } from '@/api/user'
 
 export default {
-  mixins: [browser, MescrollMixin],
-  components: { },
+  mixins: [MescrollMixin],
+  components: {
+    CustomHeader,
+  },
   data() {
     return {
       up: {
@@ -53,7 +55,7 @@ export default {
           time: 500,
         },
       },
-
+      defaultTitle: '课程收藏',
       region_id: 0,
       courseData: [],
     };

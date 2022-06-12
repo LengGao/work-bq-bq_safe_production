@@ -1,5 +1,7 @@
 <template>
   <view class="examination">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="logan-list-head">
       <view class="logan-list-head-left" @click="onCandidates">
         <text>{{ activeQuestionBank }}</text>
@@ -81,6 +83,7 @@
 <script>
 import ExaminationCard from './components/ExaminationCard'
 import { browser, userStatus } from '@/mixins/index'
+import CustomHeader from "@/components/custom-header"
 import {
   getQuestionBankList,
   getDailyStatistics
@@ -89,10 +92,12 @@ import {
 export default {
   mixins: [browser, userStatus],
   components: {
-    ExaminationCard
+    ExaminationCard,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '安培学堂',
       // 组合框
       currentCandidates: 0,
       candidates: [],
@@ -218,7 +223,6 @@ $padding-lr: 30rpx;
   height: 100%;
   overflow: hidden;
   overflow-y: scroll;
-  padding: $padding-tb 0;
 }
 
 .head-swiper {

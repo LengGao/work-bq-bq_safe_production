@@ -1,5 +1,7 @@
 <template>
   <view class="feedback-submit">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <form @submit="onSubmit" @reset="onReset">
       <view class="form-item">
         <view class="title">请选择建议类型</view>
@@ -27,12 +29,15 @@
 
 <script>
 import { feedback, uploadImage } from "@/api/user"
-import { browser } from '@/mixins/index'
+import CustomHeader from "@/components/custom-header"
 
 export default {
-  mixins: [browser],
+  components: {
+    CustomHeader,
+  },
   data() {
     return {
+      defaultTitle: '意见反馈',
       types: [
         { text: '课程建议', value: 1 },
         { text: '功能建议', value: 2 },

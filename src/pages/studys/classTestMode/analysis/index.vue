@@ -1,5 +1,7 @@
 <template>
   <view class="answer">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex">
@@ -29,6 +31,7 @@ import Indefinite from "../components/indefinite/index";
 import Completion from "../components/completion/index";
 import Short from "../components/short/index";
 import answerBar from "../components/answerBar/index"
+import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
 
 import {
@@ -47,9 +50,11 @@ export default {
     Completion,
     Short,
     answerBar,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '随堂练习',
       practice_id: '',
       lesson_id: '',
       next_lesson_id: '',

@@ -12,7 +12,7 @@
       <div class="dropdown-select-option" @click="handleClick(item.value)"
            :class="{'dropdown-select-option--active':item.value === value}" v-for="item in list" :key="item.value">
         <div> {{item.name}}</div>
-        <uni-icons type="checkmarkempty" v-show="item.value === value" color="#199fff" size="28rpx"></uni-icons>
+        <uni-icons type="checkmarkempty" v-if="item.value === value" color="#199fff" size="28rpx"></uni-icons>
       </div>
     </div>
   </div>
@@ -54,6 +54,7 @@ export default {
   },
   created() {
     this.normalizeData(this.nodeList)
+    console.log('created', this.show);
   },
   computed: {
     activeName() {
@@ -72,6 +73,7 @@ export default {
       this.hanldeToggle()
     },
     hanldeToggle() {
+      console.log('hanldeToggle', this.show);
       this.show = !this.show
     },
     normalizeData(list) {
@@ -127,7 +129,7 @@ export default {
     padding: 0 20rpx;
     box-sizing: border-box;
     transition: transform 300ms ease 0ms;
-    transform: translateY(-120%);
+    transform: translateY(-200%);
     background-color: #fff;
     &--popup {
       transform: translateY(0);

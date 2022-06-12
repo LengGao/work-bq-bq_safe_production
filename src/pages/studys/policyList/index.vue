@@ -1,11 +1,13 @@
 <template>
   <view class="policy-list">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="list">
      <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true">
         <CardRow v-for="policy in policys" :key="policy.id" class="list-item">
           <template v-slot:cardBodyLeft>
             <view class="logan-card-body-left">
-              <image class="logan-img-size-lg" :src="policy.cover || defaultCover" mode="aspectFit" @click="previewImg(policy.cover)" />
+              <image class="logan-img-size-lg" :src="policy.cover || defaultCover" @click="previewImg(policy.cover)" />
             </view>
           </template>
           <template v-slot:cardBodyRight>
@@ -17,7 +19,7 @@
               <view class="logan-card-right-footer">
                 <view class="audience">
                   <uni-icons type="person" size="24rpx" />
-                  <text style="margin-left: 10rpx">{{ policy.virtual_num }}人看过</text>
+                  <text class="audience-text">{{ policy.virtual_num }}人看过</text>
                 </view>
               </view>
             </view>
@@ -25,24 +27,24 @@
         </CardRow>
       </mescroll-body>
     </view>
-
   </view>
-
 </template>
 
 <script>
-
 import CardRow from "@/components/card-row/index";
+import CustomHeader from "@/components/custom-header"
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import defaultCover from '@/static/no-data.png'
-import { browser } from '@/mixins/index'
 import {
   articleList
 } from  '@/api/index'
 
 export default {
-  mixins: [browser, MescrollMixin],
-  components: { CardRow },
+  mixins: [MescrollMixin],
+  components: {
+    CardRow,
+    CustomHeader
+  },
   data() {
     return {
       up: {
@@ -52,6 +54,7 @@ export default {
           time: 500,
         },
       },
+      defaultTitle: '政策列表',
       defaultCover: defaultCover,
       policys: [],
     }
@@ -95,17 +98,20 @@ export default {
 @import "@/styles/logan.scss";
 
 .policy-list {
-  padding: 20rpx;
   height: 100%;
   background-color: $bg-color-list;
 }
 
 .list {
-  border-top: $logan-border-spacing-md;
+  padding: 20rpx;
   
   .list-item {
     margin-top: 20rpx;
     background-color: #fff;
+  }
+
+  .logan-card-right-top {
+    font-size: $font-size-base;
   }
 
   .logan-card-right-center {
@@ -118,7 +124,11 @@ export default {
   }
 
   .audience {
+    font-size: $font-size-sm;
     color: $color-primary;
+    &-text {
+      margin-left: 10rpx;
+    }
   }
 
   .present-price {

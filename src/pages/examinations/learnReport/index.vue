@@ -3,7 +3,7 @@
     <view class="learn-report-header">
       <view class="status_bar"></view>
       <view class="nav-bar">
-        <uni-icons class="nav-bar-back" type="back" @click="goBack" color="#fff" size="20"></uni-icons>
+        <uni-icons class="nav-bar-back" type="back" @click="goBack" color="#fff" size="16px"></uni-icons>
         <text class="nav-bar-title">学习报告</text>
       </view>
     </view>
@@ -281,10 +281,10 @@ export default {
       width: 100%;
     }
     .nav-bar {
-      height: 44px;
-      font-size: $uni-font-size-base;
       display: flex;
-      align-items: center;
+      height: 44px;
+      line-height: 44px;
+      font-size: 16px;
       color: #fff;
       &-back {
         padding: 0 20rpx;

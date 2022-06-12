@@ -1,5 +1,7 @@
 <template>
   <view class="course-list">
+    <custom-header :title="defaultTitle"></custom-header>
+    
     <view class="course-list-header">
       <DropdownFilter class="picker" v-if="categoryData.length" :nodeList="categoryData" v-model="category_id"
                       @change="(val) => reloadList('category', val)" />
@@ -43,7 +45,8 @@
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import DropdownFilter from '@/components/dropdown-filter'
 import DropdownSelect from '@/components/dropdown-select'
-import { browser } from '@/mixins/index'
+import CustomHeader from "@/components/custom-header";
+
 import {
   courseCategory,
   courseList,
@@ -51,14 +54,16 @@ import {
 } from '@/api/course'
 
 export default {
-  mixins: [browser, MescrollMixin],
+  mixins: [MescrollMixin],
   components: {
     DropdownFilter,
-    DropdownSelect
+    DropdownSelect,
+    CustomHeader
   },
   data() {
     return {
-      // mescroll
+      defaultTitle: '课程列表',
+
       up: {
         page: {
           num: 0,

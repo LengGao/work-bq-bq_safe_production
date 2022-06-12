@@ -1,5 +1,7 @@
 <template>
   <view class="certificate-list">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="header">
       <view class="option" v-for="(item,index) in actives" :key="index" :class="active === index ? 'active' : ''"
             @click="() => onChange(index)">
@@ -92,18 +94,20 @@
 
 <script>
 import CardRow from "@/components/card-row/index";
+import CustomHeader from "@/components/custom-header"
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import NoData from "@/components/noData/index"
-import { browser } from '@/mixins/index'
 
 export default {
-  mixins: [browser, MescrollMixin],
+  mixins: [MescrollMixin],
   components: {
     CardRow,
-    NoData
+    NoData,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '我的课程证书',
       active: 0,
       actives: [{ name: '学习课程', value: 0 }, { name: '我的证书', value: 1 }],
       up: { page: { num: 0, size: 1 } },

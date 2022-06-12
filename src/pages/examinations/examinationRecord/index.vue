@@ -1,45 +1,48 @@
 <template>
   <view class="examination-record">
+    <custom-header :title="defaultTitle" backgroundColor="transparent"></custom-header>
+
     <image class="b-img" src="../static/mock-background.png"></image>
     <view class="examination-record-content">
-      <!-- <scroll-view class="record-list" scroll-y @scrolltolower="onScrolltolower"> -->
-        <template v-if="list.length">
-          <view class="record-list-item" v-for="item in list" :key="item.id">
-            <view class="record-info" @click="() => toAnswer(item)">
-              <view class="record-info-title">
-                <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx" />
-                <view class="title van-ellipsis">{{ item.title }}</view>
-              </view>
-              <view class="record-info-date">
-                <text class="date">{{ item.create_time }}</text>
-                <text class="num">题目数量：{{ item.total_question_num }}</text>
-                <text>得分：<text class="number">{{ item.score }}</text></text>
-              </view>
+      <template v-if="list.length">
+        <view class="record-list-item" v-for="item in list" :key="item.id">
+          <view class="record-info" @click="() => toAnswer(item)">
+            <view class="record-info-title">
+              <uni-icons custom-prefix="iconfont" type="icon-jilu" size="28rpx" />
+              <view class="title van-ellipsis">{{ item.title }}</view>
             </view>
-            <view>
-              <uni-icons custom-prefix="iconfont" type="icon-pagenext" color="#ddd" size="28rpx"></uni-icons>
+            <view class="record-info-date">
+              <text class="date">{{ item.create_time }}</text>
+              <text class="num">题目数量：{{ item.total_question_num }}</text>
+              <text>得分：<text class="number">{{ item.score }}</text></text>
             </view>
           </view>
-        </template>
-        <NoData top="35%" v-else>暂无考试记录</NoData>
-      <!-- </scroll-view> -->
+          <view>
+            <uni-icons custom-prefix="iconfont" type="icon-pagenext" color="#ddd" size="28rpx"></uni-icons>
+          </view>
+        </view>
+      </template>
+      <NoData top="35%" v-else>暂无考试记录</NoData>
     </view>
   </view>
 </template>
 
 <script>
 import NoData from "@/components/noData";
-import { mockExamList } from "@/api/question";
+import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
+import { mockExamList } from "@/api/question";
 
 export default {
   name: "examinationRecord",
   mixins: [browser],
   components: {
     NoData,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '考试记录',
       list: [],
       total: 0,
       page: 1,
@@ -50,16 +53,14 @@ export default {
   },
   onLoad() {
     this.getMockExamHistory()
-    this.isOnload = true
   },
 
   onShow() {
-    if (!this.isOnload) {
-      setTimeout(() => { 
+    if (this.isOnload) {
         this.getMockExamHistory()
-      }, 800)
-    }
-    this.isOnload = false
+    } else {
+      this.isOnload = true
+    }   
   },
   methods: {
     async toAnswer({ id, title }) {

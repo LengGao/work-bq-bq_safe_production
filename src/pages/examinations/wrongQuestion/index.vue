@@ -1,5 +1,7 @@
 <template>
   <view class="wrong-question">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <uni-notice-bar v-if="isShow" show-icon text="答对一次后自动移除错题 " />
     <template v-if="list.length">
     <view class="wrong-question-list-item" v-for="item in list" :key="item.id">
@@ -12,11 +14,11 @@
     </template>
     <NoData top="35%" v-else>暂无考试记录</NoData>
   </view>
-
 </template>
 
 <script>
 import NoData from "@/components/noData/index";
+import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
 import { wrongChapterList, restartPractice } from "@/api/question";
 
@@ -24,10 +26,12 @@ export default {
   name: "wrongQuestion",
   mixins: [browser],
   components: {
-    NoData
+    NoData,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '错题集',
       list: [],
       isOnload: false,
       isShow: true,
@@ -38,12 +42,11 @@ export default {
     this.isOnload = true
   },
   onShow() {
-    if (!this.isOnload) {
-      setTimeout(() => { 
-        this.wrongChapterList()
-      }, 800)
+    if (this.isOnload) {
+      this.wrongChapterList()
+    } else {
+      this.isOnload = true
     }
-    this.isOnload = false
   },
   methods: {
     getPath(url, query) {

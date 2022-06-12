@@ -1,20 +1,21 @@
 <template>
-<view class="about-us">
-  <uParse  :content="content || '--'" ></uParse>
-</view>
+  <view class="about-us">
+    <custom-header :title="defaultTitle"></custom-header>
+    <uParse :content="content || '--'"></uParse>
+  </view>
 </template>
 
 <script>
-import uParse from "@/components/gaoyia-parse/parse.vue";
-import { browser } from '@/mixins/index'
+import CustomHeader from "@/components/custom-header"
 import { aboutUs } from "@/api/user"
+
 export default {
-  mixins: [browser],
   components: {
-    uParse
+    CustomHeader,
   },
   data() {
     return {
+      defaultTitle: '关于我们',
       content: ''
     }
   },
@@ -23,7 +24,7 @@ export default {
   },
   methods: {
     async aboutUs() {
-      let res = await aboutUs() 
+      let res = await aboutUs()
       if (res.code === 0) {
         this.content = res.data
       }
@@ -44,5 +45,4 @@ export default {
 .none {
   padding: 50% 50%;
 }
-
 </style>

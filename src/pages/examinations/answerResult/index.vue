@@ -1,5 +1,7 @@
 <template>
   <view class="test-results">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="results-header">
       <view class="score">
         <image class="score-img" src="@/pages/examinations/static/icon-water.png" />
@@ -30,7 +32,7 @@
             <template v-for="(parent, parentIndex) in item">
               <Circular v-for="(child, index) in parent.child" :key="child.id"
                         :type="statusMap[model][child.is_answered]" @click="onSelect(type, parentIndex)">
-                {{parentIndex + 1}}-{{ index + 1 }}
+                  {{parentIndex + 1}}-{{ index + 1 }}
               </Circular>
             </template>
           </template>
@@ -43,6 +45,7 @@
         </view>
       </view>
     </view>
+
     <view class="results-footer">
       <view class="btn" @click="handleClick">查看全部解析</view>
     </view>
@@ -54,8 +57,9 @@ import Header from "../components/header/index";
 import Footer from "../components/footer/index";
 import Title from "../components/title/index";
 import Circular from "../components/circular/index";
+import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
-import { getExamResult } from "@/api/question";
+import { getExamResult } from "@/api/question"
 
 export default {
   name: "answerSheet",
@@ -65,9 +69,11 @@ export default {
     Header,
     Footer,
     Circular,
+    CustomHeader,
   },
   data() {
     return {
+      defaultTitle: '考试结果',
       model: 0,
       exam_log_id: 0,
       question_bank_id: 0,
@@ -176,14 +182,16 @@ export default {
 </script>
 <style lang="scss" scoped>
 .test-results {
-  padding: 40rpx;
-  padding-bottom: 160rpx;
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+
   .results-header {
-    padding: 35rpx 20rpx 35rpx 35rpx;
-    border-radius: 16rpx;
-    box-shadow: 0 0 10rpx rgba(93, 207, 255, 0.3);
     display: flex;
-    margin-bottom: 60rpx;
+    margin: 60rpx 0;
+    padding: 35rpx 20rpx 35rpx 35rpx;
+    box-shadow: 0 0 10rpx rgba(93, 207, 255, 0.3);
+    border-radius: 16rpx;
     .score {
       width: 266rpx;
       height: 230rpx;
@@ -256,26 +264,31 @@ export default {
       }
     }
   }
+
   .results-container {
+    padding: 0 40rpx 60rpx;
+    height: 1000rpx;
+    overflow: scroll;
+
     .circular-list {
       display: flex;
       flex-wrap: wrap;
     }
   }
+
   .results-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 0 20rpx;
-    border-top: $uni-border;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
     height: 100rpx;
+    padding-right: 20rpx;
     padding-bottom: constant(safe-area-inset-bottom);
     padding-bottom: env(safe-area-inset-bottom);
+    padding-left: 20rpx;
+    border-top: $uni-border;
     background-color: #fff;
+    box-sizing: border-box;
     .btn {
       color: #fff;
       background-color: $uni-color-primary;

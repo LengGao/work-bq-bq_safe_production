@@ -1,5 +1,7 @@
 <template>
   <view class="study">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="header">
       <view class="header-one">
         <image class="header-one-img" :src="titleBg" mode="scaleToFill" />
@@ -43,7 +45,7 @@
         <CardRow v-for="course in courseData" :key="course.id">
           <template v-slot:cardBodyLeft>
             <view class="card-body-left">
-              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" mode="aspectFit" />
+              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" />
             </view>
           </template>
           <template v-slot:cardBodyRight>
@@ -85,6 +87,7 @@
 <script>
 import CardRow from "@/components/card-row/index";
 import NoData from "@/components/noData/index"
+import CustomHeader from "@/components/custom-header"
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import { browser, userStatus } from '@/mixins/index'
 import { userCourseList } from '@/api/user'
@@ -94,9 +97,11 @@ export default {
   components: {
     CardRow,
     NoData,
+    CustomHeader,
   },
   data() {
     return {
+      defaultTitle: '安培课堂',
       isFinish: false,
       page: { num: 0, size: 1 },
 
@@ -187,8 +192,8 @@ export default {
 $padding: 16rpx 30rpx;
 
 .study {
+  width: 100%;
   height: 100%;
-  padding: 16rpx 0;
 }
 
 .header {

@@ -1,10 +1,11 @@
 <template>
   <view class="user">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="user-header">
       <view class="user-card">
         <UserInfo :info="userInfo" :orgInfo="orgInfo" :isLogin="isLogin" @login="login" />
         <view class="card-setting">
-          <!-- <uni-icons customPrefix="iconfont" type="icon-xiaoxi" color="#fff" size="42rpx" /> -->
           <uni-icons v-if="isLogin" customPrefix="iconfont" type="icon-tuichu" color="#fff" size="40rpx" class="card-setting-icon"
                      @click="loginlout" />
         </view>
@@ -37,6 +38,7 @@
 
 <script>
 import UserInfo from "./components/userInfo";
+import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
 import { mapGetters } from 'vuex'
 
@@ -44,9 +46,11 @@ export default {
   mixins: [browser],
   components: {
     UserInfo,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '个人中心',
       loading: false,
       gridIndex: 0,
       grids: [
@@ -117,12 +121,12 @@ export default {
 $page-padding: 0rpx 20rpx;
 
 .user {
-  height: 100%;
-  overflow-y: auto;
+  width: 100%;
 }
 
 .user-header {
   height: 330rpx;
+  margin-top: -2rpx;
   width: 100%;
   background-image: url("/static/img/user_bg_head.png");
   background-size: 100% 100%;
@@ -150,7 +154,7 @@ $page-padding: 0rpx 20rpx;
 
 .grids {
   position: absolute;
-  top: 190rpx;
+  top: 268rpx;
   margin: 0 40rpx;
   width: calc(100% - 80rpx);
   height: 190rpx;

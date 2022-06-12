@@ -1,5 +1,7 @@
 <template>
   <view class="login">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <view class="form">
       <image :src="logImag" class="header-logo" mode="aspectFit" />
       <view class="input-box">
@@ -40,12 +42,17 @@
 
 <script>
 import logImag from "@/static/logo.png"
+import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
 
 export default {
   mixins: [browser],
+  components: {
+    CustomHeader
+  },
   data() {
     return {
+      defaultTitle: '登录',
       // username: '13535019471',
       // password: '123456',
       username: '430481199706297215',

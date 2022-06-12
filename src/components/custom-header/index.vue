@@ -1,22 +1,22 @@
 <template>
-  <view class="custom-header">
-    <!-- #ifdef H5 -->
+  <view class="custom-header" v-if="!isWeixinJSBridge">
     <view class="status_bar"></view>
-    <view class="nav-bar" :style="{'background-color':  backgroundColor }">
-      <uni-icons class="nav-bar-back" type="back" @click="goBack" color="#fff" size="28rpx"></uni-icons>
+    <view class="nav-bar" :style="{'background-color':  backgroundColor }">    
+      <uni-icons class="nav-bar-back" type="back" color="#fff" size="16px" @click="goBack" />
       <slot name="title"><text class="nav-bar-title"> {{ title }} </text></slot>
     </view>
-    <!-- #endif --->
   </view>
 </template>
 
 <script>
+import { browser } from '@/mixins/index'
 export default {
   name: 'custom-header',
+  mixins: [browser],
   props: {
     title: {
       type: String,
-      default: ''
+      default: '安培课堂'
     },
     customClass: {
       type: String,
@@ -31,14 +31,12 @@ export default {
       default: '#199fff'
     },
     prevFunction: {
-      type: Function,
-      default: () => { return false }
+      type: Function
     }
   },
   methods: {
     goBack() {
-      // transparent
-      if (this.prevFunction()) return;
+      if (this.prevFunction && !this.prevFunction()) { return; }
       let pages = getCurrentPages()
       if (pages.length > 1) {
         uni.navigateBack()
@@ -52,6 +50,7 @@ export default {
 
 <style lang="scss" scoped>
 .custom-header {
+  position: relative;
   width: 100%;
 
   .status_bar {
@@ -61,20 +60,22 @@ export default {
 
   .nav-bar {
     display: flex;
-    align-items: center;
     height: 44px; // 固定值
-    font-size: 32rpx;
+    font-size: 16px;
+    line-height: 44px;
     color: #fff;
+    padding-left: 10px;
 
     &-back {
-      padding: 0 20rpx;
+      z-index: 99;
     }
 
     &-title {
-      margin: 0 auto;
-      padding-right: 60rpx;
+      flex: 1;
+      margin-left: -26px;
+      text-align: center;
+      z-index: 90;
     }
   }
 }
-
 </style>

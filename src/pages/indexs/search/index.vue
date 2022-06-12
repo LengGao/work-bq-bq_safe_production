@@ -1,5 +1,7 @@
 <template>
   <view class="search">
+    <custom-header :title="defaultTitle"></custom-header>
+    
     <uni-search-bar v-model="keyword" :radius="24" placeholder="搜索您感兴趣的课程" @confirm="onSearch" @clear="onClear" @cancel="onCancel"></uni-search-bar>
     <view class="history" v-if="showRecond">
       <view class="head">
@@ -60,6 +62,7 @@
 
 <script>
 import CardRow from "@/components/card-row/index";
+import CustomHeader from "@/components/custom-header"
 import MescrollMixin from "@/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-mixins.js";
 import { browser } from '@/mixins/index'
 import {
@@ -71,10 +74,12 @@ import {
 export default {
   mixins: [browser, MescrollMixin],
   components: {
-    CardRow
+    CardRow,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '安培课堂',
       showRecond: true,
       keyword: '',
       region_id: '',

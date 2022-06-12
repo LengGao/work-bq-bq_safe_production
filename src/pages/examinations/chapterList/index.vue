@@ -1,6 +1,6 @@
 <template>
   <view class="chapter">
-    <CustomHeader backgroundColor="transparent"></CustomHeader>
+    <CustomHeader backgroundColor="transparent" title="章节练习"></CustomHeader>
     <image class="b-img" src="../static/chapter-background2.png" mode="aspectFit"></image>
     <view class="chapter-box">
       <scroll-view class="record-list" scroll-y @scrolltolower="onScrolltolower">
@@ -55,13 +55,13 @@ export default {
   },
   onLoad() {
     this.getChapterList();
-    this.isOnload = true;
   },
   onShow() {
-    if (!this.isOnload) {
-      setTimeout(() => {this.getChapterList();}, 800);
+    if (this.isOnload) {
+      this.getChapterList()
+    } else {
+      this.isOnload = true
     }
-    this.isOnload = false;
   },
   methods: {
     toAnswer({id, title, question_bank_id, last_question_id, is_answer, question_count }) {

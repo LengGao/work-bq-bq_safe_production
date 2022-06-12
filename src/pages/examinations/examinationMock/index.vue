@@ -1,6 +1,7 @@
 <template>
   <view class="examination-mock">
-    <CustomHeader></CustomHeader>
+    <CustomHeader backgroundColor="transparent" title="模拟考试"></CustomHeader>
+    
     <image class="b-img" src="../static/mock-background.png" mode="aspectFit"></image>
     <view class="examination-mock-content">
       <view class="examinationcard-bar">

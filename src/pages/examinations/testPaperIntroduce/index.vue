@@ -1,5 +1,8 @@
 <template>
-  <div class="over-years-introduce">
+  <view class="test-paper-introduce-">
+    <custom-header :title="defaultTitle"></custom-header>
+
+    <view class="over-years-introduce">
     <view class="contaienr">
       <image class="b-img" src="../static/introduce-background.png"></image>
       <view class="test-paper-name">{{ configData.title || "" }}</view>
@@ -36,18 +39,24 @@
     <view class="btns">
       <view class="btn-primary" @click="toAnswer">开始考试</view>
     </view>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script>
+import CustomHeader from "@/components/custom-header"
 import { getCustomExamInfo, getMockExamInfo, getMockExamLog, createExamLog } from "@/api/question";
 import { browser } from '@/mixins/index'
 
 export default {
   name: "testPaperIntroduce",
   mixins: [browser],
+  components: {
+    CustomHeader,
+  },
   data() {
     return {
+      defaultTitle: '考试简介',
       exam_id: 0,
       type: 0,
       source: '',

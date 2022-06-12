@@ -1,5 +1,7 @@
 <template>
   <view class="favorites">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <template v-if="list.length">
     <view class="favorites-list-item" v-for="item in list" :key="item.id">
       <view class="title">{{ item.title }}（{{ item.num }}）</view>
@@ -12,9 +14,10 @@
     <NoData top="35%" v-else>暂无考试记录</NoData>
   </view>
 </template>
-<script>
 
-import NoData from "@/components/noData/index";
+<script>
+import NoData from "@/components/noData/index"
+import CustomHeader from "@/components/custom-header"
 import { collectChapterList, restartPractice } from "@/api/question";
 import { browser } from '@/mixins/index'
 
@@ -22,25 +25,25 @@ export default {
   name: "favorites",
   mixins: [browser],
   components: {
-    NoData
+    NoData,
+    CustomHeader
   },
   data() {
     return {
+      defaultTitle: '收藏夹',
       list: [],
       isOnload: false,
     };
   },
   onLoad() {
     this.collectChapterList()
-    this.isOnload = true
   },
   onShow() {
-    if (!this.isOnload) {
-      setTimeout(() => { 
-        this.collectChapterList()
-      }, 800)
+    if (this.isOnload) {
+      this.collectChapterList()
+    } else {
+      this.isOnload = true
     }
-    this.isOnload = false
   },
   methods: {
     getPath(url, query) {

@@ -1,5 +1,7 @@
 <template>
   <view class="course-detail">
+    <custom-header :title="defaultTitle"></custom-header>
+
     <!-- #ifdef H5 -->
     <view id="aliplayer">
     <img v-if="!player" :src="courseInfo.cover" mode="aspectFit" class="course-cover" />
@@ -62,6 +64,7 @@
 import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
+import CustomHeader from "@/components/custom-header"
 import { mapGetters } from 'vuex'
 import { browser } from '@/mixins/index'
 import {
@@ -78,9 +81,12 @@ export default {
     Details,
     Catalogue,
     Rate,
+    CustomHeader,
   },
   data() {
     return {
+      defaultTitle: '课程详情',
+
       region_id: 0,
       course_id: 0,
       lesson_id: 0,

@@ -1,5 +1,6 @@
 <template>
   <view class="reisgter">
+    <custom-header :title="defaultTitle"></custom-header>
     <view class="form">
       <image src="@/static/logo.png" class="header-logo" mode="aspectFit" />
       <view class="input-box">
@@ -56,11 +57,16 @@
 </template>
 
 <script>
+import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
 export default {
   mixins: [browser],
+  components: {
+    CustomHeader
+  },
   data() {
     return {
+      defaultTitle: '安培课堂',
       username: '',
       phone: '',
       verifCode: '',
