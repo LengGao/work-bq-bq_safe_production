@@ -162,10 +162,18 @@ export default {
           flex-direction: row;
           justify-content: space-between;
           align-items: center;
-          margin: 24rpx 0 0 34rpx;
-          width: 500rpx;
+          margin-top: 24rpx;
           color: #888888;
           font-size: $uni-font-size-base;
+          .item {
+            width: 220rpx;
+          }
+          .item:nth-of-type(1) {
+             width: 180rpx;
+          }
+          .item:nth-of-type(2) {
+             width: 160rpx;
+          }
           .text {
             color: $uni-color-primary;
           }

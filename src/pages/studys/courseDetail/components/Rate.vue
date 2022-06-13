@@ -46,7 +46,7 @@
             {{ comment.comment }}
           </view>
         </view>
-        <view v-if="isFinish" style="margin-top: 40rpx; width: 100%; font-size: '24rpx'; text-align: center;">评论加载完成</view>
+        <view v-if="isFinish" class="no-more">没有更多数据</view>
       </scroll-view>
     </view>
   </view>
@@ -273,6 +273,13 @@ export default {
         border: 2rpx solid $color-error;
       }
     }
+  }
+
+  .no-more {
+    margin-top: 40rpx; 
+    width: 100%; 
+    font-size: 24rpx; 
+    text-align: center;
   }
 
   &-textarea {

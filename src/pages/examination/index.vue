@@ -36,7 +36,7 @@
           <text class="text-person">{{statistics.learning_num | empty}}人正在练习</text>
         </view>
         <view class="report-bottom-right">
-          <button class="report-bottom-btn" @click="goStudy">今日未练习</button>
+          <button class="report-bottom-btn" @click="goStudy">{{ answerStatus }}</button>
         </view>
       </view>
     </view>
@@ -114,14 +114,12 @@ export default {
         { id: 1, name: "章节练习", desc: '章节阶段练习，提升自身能力', bgColor: '#FFFAF4', arrow: '/static/img/examination_bg_list1.png', thumb: '/static/img/examination_icon_list2.png', url: "/pages/examinations/chapterList/index" },
         { id: 2, name: "模拟考试", desc: '仿真考试训练，智能组卷测评', bgColor: '#FFF7F7', arrow: '/static/img/examination_bg_list2.png', thumb: '/static/img/examination_icon_list1.png', url: '/pages/examinations/examinationMock/index' },
       ],
-      // 轮播
-      swipers: [
-        { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination-swiper.png", url: "" }
-      ],
+
+      isLoad: false,
       isReady: false,
       question_bank_id: '',
-      questionBankInfo: '请选择题库',
-      activeQuestionBank: '',
+      questionBankInfo: '',
+      activeQuestionBank: '请选择题库',
 
       statistics: {
         answer_days: 0,
@@ -129,8 +127,12 @@ export default {
         today_correct_rate: 0,
         learning_num: 0,
       },
-      isLoad: false
     };
+  },
+  computed: {
+    answerStatus() {
+      return this.statistics.today_answer_num ? '继续练习' : '今日未练习'
+    }
   },
   onLoad() {
     if (!this.isLoad) {
@@ -140,16 +142,15 @@ export default {
   onShow() {
     if (this.isLoad) {
       this.init()
-    } else {  
+    } else {
       this.isLoad = true
     }
   },  
   methods: {
     init() {
-      this.questionBankInfo = this.$store.getters.questionBankInfo
-      this.question_bank_id = this.questionBankInfo.id
-      this.setActiveQuestionBank()
-      this.getQuestionBankList()
+      this.getQuestionBankList().then(res => {
+        this.getDailyStatistics()
+      })
     },
     to(url) {
       if (this.authority({ checkBlank: true })) {
@@ -172,38 +173,32 @@ export default {
       }
     },
     onClickItem(index) {
-      let questionBankInfo = this.candidates[index]
       this.currentCandidates = index
+      let questionBankInfo = this.candidates[index]
       this.questionBankInfo = questionBankInfo
-      this.$store.commit('SET_QUESTION_BANK_INFO', questionBankInfo)
-      this.setActiveQuestionBank()
+      this.setActiveQuestionBank([questionBankInfo])
       this.$refs.popupRef.close()
     },
-    setActiveQuestionBank() {
-      let questionBankInfo = this.questionBankInfo
-      if (questionBankInfo.id) {
+    setActiveQuestionBank(questionBankList) {
+      if (Array.isArray(questionBankList)) {
+        let questionBankInfo = questionBankList[0]
         this.question_bank_id = questionBankInfo.id
         this.activeQuestionBank = questionBankInfo.title
-      } else if (this.candidates.length) {
-        let candidate = this.candidates[0]
-        this.question_bank_id = candidate.id
-        this.activeQuestionBank = candidate.title
-        this.$store.commit('SET_QUESTION_BANK_INFO', candidate)
+        this.$store.commit('SET_QUESTION_BANK_INFO', questionBankInfo)
       } else {
-        this.activeQuestionBank = '请选择题库'
+         this.activeQuestionBank = '请选择题库'
       }
     },
     async getQuestionBankList() {
       let res = await getQuestionBankList()
       if (res.code === 0) {
         this.candidates = res.data
-        if (res.data.length) {
-          this.setActiveQuestionBank()
-        }
+        this.setActiveQuestionBank(res.data)
       }
+      return res
     },
     async getDailyStatistics() {
-      let question_bank_id = this.question_bank_id
+      let question_bank_id = this.$store.getters.questionBankInfo.id
       let params = { question_bank_id }
       let res = await getDailyStatistics(params)
       if (res.code === 0) {

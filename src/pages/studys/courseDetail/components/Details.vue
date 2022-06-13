@@ -39,7 +39,7 @@
           </view>
         </view>
         <view class="right">
-          <text class="right-text">￥{{ info.price || 0 }}</text>
+          <text class="right-text">{{ info.duration || 0 }}分钟</text>
         </view>
       </view>
     </view>
@@ -47,25 +47,18 @@
     <view class="course-rich">
       <u-parse v-if="info.content" class="content" :content="info.content" />
     </view>
-
-    <!-- <view class="footer">
-      <button class="footer-btn" @click="onClick">开始学习</button>
-    </view> -->
   </view>
 </template>
 
 <script>
 import uParse from "@/components/gaoyia-parse/parse";
-import { browser } from '@/mixins/index'
 import Avator from '@/static/img/user_avator.png'
+import { browser, userStatus } from '@/mixins/index'
 import { courseFavorites } from '@/api/course'
-// #ifdef H5
-// import { share_WeixinJSBridge } from '@/utils/api'
-// #endif
 
 
 export default {
-  mixins: [browser],
+  mixins: [browser, userStatus],
   components: {
     uParse
   },
@@ -78,10 +71,6 @@ export default {
       type: [String, Number],
       default: ''
     },
-    needLogin: {
-      type: Boolean,
-      default: false
-    }
   },
   data() {
     return {
@@ -93,29 +82,17 @@ export default {
       return Math.imul(this.info.chapter_count, this.info.lesson_count)
     }
   },
-  mounted() {
-    console.log('this.info',this.info);
-  },
   methods: {
-    onClick() {
-      this.$emit('start')
-    },
-    // 分享
-    async onShare(e) {
-      if (!this.isMiniapp) {
-        let params = { course_id: this.courseId, url: location.href }
-        share_WeixinJSBridge('https://store.beiqujy.com/apidata/applet/user/share/getShareConfig', params)
-      }
-    },
     // 咨询
     async courseFavorites(e) {
+      if (!this.authority()) { return; }
       let params = { course_id: this.courseId }
       let res = await courseFavorites(params)
       if (res.code === 0) {
         if (res.data.status) {
-          uni.showToast({ title: '取消收藏陈功', icon: 'success' })
-        } else {
           uni.showToast({ title: '收藏陈功', icon: 'success' })
+        } else {
+          uni.showToast({ title: '取消收藏陈功', icon: 'success' })
         }
         this.info.favorites = !!res.data.status
       } else {
@@ -235,9 +212,12 @@ export default {
       display: flex;
       align-items: center;
       margin-left: 20rpx;
+      background-color: #b23145;
+      padding: 8rpx 16rpx;
+
       &-text {
-        font-size: 34rpx;
-        color: $text-color-price;
+        font-size: 24rpx;
+        color: #fff;
       }
     }
   }

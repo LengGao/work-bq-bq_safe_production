@@ -14,7 +14,7 @@
 
     <view class="grids">
       <uni-grid :column="3" :showBorder="false" class="grid">
-        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item" style="height: inherit;">
+        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item">
           <view class="grid-box" @click="() => onClickGrid(grid.url, grid.blank)">
             <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
             <text class="grid-text">{{ grid.title }}</text>
@@ -179,9 +179,6 @@ $page-padding: 0rpx 20rpx;
     justify-content: center;
     align-items: center;
     height: 190rpx;
-    // #ifdef H5
-    height: 100%;
-    // #endif
   }
 
   &-image {

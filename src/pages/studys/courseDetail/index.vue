@@ -10,15 +10,15 @@
 
     <!-- 分段器 -->
     <view class="segmented-bar">
-      <uni-segmented-control :current="current" :values="items" @clickItem="onChangeSegmented" styleType="text"
-                             activeColor="#199fff" />
+      <uni-segmented-control :current="current" :values="items" styleType="text" activeColor="#199fff"
+                             @clickItem="onChangeSegmented" />
       <view class="segmented-content">
         <view v-show="current === 0" class="segmented-pane">
           <Details v-if="courseInfo" :info="courseInfo" :courseId="course_id" />
         </view>
         <view v-show="current === 1" class="segmented-pane">
           <Catalogue v-if="course_id && lesson_id" :courseId="course_id" :lessonId="lesson_id"
-                     @videoChange="onChangeVideo" :needLogin="needLogin" />
+                     @videoChange="onChangeVideo" />
         </view>
         <view v-show="current === 2" class="segmented-pane">
           <Rate ref="rate" :courseId="course_id" @openComment="onComment" />
@@ -50,7 +50,8 @@
         <uni-icons type="close" color="#fff" size="42" @click="onClose" />
       </view>
     </uni-popup>
-    
+
+    <FaceVerification v-if="isFace"> </FaceVerification>
   </view>
 </template>
 
@@ -59,6 +60,7 @@ import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
 import CustomHeader from "@/components/custom-header"
+import FaceVerification from "./components/FaceVerification"
 import { browser, userStatus } from '@/mixins/index'
 import {
   courseInfo,
@@ -75,6 +77,7 @@ export default {
     Catalogue,
     Rate,
     CustomHeader,
+    FaceVerification
   },
   data() {
     return {
@@ -114,10 +117,16 @@ export default {
       start_second: 0, // 当前时间
       first: true, // 是否为第一次进入
       videoState: '', // 视频播放状态
+
+
+      // 实名与人脸验证
+      isFace: false,
+
+
     }
   },
   computed: {
-  
+
   },
   watch: {
 
@@ -153,7 +162,7 @@ export default {
     },
     getQuery() {
       return {
-        video: this.video, 
+        video: this.video,
         lesson: this.lesson,
         record: this.record,
         face: this.face,
@@ -171,7 +180,7 @@ export default {
     },
     // 我要评价
     onComment() {
-      if (this.authority) {
+      if (this.authority()) {
         this.$refs.popup.open()
       }
     },
@@ -208,7 +217,7 @@ export default {
     async onPublish() {
       let { star, comment } = this.rateForm
       let hot_word = this.tags.filter(filterItem => filterItem.checked).map(mapItem => mapItem.label)
-      let params = { course_id: this.course_id, star: star, hot_word: hot_word, comment: comment}
+      let params = { course_id: this.course_id, star: star, hot_word: hot_word, comment: comment }
 
       let res = await courseCommentSubmit(params)
       if (res.code === 0) {
@@ -217,7 +226,7 @@ export default {
         this.$refs['rate'].getCourseCommentCount()
         this.onClose()
       } else {
-        uni.showToast({ title: `${res.message}`, icon: 'none'})
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
     },
     // 获取课程详情
@@ -229,7 +238,7 @@ export default {
         let last_lesson_id = lesson_id ? lesson_id : res.data.learning_lesson_id
         this.lesson_id = last_lesson_id
         this.courseInfo = res.data
-        this.getCourseGetVideoAuth({ region_id, lesson_id: last_lesson_id }) 
+        this.getCourseGetVideoAuth({ region_id, lesson_id: last_lesson_id })
       }
     },
     // 课时目录更改
@@ -246,7 +255,7 @@ export default {
         this.jumpVideo(data.lesson_id)
       } else if (code === 2001) {
         this.needBuyVideo()
-      } else if (code === 2203) { 
+      } else if (code === 2203) {
         this.showModalForFaceVerifity()
       } else if (code === 1000 || code === 1008) {
         this.needLogin()
@@ -338,7 +347,7 @@ export default {
     },
     errSendData() {
       this.stopInterval()
-      if (this.player) { 
+      if (this.player) {
         this.player.setCover(this.courseInfo.cover);
         let end_time = this.player.getCurrentTime()
         this.sendData(this.lesson_id, this.prev_time, end_time)
@@ -382,7 +391,7 @@ export default {
     createPlayer(options) {
       if (this.player) this.player.dispose();
 
-      let {video, lesson, record, face, start_second } = options
+      let { video, lesson, record, face, start_second } = options
 
       this.player = new Aliplayer({
         id: 'aliplayer',
@@ -459,7 +468,7 @@ export default {
               player.seek(start_second)
             } else if (Math.abs(distance) >= 2) {
               this.start_second = currTime
-              this.sendData(this.lesson_id, currTime, currTime)              
+              this.sendData(this.lesson_id, currTime, currTime)
             } else {
               this.start_second = currTime
             }

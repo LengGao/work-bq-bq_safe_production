@@ -20,23 +20,27 @@ const interactiveMap = {
 }
 
 const handlerError = {
-  1000: () => {
-    console.log('$config', service.$config, store);
-    uni.showToast({ title: '请登录', icon: 'none' })
+  '1000': () => {
+    let keys = ['userInfo', 'orgInfo','region', 'questionBankInfo']
+    store.commit('SET_LOGIN_STATUS', 1000)
+    store.commit('SET_ORG_LIST', [])
+    keys.forEach(key => { uni.removeStorage({ key: key}) })
+
+    // uni.showToast({ title: '请登录', icon: 'none' })
   },
-  1001: () => {
-    console.log('$config', service.$config, store);
-    uni.showToast({ title: '请选择登录机构', icon: 'none' })
+  '1008': () => {
+    let keys = ['userInfo', 'orgInfo','region', 'questionBankInfo']
+    store.commit('SET_LOGIN_STATUS', 1008)
+    store.commit('SET_ORG_LIST', [])
+    keys.forEach(key => { uni.removeStorage({ key: key}) })
+
+    // uni.showToast({ title: '您的账号已在其他设备登录', icon: 'none' })
   },
-  1008: () => {
-    console.log('$config', service.$config);
-    uni.showToast({ title: '您的账号已在其他设备登录', icon: 'none' })
-    store.dispatch('loginout')
-  },
-  1009: async () => {
-    console.log('$config', service.$config);
-    await store.dispatch('renewal')
-    service.request.call(service, { ...service.$config })
+  '1009': async () => {
+    uni.showToast({ title: '登录信息已过期，请重新登录', icon: 'none' })
+    // console.log('service.$config', service.$config);
+    // await store.dispatch('renewal')
+    // service.request.call(service, { ...service.$config })
   }
 }
 
@@ -73,13 +77,10 @@ service.useResponseInterceptor((response) => {
   // console.log('response', service);
   if (body.code === 1 && !service.$config.nocatch) {
     uni.showToast({ icon: 'none', title: `${body.message}` })
-  } else if (body.code === 1000) {
-    // handlerError[body.code](body)
-    store.commit('SET_LOGIN_STATUS', body.code)
-    // store.dispatch('loginout', body.code)
-  } else if (body.code === 1008) {
-    store.commit('SET_LOGIN_STATUS', body.code)
-    // store.dispatch('loginout', body.code)
+  } else {
+    if (handlerError[`${body.code}`]) {
+      handlerError[`${body.code}`]()
+    }
   }
   return response
 })

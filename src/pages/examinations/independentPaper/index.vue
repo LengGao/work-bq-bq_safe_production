@@ -21,7 +21,7 @@
                 <view class="independent-info-progress">
                   <view class="item" decode>题数：<text class="text">{{ item.question_num }}</text></view>
                   <view class="item" decode>考试次数：<text class="text">{{ item.used_num }}</text></view>
-                  <view class="item" decode>最高得分：<text class="text">{{ item.score }}%</text></view>
+                  <view class="item" decode>最高得分：<text class="text">{{ item.score }}</text></view>
                 </view>
               </view>
               <view class="arrow">
@@ -157,10 +157,15 @@ export default {
           flex-direction: row;
           justify-content: space-between;
           align-items: center;
-          margin: 24rpx 0 0 34rpx;
-          width: 500rpx;
+          margin-top: 24rpx;
           color: #888888;
           font-size: $uni-font-size-base;
+          .item {
+            width: 220rpx;
+          }
+          .item:first-child {
+             width: 140rpx;
+          }
           .text {
             color: $uni-color-primary;
           }

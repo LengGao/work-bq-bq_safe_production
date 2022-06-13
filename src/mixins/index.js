@@ -37,9 +37,12 @@ export const userStatus = {
       let questionBlankStatus = this.$store.getters.questionBankInfo.id
       console.log('questionBlankStatus',userStatus, questionBlankStatus);
       let res = true
-      if (userStatus == 0 || userStatus == 1000 || userStatus == 1008) {
+      if (userStatus === 0 || userStatus === 1000) {
         res = false
         uni.showToast({ title: '请登录', icon: 'none' })
+      } else if (userStatus === 1008) {
+        res = false
+        uni.showToast({ title: '您的账号已在其他设备登录', icon: 'none' })
       } else if (!questionBlankStatus && option.checkBlank) {
         res = false
         uni.showToast({ title: '请选择题库', icon: 'none' })
