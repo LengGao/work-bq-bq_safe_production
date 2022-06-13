@@ -1,7 +1,14 @@
 <template>
   <view class="chapter">
-    <CustomHeader backgroundColor="transparent" title="章节练习"></CustomHeader>
-    <image class="b-img" src="../static/chapter-background2.png" mode="aspectFit"></image>
+    <view class="chapter-header">
+      <view class="status_bar"></view>
+      <view class="nav-bar">
+        <uni-icons class="nav-bar-back" type="back" @click="goBack" color="#fff" size="16px"></uni-icons>
+        <text class="nav-bar-title">章节练习</text>
+      </view>
+    </view>
+
+    <image class="b-img" src="../static/chapter_background2.png" mode="aspectFill"></image>
     <view class="chapter-box">
       <scroll-view class="record-list" scroll-y @scrolltolower="onScrolltolower">
         <view class="chapter-container" v-if="chapterList.length">
@@ -41,10 +48,11 @@ export default {
   mixins: [browser],
   components: {
     NoData,
-    CustomHeader
+    CustomHeader,
   },
   data() {
     return {
+      defaultTitle: '章节练习',
       chapterList: [],
       question_bank_id: '',
       question_id: '',
@@ -95,6 +103,14 @@ export default {
         cancelCallback()
       }
     },
+    goBack() {
+      let pages = getCurrentPages()
+      if (pages.length > 1) {
+        uni.navigateBack()
+      } else {
+        history.back()
+      }
+    },
 
     async getChapterList() {
       let questionBankInfo = this.$store.getters.questionBankInfo
@@ -112,18 +128,41 @@ export default {
 
 <style lang="scss" scoped>
 .chapter {
+  height: 100%;
   width: 100%;
   font-size: $uni-font-size-base;
-  .b-img {
-    position: absolute;
-    left: 0;
+
+  &-header {
+    position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
-    height: 448rpx;
+    .status_bar {
+      height: var(--status-bar-height);
+      width: 100%;
+    }
+    .nav-bar {
+      display: flex;
+      height: 44px;
+      line-height: 44px;
+      font-size: 16px;
+      color: #fff;
+      &-back {
+        padding: 0 20rpx;
+      }
+      &-title {
+        padding-right: 60rpx;
+        margin: 0 auto;
+      }
+    }
+  }
+  .b-img {
+    width: 100%;
+    height: 450rpx;
     z-index: -1;
   }
   &-box {
-    margin-top: calc(448rpx - 108rpx);
+    height: calc(100% - 460rpx);
     width: 100%;
     border-top-left-radius: 16rpx;
     border-top-right-radius: 16rpx;

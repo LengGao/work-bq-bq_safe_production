@@ -79,10 +79,11 @@ export default {
   data() {
     return {
       defaultTitle: '',
+      throttle: false,
 
       prevIndex: -1,
       currentIndex: 0,
-      duration: 300,
+      duration: 600,
 
       total: 0,
       questionList: [],
@@ -228,6 +229,7 @@ export default {
     },
 
     onSwiperChange({ detail }) {
+      console.log('detail', detail);
       if (detail.source === 'touch') {
         this.prevIndex = this.currentIndex
         this.currentIndex = detail.current
@@ -566,14 +568,18 @@ export default {
         arr[index - 2] = list[0]
         arr[index - 1] = list[1]
         arr[index] = list[2]
+      } else if (index === 0) {
+        arr[index] = list[0];
+        if (list[1]) arr[index + 1] = list[1];
+        if (list[2]) arr[index + 2] = list[2];
       } else if (index === total - 1) {
-        arr[index - 2] = list[0]
-        arr[index - 1] = list[1]
+        if (list[0]) arr[index - 2] = list[0]
+        if (list[1]) arr[index - 1] = list[1]
         arr[index] = list[2]
       } else {
-        arr[index] = list[0]
-        arr[index + 1] = list[1]
-        arr[index + 2] = list[2]
+        arr[index] = list[0];
+        if (list[1]) arr[index + 1] = list[1];
+        if (list[2]) arr[index + 2] = list[2];
       }
       // console.log(total, arr, index);
 

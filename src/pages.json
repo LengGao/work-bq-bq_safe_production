@@ -133,7 +133,6 @@
 				{
 					"path": "learnData/index",
 					"style": {
-						"navigationStyle": "custom",
 						"navigationBarTitleText": "学习数据"
 					}
 				}
@@ -145,28 +144,24 @@
 				{
 					"path": "learnReport/index",
 					"style": {
-						"navigationStyle": "custom",
 						"navigationBarTitleText": "学习报告"
 					}
 				},
 				{
 					"path": "chapterList/index",
 					"style": {
-						"navigationStyle": "custom",
 						"navigationBarTitleText": "章节练习"
 					}
 				},
 				{
 					"path": "independentPaper/index",
 					"style": {
-						"navigationStyle": "custom",
 						"navigationBarTitleText": "自主出题"
 					}
 				},
 				{
 					"path": "examinationMock/index",
 					"style": {
-						"navigationStyle": "custom",
 						"navigationBarTitleText": "模拟考试"
 					}
 				},

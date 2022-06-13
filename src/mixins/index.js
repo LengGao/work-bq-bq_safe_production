@@ -8,7 +8,7 @@ export const browser = {
   created() {
     if (navigator) {
       let browser = navigator.userAgent.toLowerCase()
-      if (browser.indexOf('micromessenger') !== -1 ) {
+      if (browser.indexOf('micromessenger') != -1 ) {
         this.isWeixinJSBridge = true
       } else {
         this.isWeixinJSBridge = false

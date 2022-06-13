@@ -14,8 +14,8 @@
 
     <view class="grids">
       <uni-grid :column="3" :showBorder="false" class="grid">
-        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item">
-          <view class="grid-box" @click="() => onClickGrid(grid.url, grid.blank)">
+        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" >
+          <view class="grid-item" @click="() => onClickGrid(grid.url, grid.blank)">
             <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
             <text class="grid-text">{{ grid.title }}</text>
           </view>
@@ -23,8 +23,8 @@
       </uni-grid>
     </view>
 
-    <view class="links">
-      <uni-list class="list">
+    <view class="links" :style="{'margin-top': linksMargin}">
+      <uni-list class="list" >
         <uni-list-item v-for="link in links" :key="link.id" :to="link.url" :title="link.title" showExtraIcon showArrow
                        clickable :extraIcon="link.showExtraIcon" @click="onClickList(link.id)">
         </uni-list-item>
@@ -63,14 +63,19 @@ export default {
         { id: 4, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-lianxikefu' }, title: "联系客服", url: "/pages/users/contactService/index" },
       ],
       isLogin: false,
+
+      linksMargin: '100rpx'
     };
   },
   computed: {
     ...mapGetters(['userInfo', 'orgInfo'])
   },
   onLoad() {
-    console.log('onLoad');
-    console.log(getCurrentPages());
+  },
+  mounted() {
+    if (this.isWeixinJSBridge) {
+      this.linksMargin = '200rpx'
+    }
   },
   onShow() {
     if (this.userInfo.token) {
@@ -162,15 +167,10 @@ $page-padding: 0rpx 20rpx;
   box-shadow: 0rpx 0rpx 12rpx rgb(129, 202, 255, 0.75);
 }
 
-::v-deep .uni-grid {
-  height: inherit;
-}
-
 .grid {
   width: 100%;
-  height: inherit;
 
-  &-box {
+  &-item {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -188,10 +188,6 @@ $page-padding: 0rpx 20rpx;
     margin-top: 20rpx;
     font-size: $font-size-base;
   }
-}
-
-.links {
-  margin-top: 100rpx;
 }
 
 ::v-deep .uni-list-item__container {

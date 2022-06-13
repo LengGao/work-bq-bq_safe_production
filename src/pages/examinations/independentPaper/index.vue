@@ -7,7 +7,7 @@
         <text class="nav-bar-title">自主出题</text>
       </view>
     </view>
-    <image class="b-img" src="../static/autonomy-background.png"></image>
+    <image class="b-img" src="../static/autonomy-background.png" mode="aspectFill"></image>
     <scroll-view scroll-y class="independent-paper-content" @scrolltolower="onScrolltolower">
         <view class="independent-container" v-if="list.length">
           <view class="independent-list">
@@ -66,7 +66,12 @@ export default {
   },
   methods: {
     goBack() {
-      uni.navigateBack()
+      let pages = getCurrentPages()
+      if (pages.length > 1) {
+        uni.navigateBack()
+      } else {
+        history.back()
+      }
     },
     toConfig(item) {
       let exam_id = item.id

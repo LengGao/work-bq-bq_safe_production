@@ -82,7 +82,7 @@ $size: 80rpx;
   }
   &-content {
     position: relative;
-    top: 350rpx;
+    top: 398rpx;
     left: 0;
     height: calc(100% - 350rpx);
     border-radius: 16rpx;
