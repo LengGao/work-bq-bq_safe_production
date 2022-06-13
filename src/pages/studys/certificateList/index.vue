@@ -15,7 +15,7 @@
         <CardRow v-for="course in courseData" :key="course.id" class="cardrow-color">
           <template v-slot:cardBodyLeft>
             <view class="card-body-left">
-              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" mode="aspectFit" />
+              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" mode="aspectFill"/>
             </view>
           </template>
           <template v-slot:cardBodyRight>
@@ -49,7 +49,7 @@
           <view class="list-item-title">{{ item.title }}</view>
           <view class="list-item-time">获取时间：{{ item.time }}</view>
           <view class="list-item-image-box">
-            <image class="image" @click="() => previewImg(item.url)" :src="item.url" mode="aspectFit" />
+            <image class="image" @click="() => previewImg(item.url)" :src="item.url" mode="aspectFill" />
           </view>
           <view class="list-item-save">
             <button class="btn-primary" @click="() => onViewCertificate(item.url)">查看证书</button>

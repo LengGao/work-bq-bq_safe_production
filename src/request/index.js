@@ -75,11 +75,11 @@ service.useResponseInterceptor((response) => {
     uni.showToast({ icon: 'none', title: `${body.message}` })
   } else if (body.code === 1000) {
     // handlerError[body.code](body)
-    // store.commit('SET_LOGIN_STATUS', body.code)
-    store.dispatch('loginout', body.code)
+    store.commit('SET_LOGIN_STATUS', body.code)
+    // store.dispatch('loginout', body.code)
   } else if (body.code === 1008) {
-    // store.commit('SET_LOGIN_STATUS', body.code)
-    store.dispatch('loginout', body.code)
+    store.commit('SET_LOGIN_STATUS', body.code)
+    // store.dispatch('loginout', body.code)
   }
   return response
 })

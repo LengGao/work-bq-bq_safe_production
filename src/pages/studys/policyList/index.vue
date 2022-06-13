@@ -7,7 +7,7 @@
         <CardRow v-for="policy in policys" :key="policy.id" class="list-item">
           <template v-slot:cardBodyLeft>
             <view class="logan-card-body-left">
-              <image class="logan-img-size-lg" :src="policy.cover || defaultCover" @click="previewImg(policy.cover)" />
+              <image class="logan-img-size-lg" :src="policy.cover || defaultCover" @click="previewImg(policy.cover)" mode="aspectFill" />
             </view>
           </template>
           <template v-slot:cardBodyRight>

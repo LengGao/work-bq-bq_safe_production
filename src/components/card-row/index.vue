@@ -4,7 +4,7 @@
       <slot name="cardBodyLeft">
         <view class="card-body-left" @click="onClickLeft">
           <image @click="previewImg" @load="onLoadImage" @errr="onerrorImagee" class="card-row-image" :src="leftImage || errorImage"
-                 mode="scaleToFill" />
+                 mode="aspectFill" />
         </view>
       </slot>
       <slot name="cardBodyRight">

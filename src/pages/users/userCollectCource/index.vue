@@ -8,25 +8,15 @@
         <view class="course-list-container">
           <view class="course-item" v-for="item in courseData" :key="item.id">
             <view class="course-item-cover">
-              <!-- <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
-              <view class="course-tag" v-else>认证课</view> -->
-              <image class="course-img" :src="item.cover" mode="aspectFit" @click="() => previewImg(item.cover)" />
+              <image class="course-img" :src="item.cover" mode="aspectFill" @click="() => previewImg(item.cover)" />
             </view>
             <view class="course-item-content" @click="() => toDetails(item.id)">
               <view class="course-name">{{ item.title }}</view>
-              <!-- <view class="course-time">
-                {{ item.chapter_count }}章
-                {{ item.lesson_count }}课时
-              </view> -->
               <view class="course-other">
                 <view class="course-other-count">
                   <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons>
                   {{ item.learn_count }} 人在学
                 </view>
-                <!-- <view v-if="item.price === 0" class="course-other-tag"> 免费</view>
-                <view v-else class="course-other-price">
-                  ￥{{ item.price }}
-                </view> -->
               </view>
             </view>
           </view>

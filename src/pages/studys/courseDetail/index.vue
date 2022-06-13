@@ -4,7 +4,7 @@
 
     <!-- #ifdef H5 -->
     <view id="aliplayer">
-      <img v-if="!player" :src="courseInfo.cover" class="course-cover" />
+      <image v-if="!player" :src="courseInfo.cover" class="course-cover" mode="aspectFill" />
     </view>
     <!-- #endif -->
 
@@ -50,7 +50,7 @@
         <uni-icons type="close" color="#fff" size="42" @click="onClose" />
       </view>
     </uni-popup>
-
+    
   </view>
 </template>
 
@@ -107,11 +107,13 @@ export default {
       lesson: {}, // 课时记录
       record: {}, // 学习记录
       face: [], // 人脸信息
-      tiemr: 0, //计时器
+      intervalId: 0, //计时器
       time: 1000 * 10, // 记录时间
       end_time: 0,    // 终止时间
       prev_time: 0,   // 上次时间
       start_second: 0, // 当前时间
+      first: true, // 是否为第一次进入
+      videoState: '', // 视频播放状态
     }
   },
   computed: {
@@ -160,7 +162,7 @@ export default {
         start_second: this.start_second,
         region_id: this.region_id,
         course_id: this.course_id,
-        lesson_id: this.lesson_id 
+        lesson_id: this.lesson_id,
       }
     },
     // 分段其切换
@@ -194,6 +196,7 @@ export default {
     onChangeRate(e) {
       this.rateForm.star = e.value
     },
+    // 获取评价热刺
     async getCommentHotWord() {
       let res = await courseCommentHotWord()
       if (res.code === 0) {
@@ -217,113 +220,169 @@ export default {
         uni.showToast({ title: `${res.message}`, icon: 'none'})
       }
     },
-
+    // 获取课程详情
     async getCourseInfo() {
       let { region_id, course_id, lesson_id } = this.getQuery()
       let param = { region_id, course_id }
       let res = await courseInfo(param)
       if (res.code === 0) {
-        let lesson_id = lesson_id ? lesson_id : res.data.learning_lesson_id
-        this.lesson_id = lesson_id
+        let last_lesson_id = lesson_id ? lesson_id : res.data.learning_lesson_id
+        this.lesson_id = last_lesson_id
         this.courseInfo = res.data
-        this.getCourseGetVideoAuth({ region_id, lesson_id }) 
+        this.getCourseGetVideoAuth({ region_id, lesson_id: last_lesson_id }) 
       }
     },
-
+    // 课时目录更改
     onChangeVideo(detailArr) {
       let curr = detailArr[0]
       this.lesson_id = curr.id
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
     },
+    // 错误码提示
+    showToast(title, code, data) {
+      if (code === 2201) {
+        this.prev_time = data.last_second
+        this.finish_second = data.finish_second
+        this.jumpVideo(data.lesson_id)
+      } else if (code === 2001) {
+        this.needBuyVideo()
+      } else if (code === 2203) { 
+        this.showModalForFaceVerifity()
+      } else if (code === 1000 || code === 1008) {
+        this.needLogin()
+      } else {
+        uni.showToast({ title, icon: 'none' })
+      }
+    },
+    // 随堂测试
+    showModalForExamination([path]) {
+      uni.showModal({
+        title: '提示',
+        content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
+        cancelText: '取消',
+        confirmText: '开始考试',
+        cancelColor: '#199fff',
+        confirmColor: '#199fff',
+        success: (res) => {
+          if (res.confirm) {
+            this.$store.commit('SET_EXAMINATION', true)
+            uni.navigateTo({ url: path })
+          }
+        }
+      })
+    },
+    // 人脸验证
+    showModalForFaceVerifity() {
+      uni.showModal({
+        title: '提示',
+        content: '请人脸核验成功后再继续学习',
+        cancelText: '取消',
+        confirmText: '开始验证',
+        cancelColor: '#199fff',
+        confirmColor: '#199fff',
+        success: (res) => {
 
+        }
+      })
+    },
+    // 播放结束提示框
     showModal() {
       let url = `/pages/studys/classTestMode/answer/index`
-      let { lesson_id, course_id, lesson } = this.getQuery()
+      let { lesson_id, course_id, lesson, start_second } = this.getQuery()
       let query = { lesson_id, course_id }
       let path = this.getPath(url, query)
       let is_free = lesson.is_free
       let free_second = lesson.free_second
-      let start_second = this.start_second
-      let distance = Math.abs(free_second, start_second) <= 2
-
-      if (this.free_second && distance) {
-        this.is_free = false
-        uni.showToast({ title: `试看结束`, icon: 'none'})
-      } else {
-        if (this.is_practice && !this.is_done) {
-          uni.showModal({
-            title: '提示',
-            content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
-            cancelText: '取消',
-            confirmText: '开始考试',
-            cancelColor: '#199fff',
-            confirmColor: '#199fff',
-            success: (res) => {
-              if (res.confirm) {
-                this.$store.commit('SET_EXAMINATION', true)
-                uni.navigateTo({ url: url + query })
-              }
-            }
-          })
-        }
-      }      
+      let distance = Math.abs(free_second - start_second)
+      let is_practice = lesson.is_practice
+      let is_done = lesson.is_done
+      if (free_second && distance <= 2) {
+        this.showToast('试看结束')
+      } else if (is_practice && !is_done) {
+        this.showModalForExamination(path)
+      }
     },
-
-    seekSendData() {
-      let end_time = this.player.getCurrentTime()
-      let lesson_id = this.lesson_id
-      this.sendData(lesson_id, end_time, end_time)
-    },
-    stopSend() {
+    // 停止计时器
+    stopInterval() {
       clearInterval(this.intervalId)
       this.intervalId = null
+    },
+    stopSend() {
+      this.stopInterval()
+      let end_time = this.player.getCurrentTime()
+      this.sendData(this.lesson_id, end_time, end_time)
+    },
+    seekSendData() {
       let end_time = this.player.getCurrentTime()
       this.sendData(this.lesson_id, end_time, end_time)
     },
     playSendData() {
       if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
       this.intervalId = setInterval(() => {
-        let start_second = this.prev_time
         let end_time = this.player.getCurrentTime()
-        let lesson_id = this.lesson_id
-        this.sendData(lesson_id, start_second, end_time)
+        this.sendData(this.lesson_id, this.prev_time, end_time)
       }, this.time)
     },
     pauseSendData() {
-      clearInterval(this.intervalId)
-      this.intervalId = null
+      this.stopInterval()
       let end_time = this.player.getCurrentTime()
-      this.sendData(this.lesson_id, this.prev_time, end_time)
+      console.log('videoState', this.videoState);
+      if (this.videoState !== 'ended') {
+        this.sendData(this.lesson_id, this.prev_time, end_time)
+      }
     },
     endedSendData() {
-      clearInterval(this.intervalId)
-      this.intervalId = null
+      this.stopInterval()
       let end_time = this.player.getCurrentTime()
       this.sendData(this.lesson_id, this.prev_time, end_time)
     },
     errSendData() {
-      let end_time = this.player.getCurrentTime()
-      let lesson_id = this.lesson_id
-      this.sendData(lesson_id, this.prev_time, end_time)
+      this.stopInterval()
+      if (this.player) { 
+        this.player.setCover(this.courseInfo.cover);
+        let end_time = this.player.getCurrentTime()
+        this.sendData(this.lesson_id, this.prev_time, end_time)
+      } else {
+        this.setCover(this.courseInfo.cover)
+      }
     },
-    pausePlay() {
-      if (this.player) this.player.pause();
-      clearInterval(this.intervalId)
-      this.intervalId = null
+    endedCallback() {
+      this.endedSendData()
+      this.showModal()
+      this.resetProgress()
     },
     resetProgress() {
       this.start_second = 0
       this.prev_time = 0
       this.end_time = 0
     },
-    endedCallback() {
-      this.showModal()
-      this.resetProgress()
+    pausePlay() {
+      if (this.player) this.player.pause();
+      this.stopInterval()
     },
-    
+    setCover(url) {
+      if (this.player) this.player.setCover(url);
+    },
+    jumpVideo(lesson_id) {
+      let params = { lesson_id: lesson_id, course_id: this.course_id }
+      this.getCourseGetVideoAuth(params)
+    },
+    needBuyVideo() {
+      uni.showToast({ title: '请联系所在机构开通该课程', icon: 'none' })
+    },
+    needLogin() {
+      uni.showToast({ title: '请登录', icon: 'none' })
+    },
+    needFaceVerifity(currTime) {
+      if (this.face.includes(currTime)) {
+        this.showModalForFaceVerifity()
+      }
+    },
     // 创建播放器
     createPlayer(options) {
       if (this.player) this.player.dispose();
+
+      let {video, lesson, record, face, start_second } = options
 
       this.player = new Aliplayer({
         id: 'aliplayer',
@@ -354,39 +413,50 @@ export default {
             ]
           }
         ],
-        vid: options.video_id,
-        playauth: options.auth_data.PlayAuth,
-        cover: options.cover,
-        duration: options.duration,
+        vid: video.id,
+        playauth: video.auth_data.PlayAuth,
+        cover: video.cover,
+        duration: video.duration,
         encryptType: 0
       }, (player) => {
         player.on('ready', () => {
-          if (options.free_second) player.setPreviewTime(options.free_second);
-          player.seek(this.start_second)
-          player.play()
+          console.log('ready');
+          if (lesson.free_second) player.setPreviewTime(lesson.free_second);
+          player.seek(start_second)
+          this.videoState = 'ready'
+          // player.play()
         })
         player.on('play', () => {
+          console.log('play');
           this.playSendData()
+          this.videoState = 'play'
         })
         player.on('pause', () => {
           console.log('pause');
           this.pauseSendData()
+          this.videoState = 'pause'
         })
         player.on('ended', () => {
           console.log("ended");
           this.endedCallback()
+          this.videoState = 'ended'
           this.player.seek(0)
         })
         player.on('timeupdate', () => {
+          console.log('timeupdate');
           let currTime = player.getCurrentTime()
-          let distance = currTime - this.start_second
-          if (this.is_forward || this.is_free || this.start_second < this.finish_secon) {
+          let start_second = this.start_second
+          let is_free = lesson.is_free
+          let is_forward = lesson.is_forward
+          let finish_second = record.finish_second
+          let distance = currTime - start_second
+
+          if (is_free || is_forward || start_second < finish_second) {
             this.start_second = currTime
             if (Math.abs(distance) >= 2) this.sendData(this.lesson_id, currTime, currTime);
           } else {
-            // console.log("distance", distance);
             if (distance >= 2) {
-              player.seek(this.start_second)
+              player.seek(start_second)
             } else if (Math.abs(distance) >= 2) {
               this.start_second = currTime
               this.sendData(this.lesson_id, currTime, currTime)              
@@ -400,8 +470,9 @@ export default {
           this.seekSendData()
         })
         player.on('error', () => {
-          this.pausePlay()
-          this.seekSendData()
+          console.log('error');
+          this.player.pause()
+          this.errSendData()
         })
       })
     },
@@ -411,88 +482,36 @@ export default {
       let res = await courseRecordLearn(params)
       if (res.code === 0) {
         let redirect_url = res.data.redirect_url
-        if (redirect_url) {
-          location.href = redirect_url
-        }
         this.finish_second = +res.data.finish_second
         this.prev_time = +res.data.last_second
-        this.needLogin = false
-      } else if (res.code === 2201) {
-        this.prev_time = +res.data.last_second
-        this.finish_second = +res.data.finish_second
-        // 有章节没看完
-        this.pausePlay()
-        this.resetProgress()
-        this.lesson_id = res.data.lesson_id
-        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: res.data.lesson_id })
-        uni.showToast({ title: `${res.message}`, icon: 'none', duration: 2000 })
-      } else if (res.code === 1000 || res.code === 1008) {      
-        this.needLogin = true
-        this.prev_time = +res.data.last_second
-        this.finish_second = +res.data.finish_second
-        this.pausePlay()
-        uni.showToast({ title: `${res.message}`, icon: 'none' })
-      } else if (res.code === 2001) { 
-        this.needBuy = true
-        this.prev_time = +res.data.last_second
-        this.finish_second = +res.data.finish_second
-        this.pausePlay()
-        uni.showToast({ title: `${res.message}`, icon: 'none' })
-      }else {
-        this.prev_time = +res.data.last_second
-        this.finish_second = +res.data.finish_second
-        this.pausePlay()
-        uni.showToast({ title: `${res.message}`, icon: 'none' })
+      } else {
+        this.showToast(res.message, res.code, res.data)
       }
     },
     // 获取视频凭证
     async getCourseGetVideoAuth(params) {
-      if (this.needLogin) {
-        uni.showToast({ title: '请登录', icon: 'none' });
-        return;
-      }
-      this.first = true
       let res = await courseGetVideoAuth(params)
-      let { video_id, auth_data, start_second, duration, lesson_id, title, cover,
-        free_second, finish_second, is_forward, is_free, is_practice, is_done} = res.data
+      let { video, lesson, record, face } = res.data
 
       if (res.code === 0) {
-        this.title = title
-        this.cover = cover
-        this.is_free = is_free
-        this.is_forward = is_forward
-        this.free_second = +free_second
-        this.finish_second = +finish_second
-        this.start_second = +start_second
-        this.prev_time = +start_second
-        this.duration = +duration
-        this.is_practice = is_practice
-        this.is_done = is_done
+        this.video = video
+        this.lesson = lesson
+        this.record = record
+        this.face = face
+        this.start_second = +record.start_second
+        this.prev_time = +record.finish_second
+        this.first = false
 
-        this.needLogin = false
-        this.needBuy = false
         // #ifdef H5
-        this.createPlayer({ video_id, auth_data, start_second, cover, free_second, duration })
+        this.createPlayer({ video, lesson, record, face, start_second: +record.start_second })
         // #endif
+
         // #ifdef MP-WEIXIN
-        this.settingPlayer({ video_id, auth_data, start_second, cover, free_second, duration })
+        this.createPlayer({ video, lesson, record, face, start_second: +record.start_second })
         // #endif
-      } else if (res.code === 1000 || res.code === 1008) {
-        this.needLogin = true
-        this.pausePlay()
-        if (this.player) this.player.setCover(this.courseInfo.cover);
-        uni.showToast({ title: `${res.message}`, icon: 'none' });
-      } else if (res.code === 2001) {
-        this.needBuy = true
-        this.pausePlay()
-        if (this.player) this.player.setCover(this.courseInfo.cover);
-        if (!first) uni.showToast({ title: `请联系机构开通课程`, icon: 'none' }) ;
       } else {
-        // 其他异常
-        this.pausePlay()
-        if (this.player) this.player.setCover(this.courseInfo.cover);
-        if (first)
-        uni.showToast({ title: `${res.message}`, icon: 'none' })
+        if (!this.first) { this.showToast(res.data.message, res.code, res.data) }
+        this.errSendData()
       }
     },
   }
@@ -510,7 +529,7 @@ export default {
 
 .course-cover {
   width: 100%;
-  height: 400rpx;
+  height: 200px;
 }
 
 .course-video {

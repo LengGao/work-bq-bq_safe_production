@@ -247,8 +247,9 @@ export default {
   border-top: $logan-border-spacing-md;
   padding: 30rpx;
   width: 100%;
-  box-sizing: border-box;
   overflow: hidden;
+  line-height: 2;
+  box-sizing: border-box;
 }
 
 .footer {

@@ -34,10 +34,9 @@ export default {
       canvas: null,
       image: null,
 
-      lesson_id: '',
-      end_second: '',
+      lesson_id: 0,
+      end_second: 0,
       timer: 0,
-
       src: '',
 
       errMsgMap: {
@@ -52,8 +51,6 @@ export default {
     }
   },
   onLoad(query) {
-    this.lesson_id = 76 || query.lesson_id
-    this.end_second = 10 || query.end_second
     this.init()
   },
   mounted() {

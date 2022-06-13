@@ -16,7 +16,7 @@
             <view class="course-item-cover">
               <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
               <view class="course-tag" v-else>认证课</view>
-              <image class="course-img" :src="item.cover" @click="() => previewImg(item.cover)" />
+              <image class="course-img" :src="item.cover" @click="() => previewImg(item.cover)" mode="aspectFill" />
             </view>
             <view class="course-item-content" @click="() => toDetails(item.id)">
               <view class="course-name">{{ item.title }}</view>
