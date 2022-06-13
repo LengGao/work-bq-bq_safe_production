@@ -2,7 +2,7 @@
   <view class="feedback-submit">
     <custom-header :title="defaultTitle"></custom-header>
 
-    <form @submit="onSubmit" @reset="onReset">
+    <form @submit="onSubmit" @reset="onReset" class="form">
       <view class="form-item">
         <view class="title">请选择建议类型</view>
         <uni-data-select v-model="form.type" :localdata="types"></uni-data-select>
@@ -65,9 +65,10 @@ export default {
         this.form.images.push(item)
       }
     },
-    ondel({ tempFiles }) {
-      let file = tempFiles[0]
-      let index = this.form.images.findIndex(item.uuid === file.uuid)
+    ondel({ tempFile }) {
+      console.log('tempFiles', tempFile );
+      let file = tempFile
+      let index = this.form.images.findIndex(item => item.id === file.uuid)
       this.form.images.splice(index, 1)
     },
     async onSubmit(e) {
@@ -78,10 +79,19 @@ export default {
       if (res.code === 0) {
         this.onReset()
         uni.showToast({ title: '提交陈功', icon: 'success'})
+        setTimeout(() => { this.goBack() }, 800)
       }
     },
     onReset() {
       this.form = { type: '', content: '', images: [] }
+    },
+    goBack() {
+      let pages = getCurrentPages()
+      if (pages.length > 1) {
+        uni.navigateBack({ delta: 1 })
+      } else {
+        history.back()
+      }
     },
   }
 }
@@ -90,12 +100,13 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 .feedback-submit {
-  padding: 20rpx 40rpx;
   overflow: hidden;
+  width: 100%;
 }
 
 .form-item {
   margin-top: 30rpx;
+  padding: 20rpx 40rpx;
 }
 
 .title {
