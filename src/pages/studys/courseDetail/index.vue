@@ -238,7 +238,7 @@ export default {
 
     showModal() {
       let url = `/pages/studys/classTestMode/answer/index`
-      let { lesson_id, course_id, lesson_id, lesson } = this.getQuery()
+      let { lesson_id, course_id, lesson } = this.getQuery()
       let query = { lesson_id, course_id }
       let path = this.getPath(url, query)
       let is_free = lesson.is_free
