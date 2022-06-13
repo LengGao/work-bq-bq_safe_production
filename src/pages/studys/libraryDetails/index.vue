@@ -58,11 +58,12 @@ export default {
 @import "@/styles/logan.scss";
 
 .library-details {
-  padding: 20rpx 30rpx;
+  width: 100%;
 }
 
 .content {
   height: 100%;
+  padding: 20rpx 30rpx;
   text-align: center;
 
   .title {

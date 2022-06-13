@@ -249,7 +249,12 @@ export default {
   width: 100%;
   overflow: hidden;
   line-height: 2;
+  text-indent: 2em;
   box-sizing: border-box;
+}
+
+::v-deep uni-image {
+  margin-left: -2em;
 }
 
 .footer {

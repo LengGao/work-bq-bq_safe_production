@@ -14,7 +14,7 @@
     </view>
 
     <view class="textarea">
-      <u-parse :content="info.content || '--'" />
+      <u-parse :content="info.content || '--'" class="wxParse" />
     </view>
   </view>
 </template>
@@ -38,6 +38,7 @@ export default {
   onLoad(query) {
     this.article_id = query.article_id
     this.getData()
+
   },
   methods: {
     async getData() {
@@ -90,6 +91,14 @@ export default {
 .textarea {
   margin-top: 20rpx;
   padding: 0 30rpx;
-  line-height: 2;
 }
+
+::v-deep .p {
+  text-indent: 2em;
+}
+
+::v-deep uni-image {
+  margin-left: -2em;
+}
+
 </style>
