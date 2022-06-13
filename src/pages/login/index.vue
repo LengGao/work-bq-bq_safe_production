@@ -18,16 +18,14 @@
                        placeholderStyle="font-size: 28rpx; color: #ccc;" type="password" :inputBorder="false"
                        passwordIcon></uni-easyinput>
       </view>
-      <button class="btn-submit" :class="!isRead ? 'btn-disable' : ''" @click="onSubmit" :loading="loading"
-              :disable="!isRead">
-        登录
-      </button>
+      <button class="btn-submit" :class="!isRead ? 'btn-disable' : ''" :loading="loading"
+              :disabled="!isRead"  @click="onSubmit">登录</button>
       <view class="read">
         <checkbox-group @change="onChecked">
           <label class="label">
-            <checkbox class="checkbox" value="1" :checked="isRead" />
-            我已阅读并同意<text class="label-em" @click="onRead">《用户协议与隐私政策》</text>
+            <checkbox class="checkbox" value="1" :checked="isRead"  />
           </label>
+          我已阅读并同意<text class="label-em" @click="onRead">《用户协议与隐私政策》</text>
         </checkbox-group>
       </view>
     </view>
@@ -57,22 +55,18 @@ export default {
       // password: '123456',
       username: '430481199706297215',
       password: '123456',
-      isRead: false,
       visibility: false,
+      isRead: false,
       loading: false,
       logImag: logImag
     }
   },
   onLoad(query) {
-    let isRead = query.isRead
-    this.isRead = !!isRead
-    this.getSystemConfig()
+    this.isRead = !!query.isRead
   },
-  onReady() {
-    let isLogin = uni.getStorageSync('userInfo') || {}
-    if (isLogin.token) {
-      uni.switchTab({ url: '/pages/index/index' })
-    }
+  onShow() {
+    console.log('this.isRead', this.isRead);
+    this.isRead = this.isRead
   },
   methods: {
     onFocus() {
@@ -100,9 +94,6 @@ export default {
     onBlur() {
       this.visibility = false
     },
-    updateRead(isRead) {
-      this.isRead = isRead
-    },
     onRead() {
       uni.navigateTo({ url: '/pages/indexs/clause/index' })
     },
@@ -122,19 +113,12 @@ export default {
       } else {
         uni.showToast({ icon: 'none', title: `${res.message}` })
       }
-      this.loading = true
+      this.loading = false
     },
     onChecked(e) {
+      console.log('e', e);
       this.isRead = e.target.value.length ? true : false
     },
-    async getSystemConfig() {
-      // const res = await systemConfig()
-      // if (res.code === 0) {
-      //   if (res.data.site_logo) {
-      //     this.logImag = res.data.site_logo
-      //   }
-      // }
-    }
   }
 }
 </script>
