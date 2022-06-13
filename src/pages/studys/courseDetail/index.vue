@@ -4,14 +4,8 @@
 
     <!-- #ifdef H5 -->
     <view id="aliplayer">
-    <img v-if="!player" :src="courseInfo.cover" mode="aspectFit" class="course-cover" />
+      <img v-if="!player" :src="courseInfo.cover" class="course-cover" />
     </view>
-    <!-- #endif -->
-    <!-- #ifdef MP-WEIXIN -->
-    <video v-if="src" class="course-video" id="course-video" :src="src" :autoplay="false" :initial-time="start_second"
-           :title="title" :poster="cover" :poster-for-crawler="cover" @play="onPlay" @pause="onPause" @ended="onEnded"
-           @timeupdate="onTimeupdate" @loadedmetadata="onLoadedmetadata" @error="onError">
-    </video>
     <!-- #endif -->
 
     <!-- 分段器 -->
@@ -65,8 +59,7 @@ import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
 import CustomHeader from "@/components/custom-header"
-import { mapGetters } from 'vuex'
-import { browser } from '@/mixins/index'
+import { browser, userStatus } from '@/mixins/index'
 import {
   courseInfo,
   courseCommentSubmit,
@@ -76,7 +69,7 @@ import {
 } from '@/api/course'
 
 export default {
-  mixins: [browser],
+  mixins: [browser, userStatus],
   components: {
     Details,
     Catalogue,
@@ -91,46 +84,34 @@ export default {
       course_id: 0,
       lesson_id: 0,
 
-      // 上拉配置
-      up: { page: { num: 0, size: 10, time: 1000 } },
       // 课程详情
       courseInfo: {},
       // 目录
       chapterList: [],
       // 评价
+      up: { page: { num: 0, size: 10, time: 1000 } },
       tags: [],
-      // 评价
       starText: ['', '不满意', '一般', '比较满意', '满意', '非常满意'],
       rateForm: {
         star: 1,
         comment: '',
       },
-      // 分段器材
+
+      // 分段器
       current: 0,
       items: ['简介', '目录', '评价'],
 
       // h5 视频 小程序视频
-      src: '',
-      title: '',
-      cover: '',
+      player: null, // 播放器实例
+      video: {}, // 视频播放
+      lesson: {}, // 课时记录
+      record: {}, // 学习记录
+      face: [], // 人脸信息
+      tiemr: 0, //计时器
+      time: 1000 * 10, // 记录时间
+      end_time: 0,    // 终止时间
       prev_time: 0,   // 上次时间
       start_second: 0, // 当前时间
-      end_time: 0,    // 截止时间
-      free_second: 0, // 
-      finish_second: 0,
-      duration: 0,
-      time: 1000 * 10,
-      intervalId: null,
-      is_free: false,   // 是否播完
-      is_forward: false,
-      player: null,
-      disableChange: false,
-      is_practice: false,
-      is_done: false,
-
-      needLogin: false,
-      needBuy: false,
-      first: false
     }
   },
   computed: {
@@ -159,139 +140,42 @@ export default {
     clearInterval(this.intervalId)
     this.intervalId = null
     // #ifdef H5
-    if (this.player) { this.player.dispose();}
+    if (this.player) this.player.dispose();
     // #endif
   },
   methods: {
-    async toLogin () {
-      let res = await uni.showModal({ title: '提示', content: "该功能需要登录后才能使用" })
-      if (res[1].confirm) {
-        uni.navigateTo({ url: '/pages/login/index' })
+    getPath(url, query) {
+      let params = ''
+      Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
+      return url + params.replace(/&?/, '?')
+    },
+    getQuery() {
+      return {
+        video: this.video, 
+        lesson: this.lesson,
+        record: this.record,
+        face: this.face,
+        end_time: this.end_time,
+        prev_time: this.prev_time,
+        start_second: this.start_second,
+        region_id: this.region_id,
+        course_id: this.course_id,
+        lesson_id: this.lesson_id 
       }
     },
-    // 加载完成
-    onLoadedmetadata() {
-      wx.createSelectorQuery().select('#course-video').context((res) => {
-        this.player = res.context;
-        this.player.play()
-      }).exec()
-    },
-    // 播放
-    onPlay() {
-      this.intervalSendMini()
-    },
-    // 展厅
-    onPause(e) {
-      this.stopSendMini()
-    },
-    // 结束
-    onEnded(e) {
-      this.stopSendMini()
-      this.is_free = true
-      this.prev_time = 0
-      this.start_second = 0
-      this.end_time = 0
-      this.player.seek(0)
-      this.showModal()
-    },
-    // 进度更新
-    onTimeupdate({ detail }) {
-      let currentTime = detail.currentTime
-      if (this.is_forward || this.is_free || this.start_second < this.finish_second) {
-        this.start_second = currentTime
-      } else {
-        if (Math.abs(currentTime - this.start_second) >= 2) {
-          this.player.seek(this.start_second)
-        } else {
-          this.start_second = currentTime
-          this.end_time = currentTime
-        }
-      }
-    },
-    onEnded(err) {
-      console.log('onEnded', err);
-    },
-    //定时发送数据
-    intervalSendMini() {
-      // 定时器开始前先请空，再开启
-      if (this.intervalId) { clearInterval(this.intervalId) }
-      this.intervalId = setInterval(() => { this.sendDataMini() }, this.time)
-    },
-    // 暂停发送
-    stopSendMini() {
-      if (this.intervalId) {
-        // 清空定时发送时间，发送暂停时的播放时间
-        clearInterval(this.intervalId)
-        this.intervalId = null
-        this.sendDataMini()
-      }
-    },
-    // 发送数据
-    async sendDataMini() {
-      // 由已经播放的时间减去开始播放的时间，判断是否拖动了进度条，
-      let endTime = this.end_time
-
-      let params = {
-        lesson_id: this.lesson_id,
-        start_second: parseFloat(this.prev_time),
-        end_second: parseFloat(endTime)
-      }
-
-      let res = await courseRecordLearn(params)
-      if (res.code === 0) {
-        let last_second = res.data.last_second
-        let redirect_url = res.data.redirect_url
-        if (redirect_url) {
-          this.player.pause()
-          this.onPause()
-          uni.showToast({ icon: 'none', title: `${res.message}` })
-          setTimeout(() => {
-            this.soterAuthentication(redirect_url)
-          }, 1000)
-        }
-      } else {
-        this.player.pause()
-        this.onPause()
-        uni.showToast({ icon: 'icon', title: `${res.message}` })
-      }
-
-      this.prev_time = endTime
-    },
-    // 设置播放器
-    settingPlayer(options) {
-      this.src = 'https://img.cdn.aliyun.dcloud.net.cn/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20200317.mp4'
-    },
-    // 生物认证
-    async soterAuthentication(redirect_url) {
-      let check = await wx.checkIsSupportSoterAuthentication()
-      console.log('check', check);
-      if (check.supportMode.indexOf('facial') !== -1) {
-        wx.startSoterAuthentication({
-          requestAuthModes: ['facial'],
-          authContent: '身份验证'
-        })
-      }
-    },
-
     // 分段其切换
     onChangeSegmented({ currentIndex }) {
       this.current = currentIndex
     },
     // 我要评价
     onComment() {
-      if (this.needLogin) {
-        uni.showToast({ title: '请登录', icon: 'none' });
-        return;
+      if (this.authority) {
+        this.$refs.popup.open()
       }
-      if (this.needBuy) {
-        uni.showToast({ title: '请联系管理员开通课程', icon: 'none' });
-        return
-      }
-      this.resetForm()
-      this.$refs.popup.open()
     },
     // 关闭评论
     onClose() {
+      this.resetForm()
       this.$refs.popup.close()
     },
     // 重置评论表单
@@ -310,21 +194,18 @@ export default {
     onChangeRate(e) {
       this.rateForm.star = e.value
     },
-
+    async getCommentHotWord() {
+      let res = await courseCommentHotWord()
+      if (res.code === 0) {
+        let list = res.data.map((word, index) => ({ id: index, label: word, checked: false }))
+        this.tags = list
+      }
+    },
     // 发表评论
     async onPublish() {
-      if (this.needLogin) {
-        uni.showToast({ title: '请登录', icon: 'none' });
-        return;
-      } 
       let { star, comment } = this.rateForm
       let hot_word = this.tags.filter(filterItem => filterItem.checked).map(mapItem => mapItem.label)
-      let params = {
-        course_id: this.course_id,
-        star: star,
-        hot_word: hot_word,
-        comment: comment
-      }
+      let params = { course_id: this.course_id, star: star, hot_word: hot_word, comment: comment}
 
       let res = await courseCommentSubmit(params)
       if (res.code === 0) {
@@ -338,36 +219,34 @@ export default {
     },
 
     async getCourseInfo() {
-      let param = { region_id: this.region_id, course_id: this.course_id }
+      let { region_id, course_id, lesson_id } = this.getQuery()
+      let param = { region_id, course_id }
       let res = await courseInfo(param)
       if (res.code === 0) {
-        this.lesson_id = this.lesson_id ? lesson_id : res.data.learning_lesson_id
+        let lesson_id = lesson_id ? lesson_id : res.data.learning_lesson_id
+        this.lesson_id = lesson_id
         this.courseInfo = res.data
-        this.videoCover = res.data.cover
-        let lesson_id = this.lesson_id || res.data.learning_lesson_id
-        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: lesson_id }) 
-      }
-    },
-
-    async getCommentHotWord() {
-      let res = await courseCommentHotWord()
-      if (res.code === 0) {
-        let list = res.data.map((word, index) => ({ id: index, label: word, checked: false }))
-        this.tags = list
+        this.getCourseGetVideoAuth({ region_id, lesson_id }) 
       }
     },
 
     onChangeVideo(detailArr) {
       let curr = detailArr[0]
-      let params = { region_id: this.region_id, lesson_id: curr.id }
       this.lesson_id = curr.id
-      this.getCourseGetVideoAuth(params)
+      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
     },
 
     showModal() {
-      let url = `/pages/studys/classTestMode/answer/index`,
-        query = `?course_id=${this.course_id}&lesson_id=${this.lesson_id}`
-      if (this.free_second && Math.abs(this.free_second - this.start_second) <= 2) {
+      let url = `/pages/studys/classTestMode/answer/index`
+      let { lesson_id, course_id, lesson_id, lesson } = this.getQuery()
+      let query = { lesson_id, course_id }
+      let path = this.getPath(url, query)
+      let is_free = lesson.is_free
+      let free_second = lesson.free_second
+      let start_second = this.start_second
+      let distance = Math.abs(free_second, start_second) <= 2
+
+      if (this.free_second && distance) {
         this.is_free = false
         uni.showToast({ title: `试看结束`, icon: 'none'})
       } else {
