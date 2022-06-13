@@ -119,7 +119,6 @@ export default {
       isReady: false,
       question_bank_id: '',
       questionBankInfo: '',
-      activeQuestionBank: '请选择题库',
 
       statistics: {
         answer_days: 0,
@@ -129,15 +128,25 @@ export default {
       },
     };
   },
+  watch: {
+    questionBankInfo(val) {
+      if (val.id) {
+        this.setActiveQuestionBank([val])
+        this.getDailyStatistics()
+      }
+    }
+  },
   computed: {
     answerStatus() {
       return this.statistics.today_answer_num ? '继续练习' : '今日未练习'
+    },
+    activeQuestionBank() {
+      return this.questionBankInfo && this.questionBankInfo.id ? this.questionBankInfo.title : '请选择题库' 
     }
   },
   onLoad() {
-    if (!this.isLoad) {
-      this.init()
-    }
+    this.questionBankInfo = this.$store.getters.questionBankInfo
+    if (!this.isLoad) { this.init() }
   },
   onShow() {
     if (this.isLoad) {
@@ -148,9 +157,7 @@ export default {
   },  
   methods: {
     init() {
-      this.getQuestionBankList().then(res => {
-        this.getDailyStatistics()
-      })
+      this.getQuestionBankList()
     },
     to(url) {
       if (this.authority({ checkBlank: true })) {
@@ -176,29 +183,28 @@ export default {
       this.currentCandidates = index
       let questionBankInfo = this.candidates[index]
       this.questionBankInfo = questionBankInfo
-      this.setActiveQuestionBank([questionBankInfo])
       this.$refs.popupRef.close()
     },
     setActiveQuestionBank(questionBankList) {
       if (Array.isArray(questionBankList)) {
         let questionBankInfo = questionBankList[0]
         this.question_bank_id = questionBankInfo.id
-        this.activeQuestionBank = questionBankInfo.title
+        this.questionBankInfo = questionBankInfo
         this.$store.commit('SET_QUESTION_BANK_INFO', questionBankInfo)
-      } else {
-         this.activeQuestionBank = '请选择题库'
       }
     },
     async getQuestionBankList() {
       let res = await getQuestionBankList()
       if (res.code === 0) {
         this.candidates = res.data
-        this.setActiveQuestionBank(res.data)
+        if (!this.questionBankInfo.id) {
+          this.setActiveQuestionBank(res.data)
+        }
       }
       return res
     },
     async getDailyStatistics() {
-      let question_bank_id = this.$store.getters.questionBankInfo.id
+      let question_bank_id = this.question_bank_id
       let params = { question_bank_id }
       let res = await getDailyStatistics(params)
       if (res.code === 0) {
