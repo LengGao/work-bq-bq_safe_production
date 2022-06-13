@@ -12,6 +12,30 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-shangchuan-copy:before {
+  content: "\e622";
+}
+
+.icon-guanyuwomen-2:before {
+  content: "\e660";
+}
+
+.icon-lianxikefu:before {
+  content: "\e668";
+}
+
+.icon-shoucang3:before {
+  content: "\e906";
+}
+
+.icon-Opinion:before {
+  content: "\e614";
+}
+
+.icon-a-ziyuan460:before {
+  content: "\e78b";
+}
+
 .icon-chacha:before {
   content: "\e658";
 }

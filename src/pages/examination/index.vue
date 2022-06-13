@@ -1,6 +1,6 @@
 <template>
   <view class="examination">
-    <custom-header :title="defaultTitle"></custom-header>
+    <custom-header :title="defaultTitle" :needBack="false"></custom-header>
 
     <view class="logan-list-head">
       <view class="logan-list-head-left" @click="onCandidates">
@@ -97,7 +97,7 @@ export default {
   },
   data() {
     return {
-      defaultTitle: '安培学堂',
+      defaultTitle: '题库',
       // 组合框
       currentCandidates: 0,
       candidates: [],

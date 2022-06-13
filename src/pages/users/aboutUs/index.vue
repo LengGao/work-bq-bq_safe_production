@@ -1,16 +1,21 @@
 <template>
   <view class="about-us">
     <custom-header :title="defaultTitle"></custom-header>
-    <uParse :content="content || '--'"></uParse>
+    <view class="content">
+       <uParse :content="content || '--'"></uParse>
+    </view>
+
   </view>
 </template>
 
 <script>
+import uParse from "@/components/gaoyia-parse/parse";
 import CustomHeader from "@/components/custom-header"
 import { aboutUs } from "@/api/user"
 
 export default {
   components: {
+    uParse,
     CustomHeader,
   },
   data() {
@@ -38,11 +43,18 @@ export default {
 @import "@/styles/logan.scss";
 .about-us {
   overflow: hidden;
-  padding: 40rpx;
   height: 100%;
 }
 
-.none {
-  padding: 50% 50%;
+.content {
+  padding: 30rpx;
+  font-size: 28rpx;
+  line-height: 2;
+  text-indent: 2em;
 }
+
+::v-deep uni-image {
+  margin-left: -2em;
+}
+
 </style>

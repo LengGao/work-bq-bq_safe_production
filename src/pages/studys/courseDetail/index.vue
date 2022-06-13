@@ -52,6 +52,7 @@
     </uni-popup>
 
     <FaceVerification v-if="isFace"> </FaceVerification>
+    
   </view>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <view class="study">
-    <custom-header :title="defaultTitle"></custom-header>
+    <custom-header :title="defaultTitle" :needBack="false"></custom-header>
 
     <view class="header">
       <view class="header-one">
@@ -101,7 +101,7 @@ export default {
   },
   data() {
     return {
-      defaultTitle: '安培课堂',
+      defaultTitle: '课程',
       isFinish: false,
       page: { num: 0, size: 1 },
 

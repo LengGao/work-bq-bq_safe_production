@@ -1,13 +1,13 @@
 <template>
   <view class="user">
-    <custom-header :title="defaultTitle"></custom-header>
+    <custom-header :title="defaultTitle" :needBack="false"></custom-header>
 
     <view class="user-header">
       <view class="user-card">
         <UserInfo :info="userInfo" :orgInfo="orgInfo" :isLogin="isLogin" @login="login" />
         <view class="card-setting">
-          <uni-icons v-if="isLogin" customPrefix="iconfont" type="icon-tuichu" color="#fff" size="40rpx" class="card-setting-icon"
-                     @click="loginlout" />
+          <uni-icons v-if="isLogin" customPrefix="iconfont" type="icon-tuichu" color="#fff" size="40rpx"
+                     class="card-setting-icon" @click="loginlout" />
         </view>
       </view>
     </view>
@@ -25,11 +25,8 @@
 
     <view class="links">
       <uni-list class="list">
-        <uni-list-item v-for="link in links" :key="link.id" :to="link.url" :title="link.title"
-                       @click="onClickList(link.id)" showArrow clickable>
-          <template v-slot:header>
-            <image class="list-image" :src="link.thumb" mode="widthFix"></image>
-          </template>
+        <uni-list-item v-for="link in links" :key="link.id" :to="link.url" :title="link.title" showExtraIcon showArrow
+                       clickable :extraIcon="link.showExtraIcon" @click="onClickList(link.id)">
         </uni-list-item>
       </uni-list>
     </view>
@@ -60,10 +57,10 @@ export default {
       ],
       listIndex: 0,
       links: [
-        { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list1.png", title: "课程收藏", url: "/pages/users/userCollectCource/index" },
-        { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list1.png", title: "关于我们", url: "/pages/users/aboutUs/index" },
-        { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list2.png", title: "意见反馈", url: "/pages/users/feedback/index" },
-        { id: 4, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_icon_list4.png", title: "联系客服", url: "/pages/users/contactService/index" },
+        { id: 1, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-shoucang3' }, title: "课程收藏", url: "/pages/users/userCollectCource/index" },
+        { id: 2, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-guanyuwomen-2' }, title: "关于我们", url: "/pages/users/aboutUs/index" },
+        { id: 3, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-Opinion' }, title: "意见反馈", url: "/pages/users/feedback/index" },
+        { id: 4, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-lianxikefu' }, title: "联系客服", url: "/pages/users/contactService/index" },
       ],
       isLogin: false,
     };
@@ -72,7 +69,7 @@ export default {
     ...mapGetters(['userInfo', 'orgInfo'])
   },
   onLoad() {
-    console.log('onLoad');    
+    console.log('onLoad');
     console.log(getCurrentPages());
   },
   onShow() {

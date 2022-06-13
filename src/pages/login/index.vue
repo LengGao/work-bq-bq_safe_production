@@ -85,7 +85,8 @@ export default {
         } else {
           this.visibility = false
         }
-      }) // #endif
+      }) 
+      // #endif
 
       // #ifdef MP-WEIXIN
       uni.onKeyboardHeightChange(res => {

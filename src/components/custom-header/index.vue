@@ -2,7 +2,7 @@
   <view class="custom-header" v-if="!isWeixinJSBridge">
     <view class="status_bar"></view>
     <view class="nav-bar" :style="{'background-color':  backgroundColor }">    
-      <uni-icons class="nav-bar-back" type="back" color="#fff" size="16px" @click="goBack" />
+      <uni-icons class="nav-bar-back" type="back" color="#fff" size="16px" v-if="needBack" @click="goBack" />
       <slot name="title"><text class="nav-bar-title"> {{ title }} </text></slot>
     </view>
   </view>
@@ -29,6 +29,10 @@ export default {
     backgroundColor: {
       type: String,
       default: '#199fff'
+    },
+    needBack: {
+      type: Boolean,
+      default: true
     },
     prevFunction: {
       type: Function

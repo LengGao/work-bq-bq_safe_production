@@ -3,7 +3,7 @@
     <!-- #ifdef MP-WEIXIN -->
     <official-account @load="onbindload" @error="onbinderror" :hidden="isHidden"></official-account>
     <!-- #endif -->
-    <custom-header :title="defaultTitle"></custom-header>
+    <custom-header :title="defaultTitle" :needBack="false"></custom-header>
 
     <view class="filter">
       <view class="filter-left" @click="onOpenFilter">
@@ -20,7 +20,7 @@
       <swiper :interval="2000" autoplay circular disable-touch class="swiper">
         <swiper-item v-for="swiper in swipers" :key="swiper.id" @click="() => onClickSwiperImg(swiper)"
                      :current-item-id="swiper.id" class="swiper-item">
-          <image :src="swiper.banner" class="swiper-image" mode="scaleToFill" />
+          <image :src="swiper.banner" class="swiper-image" mode="aspectFill" />
         </swiper-item>
       </swiper>
     </view>
@@ -184,6 +184,8 @@ export default {
   data() {
     return {
       isHidden: false,
+      isReady: false,
+      isOnload: false,
       defaultTitle: '安培课堂',
 
       swipers: [],
@@ -197,7 +199,6 @@ export default {
       courses: [],
       policys: [],
       librarys: [],
-
     };
   },
   computed: {
@@ -214,21 +215,21 @@ export default {
     this.libraryList()
   },
   onReady() {
-    let orgInfo = uni.getStorageSync('orgInfo'), userInfo = uni.getStorageSync('userInfo')
-    if (userInfo.token) {
-      if (!orgInfo.id) {
-        this.openPopup(this.organizationList)
-      }
+    if (this.isReady) {
+      this.needShowOrg()
     }
   },
   onShow() {
-    if (this.$refs['popup-org']) {
-      let orgInfo = uni.getStorageSync('orgInfo'), userInfo = uni.getStorageSync('userInfo')
-      if (userInfo.token) {
-        if (!orgInfo.id) {
-          this.openPopup(this.organizationList)
-        }
-      }
+    if (this.isReady) {
+      this.needShowOrg()
+    } else {
+      this.isReady = true
+    }
+
+    if (this.isOnload) {
+      this.init()
+    } else {
+      this.isOnload = true
     }
   },
   methods: {
@@ -244,10 +245,19 @@ export default {
       let orgInfo = uni.getStorageSync('orgInfo')
       return orgInfo
     },
+    needShowOrg() {
+      let userInfo = this.checkLogin()
+      let orgInfo = this.checkOrgInfo()
+      let organizationList = this.organizationList
+      let component = this.$refs['popup-org']
+
+      if (component && userInfo.token && organizationList.length && (!orgInfo || !orgInfo.id )) {
+        this.openPopup(organizationList)
+      }
+    },
     openPopup(list) {
       if (list && list.length) {
-        let len = list.length
-        if (len > 1) {
+        if (list.length > 1) {
           uni.hideTabBar()
           this.$refs['popup-org'].open('bottom')
         } else {
@@ -256,13 +266,13 @@ export default {
         }
       }
     },
-    // 选择机构s
+    // 选择机构
     onChoiceOrg(item) {
       uni.showToast({ title: `欢迎进入${item.name}`, icon: 'none' })
-      this.$store.dispatch('setOrgCurrent', item)
-      this.$refs['popup-org'].close()
       uni.showTabBar()
       this.defaultTitle = item.name
+      this.$refs['popup-org'].close()
+      this.$store.dispatch('setOrgCurrent', item)
     },
     // 点击筛选
     onOpenFilter() {
@@ -396,7 +406,6 @@ export default {
           this.$store.commit('SET_REGION', currLocation)
         }
       }
-      this.init()
     }
   }, // methods end
 };
