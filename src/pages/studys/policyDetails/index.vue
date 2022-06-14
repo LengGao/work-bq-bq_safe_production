@@ -7,14 +7,14 @@
       <view class="subtitle">
         <view class="left">
           <text class="school">{{ info.source || '--' }}</text>
-          <text class="time">{{ info.create_time || '--' }}}</text>
+          <text class="time">{{ info.create_time || '--' }}</text>
         </view>
         <view class="right">阅读{{ info.virtual_num}}</view>
       </view>
     </view>
 
     <view class="textarea">
-      <u-parse :content="info.content || '--'" class="wxParse" />
+      <u-parse :content="info.content || '--'" />
     </view>
   </view>
 </template>
@@ -91,9 +91,7 @@ export default {
 .textarea {
   margin-top: 20rpx;
   padding: 0 30rpx;
-}
-
-::v-deep .p {
+  line-height: 2;
   text-indent: 2em;
 }
 

@@ -61,7 +61,11 @@ export default {
   },
   methods: {
     onClickRecommend(item) {
-      uni.navigateTo({ url: `/pages/studys/policyDetails/index?policy_id=${item.id}` })
+      if (item.url) {
+        location.href = item.url
+      } else {
+        uni.navigateTo({ url: `/pages/studys/policyDetails/index?article_id=${item.id}` })
+      }
     },
     previewImg(url) {
       uni.previewImage({

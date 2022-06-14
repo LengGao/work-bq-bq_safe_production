@@ -55,8 +55,9 @@
           <CardRow v-for="course in courses" :key="course.id">
             <template v-slot:cardBodyLeft>
               <view class="logan-card-body-left">
-                <view class="cover-tag cover-tag--success" v-if="!course.price">免费课</view>
-                <view class="cover-tag" v-else>认证课</view>
+                <view class="cover-tag cover-tag--success" v-if="course.price_type === 0">免费课</view>
+                <view class="cover-tag cover-tag--primary" v-else-if="course.price_type === 1">认证课</view>
+                <view class="cover-tag" v-else>其他课</view>
                 <image @click="() => previewImg(course.cover)" :src="course.cover" class="logan-img-size-lg" mode="aspectFill" />
               </view>
             </template>
@@ -98,7 +99,7 @@
       </view>
 
       <view class="policy-swiper">
-        <swiper @change="onChangeSwiper" :display-multiple-items="3" :autoplay="false" circular class="swiper">
+        <swiper @change="onChangeSwiper" :autoplay="false" circular class="swiper">
           <swiper-item v-for="policy in policys" :key="policy.id" :current-item-id="policy.id">
             <view class="swiper-item-box" @click="() => onClickPolicy(policy.id)">
               <image :src="policy.cover" class="swiper-image" mode="aspectFill" />
@@ -550,6 +551,9 @@ $padding-lr: 30rpx;
       border-bottom-right-radius: 12rpx;
       &--success {
         background-color: $uni-color-success;
+      }
+      &--primary {
+        background-color: #199fff;
       }
     }
   }

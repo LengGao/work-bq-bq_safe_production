@@ -3,12 +3,14 @@
     <custom-header :title="defaultTitle"></custom-header>
 
     <view class="content">
-      <view class="title">{{libraryData.title}}</view>
-      <image v-if="libraryData.preview" :src="libraryData.preview" mode="scaleToFill" class="img" />
+      <view class="title">{{libraryData.title || '--' }}</view>
+      <!-- <view class="title">发布事件{{libraryData.time || '--' }}</view> -->
+
+      <image v-if="libraryData.preview" :src="libraryData.preview" mode="aspectFill" class="img" />
     </view>
     
     <view class="footer">
-      <button class="btn__primary" @click="onDownLoad"> 点击下载 </button>
+      <button class="btn__primary" @click="onDownLoad" v-if="libraryData.file_url"> 点击下载 </button>
     </view>
   </view>
 </template>
