@@ -12,7 +12,7 @@
       </view>
     </view>
 
-    <view class="grids">
+    <view class="grids" :style="{'top': linksMargin }">
       <uni-grid :column="3" :showBorder="false" class="grid">
         <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" >
           <view class="grid-item" @click="() => onClickGrid(grid.url, grid.blank)">
@@ -23,7 +23,7 @@
       </uni-grid>
     </view>
 
-    <view class="links" :style="{'margin-top': linksMargin}">
+    <view class="links">
       <uni-list class="list" >
         <uni-list-item v-for="link in links" :key="link.id" :to="link.url" :title="link.title" showExtraIcon showArrow
                        clickable :extraIcon="link.showExtraIcon" @click="onClickList(link.id)">
@@ -64,7 +64,7 @@ export default {
       ],
       isLogin: false,
 
-      linksMargin: '100rpx'
+      linksMargin: '290rpx'
     };
   },
   computed: {
@@ -74,7 +74,7 @@ export default {
   },
   mounted() {
     if (this.isWeixinJSBridge) {
-      this.linksMargin = '200rpx'
+      this.linksMargin = '368rpx'
     }
   },
   onShow() {
@@ -156,7 +156,7 @@ $page-padding: 0rpx 20rpx;
 
 .grids {
   position: absolute;
-  top: 268rpx;
+  top: 208rpx;
   margin: 0 40rpx;
   width: calc(100% - 80rpx);
   height: 190rpx;
@@ -188,6 +188,10 @@ $page-padding: 0rpx 20rpx;
     margin-top: 20rpx;
     font-size: $font-size-base;
   }
+}
+
+.links {
+  margin-top: 100rpx;
 }
 
 ::v-deep .uni-list-item__container {

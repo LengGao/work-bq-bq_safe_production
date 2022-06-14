@@ -83,6 +83,12 @@
 					}
 				},
 				{
+					"path": "faceVerification/index",
+					"style": {
+						"navigationBarTitleText": "人脸识别"
+					}
+				},
+				{
 					"path": "classTestMode/answer/index",
 					"style": {
 						"navigationBarTitleText": "随堂考试"

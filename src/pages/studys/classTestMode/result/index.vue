@@ -44,7 +44,7 @@
 
 <script>
 import CustomHeader from "@/components/custom-header"
-import { practiceSubmit } from "@/api/question";
+import { practiceSubmit } from "@/api/course";
 import { browser } from '@/mixins/index'
 
 export default {

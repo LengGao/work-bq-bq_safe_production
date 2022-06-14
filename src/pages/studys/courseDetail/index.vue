@@ -51,7 +51,6 @@
       </view>
     </uni-popup>
 
-    <FaceVerification v-if="isFace"> </FaceVerification>
     
   </view>
 </template>
@@ -61,7 +60,6 @@ import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
 import CustomHeader from "@/components/custom-header"
-import FaceVerification from "./components/FaceVerification"
 import { browser, userStatus } from '@/mixins/index'
 import {
   courseInfo,
@@ -78,7 +76,6 @@ export default {
     Catalogue,
     Rate,
     CustomHeader,
-    FaceVerification
   },
   data() {
     return {
@@ -111,6 +108,8 @@ export default {
       lesson: {}, // 课时记录
       record: {}, // 学习记录
       face: [], // 人脸信息
+      faceNap: {},  // 缓存验证记录
+      user: [], // 用户信息相关
       intervalId: 0, //计时器
       time: 1000 * 10, // 记录时间
       end_time: 0,    // 终止时间
@@ -265,7 +264,7 @@ export default {
       }
     },
     // 随堂测试
-    showModalForExamination([path]) {
+    showModalForExamination(path) {
       uni.showModal({
         title: '提示',
         content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
@@ -283,6 +282,14 @@ export default {
     },
     // 人脸验证
     showModalForFaceVerifity() {
+      let url = `/pages/studys/faceVerification/index`
+      let query = { 
+        lesson_id: this.lesson_id, 
+        real_status: this.user.real_status,
+        end_second: this.player.getCurrentTime()
+      }
+      let path = this.getPath(url, query)
+
       uni.showModal({
         title: '提示',
         content: '请人脸核验成功后再继续学习',
@@ -291,7 +298,7 @@ export default {
         cancelColor: '#199fff',
         confirmColor: '#199fff',
         success: (res) => {
-
+          uni.redirectTo({ url: path })
         }
       })
     },
@@ -384,9 +391,11 @@ export default {
       uni.showToast({ title: '请登录', icon: 'none' })
     },
     needFaceVerifity(currTime) {
-      if (this.face.includes(currTime)) {
-        this.showModalForFaceVerifity()
-      }
+      this.face.forEach(item => {
+        if (Math.abs(item - currTime) >= 2) {
+          this.showModalForFaceVerifity()
+        }
+      })
     },
     // 创建播放器
     createPlayer(options) {
@@ -434,6 +443,7 @@ export default {
           if (lesson.free_second) player.setPreviewTime(lesson.free_second);
           player.seek(start_second)
           this.videoState = 'ready'
+          this.needFaceVerifity(start_second)
           // player.play()
         })
         player.on('play', () => {
@@ -474,6 +484,7 @@ export default {
               this.start_second = currTime
             }
           }
+          this.needFaceVerifity(currTime)
         })
         player.on('completeSeek', (e) => {
           console.log('completeSeek');
@@ -494,6 +505,7 @@ export default {
         let redirect_url = res.data.redirect_url
         this.finish_second = +res.data.finish_second
         this.prev_time = +res.data.last_second
+        if (redirect_url) this.needFaceVerifity(+res.data.last_second)
       } else {
         this.showToast(res.message, res.code, res.data)
       }
@@ -501,13 +513,14 @@ export default {
     // 获取视频凭证
     async getCourseGetVideoAuth(params) {
       let res = await courseGetVideoAuth(params)
-      let { video, lesson, record, face } = res.data
+      let { video, lesson, record, face, user } = res.data
 
       if (res.code === 0) {
         this.video = video
         this.lesson = lesson
         this.record = record
         this.face = face
+        this.user = user
         this.start_second = +record.start_second
         this.prev_time = +record.finish_second
         this.first = false

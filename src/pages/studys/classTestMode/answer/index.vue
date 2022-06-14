@@ -2,21 +2,24 @@
   <view class="answer">
     <custom-header :title="defaultTitle"></custom-header>
 
-    <uni-notice-bar v-if="notice" scrollable single showIcon color="#E2E227" background-color="#f8f8f8"
-                    text="在考试过程中不得弄虚作假，严禁采用任何作弊手段，遵纪守法，保证考试数据真实可信。"></uni-notice-bar>
+    <transition name="notice">
+      <uni-notice-bar v-if="notice" showIcon color="#E2E227" background-color="#f8f8f8"
+                      text="在考试过程中不得弄虚作假，严禁采用任何作弊手段，遵纪守法，保证考试数据真实可信。"
+                      class="notice" />
+    </transition>
                     
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" :current="currentIndex" :disable-touch="disableTouch"
             @change="onSwiperChange">
-      <swiper-item class="swiper-item" :class="{ 'swiper-item--hidden': item.question_type === 7 }"
-                   v-for="(item, index) in questionList" :key="index">
-        <Single :options="item" @change="onSingleChange" v-if="item.question_type === 1" />
-        <Multiple :options="item" @change="onSingleChange" v-if="item.question_type === 2" />
-        <Indefinite :options="item" @change="onSingleChange" v-if="item.question_type === 3" />
-        <Judg :options="item" @change="onSingleChange" v-if="item.question_type === 4" />
-        <Completion :options="item" @change="onInputChange" v-if="item.question_type === 5" />
-        <Short :options="item" @change="onInputChange" v-if="item.question_type === 6" />
+      <swiper-item class="swiper-item" v-for="(item, index) in answerSheet" :key="index">
+        
+        <Single :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 1" />
+        <Multiple :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 2" />
+        <Indefinite :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 3" />
+        <Judg :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 4" />
+        <Completion :options="questionList[index]" @change="onInputChange" v-if="questionList[index] && questionList[index].question_type === 5" />
+        <Short :options="questionList[index]" @change="onInputChange" v-if="questionList[index] && questionList[index].question_type === 6" />
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @next="handleNext"
@@ -39,8 +42,9 @@ import { browser } from '@/mixins/index'
 
 import {
   practiceStart,
+  practiceQuestion,
   practiceAnswer,
-} from "@/api/question";
+} from "@/api/course";
 
 export default {
   name: "answer",
@@ -65,10 +69,11 @@ export default {
       prevIndex: -1,
       currentIndex: 0,
       disableTouch: true,
-      duration: 300,
+      duration: 600,
       notice: true,
 
       total: 0,
+      answerSheet: [],
       questionList: [],
       userAnswerMap: {},
     };
@@ -161,10 +166,29 @@ export default {
         this.disableTouch = false
       }
       
+      this.prevfetch()
+      this.submitAnswer(this.prevIndex)
+    },
+
+    prevfetch() {
+      let index = 0
       if (this.isRight) {
-        this.submitAnswer(this.prevIndex)
+        index = this.currentIndex + 1
+      } else {
+        index = this.currentIndex - 1
+      }
+      if (index > this.total - 1 || index < 0) return;
+
+      let inAnswerSheet = this.answerSheet[index]
+      let inQuestionList = this.questionList[index]
+      let question_id = ''
+
+      if (inAnswerSheet && !inQuestionList) {
+        question_id = inAnswerSheet
+        this.practiceQuestion(question_id, index)
       }
     },
+
 
     getCurrAnswer(index) {
       let question_id = this.questionList[index].question_id
@@ -198,9 +222,10 @@ export default {
 
     async submitPaper() {
       let url = `/pages/studys/classTestMode/result/index`
-      let { practice_id, course_id, lesson_id, answer } = this.getQuery()
+      let { practice_id, course_id, lesson_id, answer } = this.getQuery(this.currentIndex)
       let query = { practice_id, course_id, lesson_id }
       let path = this.getPath(url, query)
+
       let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
       let res = await practiceAnswer(params)
       if (res.code === 0) {
@@ -211,7 +236,18 @@ export default {
     async submitAnswer(prevIndex) {
       let { practice_id, question_id, answer } = this.getQuery(prevIndex)
       let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
-      await practiceAnswer(params)
+      let res = await practiceAnswer(params)
+    },
+
+    async practiceQuestion(question_id, index) {
+      let practice_id = this.practice_id
+      let params = { question_id, practice_id }
+      let res = await practiceQuestion(params)
+      if (res.code === 0) {
+        let question = res.data
+        question.answer = []
+        this.questionList[index] = question 
+      }
     },
 
     async createQuestion() {
@@ -219,10 +255,28 @@ export default {
       const res = await practiceStart(data);
       if (res.code === 0) {
         this.practice_id = res.data.practice_id
-        this.questionList = res.data.question.map(item => { item.answer = []; return item; })
+        this.answerSheet = res.data.question
         this.total = res.data.question.length
+        this.initQuestions(res.data.question)
       }
     },
+
+    async initQuestions(arr) {
+      let practice_id = this.practice_id
+      let params1 = {question_id: arr[0], practice_id}
+      let params2 = {question_id: arr[1], practice_id}
+      
+      let res = await Promise.all([practiceQuestion(params1), practiceQuestion(params2) ])
+      if (res.length) {
+        let list = res.map(item => {
+          item.data.answer = []
+          return  item.data
+        })
+        console.log(list, this.answerSheet);
+        this.questionList = JSON.parse(JSON.stringify(list))
+      }
+    }
+
   },
 };
 </script>
@@ -252,5 +306,13 @@ export default {
   .bar {
     margin-top: auto;
   }
+}
+
+
+.notice-enter-active, .notice-leave-active {
+  transition: opacity 6s;
+}
+.notice-enter, .notice-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>

@@ -147,3 +147,44 @@ export function buildLearnCert(data) {
   })
 }
 
+
+export function practiceStart(data) {
+  return request({
+    url: 'course/practiceStart',
+    method: 'get',
+    data   
+  })
+}
+
+export function practiceQuestion(data) {
+  return request({
+    url: 'course/practiceQuestion',
+    method: 'post',
+    data,
+    loading: false,
+  })
+}
+
+export function practiceAnswer(data) {
+  return request({
+    url: 'course/practiceAnswer',
+    method: 'post',
+    data
+  })
+}
+
+export function practiceSubmit(data) {
+  return request({
+    url: 'course/practiceSubmit',
+    method: 'post',
+    data
+  })
+}
+
+export function practiceAnalyse(data) {
+  return request({
+    url: 'course/practiceAnalyse',
+    method: 'get',
+    data   
+  })
+}

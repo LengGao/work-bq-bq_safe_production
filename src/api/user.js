@@ -4,7 +4,7 @@ import { PREFIX } from '@/request/config'
 
 // 获取小程序信息
 export const getVersion = (data) => {
-    return requset({
+    return request({
         url: 'sign/getVersion',
         method: 'post',
         data,

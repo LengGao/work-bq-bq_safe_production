@@ -572,7 +572,7 @@ $padding-lr: 30rpx;
       border-radius: 50%;
     }
   }
-  .cost {
+  .cost {    
     .tag {
       position: relative;
       top: -4rpx;

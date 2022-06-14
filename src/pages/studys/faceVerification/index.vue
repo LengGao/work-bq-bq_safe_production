@@ -1,5 +1,8 @@
-<template>
+<template> 
   <view class="face-verification">
+    <custom-header :title="defaultTitle"></custom-header>
+
+<input type="file" accept="video/*" capture="camcorder" >
     <view class="title">
       {{ messageErr }}
     </view>
@@ -12,21 +15,28 @@
     </view>
 
     <view class="dialog-footer">
-      <button class="btn-primary" :disabled="btndisabled" size="small" @click="handleOk">开始认证</button>
+      <button class="btn-primary" v-if="!showRestartBtn" :disabled="btndisabled" size="small" @click="handleOk">开始认证</button>
+      <button class="btn-primary"  v-else size="small" @click="handleOk">重新验证</button>
     </view>
   </view>
 </template>
 
 <script>
 import { faceUpload } from '@/api/course'
+import CustomHeader from "@/components/custom-header"
 
 export default {
+  components: {
+    CustomHeader
+  },
   data() {
     return {
+      defaultTitle: '人脸验证',
       devicesState: '', // 设备状态
       messageErr: '认证（ 请将面部置于方框内，点击开始认证 ）',
       btndisabled: false,
       verificationStatus: false,
+      showRestartBtn: false,
 
       strem: null,
       video: null,
@@ -36,6 +46,7 @@ export default {
 
       lesson_id: 0,
       end_second: 0,
+      real_status: false,
       timer: 0,
       src: '',
 
@@ -51,6 +62,11 @@ export default {
     }
   },
   onLoad(query) {
+    let {lesson_id, end_second, real_status } =  query
+    this.lesson_id = +lesson_id
+    this.end_time = +end_second
+    this.real_status = real_status
+
     this.init()
   },
   mounted() {
@@ -76,11 +92,13 @@ export default {
   },
   methods: {
     init() {
+      console.log('asdsa');
       if (window.strem) { this.stopStrem() }
       this.checkSetting()
     },
     // 检查设备情况
     checkSetting() {
+      console.log('navigator.mediaDevices)', window.navigator.getUserMedia);
       if (navigator.mediaDevices) {
         this.devicesState = 'mediaDevices.getUserMedia'
       } else if (navigator.webkitGetUserMedia) {
@@ -106,11 +124,13 @@ export default {
     handlerError(error) {
       console.log('error', error);
       this.btndisabled = true
+      this.showRestartBtn = true
       let messageErr = `${this.errMsgMap[error.name]}错误`
       uni.showToast({ title: messageErr, icon: 'none' })
     },
     // 获取媒体
     geMediaDevices(constraints) {
+      console.log('asdsa');
       let devicesState = this.devicesState
       if (devicesState === 'mediaDevices.getUserMedia') {
         navigator.mediaDevices.getUserMedia(constraints).then(this.handlerSuccess).catch(this.handlerError)
@@ -156,7 +176,7 @@ export default {
     },
 
     stopStrem() {
-      if (this.strem) this.stream.getTracks().forEach((track) => track.stop());
+      // if (this.strem) this.stream.getTracks().forEach((track) => track.stop());
     },
 
     // 发送数据
@@ -187,7 +207,6 @@ export default {
 
 <style lang="scss" scoped>
 .face-verification {
-  padding: 30rpx;
   width: 100%;
   height: 100%;
 }

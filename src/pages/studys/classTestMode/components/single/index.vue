@@ -26,7 +26,7 @@ export default {
       type: Object,
       default: () => ({
         option: [],
-        title: "",
+        title: ""
       })
     },
     analysis: {

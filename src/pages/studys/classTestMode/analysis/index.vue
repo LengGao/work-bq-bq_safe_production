@@ -36,7 +36,7 @@ import { browser } from '@/mixins/index'
 
 import {
   practiceAnalyse,
-} from "@/api/question";
+} from "@/api/course";
 
 export default {
   name: "answer",

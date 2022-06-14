@@ -1,41 +1,8 @@
-import requset from '@/request/index'
+import request from '@/request/index'
 
-
-
-export function practiceStart(data) {
-  return requset({
-    url: 'course/practiceStart',
-    method: 'get',
-    data   
-  })
-}
-
-export function practiceAnswer(data) {
-  return requset({
-    url: 'course/practiceAnswer',
-    method: 'POST',
-    data
-  })
-}
-
-export function practiceSubmit(data) {
-  return requset({
-    url: 'course/practiceSubmit',
-    method: 'POST',
-    data
-  })
-}
-
-export function practiceAnalyse(data) {
-  return requset({
-    url: 'course/practiceAnalyse',
-    method: 'get',
-    data   
-  })
-}
 
 export function getQuestionBankList(data) {
-  return requset({
+  return request({
     url: 'question/getQuestionBankList',
     method: 'get',
     data   
@@ -43,7 +10,7 @@ export function getQuestionBankList(data) {
 }
 
 export function getChapterList(data) {
-  return requset({
+  return request({
     url: 'question/getPracticeChapterList',
     method: 'post',
     data   
@@ -51,7 +18,7 @@ export function getChapterList(data) {
 }
 
 export function restartPractice(data) {
-  return requset({
+  return request({
     url: 'question/restartPractice',
     method: 'post',
     data   
@@ -59,7 +26,7 @@ export function restartPractice(data) {
 }
 
 export function getPracticeAnswerSheet(data) {
-  return requset({
+  return request({
     url: 'question/getPracticeAnswerSheet',
     method: 'post',
     data,
@@ -67,7 +34,7 @@ export function getPracticeAnswerSheet(data) {
 }
 
 export function getQuestionDetail(data) {
-  return requset({
+  return request({
     url: 'question/getQuestionDetail',
     method: 'post',
     data,
@@ -76,7 +43,7 @@ export function getQuestionDetail(data) {
 }
 
 export function customExamList(data) {
-  return requset({
+  return request({
     url: 'question/customExamList',
     method: 'post',
     data   
@@ -84,7 +51,7 @@ export function customExamList(data) {
 }
 
 export function getCustomExamInfo(data) {
-  return requset({
+  return request({
     url: 'question/getCustomExamInfo',
     method: 'post',
     data   
@@ -92,7 +59,7 @@ export function getCustomExamInfo(data) {
 }
 
 export function getMockExamInfo(data) {
-  return requset({
+  return request({
     url: 'question/getMockExamInfo',
     method: 'post',
     data   
@@ -100,7 +67,7 @@ export function getMockExamInfo(data) {
 }
 
 export function wrongChapterList(data) {
-  return requset({
+  return request({
     url: 'question/wrongChapterList',
     method: 'post',
     data   
@@ -108,7 +75,7 @@ export function wrongChapterList(data) {
 }
 
 export function wrongAnswerSheet(data) {
-  return requset({
+  return request({
     url: 'question/wrongAnswerSheet',
     method: 'post',
     data   
@@ -116,7 +83,7 @@ export function wrongAnswerSheet(data) {
 }
 
 export function collectChapterList(data) {
-  return requset({
+  return request({
     url: 'question/collectChapterList',
     method: 'post',
     data   
@@ -124,7 +91,7 @@ export function collectChapterList(data) {
 }
 
 export function collectAnswerSheet(data) {
-  return requset({
+  return request({
     url: 'question/collectAnswerSheet',
     method: 'post',
     data   
@@ -132,7 +99,7 @@ export function collectAnswerSheet(data) {
 }
 
 export function mockExamList(data) {
-  return requset({
+  return request({
     url: 'question/mockExamList',
     method: 'post',
     data   
@@ -140,7 +107,7 @@ export function mockExamList(data) {
 }
 
 export function practiceAnswerTheQuestion(data) {
-  return requset({
+  return request({
     url: 'question/practiceAnswerTheQuestion',
     method: 'post',
     data   
@@ -148,7 +115,7 @@ export function practiceAnswerTheQuestion(data) {
 }
 
 export function examAnswerTheQuestion(data) {
-  return requset({
+  return request({
     url: 'question/examAnswerTheQuestion',
     method: 'post',
     data
@@ -156,7 +123,7 @@ export function examAnswerTheQuestion(data) {
 }
 
 export function submitExamPaper(data) {
-  return requset({
+  return request({
     url: 'question/submitExamPaper',
     method: 'post',
     data
@@ -165,7 +132,7 @@ export function submitExamPaper(data) {
 
 
 export function collect(data) {
-  return requset({
+  return request({
     url: 'question/collect',
     method: 'post',
     data   
@@ -173,7 +140,7 @@ export function collect(data) {
 }
 
 export function getMockExamLog(data) {
-  return requset({
+  return request({
     url: 'question/getMockExamLog',
     method: 'post',
     data   
@@ -181,7 +148,7 @@ export function getMockExamLog(data) {
 }
 
 export function createExamLog(data) {
-  return requset({
+  return request({
     url: 'question/createExamLog',
     method: 'post',
     data   
@@ -189,7 +156,7 @@ export function createExamLog(data) {
 }
 
 export function getExamAnswerSheet(data) {
-  return requset({
+  return request({
     url: 'question/getExamAnswerSheet',
     method: 'post',
     data   
@@ -197,7 +164,7 @@ export function getExamAnswerSheet(data) {
 }
 
 export function getExamResult(data) {
-  return requset({
+  return request({
     url: 'question/getExamResult',
     method: 'post',
     data   
@@ -205,7 +172,7 @@ export function getExamResult(data) {
 }
 
 export function getDailyStatistics(data) {
-  return requset({
+  return request({
     url: 'question/getDailyStatistics',
     method: 'post',
     data   
@@ -213,7 +180,7 @@ export function getDailyStatistics(data) {
 }
 
 export function getStudyReport(data) {
-  return requset({
+  return request({
     url: 'question/getStudyReport',
     method: 'post',
     data   
