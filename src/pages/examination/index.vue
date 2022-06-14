@@ -14,7 +14,9 @@
         <view class="report-top-title">每日学习，为梦想持续加码</view>
         <view class="report-top-data">
           <view class="report-top-col">
-            <text class="data-number">{{statistics.answer_days | empty}}天</text>
+            <text class="data-number">{{statistics.answer_days | empty}}
+              <text class="data-company">天</text>
+            </text>
             <text class="data-desc">累计答题天数</text>
           </view>
           <view class="spacing" style="width: 2rpx; height: 75rpx; background-color: #fff;"></view>
@@ -24,7 +26,10 @@
           </view>
           <view class="spacing" style="width: 2rpx; height: 75rpx; background-color: #fff;"></view>
           <view class="report-top-col">
-            <text class="data-number">{{statistics.today_correct_rate | empty}}%</text>
+            <text class="data-number">
+              {{statistics.today_correct_rate | empty}}
+              <text class="data-company">%</text>
+            </text>
             <text class="data-desc">今日正确率</text>
           </view>
           
@@ -267,6 +272,11 @@ $padding-lr: 30rpx;
       display: flex;
       flex-direction: column;
       align-items: center;
+
+      .data-company {
+        font-size: 24rpx;
+        color: #fff;
+      }
 
       .data-number {
         font-size: 48rpx;

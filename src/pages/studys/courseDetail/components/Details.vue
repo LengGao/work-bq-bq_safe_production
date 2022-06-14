@@ -233,9 +233,9 @@ export default {
   box-sizing: border-box;
 }
 
-::v-deep uni-image {
-  margin-left: -2em;
-}
+// ::v-deep uni-image {
+//   margin-left: -2em;
+// }
 
 .footer {
   position: fixed;

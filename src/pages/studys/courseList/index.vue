@@ -14,7 +14,8 @@
         <view class="course-list-container">
           <view class="course-item" v-for="item in courseData" :key="item.id">
             <view class="course-item-cover">
-              <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
+              <view class="course-tag course-tag--success" v-if="item.price_type === 0">免费课</view>
+              <view class="course-tag course-tag--primary" v-else-if="item.price_type === 1">认证课</view>
               <view class="course-tag" v-else>认证课</view>
               <image class="course-img" :src="item.cover" @click="() => previewImg(item.cover)" mode="aspectFill" />
             </view>
@@ -196,6 +197,9 @@ export default {
           border-bottom-right-radius: 12rpx;
           &--success {
             background-color: $uni-color-success;
+          }
+          &--primary {
+            background-color: #199fff;
           }
         }
         image {

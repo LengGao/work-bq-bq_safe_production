@@ -9,10 +9,10 @@
     </view>
     
     <view class="learn-data-container">
-      <picker @change="bindPickerChange" :value="activeCourseIndex" :range="array">
+      <picker @change="bindPickerChange" :value="activeCourseIndex" :range="array" range-key="title">
         <view class="learn-data-select">
           <uni-icons type="bars" color="#fff" size="40rpx"></uni-icons>
-          <text class="course-name">{{ array[activeCourseIndex] }}</text>
+          <text class="course-name">{{ activeCourseTitle }}</text>
         </view>
       </picker>
       <view class="learn-data-card">
@@ -23,15 +23,15 @@
           </view>
           <view class="learn-data-card-header-tabs">
             <view class="tab-item">
-              <view class="tab-item-value"><text>888</text> 分钟</view>
+              <view class="tab-item-value"><text>{{ learnData.week_minute_total || 0 }}</text> 分钟</view>
               <view class="tab-item-title">本周累计</view>
             </view>
             <view class="tab-item">
-              <view class="tab-item-value"><text>888</text> 分钟</view>
+              <view class="tab-item-value"><text>{{ learnData.today_minute_total || 0 }}</text> 分钟</view>
               <view class="tab-item-title">今日已学</view>
             </view>
             <view class="tab-item">
-              <view class="tab-item-value"><text>56</text> %</view>
+              <view class="tab-item-value"><text>{{ learnData.beat_percent || 0 }}</text> %</view>
               <view class="tab-item-title">打败同学</view>
             </view>
           </view>
@@ -52,28 +52,28 @@
         <view class="learn-data-card-content block">
           <view class="block-item primary">
             <view class="block-item-value">
-              <text>110</text>
+              <text>{{ learnData.learn_minute_total || 0 }}</text>
               分钟
             </view>
             <view class="block-item-title">累计学习时长</view>
           </view>
           <view class="block-item warning">
             <view class="block-item-value">
-              <text>110</text>
+              <text>{{ learnData.learn_day_total || 0 }}</text>
               天
             </view>
             <view class="block-item-title">累计学习天数</view>
           </view>
           <view class="block-item success">
             <view class="block-item-value">
-              <text>88</text>
+              <text>{{ learnData.completed_lesson_count || 0 }}</text>
               个
             </view>
             <view class="block-item-title">完成学时总数</view>
           </view>
           <view class="block-item danger">
             <view class="block-item-value">
-              <text>78</text>
+              <text>{{ learnData.process || 0}}</text>
               %
             </view>
             <view class="block-item-title">课程总进度</view>
@@ -87,6 +87,8 @@
 <script>
 import qiunDataCharts from "@/uni_modules/ucharts/components/qiun-data-charts/qiun-data-charts.vue";
 import { browser } from '@/mixins/index'
+import { userCertList } from '@/api/user'
+import { getLearnData } from '@/api/course'
 
 export default {
   mixins: [browser],
@@ -95,8 +97,10 @@ export default {
   },
   data() {
     return {
-      array: ["一回合或或", "发送范德萨个都", "hgfhgfhgfh", 4, 5],
+      array: [],
       activeCourseIndex: 1,
+      course_id: '',
+      learnData: {},
       chartsOpts: {
         legend: {
           show: false,
@@ -112,18 +116,50 @@ export default {
         series: [
           {
             name: "分数",
-            data: [35, 36, 31, 33, 13, 34, 5],
+            data: [],
           },
         ],
       },
     };
   },
+  onLoad() {
+    this.userCertList()
+  },
+  computed: {
+    activeCourseTitle() {
+      return this.array[this.activeCourseIndex] ? this.array[this.activeCourseIndex].title : '请选择课程'
+    }
+  },
   methods: {
     goBack() {
-      uni.navigateBack();
+      let pages = getCurrentPages()
+      if (pages.length > 1) {
+        uni.navigateBack()
+      } else {
+        history.back()
+      }
     },
     bindPickerChange({ detail }) {
       this.activeCourseIndex = detail.value;
+      this.course_id = this.array[detail.value].id
+       this.getLearnData(this.course_id)
+    },
+    async userCertList() {
+      let res = await userCertList()
+      if (res .code === 0) {
+        this.array = res.data.data.filter(item => item.status !== 0).map(item => ({id: item.id, title: item.title }))
+        this.course_id = this.array[0].id
+        this.getLearnData(this.course_id)
+      }
+    },
+
+    async getLearnData(course_id) {
+      let params = { course_id }
+      let res = await getLearnData(params)
+      if (res.code === 0) {
+        this.learnData = res.data
+        this.chartData.series[0].data = res.data.daily.map(item => +item)
+      }
     },
   },
 };

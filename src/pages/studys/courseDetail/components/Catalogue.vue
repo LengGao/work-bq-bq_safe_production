@@ -2,7 +2,7 @@
   <view class="catalogue">
     <collapse ref="catalogue">
       <!-- 一级 -->
-      <collapse-item v-for=" item1 in chapterList" :key="item1.id" :open="item1.checked">
+      <collapse-item v-for=" item1 in chapterList" :key="item1.id" :open="item1.checked" title-border="show">
         <template v-slot:title>
           <view class="title one-title" :class="item1.checked ? 'title-active' : ''">
             <view class="title-box">
@@ -14,10 +14,11 @@
 
         <!-- 二级 -->
         <view v-if="item1.nodeType === 'sub'">
-          <collapse-item v-for="item2 in item1.sub" :key="item2.id" :open="item2.checked">
+          <collapse-item v-for="item2 in item1.sub" :key="item2.id" :open="item2.checked" title-border="show">
             <template v-slot:title>
               <view class="title two-title" :class="item2.checked ? 'title-active' : ''">
                 <view class="title-box">
+                  <uni-icons type="circle-filled" size="24rpx" style="margin-right: 8rpx" />
                   {{ item2.title }}
                   <view v-if="item2.is_try" class="tag">试看</view>
                 </view>
@@ -29,6 +30,7 @@
               <view v-for="item3 in item2.lesson" :key="item3.id" class="title three-title"
                     :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item2, item1)">
                 <view class="title-box">
+                  <uni-icons type="circle-filled" size="24rpx" style="margin-right: 8rpx" />
                   {{ item3.title }}
                   <view v-if="item3.is_try" class="tag">试看</view>
                 </view>
@@ -49,6 +51,7 @@
           <view v-for="item3 in item1.lesson" :key="item3.id" class="title three-title"
                 :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item1)">
             <view class="title-box">
+              <uni-icons type="circle-filled" size="24rpx" style="margin-right: 8rpx" />
               {{ item3.title }}
               <view v-if="item3.is_try" class="tag">试看</view>
             </view>

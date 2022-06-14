@@ -92,16 +92,8 @@ export default {
       },
       
       cources: [],
-      historys: [
-        { id: 1, name: '管理工程师', tag: 'hot', checked: false },
-        { id: 2, name: '系统集成项目管理工程师', tag: 'hot', checked: false },
-      ],
-      hots: [
-        { id: 1, name: '系统集管', tag: 'hot', checked: false },
-        { id: 2, name: '系统集成项目管理工程师', tag: 'hot', checked: false },
-        { id: 3, name: '系统集成项目管理工程师', tag: '', checked: false },
-        { id: 4, name: '系统集成项目管理工程师', tag: '', checked: false }
-      ],
+      historys: [],
+      hots: [],
     }
   },
   onLoad() {

@@ -126,6 +126,16 @@ export function courseFavorites(data) {
   })
 }
 
+
+export function getLearnData(data) {
+  return request({
+    url: 'course/learnData',
+    method: 'get',
+    data,
+    loading: false
+  })
+}
+
 // 人脸验证
 export function faceUpload(data) {
   return request({
