@@ -285,7 +285,7 @@ export default {
       let url = `/pages/studys/faceVerification/index`
       let query = { 
         lesson_id: this.lesson_id, 
-        real_status: this.user.real_status,
+        real_status: this.user.real_status ? 1 : 0,
         end_second: this.player.getCurrentTime()
       }
       let path = this.getPath(url, query)
@@ -391,11 +391,13 @@ export default {
       uni.showToast({ title: '请登录', icon: 'none' })
     },
     needFaceVerifity(currTime) {
-      this.face.forEach(item => {
-        if (Math.abs(item - currTime) >= 2) {
+      this.face = this.face.filter(item => {
+        if (Math.abs(item - currTime) <= 2) {
           this.showModalForFaceVerifity()
+          return undefined
         }
-      })
+        return item
+      }).filter(item => item !== undefined)
     },
     // 创建播放器
     createPlayer(options) {

@@ -96,6 +96,14 @@ export function aboutUs(data) {
 }
 
 
+export function updateIdCardImg(data) {
+    return request({
+        url: 'user/updateIdCardImg',
+        method: 'post',
+        data
+    })
+}
+
 var base_url = process.env.VUE_APP_BASE_API
 var prefix = PREFIX
 export function uploadImage(data, header) {

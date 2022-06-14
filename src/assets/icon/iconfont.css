@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3328807 */
-  src: url('//at.alicdn.com/t/font_3328807_jm8uje0m0y.woff2?t=1653391854287') format('woff2'),
-       url('//at.alicdn.com/t/font_3328807_jm8uje0m0y.woff?t=1653391854287') format('woff'),
-       url('//at.alicdn.com/t/font_3328807_jm8uje0m0y.ttf?t=1653391854287') format('truetype');
+  src: url('/static/fonts/iconfont.woff2?t=1655195972759') format('woff2'),
+       url('/static/fonts/iconfont.woff?t=1655195972759') format('woff'),
+       url('/static/fonts/iconfont.ttf?t=1655195972759') format('truetype');
 }
 
 .iconfont {
@@ -311,3 +311,4 @@
 .icon-user-filling:before {
   content: "\e68b";
 }
+
