@@ -16,7 +16,7 @@
             <view class="course-item-cover">
               <view class="course-tag course-tag--success" v-if="item.price_type === 0">免费课</view>
               <view class="course-tag course-tag--primary" v-else-if="item.price_type === 1">认证课</view>
-              <view class="course-tag" v-else>认证课</view>
+              <view class="course-tag" v-else>其他课</view>
               <image class="course-img" :src="item.cover" @click="() => previewImg(item.cover)" mode="aspectFill" />
             </view>
             <view class="course-item-content" @click="() => toDetails(item.id)">

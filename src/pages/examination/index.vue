@@ -111,7 +111,7 @@ export default {
       grids: [
         { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird1.png", title: "收藏夹", url: "/pages/examinations/favorites/index" },
         { id: 2, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird2.png", title: "错题集", url: "/pages/examinations/wrongQuestion/index" },
-        { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird3.png", title: "学习报告", url: "/pages/examinations/learnReport/index" },
+        { id: 3, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird3.png", title: "练习报告", url: "/pages/examinations/learnReport/index" },
         { id: 4, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/examination_gird4.png", title: "考试记录", url: "/pages/examinations/examinationRecord/index" },
       ],
       // 推荐课程

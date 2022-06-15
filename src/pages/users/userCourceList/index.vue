@@ -12,7 +12,7 @@
             </view>
           </template>
           <template v-slot:cardBodyRight>
-            <view class="card-body-right" @click="() => onClickRecommend(course.id)">
+            <view class="card-body-right" @click="() => onClickRecommend(course)">
               <view class="card-right-top">
                 <text>{{ course.title }}</text>
               </view>
@@ -31,6 +31,9 @@
                   <view class="tag tag-two" v-if="course.learning_progress >= 100">已学完</view>
                   <view class="tag tag-three" v-else-if="course.learning_progress <= 0">未开始</view>
                   <view class="tag tag-one" v-else>已学习 {{ course.learning_progress || 0 }}%</view>
+                </view>
+                <view class="status">
+                  <uni-tag class="tag" type="error" v-if="!course.status" text="已下架" inverted />
                 </view>
               </view>
             </view>
@@ -67,9 +70,9 @@ export default {
     }
   },
   methods: {
-    // 点击推荐课程
-    onClickRecommend(id) {
-      uni.navigateTo({ url: `/pages/studys/courseDetail/index?course_id=${id}` })
+    onClickRecommend(item) {
+      if (!item.status) return uni.showToast({ title: '该课程已下架', icon: 'none' });
+      uni.navigateTo({ url: `/pages/studys/courseDetail/index?course_id=${item.id}` })
     },
     // 预览
     previewImg(url) {
@@ -173,6 +176,16 @@ export default {
     width: 100%;
     font-size: $font-size-sm;
     color: $text-color-grey;
+  }
+
+  .status {
+    position: relative;
+    top: -4rpx;
+
+    .tag {
+      padding: 4rpx 10rpx;
+      font-size: 24rpx;
+    }
   }
 
   .audience {

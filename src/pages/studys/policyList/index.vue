@@ -57,7 +57,11 @@ export default {
       defaultTitle: '政策列表',
       defaultCover: defaultCover,
       policys: [],
+      region_id: '',
     }
+  },
+  onLoad() {
+    this.region_id = this.$store.getters.region.id
   },
   methods: {
     onClickRecommend(item) {
@@ -80,8 +84,6 @@ export default {
         page: page.num,
         page_size: page.size,
         region_id: this.region_id,
-        category_id: this.category_id,
-        price_type: this.type_id
       }
       const res = await articleList(data)
       if (res.code !== 0) return this.mescroll.endBySize(0, 0);

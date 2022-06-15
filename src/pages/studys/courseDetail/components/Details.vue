@@ -224,16 +224,14 @@ export default {
 }
 
 .course-rich {
-  border-top: $logan-border-spacing-md;
-  padding: 30rpx;
   width: 100%;
   overflow: hidden;
+  padding: 30rpx;
+  box-sizing: border-box;
+  border-top: $logan-border-spacing-md;
+  ::v-deep .p {
   line-height: 2;
   text-indent: 2em;
-  box-sizing: border-box;
-
-  ::v-deep uni-image {
-    margin-left: -2em;
   }
 }
 

@@ -49,7 +49,7 @@
             </view>
           </template>
           <template v-slot:cardBodyRight>
-            <view class="card-body-right" @click="() => onClickCource(course.id)">
+            <view class="card-body-right" @click="() => onClickCource(course)">
               <view class="card-right-top">
                 <text>{{ course.title }}</text>
               </view>
@@ -68,6 +68,9 @@
                   <view class="tag tag-two" v-if="course.learning_progress >= 100">已学完</view>
                   <view class="tag tag-three" v-else-if="course.learning_progress <= 0" >未开始</view>
                   <view class="tag tag-one" v-else >已学习 {{ course.learning_progress }}%</view>
+                </view>
+                <view class="status">
+                  <uni-tag class="tag" type="error" v-if="!course.status" text="已下架" inverted />
                 </view>
               </view>
             </view>
@@ -131,9 +134,10 @@ export default {
       let path = '/pages/studys/courseList/index'
       uni.navigateTo({ url: path })
     },
-    onClickCource(id) {
+    onClickCource(item) {
       let url = '/pages/studys/courseDetail/index'
-      let query = `?course_id=${id}`
+      let query = `?course_id=${item.id}`
+      if (!item.status) return uni.showToast({ title: '该课程已下架', icon: 'none' });
       uni.navigateTo({ url: url + query })
     },
     // 下拉
@@ -324,6 +328,16 @@ $padding: 16rpx 30rpx;
     width: 100%;
     font-size: $font-size-sm;
     color: $text-color-grey;
+  }
+
+  .status {
+    position: relative;
+    top: -4rpx;
+
+    .tag {
+      padding: 4rpx 10rpx;
+      font-size: 24rpx;
+    }
   }
 
   .audience {

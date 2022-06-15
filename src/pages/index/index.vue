@@ -58,7 +58,8 @@
                 <view class="cover-tag cover-tag--success" v-if="course.price_type === 0">免费课</view>
                 <view class="cover-tag cover-tag--primary" v-else-if="course.price_type === 1">认证课</view>
                 <view class="cover-tag" v-else>其他课</view>
-                <image @click="() => previewImg(course.cover)" :src="course.cover" class="logan-img-size-lg" mode="aspectFill" />
+                <image @click="() => previewImg(course.cover)" :src="course.cover" class="logan-img-size-lg"
+                       mode="aspectFill" />
               </view>
             </template>
             <template v-slot:cardBodyRight>
@@ -99,8 +100,9 @@
       </view>
 
       <view class="policy-swiper">
-        <swiper @change="onChangeSwiper" :autoplay="false" circular class="swiper">
-          <swiper-item v-for="policy in policys" :key="policy.id" :current-item-id="policy.id">
+        <swiper :display-multiple-items="policys.length" :duration="500"
+                :autoplay="false" :circular="false" class="swiper">
+          <swiper-item v-for="policy in policys" :key="policy.id">
             <view class="swiper-item-box" @click="() => onClickPolicy(policy.id)">
               <image :src="policy.cover" class="swiper-image" mode="aspectFill" />
               <view class="swiper-text">{{ policy.title }}</view>
@@ -199,6 +201,7 @@ export default {
       currLocation: {},
       regions: [],
       courses: [],
+      current: 0,
       policys: [],
       librarys: [],
     };
@@ -346,6 +349,9 @@ export default {
       uni.previewImage({
         urls: [url]
       })
+    },
+    onChangeSwiper() {
+
     },
     // 加载成功
     onbindload(e) {
@@ -598,11 +604,11 @@ $padding-lr: 30rpx;
       border-radius: 50%;
     }
   }
-  .cost {    
+  .cost {
     .tag {
       position: relative;
       top: -4rpx;
-      color:  #fff;
+      color: #fff;
       background-color: #b23145;
       border-color: #b23145;
     }
@@ -619,7 +625,7 @@ $padding-lr: 30rpx;
   border: $logan-border-spacing-md-sm;
 
   .swiper {
-    padding: 16rpx 0rpx;
+    margin: 16rpx 0rpx;
     height: 200rpx;
   }
 

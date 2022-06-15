@@ -11,7 +11,7 @@
       <view class="learn-report-statistics">
         <view class="statistics-top">
           <view class="statistics-top-user">
-            <image class="user-avatar" :src="userInfo.avatar_url" />
+            <image class="user-avatar" :src="userInfo.avatar_url || Avator" />
             <view>
               <view class="user-name">{{userInfo.real_name}}</view>
               <view class="user-time">{{practiceData.first_time_study}} 开始学习</view>
@@ -107,7 +107,7 @@
 
 <script>
 import qiunDataCharts from "@/uni_modules/ucharts/components/qiun-data-charts/qiun-data-charts.vue";
-import moment from '@/utils/date'
+import Avator from "@/static/img/user_avator.png";
 import { 
   getDailyStatistics,
   getStudyReport
@@ -129,7 +129,7 @@ export default {
   },
   data() {
     return {
-      srcImage: 'https://img2.baidu.com/it/u=1347252749,346830019&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
+      Avator: Avator,
 
       userInfo: {},
       todyData: {},

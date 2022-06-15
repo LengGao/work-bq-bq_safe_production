@@ -93,10 +93,10 @@ export default {
   padding: 0 30rpx;
   line-height: 2;
   text-indent: 2em;
-}
-
-::v-deep uni-image {
-  margin-left: -2em;
+  ::v-deep .p {
+    line-height: 2;
+    text-indent: 2em;
+  }
 }
 
 </style>

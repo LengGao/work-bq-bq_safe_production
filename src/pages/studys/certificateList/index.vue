@@ -143,6 +143,8 @@ export default {
     },
     generatorLearnRecond(course) {
       if (course.learning_progress <= 0 || course.learning_progress >= 100) return;
+      if (!course.status) return uni.showToast({ title: '该课程已下架', icon: 'none' });
+
       let url = '/pages/studys/learningRecords/index'
       let query = `?course_id=${course.id}`
       uni.navigateTo({ url: url + query })
@@ -196,6 +198,8 @@ export default {
     // 生成证书
     async buildLearnCert(course) {
       if (course.learning_progress < 100) return;
+      if (!course.status) return uni.showToast({ title: '该课程已下架', icon: 'none' });
+      
       this.$refs['popup-progress'].open('center')
       this.canScroll = false
       let res = await buildLearnCert({ course_id: course.id })
@@ -203,7 +207,7 @@ export default {
         this.downloadUrl = res.data.url
         this.generator()
       } else {
-        uni.showToast({ title: '证书生成失败', icon: 'name' })
+        uni.showToast({ title:`${res.message}`, icon: 'none' })
         this.onClose(1)
       }
     },
