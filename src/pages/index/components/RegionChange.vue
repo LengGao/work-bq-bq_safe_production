@@ -15,17 +15,24 @@
 </template>
 
 <script>
+
 export default {
   props: {
-    location: { type: Object, default: () => ({}) },
-    buttons: { type: Array, default: () => ([]) }
+    location: { 
+      type: Object, 
+      default: () => ({})
+    },
+    buttons: { 
+      type: Array, 
+      default: () => ([])
+    }
   },
   watch: {
     location(val) {
       this.init(val)
     }
   },
-  mounted() {
+  created() {
     this.init(this.location)
   },
   methods: {

@@ -3,7 +3,6 @@ import { GLOBAL } from './config'
 import { isObject } from './utils'
 import store from '../store'
 
-
 const service = new MiniService()
 
 const userInfo = uni.getStorageSync('userInfo')
@@ -21,7 +20,7 @@ const interactiveMap = {
 
 const handlerError = {
   '1000': () => {
-    let keys = ['userInfo', 'orgInfo','region', 'questionBankInfo']
+    let keys = ['userInfo', 'orgInfo', 'questionBankInfo']
     store.commit('SET_LOGIN_STATUS', 1000)
     store.commit('SET_ORG_LIST', [])
     keys.forEach(key => { uni.removeStorage({ key: key}) })
@@ -29,18 +28,15 @@ const handlerError = {
     // uni.showToast({ title: '请登录', icon: 'none' })
   },
   '1008': () => {
-    let keys = ['userInfo', 'orgInfo','region', 'questionBankInfo']
+    let keys = ['userInfo', 'orgInfo', 'questionBankInfo']
     store.commit('SET_LOGIN_STATUS', 1008)
     store.commit('SET_ORG_LIST', [])
     keys.forEach(key => { uni.removeStorage({ key: key}) })
-
+    
     // uni.showToast({ title: '您的账号已在其他设备登录', icon: 'none' })
   },
   '1009': async () => {
     uni.showToast({ title: '登录信息已过期，请重新登录', icon: 'none' })
-    // console.log('service.$config', service.$config);
-    // await store.dispatch('renewal')
-    // service.request.call(service, { ...service.$config })
   }
 }
 
@@ -74,7 +70,6 @@ service.useResponseInterceptor((response) => {
 
 service.useResponseInterceptor((response) => {
   let body = response.data
-  // console.log('response', service);
   if (body.code === 1 && !service.$config.nocatch) {
     uni.showToast({ icon: 'none', title: `${body.message}` })
   } else {

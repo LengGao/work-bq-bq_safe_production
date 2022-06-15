@@ -178,7 +178,7 @@ const actions = {
     async loginout({ commit }, data) {
         commit('SET_LOGIN_STATUS', data || 0)
         commit('SET_ORG_LIST', [])
-        let keys = ['userInfo', 'orgInfo','region', 'questionBankInfo']
+        let keys = ['userInfo', 'orgInfo', 'questionBankInfo']
         keys.forEach(key => { uni.removeStorage({ key: key}) })
 
         return loginout()

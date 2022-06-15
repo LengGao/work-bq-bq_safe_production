@@ -14,8 +14,8 @@
 
     <view class="grids">
       <uni-grid :showBorder="false" class="grid">
-        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" @click="() => onClickGrid(grid.url, grid.blank)" >
-          <view class="grid-item">
+        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" >
+          <view class="grid-item" @click="() => onClickGrid(grid.url, grid.blank)">
             <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
             <text class="grid-text">{{ grid.title }}</text>
           </view>

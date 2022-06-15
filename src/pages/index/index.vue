@@ -208,7 +208,7 @@ export default {
   },
   watch: {
     currLocation() {
-      this.init()
+      this.currLocationChange()
     }
   },
   onLoad() {
@@ -234,11 +234,19 @@ export default {
       this.isOnload = true
     }
   },
+  onHide() {
+    if (this.$refs['popup']) {
+      this.$refs['popup'].close()
+    }
+  },
   methods: {
     init() {
       this.courseList()
       this.articleList()
-      this.getLocation()
+    },
+    currLocationChange() {
+      this.courseList()
+      this.articleList()
     },
     checkLogin() {
       let userInfo = uni.getStorageSync('userInfo')
@@ -254,8 +262,10 @@ export default {
       let organizationList = this.organizationList
       let component = this.$refs['popup-org']
 
-      if (component && userInfo.token && organizationList.length && (!orgInfo || !orgInfo.id )) {
+      if (component && userInfo.token && organizationList.length && !orgInfo.id) {
         this.openPopup(organizationList)
+      } else if (orgInfo.id) {
+        this.defaultTitle = orgInfo.name
       }
     },
     openPopup(list) {
@@ -284,11 +294,6 @@ export default {
     // 关闭筛选
     onCloseFilter() {
       this.$refs.popup.close()
-    },
-    // 地区选择
-    onChangeRegion(detail) {
-      this.currLocation = detail
-      this.$store.commit('SET_REGION', detail)
     },
     // 打开搜索页面
     onOpenSearch() {
@@ -396,24 +401,33 @@ export default {
         this.librarys = res.data.list
       }
     },
+    // 地区选择
+    onChangeRegion(detail) {
+      this.currLocation = detail
+      this.$store.commit('SET_REGION', detail)
+    },
+    checkRegion() {
+      let cache = this.$store.getters.region
+      let currLocation = this.currLocation
+      if (cache.id !== currLocation.id) {
+        this.$store.commit('SET_REGION', currLocation)
+      }
+    },
     async getSystemRegion() {
       let res = await systemRegion()
       if (res.code === 0) {
         let regions = res.data.map(item => { item.checked = false; return item; })
         this.regions = regions
-        if (this.$store.getters.region.id) {
-          this.currLocation = this.$store.getters.region
-        } else {
-          let currLocation = regions[0]
-          this.currLocation = currLocation
-          this.$store.commit('SET_REGION', currLocation)
-        }
+        this.getLocation()
       }
     },
     async getLocation() {
       let res = await getLocation()
       if (res.code === 0) {
-        
+        let currLocation = res.data
+        currLocation.region = res.data.name
+        this.currLocation = currLocation
+        this.checkRegion()
       }
     },
   }, // methods end
