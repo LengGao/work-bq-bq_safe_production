@@ -73,7 +73,7 @@
                 <view class="logan-card-right-footer">
                   <view class="audience">
                     <uni-icons type="person-filled" color="#fff" class="icon-person" size="24rpx"></uni-icons>
-                    <text style="margin-left: 10rpx">{{ course.learn_count }}人看过</text>
+                    <text style="margin-left: 10rpx">{{ course.pv }}人看过</text>
                   </view>
                   <view class="cost">
                     <uni-tag class="tag" v-if="course.duration" size="small" :text="course.duration + '分钟'" inverted />

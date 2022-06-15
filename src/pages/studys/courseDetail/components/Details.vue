@@ -7,7 +7,7 @@
           <view class="subtitle">
             {{ info.chapter_count | empty }}章
             {{ info.lesson_count | empty }}课时
-            <text decode> | 共{{ timeTotal }}学时</text>
+            <text decode> | 共{{ info.hours_count }}学时</text>
           </view>
         </view>
 
@@ -39,7 +39,7 @@
           </view>
         </view>
         <view class="right">
-          <text class="right-text">{{ info.duration || 0 }}分钟</text>
+          <text class="right-text">{{ info.minute_count || 0 }}分钟</text>
         </view>
       </view>
     </view>
@@ -231,11 +231,11 @@ export default {
   line-height: 2;
   text-indent: 2em;
   box-sizing: border-box;
-}
 
-// ::v-deep uni-image {
-//   margin-left: -2em;
-// }
+  ::v-deep uni-image {
+    margin-left: -2em;
+  }
+}
 
 .footer {
   position: fixed;

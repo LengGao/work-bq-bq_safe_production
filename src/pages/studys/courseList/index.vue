@@ -28,7 +28,7 @@
               <view class="course-other">
                 <view class="course-other-count">
                   <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons>
-                  {{ item.learn_count }} 人在学
+                  {{ item.pv }} 人在学
                 </view>
                 <view class="cost">
                   <uni-tag class="tag" v-if="item.duration" size="small" :text="item.duration + '分钟'" inverted />

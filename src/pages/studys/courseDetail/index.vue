@@ -298,7 +298,9 @@ export default {
         cancelColor: '#199fff',
         confirmColor: '#199fff',
         success: (res) => {
-          uni.redirectTo({ url: path })
+          if (res.confirm) {
+            uni.redirectTo({ url: path })
+          }
         }
       })
     },

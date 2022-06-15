@@ -22,7 +22,7 @@
                   {{ course.chapter_count }}章
                   {{ course.lesson_count }}课时
                   <text style="margin: 0 8rpx;"> | </text>
-                  共{{ course.duration_count }}课时
+                  共{{ course.duration_count }}学时
                 </view>
               </view>
 
