@@ -85,7 +85,7 @@ export default {
   methods: {
     // 咨询
     async courseFavorites(e) {
-      if (!this.authority()) { return; }
+      if (!this.authority({toast: '请登录后收藏'})) { return; }
       let params = { course_id: this.courseId }
       let res = await courseFavorites(params)
       if (res.code === 0) {

@@ -39,7 +39,11 @@ export const userStatus = {
       let res = true
       if (userStatus === 0 || userStatus === 1000) {
         res = false
-        uni.showToast({ title: '请登录', icon: 'none' })
+        if (option.toast) {
+          uni.showToast({ title: `${option.toast}`, icon: 'none' })
+        } else {
+          uni.showToast({ title: '请登录', icon: 'none' })
+        }
       } else if (userStatus === 1008) {
         res = false
         uni.showToast({ title: '您的账号已在其他设备登录', icon: 'none' })

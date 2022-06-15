@@ -154,7 +154,7 @@ $page-padding: 0rpx 20rpx;
 
 .grids {
   position: relative;
-  top: -108rpx;
+  top: -140rpx;
   margin: 0 40rpx;
   width: calc(100% - 80rpx);
   height: 190rpx;
@@ -189,7 +189,7 @@ $page-padding: 0rpx 20rpx;
 }
 
 .links {
-  margin-top: -60rpx;
+  margin-top: -80rpx;
 }
 
 ::v-deep .uni-list-item__container {

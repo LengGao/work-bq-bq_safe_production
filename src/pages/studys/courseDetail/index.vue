@@ -49,9 +49,7 @@
       <view class="close">
         <uni-icons type="close" color="#fff" size="42" @click="onClose" />
       </view>
-    </uni-popup>
-
-    
+    </uni-popup>    
   </view>
 </template>
 
@@ -283,9 +281,9 @@ export default {
     // 人脸验证
     showModalForFaceVerifity() {
       let url = `/pages/studys/faceVerification/index`
-      let query = { 
+      let query = {
         lesson_id: this.lesson_id, 
-        real_status: this.user.real_status ? 1 : 0,
+        course_id: this.course_id,
         end_second: this.player.getCurrentTime()
       }
       let path = this.getPath(url, query)
@@ -293,6 +291,30 @@ export default {
       uni.showModal({
         title: '提示',
         content: '请人脸核验成功后再继续学习',
+        cancelText: '取消',
+        confirmText: '开始验证',
+        cancelColor: '#199fff',
+        confirmColor: '#199fff',
+        success: (res) => {
+          if (res.confirm) {
+            uni.redirectTo({ url: path })
+          }
+        }
+      })
+    },
+    // 实名认证
+    showModalForRealVerification() {
+      let url = `/pages/studys/realVerification/index`
+      let query = { 
+        lesson_id: this.lesson_id, 
+        course_id: this.course_id,
+        end_second: this.player.getCurrentTime()
+      }
+      let path = this.getPath(url, query)
+
+      uni.showModal({
+        title: '提示',
+        content: '根据安全生产资格考试网络培训管理办法规定， 此 课程需要通过实名认证后才能开始学习。',
         cancelText: '取消',
         confirmText: '开始验证',
         cancelColor: '#199fff',
@@ -396,7 +418,11 @@ export default {
       this.face = this.face.filter(item => {
         if (Math.abs(item - currTime) <= 2) {
           this.pauseSendData()
-          this.showModalForFaceVerifity()
+          if (this.user.real_status) {
+            this.showModalForFaceVerifity()
+          } else {
+            this.showModalForRealVerification()
+          }
           return undefined
         }
         return item

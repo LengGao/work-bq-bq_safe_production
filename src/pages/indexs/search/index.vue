@@ -32,8 +32,10 @@
         <view class="course-list-container">
           <view class="course-item" v-for="item in cources" :key="item.id">
             <view class="course-item-cover">
-              <view class="course-tag course-tag--success" v-if="!item.price">免费课</view>
-              <view class="course-tag" v-else>认证课</view>
+              <view class="course-tag course-tag--success" v-if="item.price_type === 0">免费课</view>
+              <view class="course-tag course-tag--primary" v-else-if="item.price_type === 1">认证课</view>
+              <view class="course-tag" v-else>其他课</view>
+
               <image class="course-img" :src="item.cover" mode="aspectFit" @click="() => previewImg(item.cover)" />
             </view>
             <view class="course-item-content" @click="() => toDetails(item.id)">
@@ -47,9 +49,8 @@
                   <uni-icons type="person-filled" color="#fff" class="icon-person" size="32rpx"></uni-icons>
                   {{ item.learn_count }} 人在学
                 </view>
-                <view v-if="item.price === 0" class="course-other-tag"> 免费</view>
-                <view v-else class="course-other-price">
-                  ￥{{ item.price }}
+                <view class="cost">
+                  <uni-tag class="tag" v-if="item.duration" size="small" :text="item.duration + '分钟'" inverted />
                 </view>
               </view>
             </view>
@@ -294,6 +295,9 @@ export default {
           &--success {
             background-color: $uni-color-success;
           }
+          &--primary {
+            background-color: #199fff;
+          }
         }
         image {
           border-radius: 12rpx;
@@ -334,20 +338,13 @@ export default {
             color: $uni-color-primary;
             font-size: $uni-font-size-sm;
           }
-          &-tag {
-            color: #f0ad4e;
-            border: 2rpx solid #f0ad4e;
-            border-radius: 8rpx;
-            padding: 4rpx 12rpx;
-          }
-          &-price {
-            color: #f0ad4e;
-            font-size: $uni-font-size-md;
-            .origin {
-              margin-left: 4rpx;
-              text-decoration: line-through;
-              color: #b1b1b1;
-              font-size: $uni-font-size-sm;
+          .cost {
+            .tag {
+              position: relative;
+              top: -4rpx;
+              color:  #fff;
+              background-color: #b23145;
+              border-color: #b23145;
             }
           }
         }
