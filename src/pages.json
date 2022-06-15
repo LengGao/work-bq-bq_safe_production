@@ -168,7 +168,7 @@
 				{
 					"path": "independentPaper/index",
 					"style": {
-						"navigationBarTitleText": "自主出题"
+						"navigationBarTitleText": "人工组卷"
 					}
 				},
 				{
@@ -254,7 +254,7 @@
 				{
 					"path": "feedbackSubmit/index",
 					"style": {
-						"navigationBarTitleText": "我要反馈"
+						"navigationBarTitleText": "意见反馈"
 					}					
 				},
 				{
@@ -266,7 +266,7 @@
 				{
 					"path": "aboutUs/index",
 					"style": {
-						"navigationBarTitleText": "联系客服"
+						"navigationBarTitleText": "关于我们"
 					}
 				},
 				{

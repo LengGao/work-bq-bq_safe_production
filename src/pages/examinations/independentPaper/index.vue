@@ -4,7 +4,7 @@
       <view class="status_bar"></view>
       <view class="nav-bar">
         <uni-icons class="nav-bar-back" type="back" @click="goBack" color="#fff" size="16px"></uni-icons>
-        <text class="nav-bar-title">自主出题</text>
+        <text class="nav-bar-title">人工组卷</text>
       </view>
     </view>
     <image class="b-img" src="../static/autonomy-background.png" mode="aspectFill"></image>

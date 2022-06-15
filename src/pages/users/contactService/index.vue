@@ -21,7 +21,7 @@ export default {
   },
   data() {
     return {
-      defaultTitle: '练习客服'
+      defaultTitle: '联系客服'
     }
   }
 }

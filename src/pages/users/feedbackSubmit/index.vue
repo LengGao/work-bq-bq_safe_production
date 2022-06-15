@@ -77,10 +77,12 @@ export default {
       let params = { ...form }
       let res = await feedback(params)
       if (res.code === 0) {
-        this.onReset()
-        uni.showToast({ title: '提交陈功', icon: 'success'})
+        this.onReset() 
+        uni.showToast({ title: '提交陈功', icon: 'success' })
         setTimeout(() => { this.goBack() }, 800)
-      }
+      } else {
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
+      } 
     },
     onReset() {
       this.form = { type: '', content: '', images: [] }

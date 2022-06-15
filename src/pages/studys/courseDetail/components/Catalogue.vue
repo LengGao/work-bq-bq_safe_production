@@ -29,7 +29,7 @@
               <view v-for="item3 in item2.lesson" :key="item3.id" class="title three-title"
                     :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item2, item1)">
                 <view class="title-box">
-                  <uni-icons type="videocam-filled" size="24rpx" :color="item3.checked ? '#199fff' : '#333'" style="margin-right: 8rpx" />
+                  <uni-icons type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'" style="margin-right: 8rpx" />
                   {{ item3.title }}
                   <view v-if="item3.is_try" class="tag">试看</view>
                 </view>
@@ -50,7 +50,7 @@
           <view v-for="item3 in item1.lesson" :key="item3.id" class="title three-title"
                 :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item1)">
             <view class="title-box">
-              <uni-icons type="videocam-filled" size="24rpx" :color="item3.checked ? '#199fff' : '#333'" style="margin-right: 8rpx" />
+              <uni-icons type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'" style="margin-right: 8rpx" />
               {{ item3.title }}
               <view v-if="item3.is_try" class="tag">试看</view>
             </view>
@@ -83,7 +83,8 @@ export default {
     }
   },
   watch: {
-    courseId() {
+    courseId(val) {
+      console.log('courseId', val);
       this.getChapterList()
     },
     lessonId(val, oldval) {
@@ -122,14 +123,20 @@ export default {
         if (item.id === id) {
           item.checked = true; parent = item; this.checkeds.push(item); break;
         } else {
-          item.checked = false
-          if (childs && childs.length) parent = this.toFlushBack(id, childs);
+          item.checked = false;
+          if (childs && childs.length) {
+            parent = this.toFlushBack(id, childs);
+          }
         }
 
         if (parent.chapter_id === item.id || parent.parent_id === item.id) {
-          item.checked = true; parent = item; this.checkeds.push(item);
+          item.checked = true; 
+          this.checkeds.push(item);
+          // parent = item;
+          return parent = item;
         }
       }
+
       return parent
     },
     // 更新目录
@@ -203,7 +210,7 @@ export default {
 }
 
 .three-title {
-  margin-left: 60rpx;
+  margin-left: 30rpx;
   margin-right: 10rpx;
   color: #777;
   border-bottom: 2rpx solid #ebeef5;
