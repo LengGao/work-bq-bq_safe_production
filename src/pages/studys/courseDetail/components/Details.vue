@@ -90,9 +90,9 @@ export default {
       let res = await courseFavorites(params)
       if (res.code === 0) {
         if (res.data.status) {
-          uni.showToast({ title: '收藏陈功', icon: 'success' })
+          uni.showToast({ title: '收藏成功', icon: 'success' })
         } else {
-          uni.showToast({ title: '取消收藏陈功', icon: 'success' })
+          uni.showToast({ title: '取消收藏成功', icon: 'success' })
         }
         this.info.favorites = !!res.data.status
       } else {

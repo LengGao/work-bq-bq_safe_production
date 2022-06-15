@@ -163,6 +163,9 @@ export default {
   methods: {
     init() {
       this.getQuestionBankList()
+      if (this.question_bank_id) {
+        this.getDailyStatistics()
+      }
     },
     to(url) {
       if (this.authority({ checkBlank: true })) {

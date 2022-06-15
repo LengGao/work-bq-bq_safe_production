@@ -8,7 +8,7 @@
         <uni-icons customPrefix="iconfont" type="icon-user-filling" size="36rpx" color="#ccc"
                    style="margin-left: 10rpx" />
         <uni-easyinput class="input" v-model="username" placeholder="请输入身份证号" @focus="onFocus" @blur="onBlur"
-                       placeholderStyle="font-size: 28rpx; color: #ccc;" type="number" :inputBorder="false"
+                       placeholderStyle="font-size: 28rpx; color: #ccc;" :inputBorder="false"
                        :clearable="false">
         </uni-easyinput>
       </view>
@@ -116,7 +116,6 @@ export default {
       this.loading = false
     },
     onChecked(e) {
-      console.log('e', e);
       this.isRead = e.target.value.length ? true : false
     },
   }

@@ -4,12 +4,17 @@
 
     <view class="main">
       <view class="title">{{ info.title || '--'}}</view>
+
       <view class="subtitle">
         <view class="left">
           <text class="school">{{ info.source || '--' }}</text>
           <text class="time">{{ info.create_time || '--' }}</text>
         </view>
-        <view class="right">阅读{{ info.virtual_num}}</view>
+
+        <view class="right">
+          <uni-icons type="eye" size="28rpx" color="#BBBBBB"  style="margin-right: 8rpx;" />
+          {{ info.virtual_num}}
+        </view>
       </view>
     </view>
 
@@ -71,8 +76,9 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20rpx;
+  padding: 20rpx 0;
   font-size: $font-size-sm;
+  border-bottom: 2rpx dashed #c8c7cc;
 
   .school {
     color: $color-primary;
@@ -84,7 +90,7 @@ export default {
   }
 
   .right {
-    color: $text-color;
+    color: $text-color-grey;
   }
 }
 

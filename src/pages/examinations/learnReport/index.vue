@@ -24,7 +24,7 @@
         </view>
         <view class="statistics-data">
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">{{practiceData.today_correct_rate | empty}}%</view>
+            <view class="statistics-data-item-value">{{practiceData.today_correct_rate | empty}}<text>%</text></view>
             <view class="statistics-data-item-title">今日正确率</view>
           </view>
           <view class="statistics-data-item">

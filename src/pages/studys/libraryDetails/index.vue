@@ -3,8 +3,10 @@
     <custom-header :title="defaultTitle"></custom-header>
 
     <view class="content">
-      <view class="title">{{libraryData.title || '--' }}</view>
-      <!-- <view class="title">发布事件{{libraryData.time || '--' }}</view> -->
+      <view class="header">
+        <view class="title">{{libraryData.title || '--' }}</view>
+        <view class="time">{{libraryData.time || '--' }}</view>
+      </view>
 
       <image v-if="libraryData.preview" :src="libraryData.preview" mode="aspectFill" class="img" />
     </view>
@@ -68,13 +70,28 @@ export default {
   padding: 20rpx 30rpx;
   text-align: center;
 
-  .title {
-    font-size: 32rpx;
-    font-weight: bold;
-    height: 96rpx;
-    line-height: 96rpx;
-    color: #000;
+  .header {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 30rpx 0;
     border-bottom: 2rpx dashed #c8c7cc;
+
+    .title {
+      width: 100%;
+      color: #000;
+      font-size: 32rpx;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    .time {
+      margin-top: 30rpx;
+      width: 100%;
+      color: #888;
+      text-align: left;
+      font-size: 24rrpx;
+    }
   }
 
   .img {
