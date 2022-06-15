@@ -1,8 +1,9 @@
 <template>
   <view class="search">
     <custom-header :title="defaultTitle"></custom-header>
-    
-    <uni-search-bar v-model="keyword" :radius="24" placeholder="搜索您感兴趣的课程" @confirm="onSearch" @clear="onClear" @cancel="onCancel"></uni-search-bar>
+
+    <uni-search-bar v-model="keyword" :radius="24" placeholder="搜索您感兴趣的课程" @confirm="onSearch" @clear="onClear"
+                    @cancel="onCancel"></uni-search-bar>
     <view class="history" v-if="showRecond">
       <view class="head">
         <view class="title">搜索历史</view>
@@ -90,7 +91,7 @@ export default {
           time: 500,
         },
       },
-      
+
       cources: [],
       historys: [],
       hots: [],
@@ -114,7 +115,7 @@ export default {
     },
     // 点击热门搜索
     onCLickHot(type, index) {
-      this.keyword = this.hots[index].name
+      this.keyword = this.hots[index]
       this.showRecond = false
       this.reloadList()
     },
@@ -146,7 +147,7 @@ export default {
       this.getHotWord()
     },
     downCallback() {
-      if(this.mescroll) {
+      if (this.mescroll) {
         this.mescroll.resetUpScroll(true)
       }
     },
@@ -166,7 +167,7 @@ export default {
       this.cources = this.cources.concat(curPageData);
       this.mescroll.endBySize(curPageLen, totalSize);
     },
-    
+
     async getHotWord() {
       let res = await hotWord()
       if (res.code === 0) {
@@ -186,7 +187,22 @@ export default {
   overflow: hidden;
 }
 
-.history,
+.history {
+  display: flex;
+  flex-direction: column;
+  .head {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16rpx;
+
+    .title {
+      font-size: $font-size-md;
+    }
+  }
+}
+
 .hot {
   display: flex;
   flex-direction: column;
@@ -204,7 +220,16 @@ export default {
   }
 }
 
-.history-list,
+.history-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 16rpx;
+  width: 100%;
+}
+
 .hot-list {
   display: flex;
   flex-direction: row;
@@ -216,11 +241,12 @@ export default {
 }
 
 .btn {
+  overflow: visible;
   flex: 1 1 1;
   margin: 8rpx 10rpx;
   font-size: $font-size-base;
-  background-color: #fff;
   color: $text-color-default;
+  background-color: #fff;
 }
 
 .course-list {
@@ -332,5 +358,5 @@ export default {
 
 ::v-deep .uni-searchbar__box {
   justify-content: flex-start;
-} 
+}
 </style>
