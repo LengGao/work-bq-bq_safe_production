@@ -72,6 +72,10 @@ export default {
   },
   methods: {
     async toAnswer() {
+      if (!this.configData.question_type_info || !this.configData.question_type_info.length) {
+        return uni.showToast({ title: '该是试卷暂无题目' });
+      }
+
       let url = `/pages/examinations/answer/index`
       let query = ``
       let source = this.source

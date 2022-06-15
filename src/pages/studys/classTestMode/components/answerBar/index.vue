@@ -4,6 +4,12 @@
       <uni-icons custom-prefix="iconfont" :color="isStart?'#ddd':''" type="icon-fanhui" size="28rpx"></uni-icons>
       <view class="bar-text">上一题</view>
     </view>
+    <view class="answer-bar-item" v-if="!analysis">
+      <uni-icons custom-prefix="iconfont" type="icon-time" size="28rpx"></uni-icons>
+      <view class="bar-text">
+        <uni-countdown :show-day="false" @timeup="onTimeUp" :hour="0" :minute="0" :second="time" />
+      </view>
+    </view>
     <view class="answer-bar-item" v-if="isEnd" @click="onSubmitPaper">
       <uni-icons custom-prefix="iconfont" type="icon-jiaojuan" size="28rpx"></uni-icons>
       <view class="bar-text" v-if="analysis"> {{ pass ? '继续学习' :'再考一次' }}</view>

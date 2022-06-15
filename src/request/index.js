@@ -18,6 +18,10 @@ const interactiveMap = {
   modal: { open: GLOBAL.showModal, option: { title: '', content: '' } },
 }
 
+const goBack = () => {
+  setTimeout(() => { history.back()}, 1500)
+}
+
 const handlerError = {
   '1000': () => {
     let keys = ['userInfo', 'orgInfo', 'questionBankInfo']
@@ -37,6 +41,18 @@ const handlerError = {
   },
   '1009': async () => {
     uni.showToast({ title: '登录信息已过期，请重新登录', icon: 'none' })
+  },
+  '2998': async () => {
+    uni.showToast({ title: '课程已下架', icon: 'none' })
+    goBack()
+  },
+  '2999': async () => {
+    uni.showToast({ title: '课程不存在。课程不存在或者被删除', icon: 'none' })
+    goBack()
+  },
+  '3999': async () => {
+    uni.showToast({ title: '题库不存在。题库不存在或被删除', icon: 'none' })
+    goBack()
   }
 }
 

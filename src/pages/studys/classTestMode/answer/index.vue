@@ -13,7 +13,6 @@
     <swiper class="swiper" :duration="duration" :current="currentIndex" :disable-touch="disableTouch"
             @change="onSwiperChange">
       <swiper-item class="swiper-item" v-for="(item, index) in answerSheet" :key="index">
-        
         <Single :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 1" />
         <Multiple :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 2" />
         <Indefinite :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 3" />
@@ -22,8 +21,11 @@
         <Short :options="questionList[index]" @change="onInputChange" v-if="questionList[index] && questionList[index].question_type === 6" />
       </swiper-item>
     </swiper>
-    <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" @submit-paper="submitPaper" @next="handleNext"
-               @prev="handlePrev">
+              <!-- :currentIndex="currentIndex"
+              :time="questionList[currentIndex].timeout" -->
+              <!-- @timeup="onTimeUp" -->
+    <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" 
+               @submit-paper="submitPaper" @next="handleNext" @prev="handlePrev">
     </AnswerBar>
   </view>
 </template>
@@ -189,7 +191,6 @@ export default {
       }
     },
 
-
     getCurrAnswer(index) {
       let question_id = this.questionList[index].question_id
       let answer = this.userAnswerMap[question_id]
@@ -219,6 +220,11 @@ export default {
 
       return { practice_id, question_id, course_id, lesson_id, answer}
     },
+
+    async onTimeUp () {
+
+    },
+
 
     async submitPaper() {
       let url = `/pages/studys/classTestMode/result/index`

@@ -343,8 +343,8 @@ export default {
               position: relative;
               top: -4rpx;
               color:  #fff;
-              background-color: #b23145;
-              border-color: #b23145;
+              background-color: #199fff;
+              border-color: #199fff;
             }
           }
         }

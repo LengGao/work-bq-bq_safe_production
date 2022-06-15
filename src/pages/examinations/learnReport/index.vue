@@ -53,20 +53,24 @@
         </view>
         <view class="learn-report-card-statistics statistics-data">
           <view class="statistics-data-item">
+            <view class="statistics-data-item-value">{{customData.total_exam_num | empty}}</view>
+            <view class="statistics-data-item-title">考试次数</view>
+          </view>
+          <view class="statistics-data-item">
             <view class="statistics-data-item-value">{{customData.total_answer_num | empty}}</view>
             <view class="statistics-data-item-title">答题总数</view>
           </view>
-          <view class="statistics-data-item">
+          <!-- <view class="statistics-data-item">
             <view class="statistics-data-item-value">{{customData.answer_progress | empty}}<text>%</text></view>
             <view class="statistics-data-item-title">答题进度</view>
-          </view>
-          <view class="statistics-data-item">
-            <view class="statistics-data-item-value">{{customData.total_exam_num | empty}}</view>
-            <view class="statistics-data-item-title">总考试次数</view>
-          </view>
+          </view> -->
           <view class="statistics-data-item none">
             <view class="statistics-data-item-value">{{customData.top_score | empty}}</view>
             <view class="statistics-data-item-title">最高得分</view>
+          </view>
+          <view class="statistics-data-item">
+            <view class="statistics-data-item-value">{{customData.avg | empty}}<text>%</text></view>
+            <view class="statistics-data-item-title">平均得分</view>
           </view>
         </view>
       </view>
