@@ -395,7 +395,7 @@ export default {
     needFaceVerifity(currTime) {
       this.face = this.face.filter(item => {
         if (Math.abs(item - currTime) <= 2) {
-          this.player.pause()
+          this.pauseSendData()
           this.showModalForFaceVerifity()
           return undefined
         }
