@@ -167,6 +167,7 @@ import { browser } from '@/mixins/index'
 
 import {
   systemRegion,
+  getLocation,
   banner,
   courseList,
   articleList,
@@ -237,6 +238,7 @@ export default {
     init() {
       this.courseList()
       this.articleList()
+      this.getLocation()
     },
     checkLogin() {
       let userInfo = uni.getStorageSync('userInfo')
@@ -407,7 +409,13 @@ export default {
           this.$store.commit('SET_REGION', currLocation)
         }
       }
-    }
+    },
+    async getLocation() {
+      let res = await getLocation()
+      if (res.code === 0) {
+        
+      }
+    },
   }, // methods end
 };
 </script>

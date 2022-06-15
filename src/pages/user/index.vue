@@ -12,10 +12,10 @@
       </view>
     </view>
 
-    <view class="grids" :style="{'top': linksMargin }">
-      <uni-grid :column="3" :showBorder="false" class="grid">
-        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" >
-          <view class="grid-item" @click="() => onClickGrid(grid.url, grid.blank)">
+    <view class="grids">
+      <uni-grid :showBorder="false" class="grid">
+        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" @click="() => onClickGrid(grid.url, grid.blank)" >
+          <view class="grid-item">
             <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
             <text class="grid-text">{{ grid.title }}</text>
           </view>
@@ -25,8 +25,11 @@
 
     <view class="links">
       <uni-list class="list" >
-        <uni-list-item v-for="link in links" :key="link.id" :to="link.url" :title="link.title" showExtraIcon showArrow
-                       clickable :extraIcon="link.showExtraIcon" @click="onClickList(link.id)">
+        <uni-list-item v-for="link in links" :key="link.id" :to="link.url" :title="link.title" showArrow
+                       clickable @click="onClickList(link.id)">
+          <template v-slot:header>
+            <uni-icons customPrefix="iconfont" :type="link.showExtraIcon.type" :color="link.showExtraIcon.color" :size="link.showExtraIcon.size" style="margin-right: 10rpx;" />
+          </template>
         </uni-list-item>
       </uni-list>
     </view>
@@ -63,8 +66,6 @@ export default {
         { id: 4, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-lianxikefu' }, title: "联系客服", url: "/pages/users/contactService/index" },
       ],
       isLogin: false,
-
-      linksMargin: '290rpx'
     };
   },
   computed: {
@@ -73,9 +74,6 @@ export default {
   onLoad() {
   },
   mounted() {
-    if (this.isWeixinJSBridge) {
-      this.linksMargin = '368rpx'
-    }
   },
   onShow() {
     if (this.userInfo.token) {
@@ -155,8 +153,8 @@ $page-padding: 0rpx 20rpx;
 }
 
 .grids {
-  position: absolute;
-  top: 208rpx;
+  position: relative;
+  top: -108rpx;
   margin: 0 40rpx;
   width: calc(100% - 80rpx);
   height: 190rpx;
@@ -191,7 +189,7 @@ $page-padding: 0rpx 20rpx;
 }
 
 .links {
-  margin-top: 100rpx;
+  margin-top: -60rpx;
 }
 
 ::v-deep .uni-list-item__container {

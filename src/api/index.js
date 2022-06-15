@@ -15,6 +15,13 @@ export function systemRegion(data) {
   })
 }
 
+export function getLocation(data) {
+  return request({
+    url: 'index/getLocation',
+    method: 'get',
+    data
+  })
+}
 
 export function banner(data) {
   return request({
