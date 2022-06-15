@@ -13,8 +13,8 @@
     </view>
 
     <view class="grids">
-      <uni-grid :showBorder="false" class="grid">
-        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" >
+      <uni-grid :showBorder="false" class="grid" :highlight="false">
+        <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id">
           <view class="grid-item" @click="() => onClickGrid(grid.url, grid.blank)">
             <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
             <text class="grid-text">{{ grid.title }}</text>
@@ -88,11 +88,11 @@ export default {
       this.listIndex = detail;
     },
     onClickGrid(url, blank) {
-      if (blank === 'switchTab') {
-        uni.switchTab({ url: url })
-      } else {
-        uni.navigateTo({ url: url })
-      }
+      // if (blank === 'switchTab') {
+      //   uni.switchTab({ url: url })
+      // } else {
+      //   uni.navigateTo({ url: url })
+      // }
     },
     login() {
       uni.navigateTo({ url: '/pages/login/index' })

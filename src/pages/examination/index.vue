@@ -47,7 +47,7 @@
     </view>
 
     <view class="grids">
-      <uni-grid :column="4" :showBorder="false" class="grid">
+      <uni-grid :column="4" :showBorder="false" class="grid" :highlight="false">
         <uni-grid-item v-for="grid in grids" :key="grid.id" :index="grid.id" class="grid-item">
           <view class="grid-box" @click="() => to(grid.url)">
             <image :src="grid.thumb" class="grid-image" mode="aspectFit" />
