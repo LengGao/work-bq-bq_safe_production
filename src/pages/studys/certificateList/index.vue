@@ -1,7 +1,7 @@
 <template>
-  <view class="certificate-list">
+  <view class="certificate-list" :style="{'overflow': canScroll ? 'auto' : 'hidden'} ">
     <custom-header :title="defaultTitle"></custom-header>
-
+     
     <view class="header">
       <view class="option" v-for="(item,index) in actives" :key="index" :class="active === index ? 'active' : ''"
             @click="() => onChange(index)">
@@ -23,18 +23,18 @@
               <view class="card-right-top">
                 <text>{{ course.title }}</text>
               </view>
-              <view class="card-right-footer">
+              <view class="card-right-center">
                 <view class="time">
                   <view class="tag tag-two" v-if="course.learning_progress >= 100">已学完</view>
                   <view class="tag tag-three" v-else-if="course.learning_progress <= 0">未开始</view>
                   <view class="tag tag-one" v-else>已学习 {{ course.learning_progress }}%</view>
                 </view>
-                <view class="cost">
-                  <view class="tag tag-two-full" v-if="course.learning_progress >= 100"
-                        @click="() => buildLearnCert(course.id)">生成证书</view>
-                  <view class="tag tag-three-full" v-else-if="course.learning_progress <= 0"></view>
-                  <view class="tag tag-one-full" v-else @click="() => onViewCertificate(cert_url)">查看证书</view>
-                </view>
+              </view>
+              <view class="card-right-footer">
+                  <view class="tag" :class="course.learning_progress > 0  && course.learning_progress < 100 ? 'tag-two-full' : 'tag-three-full'"
+                        @click="() => generatorLearnRecond(course)">学习记录</view>
+                  <view class="tag" :class="course.learning_progress >= 100 ? 'tag-one-full' : 'tag-three-full'"
+                        @click="() => buildLearnCert(course)">学习证书</view>
               </view>
             </view>
           </template>
@@ -52,7 +52,7 @@
             <image class="image" @click="() => previewImg(item.url)" :src="item.url" mode="aspectFill" />
           </view>
           <view class="list-item-save">
-            <button class="btn-primary" @click="() => onViewCertificate(item.url)">查看证书</button>
+            <button class="btn-primary" @click="() => onViewCertificate(item.url)">打开图片</button>
           </view>
         </view>
       </mescroll-body>
@@ -66,12 +66,12 @@
       </view>
     </uni-popup>
 
-    <uni-popup ref="popup-certificate" class="certificate-detail" :is-mask-click="false">
+    <uni-popup ref="popup-certificate" class="certificate-detail" :is-mask-click="false" style="overflow: scroll;">
       <view class="main">
         <view class="section">
           <view class="hader">太好啦，您的证书已生成</view>
           <view class="certificate">
-            <image class="certificate" :src="downloadUrl" />
+            <image class="certificate-img" :src="downloadUrl" mode="widthFix" />
           </view>
           <view class="close-icon">
             <uni-icons type="clear" size="56rpx" @click="onClose(2)"/>
@@ -115,7 +115,8 @@ export default {
       percent: 0,
       timer: 0,
       downloadTask: null,
-      downloadUrl: ''
+      downloadUrl: '',
+      canScroll: true
     }
   },
   methods: {
@@ -138,6 +139,13 @@ export default {
       } else {
         this.$refs['popup-certificate'].close()
       }
+      this.canScroll = true
+    },
+    generatorLearnRecond(course) {
+      if (course.learning_progress <= 0 || course.learning_progress >= 100) return;
+      let url = '/pages/studys/learningRecords/index'
+      let query = `?course_id=${course.id}`
+      uni.navigateTo({ url: url + query })
     },
     generator(url) {
       this.timer = setInterval(() => {
@@ -186,9 +194,11 @@ export default {
       this.mescroll.endBySize(curPageLen, totalSize);
     },
     // 生成证书
-    async buildLearnCert(id) {
+    async buildLearnCert(course) {
+      if (course.learning_progress < 100) return;
       this.$refs['popup-progress'].open('center')
-      let res = await buildLearnCert({ course_id: id })
+      this.canScroll = false
+      let res = await buildLearnCert({ course_id: course.id })
       if (res.code === 0) {
         this.downloadUrl = res.data.url
         this.generator()
@@ -229,7 +239,7 @@ export default {
 
 .cource-list {
   width: 100%;
-  padding: 20rpx 0;
+  padding: 10rpx 0;
   background-color: $bg-color-grey;
 
   .cardrow-color {
@@ -287,15 +297,11 @@ export default {
   .card-right-footer {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
     font-size: $font-size-sm;
     color: $text-color-grey;
-
-    .cost {
-      font-size: $font-size-sm;
-    }
   }
 
   .audience {
@@ -317,7 +323,7 @@ export default {
   .tag {
     position: relative;
     top: -4rpx;
-    padding: 6rpx;
+    margin-right: 40rpx;
     font-size: $font-size-sm;
   }
 
@@ -355,7 +361,12 @@ export default {
   }
 
   .tag-three-full {
-    background-color: transparent;
+    padding: 8rpx 10rpx;
+    width: 120rpx;
+    text-align: center;
+    font-size: $font-size-sm;
+    color: #fff;
+    background-color: #D7DAD8;
   }
 }
 
@@ -428,17 +439,23 @@ export default {
 ::v-deep .uni-progress-info {
   color: #fff;
 }
+
 .certificate-detail {
+  height: 100vh;
 
   .close-icon {
     margin-top: 20rpx;
     text-align: center;
   }
 
-  .footer {
-    position: relative;
-    top: 20vh;
+  .certificate-img {
+    width: 680rpx;
+    // height: 800rpx;
+  }
 
+  .footer {
+    margin-top: 15%;
+    width: 100%;
     .btn-primary {
       font-size: 28rpx;
       color: #fff;

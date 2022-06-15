@@ -13,7 +13,8 @@ export function getChapterList(data) {
   return request({
     url: 'question/getPracticeChapterList',
     method: 'post',
-    data   
+    data,
+    loading: false
   })
 }
 

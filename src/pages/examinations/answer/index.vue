@@ -3,12 +3,13 @@
     <custom-header :title="defaultTitle"></custom-header>
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
-    <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex" :disable-touch="false"
+    <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex" :disable-touch="disableTouch"
             @animationfinish="onAnimationfinish">
 
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
+         <template v-if="index === currentIndex - 1 || index === currentIndex || index === currentIndex + 1">
         <Single :options="questionList[index]" :model="model" @change="onSingleChange"
                 v-if="questionList[index] && questionList[index].question_type === 1" />
         <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
@@ -23,8 +24,9 @@
                v-if="questionList[index] && questionList[index].question_type === 6" />
         <Case :options="questionList[index]" :serial-number="currentIndex + 1" :model="model"
               v-if="questionList[index] && questionList[index].question_type === 7" 
-              :ref="`case-${item.id}`" :question-bank="question_bank_id" :log-id="exam_log_id" 
+              :question-bank="question_bank_id" :log-id="exam_log_id" 
               @change="onCaseChange" @submitanswe-case="submitAnswerChild" @index-change="onCaseIndexChange" />
+         </template>
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar" :is-end="isEnd" :is-start="isStart"
@@ -80,10 +82,11 @@ export default {
     return {
       defaultTitle: '',
       throttle: false,
+      disableTouch: false,
 
       prevIndex: -1,
       currentIndex: 0,
-      duration: 600,
+      duration: 500,
 
       total: 0,
       questionList: [],
@@ -230,10 +233,12 @@ export default {
 
     onSwiperChange({ detail }) {
       console.log('detail', detail);
+      this.disableTouch = true
       if (detail.source === 'touch') {
         this.prevIndex = this.currentIndex
         this.currentIndex = detail.current
       }
+      
       if (this.isStart) {
         uni.showToast({ title: '已经是第一题了', icon: 'none' })
       } else if (this.isEnd) {
@@ -268,6 +273,7 @@ export default {
     },
 
     onAnimationfinish({ detail }) {
+      this.disableTouch = false
     },
 
     onCaseIndexChange(index) {

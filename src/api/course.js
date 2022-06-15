@@ -136,6 +136,15 @@ export function getLearnData(data) {
   })
 }
 
+export function buildLearnRecord(data) {
+  return request({
+    url: 'course/getLearnRecord',
+    method: 'get',
+    data,
+    loading: false
+  })
+}
+
 // 人脸验证
 export function faceUpload(data) {
   return request({

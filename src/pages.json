@@ -137,6 +137,12 @@
 					}
 				},
 				{
+					"path": "learningRecords/index",
+					"style": {
+						"navigationBarTitleText": "学习记录"
+					}
+				},
+				{
 					"path": "learnData/index",
 					"style": {
 						"navigationBarTitleText": "学习数据"
