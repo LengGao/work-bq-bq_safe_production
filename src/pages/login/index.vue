@@ -104,8 +104,9 @@ export default {
       uni.navigateTo({ url: '/pages/indexs/reisgter/index' })
     },
     async onSubmit() {
-      this.loading = true
-      let params = { id_card: this.username, password: this.password }
+      this.loading = true;
+      let usernam = `${this.username}`.toUpperCase()
+      let params = { id_card: usernam, password: this.password }
       let res = await this.$store.dispatch('login', params)
       if (res.code === 0) {
         uni.showToast({ icon: 'success', title: '登录成功' })
