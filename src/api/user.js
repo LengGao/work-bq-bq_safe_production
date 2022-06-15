@@ -79,6 +79,14 @@ export function userCertList(data) {
     })
 }
 
+export function problemList(data) {
+    return request({
+        url: 'article/problemList',
+        method: 'post',
+        data
+    })
+}
+
 export function feedback(data) {
     return request({
         url: 'HelpCenter/feedback',

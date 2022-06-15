@@ -11,7 +11,7 @@
         <view class="logan-list-head-left"> 常见问题 </view>
       </view>
       <uni-list>
-        <uni-list-item v-for="item in list" :key="item.id" :title="item.title" :to="item.url" showArrow></uni-list-item>
+        <uni-list-item v-for="item in list" :key="item.id" :title="item.title" :to="item.url" clickable showArrow @click="() => toDetails(item.id)"></uni-list-item>
       </uni-list>
     </view>
 
@@ -24,6 +24,8 @@
 
 <script>
 import CustomHeader from "@/components/custom-header"
+import { problemList } from '@/api/user'
+import { getLocation } from '@/api/index'
 
 export default {
   components: {
@@ -32,18 +34,41 @@ export default {
   data() {
     return {
       defaultTitle: '意见反馈',
-      list: [
-        { id: 1, title: '找不到已经购买的课程？', url: "" },
-        { id: 2, title: '手机听课出现卡顿怎么办？', url: "" },
-        { id: 3, title: '能用电脑上课吗？', url: "" },
-        { id: 4, title: '发生退款情况如何处理？', url: "" }
-      ]
+      list: []
     }
   },
+  onLoad(options) {
+    this.checkRegion()
+  },
   methods: {
+    toDetails(id) {
+      let url = `/pages/users/FAQPage/index`,
+          query = `?article_id=${id}`
+      uni.navigateTo({ url: url + query })
+    },
     onClick() {
       uni.navigateTo({ url: '/pages/users/feedbackSubmit/index' })
     },
+    checkRegion() {
+      let region_id = this.$store.getters.region.id
+      if (region_id) {
+        this.problemList(region_id)
+      } else {
+        this.getLocation()
+      }
+    },
+    async problemList(region_id) {
+      let res = await problemList({ region_id: region_id})
+      if (res.code === 0) {
+        this.list = res.data
+      }
+    },
+    async getLocation() {
+      let res = await getLocation()
+      if (res.code === 0) {
+        this.problemList(res.data.id)
+      }
+    }
   }
 }
 </script>

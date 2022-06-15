@@ -18,7 +18,6 @@
             <template v-slot:title>
               <view class="title two-title" :class="item2.checked ? 'title-active' : ''">
                 <view class="title-box">
-                  <uni-icons type="circle-filled" size="24rpx" style="margin-right: 8rpx" />
                   {{ item2.title }}
                   <view v-if="item2.is_try" class="tag">试看</view>
                 </view>
@@ -30,7 +29,7 @@
               <view v-for="item3 in item2.lesson" :key="item3.id" class="title three-title"
                     :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item2, item1)">
                 <view class="title-box">
-                  <uni-icons type="circle-filled" size="24rpx" style="margin-right: 8rpx" />
+                  <uni-icons type="videocam-filled" size="24rpx" :color="item3.checked ? '#199fff' : '#333'" style="margin-right: 8rpx" />
                   {{ item3.title }}
                   <view v-if="item3.is_try" class="tag">试看</view>
                 </view>
@@ -51,7 +50,7 @@
           <view v-for="item3 in item1.lesson" :key="item3.id" class="title three-title"
                 :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item1)">
             <view class="title-box">
-              <uni-icons type="circle-filled" size="24rpx" style="margin-right: 8rpx" />
+              <uni-icons type="videocam-filled" size="24rpx" :color="item3.checked ? '#199fff' : '#333'" style="margin-right: 8rpx" />
               {{ item3.title }}
               <view v-if="item3.is_try" class="tag">试看</view>
             </view>

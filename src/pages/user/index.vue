@@ -26,7 +26,7 @@
     <view class="links">
       <uni-list class="list" >
         <uni-list-item v-for="link in links" :key="link.id" :to="link.url" :title="link.title" showArrow
-                       clickable @click="onClickList(link.id)">
+                       clickable @click="() => onClickList(link.id)">
           <template v-slot:header>
             <uni-icons customPrefix="iconfont" :type="link.showExtraIcon.type" :color="link.showExtraIcon.color" :size="link.showExtraIcon.size" style="margin-right: 10rpx;" />
           </template>
@@ -88,11 +88,11 @@ export default {
       this.listIndex = detail;
     },
     onClickGrid(url, blank) {
-      // if (blank === 'switchTab') {
-      //   uni.switchTab({ url: url })
-      // } else {
-      //   uni.navigateTo({ url: url })
-      // }
+      if (blank === 'switchTab') {
+        uni.switchTab({ url: url })
+      } else {
+        uni.navigateTo({ url: url })
+      }
     },
     login() {
       uni.navigateTo({ url: '/pages/login/index' })
