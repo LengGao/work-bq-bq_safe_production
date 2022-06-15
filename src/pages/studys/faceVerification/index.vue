@@ -14,7 +14,7 @@
       </view>
 
       <view class="dialog-footer">
-        <button class="btn-primary" v-if="showRestartBtn" :disabled="btndisabled" size="small"
+        <button class="btn-primary" v-if="!showRestartBtn" :disabled="btndisabled" size="small"
                 @click="handleOk">开始认证</button>
         <button class="btn-primary" v-else size="small" @click="init">重新验证</button>
       </view>
@@ -81,9 +81,7 @@ export default {
   },
   methods: {
     init() {
-      if (this.strem) { 
-        this.strem.getTracks().forEach((track) => track.stop());
-      }
+      if (this.strem) { this.strem.getTracks().forEach((track) => track.stop()); }
       this.checkSetting()
     },
     mountedDom() {
@@ -138,6 +136,7 @@ export default {
     // 获取媒体
     geMediaDevices(constraints) {
       let devicesState = this.devicesState
+      console.log('devicesState', devicesState);
       if (devicesState === 'mediaDevices.getUserMedia') {
         navigator.mediaDevices.getUserMedia(constraints).then(this.handlerSuccess).catch(this.handlerError)
       } else if (devicesState !== 'unkonw'){
@@ -146,6 +145,7 @@ export default {
     },
     // 开始雅正
     handleOk() {
+      console.log('handleOk');
       this.btndisabled = true
       this.timer = setInterval(() => {
         if (this.verificationStatus) {
@@ -156,7 +156,7 @@ export default {
         }
       }, 1000)
     },
-    // 获取数据
+    // 获取数据 
     getMediaData() {
       let video = this.video,
           videoSize = this.videoSize,
@@ -196,11 +196,8 @@ export default {
       this.verificationStatus = true
       this.btndisabled = false
       this.messageErr = '验证通过'
-      clearInterval(this.timer)
-      this.this.timer = null
-      this.stopStrem()
-
       uni.redirectTo({ url: url + query })
+      this.stopStrem()
     },
     verifierror() {
       this.verificationStatus = false
@@ -216,6 +213,7 @@ export default {
     // 发送数据
     async sendData() {
       let params = this.getMediaData()
+      console.log('sendData', params);
       let res = await faceUpload(params)
       if (res.code === 0) {
         this.verifiSuccess()
