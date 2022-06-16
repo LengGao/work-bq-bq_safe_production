@@ -44,6 +44,7 @@
       </view>
     </view>
 
+
     <view class="course-rich">
       <u-parse v-if="info.content" class="content" :content="info.content" />
     </view>
@@ -81,6 +82,13 @@ export default {
     timeTotal() {
       return Math.imul(this.info.chapter_count, this.info.lesson_count)
     }
+  },
+  watch: {
+  
+  },
+  mounted() {
+
+    console.log("asd",this.info.content);
   },
   methods: {
     // 咨询
@@ -227,12 +235,9 @@ export default {
   width: 100%;
   overflow: hidden;
   padding: 30rpx;
+  line-height: 2;
   box-sizing: border-box;
   border-top: $logan-border-spacing-md;
-  ::v-deep .p {
-  line-height: 2;
-  text-indent: 2em;
-  }
 }
 
 .footer {

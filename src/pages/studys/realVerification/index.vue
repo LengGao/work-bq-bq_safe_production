@@ -58,7 +58,7 @@
 import CustomHeader from "@/components/custom-header"
 import placeholderOne from '@/pages/studys/static/idcard1.jpg'
 import placeholderTwo from '@/pages/studys/static/idcard2.jpg'
-import { updateIdCardImg, uploadFile } from '@/api/user'
+import { uploadFile } from '@/api/user'
 
 export default {
   components: {

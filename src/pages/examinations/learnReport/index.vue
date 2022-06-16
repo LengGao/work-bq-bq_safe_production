@@ -69,7 +69,7 @@
             <view class="statistics-data-item-title">最高得分</view>
           </view>
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">{{customData.avg | empty}}<text>%</text></view>
+            <view class="statistics-data-item-value">{{customData.avg | empty}}ha</view>
             <view class="statistics-data-item-title">平均得分</view>
           </view>
         </view>

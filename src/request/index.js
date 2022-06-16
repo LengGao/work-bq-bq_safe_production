@@ -88,11 +88,10 @@ service.useResponseInterceptor((response) => {
   let body = response.data
   if (body.code === 1 && !service.$config.nocatch) {
     uni.showToast({ icon: 'none', title: `${body.message}` })
-  } else {
-    if (handlerError[`${body.code}`]) {
+  } else if (handlerError[`${body.code}`]) {
       handlerError[`${body.code}`]()
-    }
   }
+  
   return response
 })
 

@@ -7,7 +7,7 @@
     <view class="answer-bar-item" v-if="!analysis">
       <uni-icons custom-prefix="iconfont" type="icon-time" size="28rpx"></uni-icons>
       <view class="bar-text">
-        <uni-countdown :show-day="false" @timeup="onTimeUp" :hour="0" :minute="0" :second="time" />
+        <uni-countdown v-if="showTimer" :show-day="false" @timeup="onTimeUp" :hour="0" :minute="0" :second="time" />
       </view>
     </view>
     <view class="answer-bar-item" v-if="isEnd" @click="onSubmitPaper">
@@ -41,6 +41,10 @@ export default {
       type: Number,
       default: 0,
     },
+    currentIndex: {
+      type: [String, Number],
+      default: 0,
+    },
     analysis: {
       type: Boolean,
       default: false,
@@ -49,6 +53,19 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  data() {
+    return {
+      showTimer: true  
+    }
+  },
+  watch: {
+    currentIndex() {
+     this.showTimer = false
+     this.$nextTick(() => {
+      this.showTimer= true
+     })
+    }
   },
   methods: {
     onTimeUp(e) {

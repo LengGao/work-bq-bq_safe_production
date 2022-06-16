@@ -21,11 +21,11 @@
         <Short :options="questionList[index]" @change="onInputChange" v-if="questionList[index] && questionList[index].question_type === 6" />
       </swiper-item>
     </swiper>
-              <!-- :currentIndex="currentIndex"
-              :time="questionList[currentIndex].timeout" -->
-              <!-- @timeup="onTimeUp" -->
+              
     <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" 
-               @submit-paper="submitPaper" @next="handleNext" @prev="handlePrev">
+               v-if="questionList[currentIndex]"
+               :currentIndex="currentIndex" :time="questionList[currentIndex].timeout"
+               @timeup="onTimeUp" @submit-paper="submitPaper" @next="handleNext" @prev="handlePrev">
     </AnswerBar>
   </view>
 </template>
@@ -222,7 +222,16 @@ export default {
     },
 
     async onTimeUp () {
+      let url = `/pages/studys/classTestMode/result/index`
+      let { practice_id, course_id, lesson_id, answer } = this.getQuery(this.currentIndex)
+      let query = { practice_id, course_id, lesson_id }
+      let path = this.getPath(url, query)
 
+      let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
+      let res = await practiceAnswer(params)
+      if (res.code === 0) {
+        uni.redirectTo({ url: path })
+      }
     },
 
 

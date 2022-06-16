@@ -257,7 +257,7 @@ export default {
     showModalForExamination(path) {
       uni.showModal({
         title: '提示',
-        content: '本次学习需要进行随堂考试,测评合格后(≥80分)将计入相应学时',
+        content: '本次学习需要进行随堂考试,每道题目限时60秒,每次考试有5次机会,测评合格后(≥80分)将计入相应学时',
         cancelText: '取消',
         confirmText: '开始考试',
         cancelColor: '#199fff',
@@ -550,11 +550,8 @@ export default {
 
         // #ifdef H5
         this.createPlayer({ video, lesson, record, face, start_second: +record.start_second })
-        // #endif
+        // #endif        
 
-        // #ifdef MP-WEIXIN
-        this.createPlayer({ video, lesson, record, face, start_second: +record.start_second })
-        // #endif
       } else {
         if (!this.first) { this.showToast(res.data.message, res.code, res.data) }
         this.errSendData()

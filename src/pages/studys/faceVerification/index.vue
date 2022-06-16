@@ -75,6 +75,10 @@ export default {
   mounted() {
     this.mountedDom()
   },
+  destroyed() {
+    clearInterval(this.timer)
+    this.timer = null
+  },
   onUnload() {
     clearInterval(this.timer)
     this.timer = null
@@ -190,14 +194,15 @@ export default {
       let course_id = this.course_id
       let lesson_id = this.lesson_id
       let end_second = this.end_second
-      let url = `/pages/studys/courseDetail`
+      let url = `/pages/studys/courseDetail/index`
       let query = `?course_id=${course_id}&lesson_id=${lesson_id}&end_second=${end_second}`
 
       this.verificationStatus = true
       this.btndisabled = false
       this.messageErr = '验证通过'
-      uni.redirectTo({ url: url + query })
+
       this.stopStrem()
+      uni.redirectTo({ url: url + query })
     },
     verifierror() {
       this.verificationStatus = false
