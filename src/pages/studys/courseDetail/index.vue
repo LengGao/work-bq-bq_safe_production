@@ -115,19 +115,11 @@ export default {
       start_second: 0, // 当前时间
       first: true, // 是否为第一次进入
       videoState: '', // 视频播放状态
-
-
+      
       // 实名与人脸验证
       isFace: false,
 
-
     }
-  },
-  computed: {
-
-  },
-  watch: {
-
   },
   onLoad(query) {
     let { course_id, lesson_id } = query
