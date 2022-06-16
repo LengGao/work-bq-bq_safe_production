@@ -71,6 +71,7 @@ export function userCourseList(data) {
     })
 }
 
+// 证书
 export function userCertList(data) {
     return request({
         url: 'user/certList',

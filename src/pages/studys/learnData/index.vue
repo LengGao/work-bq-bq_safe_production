@@ -87,7 +87,7 @@
 <script>
 import qiunDataCharts from "@/uni_modules/ucharts/components/qiun-data-charts/qiun-data-charts.vue";
 import { browser } from '@/mixins/index'
-import { userCertList } from '@/api/user'
+import { userCourseList } from '@/api/user'
 import { getLearnData } from '@/api/course'
 
 export default {
@@ -123,7 +123,7 @@ export default {
     };
   },
   onLoad() {
-    this.userCertList()
+    this.userCourseList()
   },
   computed: {
     activeCourseTitle() {
@@ -144,8 +144,8 @@ export default {
       this.course_id = this.array[detail.value].id
        this.getLearnData(this.course_id)
     },
-    async userCertList() {
-      let res = await userCertList()
+    async userCourseList() {
+      let res = await userCourseList()
       if (res .code === 0) {
         this.array = res.data.data.filter(item => item.status !== 0).map(item => ({id: item.id, title: item.title }))
         this.course_id = this.array[0].id
