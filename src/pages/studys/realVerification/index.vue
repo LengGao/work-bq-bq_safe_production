@@ -38,7 +38,7 @@
             <view class="none-icon">
             <uni-icons customPrefix="iconfont" type="icon-shangchuan-copy" size="48rpx" color="#fff" />
             </view>
-            <view class="text">上传身份证人面像!</view>
+            <view class="text">上传身份证国徽面!</view>
           </view>
         </view>
       </view>
