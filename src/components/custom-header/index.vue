@@ -34,18 +34,22 @@ export default {
       type: Boolean,
       default: true
     },
-    prevFunction: {
+    customBack: {
       type: Function
     }
   },
   methods: {
     goBack() {
-      if (this.prevFunction && !this.prevFunction()) { return; }
-      let pages = getCurrentPages()
-      if (pages.length > 1) {
-        uni.navigateBack()
+      if (this.customBack) {
+        this.customBack()
       } else {
-        history.back()
+        let pages = getCurrentPages()
+        console.log('pages', pages);
+        if (pages.length > 1) {
+          uni.navigateBack()
+        } else {
+          history.back()
+        }
       }
     }
   }

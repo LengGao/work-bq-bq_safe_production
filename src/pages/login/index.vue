@@ -55,7 +55,8 @@ export default {
       // password: '123456',
       // username: '430481199706297215',
       // password: '123456',
-      username: '441444200010100020',
+      // 琼琼
+      username: '430525199002265121',
       password: '123456',
       
       visibility: false,

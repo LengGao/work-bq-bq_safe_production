@@ -4,7 +4,7 @@
 
     <view class="face">
       <view class="title">
-        {{ messageErr }}
+        {{ toastMsg }}
       </view>
 
       <view class="face-container">
@@ -15,8 +15,9 @@
 
       <view class="dialog-footer">
         <button class="btn-primary" v-if="!showRestartBtn" :disabled="btndisabled" size="small"
-                @click="handleOk">开始认证</button>
-        <button class="btn-primary" v-else size="small" @click="init">重新验证</button>
+        :class="btndisabled ? 'btn-disabled' : ''" @click="handleOk">开始认证</button>
+        <button class="btn-primary" v-else size="small" 
+        @click="init">重新验证</button>
       </view>
     </view>
 
@@ -35,10 +36,12 @@ export default {
     return {
       defaultTitle: '人脸认证',
       devicesState: '', // 设备状态
-      messageErr: '请将面部置于方框内，点击开始认证',
+      toastMsg: '请将面部置于方框内，点击开始认证',
       btndisabled: false,
       verificationStatus: false,
       showRestartBtn: false,
+      timer: 0,
+      countError: 0,
 
       strem: null,
       video: null,
@@ -49,9 +52,6 @@ export default {
       course_id: 0,
       lesson_id: 0,
       end_second: 0,
-
-      timer: 0,
-      src: '',
 
       errMsgMap: {
         'AbortError': '终止错误',
@@ -88,12 +88,33 @@ export default {
       if (this.strem) { this.strem.getTracks().forEach((track) => track.stop()); }
       this.checkSetting()
     },
+    goback() {
+      let course_id = this.course_id
+      let lesson_id = this.lesson_id
+      let end_second = this.end_second
+      let url = `/pages/studys/courseDetail/index`
+      let query = `?course_id=${course_id}&lesson_id=${lesson_id}&end_second=${end_second}`
+      let options = {
+        course_id: course_id,
+        lesson_id: lesson_id,
+        end_second: end_second,
+      }
+
+      let pages = getCurrentPages()
+      if (pages.length > 1) {
+        let page = pages[pages.length -2]
+        page.init(options)
+        uni.navigateBack()
+      } else {
+        uni.redirectTo({ url: url + query })
+      }
+    },
     mountedDom() {
       let videoParent = document.getElementById('video'),
           canvas = document.createElement('canvas'),
           image = document.createElement('image')
-
-      let video = videoParent.children[0].children[0]
+      
+      let video = videoParent?.children[0]?.children[0]
 
       this.video = video
       this.canvas = canvas
@@ -117,7 +138,7 @@ export default {
       } else if (navigator.getUserMedia) {
         this.devicesState = 'getUserMedia'
       } else {
-        this.messageErr = '无法开启摄像头'
+        this.toastMsg = '无法开启摄像头'
         this.devicesState = 'unkonw'
       }
     },
@@ -125,6 +146,7 @@ export default {
     handlerSuccess(strem) {
       console.log('strem', strem);
       this.btndisabled = false
+      this.showRestartBtn = false
       this.strem = strem
       this.video.srcObject = strem
       this.video.play()
@@ -134,8 +156,8 @@ export default {
       console.log('error', error);
       this.btndisabled = true
       this.showRestartBtn = true
-      let messageErr = `${this.errMsgMap[error.name]}`
-      uni.showToast({ title: messageErr, icon: 'none' })
+      let toastMsg = `${this.errMsgMap[error.name]}`
+      uni.showToast({ title: toastMsg, icon: 'none' })
     },
     // 获取媒体
     geMediaDevices(constraints) {
@@ -149,7 +171,7 @@ export default {
     },
     // 开始雅正
     handleOk() {
-      console.log('handleOk');
+      // console.log('handleOk');
       this.btndisabled = true
       this.timer = setInterval(() => {
         if (this.verificationStatus) {
@@ -184,46 +206,41 @@ export default {
       base64 = image.split(';base64,')[1]
       return { lesson_id: this.lesson_id, end_second: this.end_second, photo: base64 }
     },
-
     stopStrem() {
       if (this.strem) {
         this.strem.getTracks().forEach((track) => track.stop());
       }
     },
+    // 验证成功
     verifiSuccess() {
-      let course_id = this.course_id
-      let lesson_id = this.lesson_id
-      let end_second = this.end_second
-      let url = `/pages/studys/courseDetail/index`
-      let query = `?course_id=${course_id}&lesson_id=${lesson_id}&end_second=${end_second}`
-
       this.verificationStatus = true
       this.btndisabled = false
-      this.messageErr = '验证通过'
+      this.toastMsg = '验证通过'
 
       this.stopStrem()
-      uni.redirectTo({ url: url + query })
+      this.goback()
     },
+    // 验证失败
     verifierror() {
       this.verificationStatus = false
       this.countError++;
 
-      if (this.countError > 20) {
+      if (this.countError > 10) {
         this.btndisabled = false
         clearInterval(this.timer)
         this.timer = null
-        this.messageErr = '人脸验证失败, 请重新验证'
+        this.toastMsg = '人脸验证失败, 请重新验证'
       }
     },
     // 发送数据
     async sendData() {
       let params = this.getMediaData()
-      console.log('sendData', params);
       let res = await faceUpload(params)
       if (res.code === 0) {
         this.verifiSuccess()
       } else {
-        this.messageErr = res.message
+        this.toastMsg = res.message
+        this.verifierror()
       }
     },
   }
@@ -267,6 +284,10 @@ export default {
     font-size: 32rpx;
     background-color: #199fff;
     border-radius: 12rpx;
+  }
+
+  .btn-disabled {
+    opacity: 0.3;
   }
 }
 </style>

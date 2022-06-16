@@ -134,7 +134,7 @@ export default {
     },
   },
   onBackPress() {
-    console.log('onBackPress');
+    // console.log('onBackPress');
   },
   
   onLoad(query) {

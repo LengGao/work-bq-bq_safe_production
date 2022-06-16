@@ -1,6 +1,6 @@
 <template>
   <view class="real-verification">
-    <custom-header :title="defaultTitle"></custom-header>
+    <custom-header :title="defaultTitle" ></custom-header>
     <view class="real">
       <view class="title">上传证件照</view>
       <view class="img-box" @click="() => onUpload(1)">
@@ -46,7 +46,6 @@
       <view class="bottom">
         注：根据安全生产资格考试网络培训管理办法规定， 此 课程需要通过实名认证后才能开始学习。
       </view>
-      
 
       <view class="dialog-footer">
         <button class="btn-primary" @click="updateIdCardImg">人脸识别</button>
@@ -97,7 +96,7 @@ export default {
         count: 1,
         sizeType: ['original'],
         success: ({ tempFilePaths, tempFiles }) => {
-          console.log('tempFilePaths', tempFiles, tempFilePaths);
+          // console.log('tempFilePaths', tempFiles, tempFilePaths);
           if (index === 1) {
             this.uploadOne = tempFilePaths[0]
             this.blobToBase64(index, tempFilePaths[0])
@@ -149,9 +148,13 @@ export default {
       if (!uploadOne) return uni.showToast({ title: '上传身份证人面像', icon: 'none' });
       if (!uploadTow) return uni.showToast({ title: '上传身份证国徽面', icon: 'none' });
 
-      let id_card_front = await this.blobToBase64(uploadOne)
-      let id_card_reverse = await this.blobToBase64(uploadOne)
-      
+      let res = await Promise.all([this.blobToBase64(uploadOne), this.blobToBase64(uploadTow)])
+      if (res.length) {
+        this.sendData(res[0], res[1])
+      }
+    },
+
+    async sendData(id_card_front, id_card_reverse) {
       let params = { id_card_front, id_card_reverse }
       let res = await updateIdCardImg(params)
 
@@ -161,7 +164,7 @@ export default {
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
-    },
+    }
   }
 }
 </script>
@@ -243,7 +246,7 @@ export default {
   }
 
   .bottom {
-    margin-top: 180rpx;
+    margin-top: 80rpx;
     font-size: 24rpx;
     color: #888888;
   }
