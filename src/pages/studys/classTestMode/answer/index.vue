@@ -1,6 +1,6 @@
 <template>
   <view class="answer">
-    <custom-header :title="defaultTitle"></custom-header>
+    <custom-header :title="defaultTitle" :customBack="onCustomBack"></custom-header>
 
     <transition name="notice">
       <uni-notice-bar v-if="notice" showIcon color="#E2E227" background-color="#f8f8f8"
@@ -72,7 +72,7 @@ export default {
       currentIndex: 0,
       disableTouch: true,
       duration: 600,
-      notice: true,
+      notice: false,
 
       total: 0,
       answerSheet: [],
@@ -91,16 +91,47 @@ export default {
       return this.currentIndex > this.prevIndex
     }
   },
-  onReady() {
-    setTimeout(() => { this.notice = false }, 6000)
-  },
   onLoad(query) {
     let { course_id, lesson_id } = query
     this.course_id = course_id
     this.lesson_id = lesson_id
     this.createQuestion();
   },
+  onReady() {
+    // console.log('this.$store.getters.is_examination', this.$store.getters.is_examination);
+    if (!this.$store.getters.is_examination) {
+      this.notice = true
+      this.$store.commit('SET_EXAMINATION', true)
+      setTimeout(() => { this.notice = false }, 6000)
+    }
+  },
   methods: {
+    onCustomBack() {  
+      this.showModalForBack()
+    },
+
+    showModalForBack() {
+      uni.showModal({
+        title: '提示',
+        content: '随堂考试，您正在进行随堂考试，确定退出后本次学习将不计入相应学时',
+        showCancel: true,
+        success: ({ confirm, cancel }) => {
+          if (confirm) {
+            this.goBack()
+          }
+        }
+      })
+    },
+
+    goBack() {
+      let pages = getCurrentPages()
+      if (pages.length > 1) {
+        uni.navigateBack()
+      } else {
+        history.back()
+      }
+    },
+
     checkInputAnswer(answer) {
       let res = false
       if (Array.isArray(answer)) {
@@ -240,6 +271,7 @@ export default {
       let { practice_id, course_id, lesson_id, answer } = this.getQuery(this.currentIndex)
       let query = { practice_id, course_id, lesson_id }
       let path = this.getPath(url, query)
+      // console.log('answer', answer);
 
       let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
       let res = await practiceAnswer(params)
@@ -252,6 +284,9 @@ export default {
       let { practice_id, question_id, answer } = this.getQuery(prevIndex)
       let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
       let res = await practiceAnswer(params)
+      if (res.code !== 0) {
+        uni.showToast({ title: `${res.message}`, icon: 'none' })        
+      }
     },
 
     async practiceQuestion(question_id, index) {

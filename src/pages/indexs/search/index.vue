@@ -283,8 +283,8 @@ export default {
         .course-tag {
           line-height: initial;
           position: absolute;
+          top: 2rpx;
           left: 0;
-          top: 0;
           z-index: 1;
           padding: 5rpx 24rpx;
           background-color: $uni-color-primary;

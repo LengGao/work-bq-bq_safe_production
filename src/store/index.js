@@ -95,7 +95,9 @@ const getters = {
         return state.course.priceTypeList
     },
 
-    questionList: state => state.questionList.list
+    questionList: state => state.questionList.list,
+
+    is_examination: state => state.user.is_examination 
 }
 
 const mutations = {

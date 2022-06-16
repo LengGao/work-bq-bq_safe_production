@@ -44,7 +44,7 @@ export default {
         this.customBack()
       } else {
         let pages = getCurrentPages()
-        console.log('pages', pages);
+        // console.log('pages', pages);
         if (pages.length > 1) {
           uni.navigateBack()
         } else {
