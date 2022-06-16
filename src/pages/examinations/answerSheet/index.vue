@@ -2,7 +2,7 @@
   <view class="answer-sheet">
     <custom-header :title="defaultTitle"></custom-header>
     
-    <Header :model="model" />
+    <Header v-if="source !== 'favorites' &&  source !== 'wrong'" :model="model" />
     <view class="content">
       <view v-for="(item, type) in list" :key="type">
         <Title>{{ typeMap[type] }}</Title>
@@ -56,7 +56,6 @@ export default {
   data() {
     return {
       defaultTitle: '答题卡',
-      
       chapter_id: 0, 
       exam_log_id: 0,
       question_id: 0,

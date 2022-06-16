@@ -7,7 +7,7 @@
       <view class="title">{{ item.title }}（{{ item.num }}）</view>
       <view class="actions">
         <view class="btn-primary plain" @click="toAnswer(1, item.id, item.title)">背题</view>
-        <view class="btn-primary" @click="toAnswer(0, item.id, item.title)">重练</view>
+        <view class="btn-primary" @click="toAnswer(0, item.id, item.title)">练习</view>
       </view>
     </view>
     </template>

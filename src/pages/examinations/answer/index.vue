@@ -3,8 +3,10 @@
     <custom-header :title="defaultTitle"></custom-header>
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
-    <swiper class="swiper" :duration="duration" @change="onSwiperChange" :current="currentIndex" :disable-touch="disableTouch"
-            @animationfinish="onAnimationfinish">
+    <swiper class="swiper" :duration="duration" 
+            :acceleration="false" :current="currentIndex" :disable-touch="disableTouch"
+            easing-function="linear"
+            @change="onSwiperChange"  @animationfinish="onAnimationfinish">
 
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
