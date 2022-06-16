@@ -123,5 +123,5 @@ export function uploadImage(data, header) {
 
 export function uploadFile(files, header, formData) {
     let url = base_url + prefix + 'user/updateIdCardImg'
-    return uni.uploadFile({ url: url, files: files, header, formData })
+    return uni.uploadFile({ url: url, files: files, header, formData, fileType: 'image' })
 }

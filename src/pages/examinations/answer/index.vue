@@ -9,7 +9,7 @@
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
-         <!-- <template v-if="index === currentIndex - 1 || index === currentIndex || index === currentIndex + 1"> -->
+         <template v-if="index === currentIndex || currentIndex === index  || currentIndex === index + 1">
         <Single :options="questionList[index]" :model="model" @change="onSingleChange"
                 v-if="questionList[index] && questionList[index].question_type === 1" />
         <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
@@ -26,7 +26,7 @@
               v-if="questionList[index] && questionList[index].question_type === 7" 
               :question-bank="question_bank_id" :log-id="exam_log_id" 
               @change="onCaseChange" @submitanswe-case="submitAnswerChild" @index-change="onCaseIndexChange" />
-         <!-- </template> -->
+         </template>
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar" :is-end="isEnd" :is-start="isStart"

@@ -11,7 +11,9 @@
       <view class="learn-report-statistics">
         <view class="statistics-top">
           <view class="statistics-top-user">
-            <image class="user-avatar" :src="userInfo.avatar_url || Avator" />
+            <image class="user-avatar" :src="userInfo.avatar_url || Avator"
+            :style="userInfo.avatar_url ? '' : 'background-color: #199fff;'"
+            />
             <view>
               <view class="user-name">{{userInfo.real_name}}</view>
               <view class="user-time">{{practiceData.first_time_study}} 开始学习</view>
@@ -69,7 +71,7 @@
             <view class="statistics-data-item-title">最高得分</view>
           </view>
           <view class="statistics-data-item">
-            <view class="statistics-data-item-value">{{customData.avg | empty}}ha</view>
+            <view class="statistics-data-item-value">{{customData.avg | empty}}</view>
             <view class="statistics-data-item-title">平均得分</view>
           </view>
         </view>

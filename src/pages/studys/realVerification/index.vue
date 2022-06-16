@@ -46,6 +46,7 @@
       <view class="bottom">
         注：根据安全生产资格考试网络培训管理办法规定， 此 课程需要通过实名认证后才能开始学习。
       </view>
+      
 
       <view class="dialog-footer">
         <button class="btn-primary" @click="updateIdCardImg">人脸识别</button>
@@ -58,7 +59,8 @@
 import CustomHeader from "@/components/custom-header"
 import placeholderOne from '@/pages/studys/static/idcard1.jpg'
 import placeholderTwo from '@/pages/studys/static/idcard2.jpg'
-import { uploadFile } from '@/api/user'
+import { updateIdCardImg } from '@/api/user'
+
 
 export default {
   components: {
@@ -72,16 +74,15 @@ export default {
       end_second: 0,
       real_status: false,
       timer: 0,
-      src: '',
 
       uploadOne: '',
       uploadTow: '',
       id_card_front: '',
-      id_card_frontFile: {},
       id_card_reverse: '',
-      id_card_reverse_reverseFile: {},
       placeholderOne: placeholderOne,
       placeholderTwo: placeholderTwo,
+
+      canvas: null,
     }
   },
   onLoad(query) {
@@ -94,26 +95,20 @@ export default {
     onUpload(index) {
       uni.chooseImage({
         count: 1,
-        success: ({ tempFiles, tempFilePaths }) => {
-          console.log(tempFiles, tempFilePaths);
+        sizeType: ['original'],
+        success: ({ tempFilePaths, tempFiles }) => {
+          console.log('tempFilePaths', tempFiles, tempFilePaths);
           if (index === 1) {
-            let file = tempFiles[0]
-            let path = file.path
-            console.log('file',file);
-            this.uploadOne = path
-            this.id_card_front = file.name.replaceAll('.', '_')
-            this.id_card_frontFile = file
+            this.uploadOne = tempFilePaths[0]
+            this.blobToBase64(index, tempFilePaths[0])
           } else {
-            let file = tempFiles[0]
-            let path = file.path
-            console.log('file',file);
-            this.uploadTow = path
-            this.id_card_reverse = file.name.replaceAll('.', '_')
-            this.id_card_reverseFile = file
+            this.uploadTow = tempFilePaths[0]
+            this.blobToBase64(index, tempFilePaths[0])
           }
         }
       })
     },
+    
     faceVerification() {
       let course_id = this.course_id
       let lesson_id = this.lesson_id
@@ -122,27 +117,51 @@ export default {
       let query = `?course_id=${course_id}&lesson_id=${lesson_id}&end_second=${end_second}`
       uni.redirectTo({ url: url + query })
     },
+
+    blobToBase64(blob) {
+      let canvas = this.canvas
+      if (!canvas) {
+        canvas = document.createElement('canvas') 
+        canvas.width = 600
+        canvas.height = 400
+        this.canvas = canvas
+      }
+      let image = new Image()
+      let context = canvas.getContext('2d')
+      return new Promise((resolve, reject) => {
+        image.onload = function () {
+          image.width = 600
+          image.height = 400
+          context.drawImage(image, 0, 0, image.width, image.height)
+          let dataURLs = canvas.toDataURL('image/png')
+          resolve(dataURLs.split(';base64,')[1])
+        }
+        context.closePath();
+        image.mode = 'aspectFill'
+        image.src = blob
+      })
+    },
+
     // 更新身份证照片
     async updateIdCardImg() {
-      let id_card_front = this.id_card_front
-      let id_card_reverse = this.id_card_reverse
-      if (!id_card_front) return uni.showToast({ title: '上传身份证人面像', icon: 'none' });
-      if (!id_card_reverse) return uni.showToast({ title: '上传身份证国徽面', icon: 'none' });
-      let token = this.$store.getters.token
-      let org = this.$store.getters.orgInfo
-      let header = {'token': token, 'org-id': org.id}
-      let formData = { id_card_front, id_card_reverse }
-      let files = [this.id_card_frontFile, this.id_card_reverseFile]
-      let ret = await uploadFile(files, header, formData)
-      let res = JSON.parse(ret[1].data)
-      console.log('res', res);
+      let uploadOne = this.uploadOne
+      let uploadTow = this.uploadTow
+      if (!uploadOne) return uni.showToast({ title: '上传身份证人面像', icon: 'none' });
+      if (!uploadTow) return uni.showToast({ title: '上传身份证国徽面', icon: 'none' });
+
+      let id_card_front = await this.blobToBase64(uploadOne)
+      let id_card_reverse = await this.blobToBase64(uploadOne)
+      
+      let params = { id_card_front, id_card_reverse }
+      let res = await updateIdCardImg(params)
+
       if (res.code === 0) {
         uni.showToast({ title: '实名认证通过', icon: 'none' })
         this.faceVerification()
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
-    }
+    },
   }
 }
 </script>

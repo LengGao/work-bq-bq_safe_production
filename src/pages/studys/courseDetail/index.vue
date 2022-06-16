@@ -115,6 +115,7 @@ export default {
       start_second: 0, // 当前时间
       first: true, // 是否为第一次进入
       videoState: '', // 视频播放状态
+      progressMarkers: [], // 打点
       
       // 实名与人脸验证
       isFace: false,
@@ -359,7 +360,7 @@ export default {
     pauseSendData() {
       this.stopInterval()
       let end_time = this.player.getCurrentTime()
-      console.log('videoState', this.videoState);
+
       if (this.videoState !== 'ended') {
         this.sendData(this.lesson_id, this.prev_time, end_time)
       }
@@ -465,24 +466,20 @@ export default {
           console.log('ready');
           if (lesson.free_second) player.setPreviewTime(lesson.free_second);
           player.seek(start_second)
-          this.videoState = 'ready'
           this.needFaceVerifity(start_second)
           // player.play()
         })
         player.on('play', () => {
           console.log('play');
           this.playSendData()
-          this.videoState = 'play'
         })
         player.on('pause', () => {
           console.log('pause');
           this.pauseSendData()
-          this.videoState = 'pause'
         })
         player.on('ended', () => {
           console.log("ended");
           this.endedCallback()
-          this.videoState = 'ended'
           this.player.seek(0)
         })
         player.on('timeupdate', () => {
@@ -507,7 +504,6 @@ export default {
               this.start_second = currTime
             }
           }
-          this.needFaceVerifity(currTime)
         })
         player.on('completeSeek', (e) => {
           console.log('completeSeek');
@@ -546,14 +542,12 @@ export default {
         this.user = user
         this.start_second = +record.start_second
         this.prev_time = +record.finish_second
-        this.first = false
-
+        
         // #ifdef H5
         this.createPlayer({ video, lesson, record, face, start_second: +record.start_second })
         // #endif        
-
       } else {
-        if (!this.first) { this.showToast(res.data.message, res.code, res.data) }
+        this.showToast(res.data.message, res.code, res.data)
         this.errSendData()
       }
     },
