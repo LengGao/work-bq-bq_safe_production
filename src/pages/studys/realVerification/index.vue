@@ -133,7 +133,9 @@ export default {
       let header = {'token': token, 'org-id': org.id}
       let formData = { id_card_front, id_card_reverse }
       let files = [this.id_card_frontFile, this.id_card_reverseFile]
-      let res = await uploadFile(files, header, formData)
+      let ret = await uploadFile(files, header, formData)
+      let res = JSON.parse(ret[1].data)
+      console.log('res', res);
       if (res.code === 0) {
         uni.showToast({ title: '实名认证通过', icon: 'none' })
         this.faceVerification()

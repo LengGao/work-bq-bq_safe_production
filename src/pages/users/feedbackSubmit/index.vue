@@ -10,7 +10,7 @@
       <view class="form-item">
         <view class="title">填写反馈内容</view>
         <view class="form-control">
-          <textarea v-model="form.content" :maxlength="200" show-confirm-bar placeholder="请输入问题的正问内容" />
+          <textarea v-model="form.content" :maxlength="200" show-confirm-bar placeholder="请输入反馈内容" />
         </view>
       </view>
       <view class="form-item">

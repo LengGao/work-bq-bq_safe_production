@@ -31,8 +31,8 @@
                 </view>
               </view>
               <view class="card-right-footer">
-                  <!-- <view class="tag" :class="course.learning_progress > 0  && course.learning_progress < 100 ? 'tag-two-full' : 'tag-three-full'"
-                        @click="() => generatorLearnRecond(course)">学习记录</view> -->
+                  <view class="tag" :class="course.learning_progress > 0  && course.learning_progress < 100 ? 'tag-two-full' : 'tag-three-full'"
+                        @click="() => generatorLearnRecond(course)">学习记录</view>
                   <view class="tag" :class="course.learning_progress >= 100 ? 'tag-one-full' : 'tag-three-full'"
                         @click="() => buildLearnCert(course)">学习证书</view>
               </view>
@@ -142,8 +142,8 @@ export default {
       this.canScroll = true
     },
     generatorLearnRecond(course) {
-      if (course.learning_progress <= 0 || course.learning_progress >= 100) return;
-      if (!course.status) return uni.showToast({ title: '该课程已下架', icon: 'none' });
+      // if (course.learning_progress <= 0 || course.learning_progress >= 100) return;
+      // if (!course.status) return uni.showToast({ title: '该课程已下架', icon: 'none' });
 
       let url = '/pages/studys/learningRecords/index'
       let query = `?course_id=${course.id}`
