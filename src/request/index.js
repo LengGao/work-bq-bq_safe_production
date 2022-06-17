@@ -47,11 +47,11 @@ const handlerError = {
     goBack()
   },
   '2999': async () => {
-    uni.showToast({ title: '课程不存在。课程不存在或者被删除', icon: 'none' })
+    uni.showToast({ title: '课程不存在或被删除', icon: 'none' })
     goBack()
   },
   '3999': async () => {
-    uni.showToast({ title: '题库不存在。题库不存在或被删除', icon: 'none' })
+    uni.showToast({ title: '题库不存在或已下架', icon: 'none' })
     goBack()
   }
 }

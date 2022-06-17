@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3328807 */
-  src: url('/static/fonts/iconfont.woff2?t=1655195972759') format('woff2'),
-       url('/static/fonts/iconfont.woff?t=1655195972759') format('woff'),
-       url('/static/fonts/iconfont.ttf?t=1655195972759') format('truetype');
+  src: url('/static/fonts/iconfont.woff2?t=1655447456935') format('woff2'),
+       url('/static/fonts/iconfont.woff?t=1655447456935') format('woff'),
+       url('/static/fonts/iconfont.ttf?t=1655447456935') format('truetype');
 }
 
 .iconfont {
@@ -10,6 +10,46 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-play-filling:before {
+  content: "\e87e";
+}
+
+.icon-PPT:before {
+  content: "\e606";
+}
+
+.icon-txt:before {
+  content: "\e60a";
+}
+
+.icon-wenjianleixing-biaozhuntu-yasuowenjian:before {
+  content: "\e6a8";
+}
+
+.icon-wenjianleixing-biaozhuntu-PDFwendang:before {
+  content: "\e6a9";
+}
+
+.icon-wenjianleixing-biaozhuntu-Wordwendang:before {
+  content: "\e6aa";
+}
+
+.icon-wenjianleixing-suolvetu-gongzuobiao:before {
+  content: "\e6ab";
+}
+
+.icon-wenjianleixing-suolvetu-tupianwenjian:before {
+  content: "\e6ac";
+}
+
+.icon-wenjianleixing-suolvetu-wenjianjia:before {
+  content: "\e6ad";
+}
+
+.icon-yanjing:before {
+  content: "\e661";
 }
 
 .icon-shangchuan-copy:before {
@@ -311,4 +351,5 @@
 .icon-user-filling:before {
   content: "\e68b";
 }
+
 

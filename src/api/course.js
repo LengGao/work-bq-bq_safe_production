@@ -1,5 +1,6 @@
 import request from '@/request/index';
 
+// https://player.alicdn.com/aliplayer/index.html
 // API docs http://showdoc.beiqujy.com/web/#/44 
 
 // 课程分类

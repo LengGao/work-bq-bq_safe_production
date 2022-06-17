@@ -69,7 +69,7 @@ export default {
     let { course_id, lesson_id, end_second } = query
     this.course_id = +course_id
     this.lesson_id = +lesson_id
-    this.end_time = +end_second
+    this.end_second = +end_second
     this.init()
   },
   mounted() {
@@ -218,7 +218,9 @@ export default {
       this.toastMsg = '验证通过'
 
       this.stopStrem()
-      this.goback()
+      uni.showToast({ title: '验证通过', icon: 'none' })
+
+      setTimeout(() => { this.goback() }, 800)
     },
     // 验证失败
     verifierror() {

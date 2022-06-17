@@ -1,7 +1,7 @@
 <template>
   <view class="user-info" :class="customClass" :style="customStyle">
     <view class="avator">
-      <image class="avator" :src="info.avatar_url || Avator" mode="aspectFit" @click="() => previewImg(info.avator)" />
+      <image class="avator" :src="info.avatar_url || Avator" mode="center" @click="() => previewImg(info.avator)" />
     </view>
     <view class="infos" v-if="isLogin">
       <view class="user">

@@ -1,10 +1,14 @@
 <template>
   <view class="course-detail">
     <custom-header :title="defaultTitle"></custom-header>
-
     <!-- #ifdef H5 -->
     <view id="aliplayer">
-      <image v-if="!player" :src="courseInfo.cover" class="course-cover" mode="aspectFill" />
+      <cover-view v-if="!player" class="course-cover">
+        <image :src="courseInfo.cover" class="course-img" mode="aspectFill">
+        <view class="play-icon">
+          <uni-icons custom-prefix="iconfont" type="icon-play-filling" :size="64" color="#fff" @click="onStartVideo" />
+        </view>
+      </cover-view>
     </view>
     <!-- #endif -->
 
@@ -91,10 +95,7 @@ export default {
       up: { page: { num: 0, size: 10, time: 1000 } },
       tags: [],
       starText: ['', '不满意', '一般', '比较满意', '满意', '非常满意'],
-      rateForm: {
-        star: 1,
-        comment: '',
-      },
+      rateForm: { star: 1, comment: '', },
 
       // 分段器
       current: 0,
@@ -121,8 +122,9 @@ export default {
       isFace: false,
       isReal: false,
       isReading: false,
-      canPlay: false,
       isLoad: false,
+
+      canPlay: false,
     }
   },
   onLoad(query) {
@@ -239,7 +241,6 @@ export default {
         let last_lesson_id = lesson_id ? lesson_id : res.data.learning_lesson_id
         this.lesson_id = last_lesson_id
         this.courseInfo = res.data
-        this.getCourseGetVideoAuth({ region_id, lesson_id: last_lesson_id })
       }
     },
     // 课时目录更改
@@ -247,6 +248,10 @@ export default {
       let curr = detailArr[0]
       this.lesson_id = curr.id
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
+    },
+    // 点击开始播放
+    onStartVideo() {
+      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
     },
     // 错误码提示
     showToast(title, code, data) {
@@ -278,12 +283,12 @@ export default {
       })
     },
     // 人脸验证
-    showModalForFaceVerifity() {
+    showModalForFaceVerifity(faceTime) {
       let url = `/pages/studys/faceVerification/index`
       let query = {
         lesson_id: this.lesson_id, 
         course_id: this.course_id,
-        end_second: this.player.getCurrentTime()
+        end_second: faceTime
       }
       let path = this.getPath(url, query)
 
@@ -305,7 +310,7 @@ export default {
     showModalForRealVerification() {
       let url = `/pages/studys/realVerification/index`
       let query = { 
-        lesson_id: this.lesson_id, 
+        lesson_id: this.lesson_id,
         course_id: this.course_id,
         end_second: this.player.getCurrentTime()
       }
@@ -356,7 +361,7 @@ export default {
       if (faceTime !== undefined && currTime - faceTime >= 0 ) {
         this.canPlay = false
         if (this.user.real_status) {
-          this.showModalForFaceVerifity()
+          this.showModalForFaceVerifity(faceTime)
         } else {
           this.showModalForRealVerification()
         }
@@ -435,14 +440,14 @@ export default {
         width: '100%',
         height: '200px',
         controlBarVisibility: 'click',
-        autoplay: false,
+        autoplay: true,
         isLive: false,
         playsinline: true,
         preload: true,
         useH5Prism: true,
         x5_type: "H5",
         skinLayout: [
-          { name: "bigPlayButton", align: "blabs", x: 30, y: 80 },
+          { name: "bigPlayButton", align: "cc", x: 30, y: 80 },
           { name: "H5Loading", align: "cc", },
           { name: "errorDisplay", align: "tlabs", x: 0, y: 0 },
           { name: "infoDisplay" },
@@ -554,7 +559,7 @@ export default {
 
         // #ifdef H5
         this.createPlayer({ video, lesson, record, face, start_second: +record.start_second })
-        // #endif        
+        // #endif
       } else {
         this.showToast(res.message, res.code, res.data)
         this.errSendData()
@@ -574,18 +579,31 @@ export default {
 }
 
 .course-cover {
+  position: relative;
   width: 100%;
-  height: 200px;
+  height: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.course-video {
-  width: 100%;
-  height: 30vh;
+.play-icon {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  z-index: 999;
+  background-color: #000;
+}
 
-  &-cover {
-    width: 100%;
-    height: 100%;
-  }
+.course-img {
+  width: 100%;
+  height: 200px;
+  z-index: 99;
 }
 
 ::v-deep .segmented-control {

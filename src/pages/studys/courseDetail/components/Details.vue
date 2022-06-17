@@ -83,13 +83,6 @@ export default {
       return Math.imul(this.info.chapter_count, this.info.lesson_count)
     }
   },
-  watch: {
-  
-  },
-  mounted() {
-
-    console.log("asd",this.info.content);
-  },
   methods: {
     // 咨询
     async courseFavorites(e) {
@@ -220,7 +213,7 @@ export default {
       display: flex;
       align-items: center;
       margin-left: 20rpx;
-      background-color: #b23145;
+      background-color: #199fff;
       padding: 8rpx 16rpx;
 
       &-text {
