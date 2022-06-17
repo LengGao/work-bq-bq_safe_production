@@ -51,10 +51,12 @@ export default {
   data() {
     return {
       defaultTitle: '登录',
+      username: '',
+      password: '',
       // username: '13535019471',
       // password: '123456',
-      username: '430481199706297215',
-      password: '123456',
+      // username: '430481199706297215',
+      // password: '123456',
       // 琼琼
       // username: '430525199002265121',
       // password: '123456',

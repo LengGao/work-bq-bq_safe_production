@@ -265,7 +265,7 @@ export default {
       let organizationList = this.organizationList
       let component = this.$refs['popup-org']
 
-      if (component && userInfo.token && organizationList.length && !orgInfo.id) {
+      if (component && userInfo.token && organizationList.length && (!orgInfo || !orgInfo.id)) {
         this.openPopup(organizationList)
       } else if (orgInfo.id) {
         this.defaultTitle = orgInfo.name

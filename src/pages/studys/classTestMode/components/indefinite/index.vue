@@ -40,7 +40,7 @@ export default {
     };
   },
   created() {
-    if (this.options.answer.length) {
+    if (this.options.answer && this.options.answer.length) {
       this.checkedAnswer = this.options.answer.map(item => +item)
     }
     if (this.analysis) {

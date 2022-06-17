@@ -114,27 +114,21 @@ export default {
       end_time: 0,    // 终止时间
       prev_time: 0,   // 上次时间
       start_second: 0, // 当前时间
-      first: true, // 是否为第一次进入
-      videoState: '', // 视频播放状态
-      progressMarkers: [], // 打点
       
       // 实名与人脸验证
-      isFace: false,
-      isReal: false,
-      isReading: false,
-      isLoad: false,
-
       canPlay: false,
+      isFaceing: false,
+      autoplay: false,
     }
   },
   onLoad(query) {
     this.init(query)
   },
   mounted() {
-    let _this = this
-    document.addEventListener('visibilitychange', function (state) {
-      _this.pausePlay()
-      _this.pauseSendData()
+    document.addEventListener('visibilitychange', (state) => {
+      console.log('visibilitychange', state);
+      this.pausePlay()
+      this.stopSend()
     })
   },
   onUnload() {
@@ -146,17 +140,14 @@ export default {
   },
   methods: {
     init(query) {
-      let { course_id, lesson_id } = query
+      let { course_id, lesson_id, autoplay } = query
       this.course_id = +course_id
       this.lesson_id = +lesson_id
+      this.autoplay = !!autoplay
       this.region_id = this.$store.getters.region.id
       uni.setStorageSync('course_id', course_id)
       this.getCourseInfo()
       this.getCommentHotWord()
-    },
-    reload(query) {
-      if (query) { this.init(query) }
-      location.reload()
     },
     getPath(url, query) {
       let params = ''
@@ -241,6 +232,9 @@ export default {
         let last_lesson_id = lesson_id ? lesson_id : res.data.learning_lesson_id
         this.lesson_id = last_lesson_id
         this.courseInfo = res.data
+        if (this.autoplay) {
+          this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: last_lesson_id })    
+        }
       }
     },
     // 课时目录更改
@@ -260,7 +254,10 @@ export default {
         this.finish_second = +data.finish_second
         this.jumpVideo(data.lesson_id)
       } else if (code === 2203) {
-        this.needFaceVerifity(+data.start_second)
+        if (!this.isFaceing) {
+          this.needFaceVerifity(+data.start_second)
+        }
+        this.isFaceing = true
       } else {
         uni.showToast({ title, icon: 'none' })
       }
@@ -301,7 +298,7 @@ export default {
         confirmColor: '#199fff',
         success: (res) => {
           if (res.confirm) {
-            uni.navigateTo({ url: path })
+            uni.redirectTo({ url: path })
           }
         }
       })
@@ -391,9 +388,7 @@ export default {
     pauseSendData() {
       this.stopInterval()
       let end_time = this.player.getCurrentTime()
-      if (this.videoState !== 'ended') {
-        this.sendData(this.lesson_id, this.prev_time, end_time)
-      }
+      this.sendData(this.lesson_id, this.prev_time, end_time)
     },
     seekSendData() {
       let end_time = this.player.getCurrentTime()
@@ -418,29 +413,27 @@ export default {
     endedCallback() {
       this.endedSendData()
       this.showModal()
-      this.resetProgress()
     },
-    resetProgress() {
-      this.start_second = 0
-      this.prev_time = 0
-      this.end_time = 0
+    pauseAndSendData() {
+      if (this.player) this.player.pause();
+      this.pauseSendData()
     },
     pausePlay() {
       if (this.player) this.player.pause();
       this.stopInterval()
     },
-
+    
     // 创建播放器
     createPlayer(options) {
       if (this.player) this.player.dispose();
-      let { video, lesson, record, face, start_second } = options
+      let { video, } = options
 
       this.player = new Aliplayer({
         id: 'aliplayer',
         width: '100%',
         height: '200px',
         controlBarVisibility: 'click',
-        autoplay: true,
+        autoplay: false,
         isLive: false,
         playsinline: true,
         preload: true,
@@ -472,13 +465,15 @@ export default {
       }, (player) => {
         player.on('ready', () => {
           console.log('ready');
-          if (lesson.free_second) player.setPreviewTime(lesson.free_second);
-          player.seek(start_second)
+          if (this.lesson.free_second) player.setPreviewTime(this.lesson.free_second);
+          player.seek(this.start_second)
+          if (this.autoplay) player.play();
         })
         player.on('play', () => {
           console.log('play');
-          this.needFaceVerifity(start_second)
+          this.needFaceVerifity(this.start_second)
           if (this.canPlay) {
+            this.isFaceing = false
             this.playSendData()
           } else {
             this.pauseSendData()
@@ -492,15 +487,14 @@ export default {
         player.on('ended', () => {
           console.log("ended");
           this.endedCallback()
-          player.seek(0)
         })
         player.on('timeupdate', () => {
           console.log('timeupdate');
           let currTime = player.getCurrentTime()
           let start_second = this.start_second
-          let is_free = lesson.is_free
-          let is_forward = lesson.is_forward
-          let finish_second = record.finish_second
+          let is_free = this.lesson.is_free
+          let is_forward = this.lesson.is_forward
+          let finish_second = this.record.finish_second
           let distance = currTime - start_second
           let faceTime = this.face[0]
 
@@ -515,7 +509,7 @@ export default {
               this.sendData(this.lesson_id, currTime, currTime)
             } else {
               this.start_second = currTime
-              if (faceTime !== undefined && currTime - faceTime >= 0 ) {
+              if (faceTime !== undefined && (currTime - faceTime) >= 0 ) {
                 player.pause()
               }
             }
@@ -558,7 +552,7 @@ export default {
         this.prev_time = +record.finish_second
 
         // #ifdef H5
-        this.createPlayer({ video, lesson, record, face, start_second: +record.start_second })
+        this.createPlayer({ video })
         // #endif
       } else {
         this.showToast(res.message, res.code, res.data)

@@ -41,7 +41,7 @@ export default {
     };
   },
   mounted() {
-    if (this.options.answer.length) {
+    if (this.options.answer && this.options.answer.length) {
       this.checkedAnswer = this.options.answer[0]
     }
     if (this.analysis) {

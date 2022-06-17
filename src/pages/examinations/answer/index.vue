@@ -3,39 +3,39 @@
     <custom-header :title="defaultTitle"></custom-header>
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
-    <swiper class="swiper" :duration="duration" 
-            :acceleration="false" :current="currentIndex" :disable-touch="disableTouch"
-            easing-function="linear"
-            @change="onSwiperChange"  @animationfinish="onAnimationfinish">
+    <swiper class="swiper" :duration="duration" :current="currentIndex"
+            :disable-touch="disableTouch"
+            :threshold="0"
+            :touchable="true"
+            @change="onSwiperChange">
 
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
-         <template v-if="index === currentIndex || currentIndex === index  || currentIndex === index + 1">
-        <Single :options="questionList[index]" :model="model" @change="onSingleChange"
-                v-if="questionList[index] && questionList[index].question_type === 1" />
-        <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
-                  v-if="questionList[index] && questionList[index].question_type === 2" />
-        <Indefinite :options="questionList[index]" :model="model" @change="onSingleChange"
-                    v-if="questionList[index] && questionList[index].question_type === 3" />
-        <Judg :options="questionList[index]" :model="model" @change="onSingleChange"
-              v-if="questionList[index] && questionList[index].question_type === 4" />
-        <Completion :options="questionList[index]" :model="model" @change="onInputChange"
-                    v-if="questionList[index] && questionList[index].question_type === 5" />
-        <Short :options="questionList[index]" :model="model" @change="onInputChange"
-               v-if="questionList[index] && questionList[index].question_type === 6" />
-        <Case :options="questionList[index]" :serial-number="currentIndex + 1" :model="model"
-              v-if="questionList[index] && questionList[index].question_type === 7" 
-              :question-bank="question_bank_id" :log-id="exam_log_id" 
-              @change="onCaseChange" @submitanswe-case="submitAnswerChild" @index-change="onCaseIndexChange" />
-         </template>
+
+          <Single :options="questionList[index]" :model="model" @change="onSingleChange"
+                  v-if="questionList[index] && questionList[index].question_type === 1" />
+          <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
+                    v-if="questionList[index] && questionList[index].question_type === 2" />
+          <Indefinite :options="questionList[index]" :model="model" @change="onSingleChange"
+                      v-if="questionList[index] && questionList[index].question_type === 3" />
+          <Judg :options="questionList[index]" :model="model" @change="onSingleChange"
+                v-if="questionList[index] && questionList[index].question_type === 4" />
+          <Completion :options="questionList[index]" :model="model" @change="onInputChange"
+                      v-if="questionList[index] && questionList[index].question_type === 5" />
+          <Short :options="questionList[index]" :model="model" @change="onInputChange"
+                 v-if="questionList[index] && questionList[index].question_type === 6" />
+          <Case :options="questionList[index]" :serial-number="currentIndex + 1" :model="model"
+                v-if="questionList[index] && questionList[index].question_type === 7" :question-bank="question_bank_id"
+                :log-id="exam_log_id" @change="onCaseChange" @submitanswe-case="submitAnswerChild"
+                @index-change="onCaseIndexChange" />
       </swiper-item>
     </swiper>
+
     <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar" :is-end="isEnd" :is-start="isStart"
                :time="time" :model="model" :isCollection="questionList[currentIndex].is_collect" @card="toCard"
-               @submit-paper="submitPaper" @end-practice="endPractice" 
-               @collect="setCollection" @timeup="onTimeUp" @prev="handlePrev"
-               @next="handleNext">
+               @submit-paper="submitPaper" @end-practice="endPractice" @collect="setCollection" @timeup="onTimeUp"
+               @prev="handlePrev" @next="handleNext">
     </AnswerBar>
   </view>
 </template>
@@ -138,13 +138,16 @@ export default {
   onBackPress() {
     // console.log('onBackPress');
   },
-  
+
   onLoad(query) {
     this.init(query)
     this.injectApi()
     this.getAnswerSheet()
   },
   methods: {
+    onTouchmove() {
+      console.log('asd');
+    },
     init(query) {
       let {
         chapter_id,
@@ -235,12 +238,11 @@ export default {
 
     onSwiperChange({ detail }) {
       console.log('detail', detail);
-      this.disableTouch = true
       if (detail.source === 'touch') {
         this.prevIndex = this.currentIndex
         this.currentIndex = detail.current
       }
-      
+
       if (this.isStart) {
         uni.showToast({ title: '已经是第一题了', icon: 'none' })
       } else if (this.isEnd) {
@@ -265,17 +267,18 @@ export default {
       let question_id = ''
 
       if (inAnswerSheet && !inQuestionList) {
-        if (this.needChangeSheet.includes(this.source)) {  
+        if (this.needChangeSheet.includes(this.source)) {
           question_id = inAnswerSheet
         } else {
           question_id = inAnswerSheet.id
         }
+        console.log('getQuestionDetail', index, question_id, this.total);
         this.getQuestionDetail(question_id, index)
       }
     },
 
     onAnimationfinish({ detail }) {
-      this.disableTouch = false
+      // this.disableTouch = false
     },
 
     onCaseIndexChange(index) {
@@ -303,7 +306,7 @@ export default {
     getPath(url, query) {
       let params = ''
       Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
-      
+
       params = params.replace(/&?/, '?')
       return url + params
     },
@@ -426,7 +429,7 @@ export default {
       let { exam_log_id, question_bank_id, source, answerCase } = this.getQuery()
       // console.log('submitAnswerChild', answerCase);
       let api = this.answerApiMap[source]
-      if (answerCase) { 
+      if (answerCase) {
         let params = { exam_log_id, question_bank_id, question_id: answerCase.id, user_answer: answerCase.answer }
         return api(params)
       }
@@ -434,7 +437,7 @@ export default {
 
     async submitAnswer(prevIndex) {
       let { exam_log_id, question_bank_id, source, answer } = this.getQuery(prevIndex)
-      
+
       let api = this.answerApiMap[source]
       if (answer) {
         let params = { exam_log_id, question_bank_id, question_id: answer.id, user_answer: answer.answer }
@@ -443,16 +446,16 @@ export default {
     },
 
     async getQuestionDetail(question_id, index) {
+      console.log('getQuestionDetail', question_id, index);
       let params = { question_id, question_bank_id: this.question_bank_id }
       let source = this.source
-      // console.log(question_id, index, this.questionList);
 
       if (source === 'wrong') {
         params.type = 1
       } else if (source === 'examRandom' || source === 'examAutonomy') {
         params.exam_log_id = this.exam_log_id
       }
-      
+
       if (question_id) {
         let res = await getQuestionDetail(params)
         if (res.code === 0) { this.questionList[index] = res.data }
@@ -603,6 +606,7 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+
   .swiper {
     flex: 1;
     &-item {

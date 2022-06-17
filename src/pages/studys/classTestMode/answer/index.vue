@@ -2,30 +2,32 @@
   <view class="answer">
     <custom-header :title="defaultTitle" :customBack="onCustomBack"></custom-header>
 
-    <transition name="notice">
-      <uni-notice-bar v-if="notice" showIcon color="#E2E227" background-color="#f8f8f8"
-                      text="在考试过程中不得弄虚作假，严禁采用任何作弊手段，遵纪守法，保证考试数据真实可信。"
-                      class="notice" />
-    </transition>
-                    
+    <uni-notice-bar v-if="notice" showIcon color="#E2E227" background-color="#f8f8f8"
+                    text="在考试过程中不得弄虚作假，严禁采用任何作弊手段，遵纪守法，保证考试数据真实可信。" class="notice" />
+
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" :current="currentIndex" :disable-touch="disableTouch"
             @change="onSwiperChange">
       <swiper-item class="swiper-item" v-for="(item, index) in answerSheet" :key="index">
-        <Single :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 1" />
-        <Multiple :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 2" />
-        <Indefinite :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 3" />
-        <Judg :options="questionList[index]" @change="onSingleChange" v-if="questionList[index] && questionList[index].question_type === 4" />
-        <Completion :options="questionList[index]" @change="onInputChange" v-if="questionList[index] && questionList[index].question_type === 5" />
-        <Short :options="questionList[index]" @change="onInputChange" v-if="questionList[index] && questionList[index].question_type === 6" />
+        <Single :options="questionList[index]" @change="onSingleChange"
+                v-if="questionList[index] && questionList[index].question_type === 1" />
+        <Multiple :options="questionList[index]" @change="onSingleChange"
+                  v-if="questionList[index] && questionList[index].question_type === 2" />
+        <Indefinite :options="questionList[index]" @change="onSingleChange"
+                    v-if="questionList[index] && questionList[index].question_type === 3" />
+        <Judg :options="questionList[index]" @change="onSingleChange"
+              v-if="questionList[index] && questionList[index].question_type === 4" />
+        <Completion :options="questionList[index]" @change="onInputChange"
+                    v-if="questionList[index] && questionList[index].question_type === 5" />
+        <Short :options="questionList[index]" @change="onInputChange"
+               v-if="questionList[index] && questionList[index].question_type === 6" />
       </swiper-item>
     </swiper>
-              
-    <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" 
-               v-if="questionList[currentIndex]"
-               :currentIndex="currentIndex" :time="questionList[currentIndex].timeout"
-               @timeup="onTimeUp" @submit-paper="submitPaper" @next="handleNext" @prev="handlePrev">
+
+    <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" :test="true" v-if="questionList[currentIndex]"
+               :currentIndex="currentIndex" :time="questionList[currentIndex].timeout" @timeup="onTimeUp"
+               @submit-paper="submitPaper" @next="handleNext" @prev="handlePrev">
     </AnswerBar>
   </view>
 </template>
@@ -106,7 +108,7 @@ export default {
     }
   },
   methods: {
-    onCustomBack() {  
+    onCustomBack() {
       this.showModalForBack()
     },
 
@@ -194,43 +196,24 @@ export default {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
       }
 
-      let currAnswer = this.getCurrAnswer(this.currentIndex)
-      if (currAnswer) {
-        this.disableTouch = false
-      }
-      
-      this.prevfetch()
       this.submitAnswer(this.prevIndex)
     },
 
     prevfetch() {
-      let index = 0
-      if (this.isRight) {
-        index = this.currentIndex + 1
-      } else {
-        index = this.currentIndex - 1
+      if (!this.isEnd) {
+        let index = this.currentIndex + 1
+        let question_id = this.answerSheet[index]
+        let question = this.questionList[index]
+        if (question_id && !question) {
+          this.practiceQuestion(question_id, index)
+        }
       }
-      if (index > this.total - 1 || index < 0) return;
-
-      let inAnswerSheet = this.answerSheet[index]
-      let inQuestionList = this.questionList[index]
-      let question_id = ''
-
-      if (inAnswerSheet && !inQuestionList) {
-        question_id = inAnswerSheet
-        this.practiceQuestion(question_id, index)
-      }
-    },
-
-    getCurrAnswer(index) {
-      let question_id = this.questionList[index].question_id
-      let answer = this.userAnswerMap[question_id]
-      return answer ? answer : undefined 
     },
 
     cacheAnswer(answer) {
       let key = answer.question_id
       this.userAnswerMap[key] = answer
+      this.prevfetch()
     },
 
     getPath(url, query) {
@@ -247,34 +230,31 @@ export default {
       let practice_id = this.practice_id
       let course_id = this.course_id
       let lesson_id = this.lesson_id
-      let answer = this.userAnswerMap[question_id]
+      let answer = this.userAnswerMap[question_id] || {answer: []}
 
-      return { practice_id, question_id, course_id, lesson_id, answer}
+      return { practice_id, question_id, course_id, lesson_id, answer }
     },
 
-    async onTimeUp () {
-      let url = `/pages/studys/classTestMode/result/index`
-      let { practice_id, course_id, lesson_id, answer } = this.getQuery(this.currentIndex)
-      let query = { practice_id, course_id, lesson_id }
-      let path = this.getPath(url, query)
-
-      let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
-      let res = await practiceAnswer(params)
-      if (res.code === 0) {
-        uni.redirectTo({ url: path })
+    async onTimeUp() {
+      if (this.isEnd) {
+        this.submitPaper()
+      } else {
+        this.prevfetch()
+        await this.submitAnswer(this.currentIndex)
+        this.prevIndex = this.currentIndex
+        this.currentIndex = this.currentIndex + 1
       }
     },
 
-
     async submitPaper() {
       let url = `/pages/studys/classTestMode/result/index`
-      let { practice_id, course_id, lesson_id, answer } = this.getQuery(this.currentIndex)
+      let { practice_id, question_id, course_id, lesson_id, answer } = this.getQuery(this.currentIndex)
       let query = { practice_id, course_id, lesson_id }
       let path = this.getPath(url, query)
-      // console.log('answer', answer);
 
-      let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
+      let params = { practice_id, question_id: question_id, answer: answer.answer }
       let res = await practiceAnswer(params)
+
       if (res.code === 0) {
         uni.redirectTo({ url: path })
       }
@@ -282,10 +262,14 @@ export default {
 
     async submitAnswer(prevIndex) {
       let { practice_id, question_id, answer } = this.getQuery(prevIndex)
-      let params = { practice_id, question_id: answer.question_id, answer: answer.answer }
+      let params = { practice_id, question_id: question_id, answer: answer.answer }
+
       let res = await practiceAnswer(params)
-      if (res.code !== 0) {
-        uni.showToast({ title: `${res.message}`, icon: 'none' })        
+
+      if (res.code === 0) {
+        this.disableTouch = false
+      } else {  
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
     },
 
@@ -295,8 +279,7 @@ export default {
       let res = await practiceQuestion(params)
       if (res.code === 0) {
         let question = res.data
-        question.answer = []
-        this.questionList[index] = question 
+        this.questionList[index] = question
       }
     },
 
@@ -307,26 +290,21 @@ export default {
         this.practice_id = res.data.practice_id
         this.answerSheet = res.data.question
         this.total = res.data.question.length
-        this.initQuestions(res.data.question)
+        this.initQuestions()
       }
     },
 
-    async initQuestions(arr) {
+    async initQuestions() {
+      let question_id = this.answerSheet[0]
       let practice_id = this.practice_id
-      let params1 = {question_id: arr[0], practice_id}
-      let params2 = {question_id: arr[1], practice_id}
-      
-      let res = await Promise.all([practiceQuestion(params1), practiceQuestion(params2) ])
-      if (res.length) {
-        let list = res.map(item => {
-          item.data.answer = []
-          return  item.data
-        })
-        console.log(list, this.answerSheet);
-        this.questionList = JSON.parse(JSON.stringify(list))
+      let params = { question_id, practice_id }
+      let res = await practiceQuestion(params)
+      if (res.code === 0) {
+        let question = res.data
+        this.questionList[0] = question
+        this.$forceUpdate()
       }
     }
-
   },
 };
 </script>
@@ -356,13 +334,5 @@ export default {
   .bar {
     margin-top: auto;
   }
-}
-
-
-.notice-enter-active, .notice-leave-active {
-  transition: opacity 6s;
-}
-.notice-enter, .notice-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
 }
 </style>

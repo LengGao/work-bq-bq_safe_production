@@ -1,6 +1,7 @@
 <template>
   <view class="answer-bar">
-    <view class="answer-bar-item" :class="{'answer-bar-item--disabled':isStart}" @click="onClickPrev">
+    <view class="answer-bar-item" :class="{'answer-bar-item--disabled':isStart}" 
+      v-if="!test" @click="onClickPrev">
       <uni-icons custom-prefix="iconfont" :color="isStart?'#ddd':''" type="icon-fanhui" size="28rpx"></uni-icons>
       <view class="bar-text">上一题</view>
     </view>
@@ -25,7 +26,7 @@
 export default {
   name: "answerBar", // 答题下方的状态栏
   props: {
-    isCollection: {
+    test: {
       type: Boolean,
       default: false,
     },

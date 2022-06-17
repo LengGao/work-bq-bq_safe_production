@@ -10,7 +10,11 @@
       <view class="face-container">
         <video class="face-video" id="video" :duration="0" :show-loading="false" :show-fullscreen-btn="false"
                :enable-progress-gesture="false" :show-progress="false" :controls="false" :show-center-play-btn="false"
-               :show-play-btn="false" />
+               :show-play-btn="false">
+          <cover-view v-if="verificationStatus" class="cover">
+            <uni-icons customPrefix="iconfont" type="icon-zhengquetishitianchong" size="320" color="#3EC100" />
+          </cover-view>
+        </video>
       </view>
 
       <view class="dialog-footer">
@@ -93,21 +97,8 @@ export default {
       let lesson_id = this.lesson_id
       let end_second = this.end_second
       let url = `/pages/studys/courseDetail/index`
-      let query = `?course_id=${course_id}&lesson_id=${lesson_id}&end_second=${end_second}`
-      let options = {
-        course_id: course_id,
-        lesson_id: lesson_id,
-        end_second: end_second,
-      }
-
-      let pages = getCurrentPages()
-      if (pages.length > 1) {
-        let page = pages[pages.length -2]
-        page.init(options)
-        uni.navigateBack()
-      } else {
-        uni.redirectTo({ url: url + query })
-      }
+      let query = `?course_id=${course_id}&lesson_id=${lesson_id}&end_second=${end_second}&autoplay=1`
+      uni.redirectTo({ url: url + query })
     },
     mountedDom() {
       let videoParent = document.getElementById('video'),
@@ -274,6 +265,17 @@ export default {
     border-radius: 50%;
   }
 }
+
+.cover {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 .dialog-footer {
   position: absolute;
   bottom: var(--window-bottom);
