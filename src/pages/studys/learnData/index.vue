@@ -98,7 +98,7 @@ export default {
   data() {
     return {
       array: [],
-      activeCourseIndex: 1,
+      activeCourseIndex: 0,
       course_id: '',
       learnData: {},
       chartsOpts: {

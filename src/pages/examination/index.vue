@@ -177,7 +177,8 @@ export default {
         uni.navigateTo({ url: '/pages/examinations/chapterList/index' })
       }
     },
-    onCandidates(e) {
+    async onCandidates(e) {
+      this,getQuestionBankList()
       this.$refs.popupRef.open()
     },
     openPopupChange({ show }) {

@@ -118,7 +118,7 @@ export default {
       // 实名与人脸验证
       canPlay: false,
       isFaceing: false,
-      autoplay: false,
+      autoplay: true,
     }
   },
   onLoad(query) {
