@@ -26,7 +26,7 @@
         <view class="comments-item" v-for="comment in comments" :key="comment.id">
           <view class="comments-userinfo">
             <view class="userinfo-left">
-              <image :src="comment.user_avatar" mode="aspectFit" class="avator" @error="(index) => avatorError(index)" />
+              <image :src="comment.user_avatar || avator" mode="aspectFit" class="avator" @error="(index) => avatorError(index)" />
               <view class="userinfo-left-box">
                 <text class="username">
                   {{ comment.user_name }}
@@ -70,6 +70,7 @@ export default {
   data() {
     return {
       isFinish: false,
+      avator: avator,
       page: { num: 0, size: 1 },
       star: 0,
       rateCount: 0,

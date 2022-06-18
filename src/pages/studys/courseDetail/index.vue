@@ -118,7 +118,7 @@ export default {
       // 实名与人脸验证
       canPlay: false,
       isFaceing: false,
-      autoplay: true,
+      autoplay: false,
     }
   },
   onLoad(query) {
@@ -247,6 +247,7 @@ export default {
     },
     // 点击开始播放
     onStartVideo() {
+      this.autoplay = true
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
     },
     // 错误码提示
