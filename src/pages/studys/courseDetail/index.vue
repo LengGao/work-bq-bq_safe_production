@@ -239,9 +239,10 @@ export default {
     },
     // 课时目录更改
     onChangeVideo(detailArr) {
-      let curr = detailArr[0]
+      console.log('detailArr', detailArr);
+      let curr = detailArr[detailArr.length -1]
       this.lesson_id = curr.id
-      this.stopSend()
+      this.changeSend()
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
     },
     // 点击开始播放
@@ -377,6 +378,13 @@ export default {
       this.stopInterval()
       let end_time = this.player.getCurrentTime()
       this.sendData(this.lesson_id, end_time, end_time)
+    },
+    changeSend() {
+      this.stopInterval()
+      if (this.player) {
+        let end_time = this.player.getCurrentTime()
+        this.sendData(this.lesson_id, end_time, end_time)
+      }
     },
     // 不同状态数据发送
     playSendData() {

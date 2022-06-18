@@ -110,10 +110,11 @@ export default {
     // 三级目录
     onClickThree(item3, item2, item1) {
       // learn_status 0 未学习 1 学习中 2，已学完
-      if (item3.learn_status === 0) return;
-      let args = [item1, item2, item3]
-      this.checkeds = this.updateChapterList(this.checkeds, args)
-      this.$emit('videoChange', args)
+      if (item3.learn_status !== 0) {
+        let args = [item1, item2, item3]
+        this.checkeds = this.updateChapterList(this.checkeds, args)
+        this.$emit('videoChange', args)
+      }
     },
     resetChapterList() {
       this.checkeds = this.updateChapterList(this.checkeds, [])
