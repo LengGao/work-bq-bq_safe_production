@@ -8,6 +8,7 @@
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" :current="currentIndex" :disable-touch="disableTouch"
+            v-if="questionList[currentIndex]"
             @change="onSwiperChange">
       <swiper-item class="swiper-item" v-for="(item, index) in answerSheet" :key="index">
         <Single :options="questionList[index]" @change="onSingleChange"
@@ -80,6 +81,8 @@ export default {
       answerSheet: [],
       questionList: [],
       userAnswerMap: {},
+
+      sss: false,
     };
   },
   computed: {
@@ -182,8 +185,11 @@ export default {
       }
     },
 
-    onSwiperChange({ detail }) {
+     async onSwiperChange({ detail }) {
       this.disableTouch = true
+      
+      // await this.submitAnswer(this.prevIndex)
+      await this.submitAnswer(this.currentIndex)
 
       if (detail.source === 'touch') {
         this.prevIndex = this.currentIndex
@@ -195,8 +201,9 @@ export default {
       } else if (this.isEnd) {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
       }
-
-      this.submitAnswer(this.prevIndex)
+      
+      
+      this.prevfetch()
     },
 
     prevfetch() {
@@ -213,7 +220,6 @@ export default {
     cacheAnswer(answer) {
       let key = answer.question_id
       this.userAnswerMap[key] = answer
-      this.prevfetch()
     },
 
     getPath(url, query) {
@@ -226,6 +232,7 @@ export default {
     getQuery(prevIndex) {
       let index = prevIndex !== undefined ? prevIndex : this.currentIndex
       let question = this.questionList[index]
+      console.log('getQuery', this.questionList, question, );
       let question_id = question.question_id
       let practice_id = this.practice_id
       let course_id = this.course_id
@@ -239,7 +246,6 @@ export default {
       if (this.isEnd) {
         this.submitPaper()
       } else {
-        this.prevfetch()
         await this.submitAnswer(this.currentIndex)
         this.prevIndex = this.currentIndex
         this.currentIndex = this.currentIndex + 1
@@ -263,7 +269,7 @@ export default {
     async submitAnswer(prevIndex) {
       let { practice_id, question_id, answer } = this.getQuery(prevIndex)
       let params = { practice_id, question_id: question_id, answer: answer.answer }
-
+      
       let res = await practiceAnswer(params)
 
       if (res.code === 0) {
@@ -274,9 +280,11 @@ export default {
     },
 
     async practiceQuestion(question_id, index) {
+
       let practice_id = this.practice_id
       let params = { question_id, practice_id }
       let res = await practiceQuestion(params)
+
       if (res.code === 0) {
         let question = res.data
         this.questionList[index] = question

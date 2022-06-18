@@ -328,8 +328,7 @@ export default {
     },
     // 点击安全生产课程
     onClickCource(courceType) {
-      let path = '/pages/studys/courseList/index',
-        query = `?type=2&courceType=${courceType}`
+      let path = '/pages/studys/courseList/index', query = `?type=2&courceType=${courceType}`
       uni.navigateTo({ url: path + query })
     },
     // 点击推荐课程
@@ -349,9 +348,6 @@ export default {
       uni.previewImage({
         urls: [url]
       })
-    },
-    onChangeSwiper() {
-
     },
     // 加载成功
     onbindload(e) {
@@ -419,6 +415,7 @@ export default {
         this.$store.commit('SET_REGION', currLocation)
       }
     },
+    // 处理地区问题
     async getSystemRegion() {
       let res = await systemRegion()
       if (res.code === 0) {

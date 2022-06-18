@@ -277,8 +277,8 @@ export default {
 
 
 .dialog-footer {
-  position: absolute;
-  bottom: var(--window-bottom);
+  position: fixed;
+  bottom: 30rpx;
   left: 0;
   width: 100%;
 

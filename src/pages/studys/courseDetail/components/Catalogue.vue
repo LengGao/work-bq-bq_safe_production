@@ -29,7 +29,8 @@
               <view v-for="item3 in item2.lesson" :key="item3.id" class="title three-title"
                     :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item2, item1)">
                 <view class="title-box">
-                  <uni-icons type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'" style="margin-right: 8rpx" />
+                  <uni-icons v-if="item3.learn_status === 0" type="locked-filled" size="32rpx" color="#999" style="margin-right: 8rpx" />
+                  <uni-icons v-else type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'" style="margin-right: 8rpx" />
                   {{ item3.title }}
                   <view v-if="item3.is_try" class="tag">试看</view>
                 </view>
@@ -50,7 +51,8 @@
           <view v-for="item3 in item1.lesson" :key="item3.id" class="title three-title"
                 :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item1)">
             <view class="title-box">
-              <uni-icons type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'" style="margin-right: 8rpx" />
+              <uni-icons v-if="item3.learn_status === 0" type="locked-filled" size="32rpx" color="#999" style="margin-right: 8rpx" />
+              <uni-icons v-else type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'" style="margin-right: 8rpx" />
               {{ item3.title }}
               <view v-if="item3.is_try" class="tag">试看</view>
             </view>
@@ -106,7 +108,9 @@ export default {
   },
   methods: {
     // 三级目录
-    onClickThree(item1, item2, item3) {
+    onClickThree(item3, item2, item1) {
+      // learn_status 0 未学习 1 学习中 2，已学完
+      if (item3.learn_status === 0) return;
       let args = [item1, item2, item3]
       this.checkeds = this.updateChapterList(this.checkeds, args)
       this.$emit('videoChange', args)
@@ -176,7 +180,7 @@ export default {
       let param = { course_id: this.courseId }
       let res = await courseChapterList(param)
       if (res.code == 0) {
-        let list = this.assembleData(res.data)
+        let list = this.assembleData(res.data.chapter)
         this.chapterList = list
         if (this.lessonId) {
           this.toFlushBack(this.lessonId, list)

@@ -241,6 +241,7 @@ export default {
     onChangeVideo(detailArr) {
       let curr = detailArr[0]
       this.lesson_id = curr.id
+      this.stopSend()
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
     },
     // 点击开始播放
@@ -252,7 +253,7 @@ export default {
       if (code === 2201) {
         this.prev_time = +data.last_second
         this.finish_second = +data.finish_second
-        this.jumpVideo(data.lesson_id)
+        // this.jumpVideo(data.lesson_id)
       } else if (code === 2203) {
         if (!this.isFaceing) {
           this.needFaceVerifity(+data.start_second)
