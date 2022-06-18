@@ -5,11 +5,18 @@
     <view class="clause-title">
       <uParse :content="agreement_subject" />
     </view>
-    <view class="clause-content">
-      <uParse :content="agreement_detail" />
+
+    <view class="clause-scroll-box">
+      <scroll-view class="clause-scroll" scroll-y>
+        <view class="clause-content">
+          <uParse :content="agreement_detail" />
+        </view>
+      </scroll-view>
     </view>
 
-    <button class="btn-read" @click="onRead">我已知悉</button>
+    <view class="footer">
+      <button class="btn-read" @click="onRead">我已知悉</button>
+    </view>
   </view>
 </template>
 
@@ -25,7 +32,7 @@ export default {
   },
   data() {
     return {
-      defaultTitle: '安培学堂',
+      defaultTitle: '隐私协议',
       agreement_subject: '--',
       agreement_detail: '--',
     }
@@ -52,7 +59,10 @@ export default {
 @import "@/styles/logan.scss";
 
 .clause {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: 100vh;
   overflow: hidden;
 
   &-title {
@@ -63,16 +73,35 @@ export default {
     font-weight: bold;
   }
 
+  &-scroll-box {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    margin-bottom: 150rpx;
+  }
+
+  &-scroll {
+    width: 100%;
+    height: 100%;
+  }
+
+
   &-content {
     padding: 0 30rpx;
     font-size: 28rpx;
-    line-height: 56rpx;
+    line-height: 2;
   }
 }
 
+
+
+.footer {
+  position: fixed;
+  bottom: calc(30rpx + var(--window-bottom));
+  width: 100%;
+}
+
 .btn-read {
-  margin-top: 60rpx;
-  margin-bottom: calc(30rpx + var(--window-bottom));
   width: 80%;
   font-size: 32rpx;
   font-weight: 600;

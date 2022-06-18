@@ -30,11 +30,11 @@
       </view>
     </view>
 
-    <view class="footer" :style="visibility ? 'visibility: hidden;' : 'visibility: visible;'">
+    <!-- <view class="footer" :style="visibility ? 'visibility: hidden;' : 'visibility: visible;'">
       <text @click="onForgine"> 忘记密码</text>
       <text class="bdi">|</text>
       <text @click="regsoter">注册账号</text>
-    </view>
+    </view> -->
   </view>
 </template>
 
