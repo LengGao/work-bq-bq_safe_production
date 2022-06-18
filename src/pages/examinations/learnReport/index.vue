@@ -4,7 +4,7 @@
       <view class="status_bar"></view>
       <view class="nav-bar">
         <uni-icons class="nav-bar-back" type="back" @click="goBack" color="#fff" size="16px"></uni-icons>
-        <text class="nav-bar-title">学习报告</text>
+        <text class="nav-bar-title">练习报告</text>
       </view>
     </view>
     <view class="learn-report-container">

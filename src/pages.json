@@ -15,13 +15,13 @@
 		{
 			"path": "pages/study/index",
 			"style": {
-				"navigationBarTitleText": "安培课堂"
+				"navigationBarTitleText": "课程"
 			}
 		},
 		{
 			"path": "pages/examination/index",
 			"style": {
-				"navigationBarTitleText": "安培课堂"
+				"navigationBarTitleText": "题库"
 			}
 		},
 		{
@@ -162,7 +162,7 @@
 				{
 					"path": "learnReport/index",
 					"style": {
-						"navigationBarTitleText": "学习报告"
+						"navigationBarTitleText": "练习报告"
 					}
 				},
 				{
@@ -267,12 +267,6 @@
 					"path": "contactService/index",
 					"style": {
 						"navigationBarTitleText": "联系客服"
-					}
-				},
-				{
-					"path": "aboutUs/index",
-					"style": {
-						"navigationBarTitleText": "关于我们"
 					}
 				},
 				{

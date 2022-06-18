@@ -150,7 +150,7 @@
     <uni-popup ref="popup-org" mask-background-color="rgba(0, 0, 0, 0.4)" :is-mask-click="false">
       <view class="org-list">
         <view class="org-list-title">请选择要进入的机构</view>
-        <view class="org-list-item" v-for="item in organizationList" :key="item.id" @click="onChoiceOrg(item)">
+        <view class="org-list-item" v-for="item in currOrganizationList" :key="item.id" @click="onChoiceOrg(item)">
           {{ item.name }}
         </view>
       </view>
@@ -204,6 +204,8 @@ export default {
       current: 0,
       policys: [],
       librarys: [],
+
+      currOrganizationList: []
     };
   },
   computed: {
@@ -222,6 +224,7 @@ export default {
   onReady() {
     if (this.isReady) {
       this.needShowOrg()
+      this.checkRegion()
     }
   },
   onShow() {
@@ -259,6 +262,15 @@ export default {
       let orgInfo = uni.getStorageSync('orgInfo')
       return orgInfo
     },
+    setTitle(title) {
+      this.defaultTitle = title
+      if (this.isWeixinJSBridge) {
+        uni.setNavigationBarTitle({ title: title })
+      }
+    },
+    setCurrOrg(orgInfo) {
+      this.$store.dispatch('setOrgCurrent', orgInfo)
+    },
     needShowOrg() {
       let userInfo = this.checkLogin()
       let orgInfo = this.checkOrgInfo()
@@ -268,27 +280,72 @@ export default {
       if (component && userInfo.token && organizationList.length && (!orgInfo || !orgInfo.id)) {
         this.openPopup(organizationList)
       } else if (orgInfo.id) {
-        this.defaultTitle = orgInfo.name
+        this.setTitle(orgInfo.name)
       }
     },
-    openPopup(list) {
+    openPopup(list, orgSheet) {
+      if (orgSheet) {
+        this.currOrganizationList = orgSheet
+      } else {
+        this.currOrganizationList =  this.organizationList
+      }
+      
       if (list && list.length) {
         if (list.length > 1) {
           uni.hideTabBar()
           this.$refs['popup-org'].open('bottom')
         } else {
-          this.defaultTitle = list[0].name
-          this.$store.dispatch('setOrgCurrent', list[0])
+          let curr = list[0]
+          this.setTitle(curr.name)
+          this.setCurrOrg(curr)
+          this.changeReageBecauseOforg(curr)
         }
+      }
+    },
+    // 改变机构改变地区
+    changeOrgBecauseOfRegion(item) {
+      console.log('organizationList', this.organizationList, item);
+      let organizations = this.organizationList.filter(org => org.region_id == item.id)
+      if (organizations.length > 1) {
+        this.openPopup(organizations, organizations)
+      } else if (organizations.length) {
+        let curr = organizations[0]
+        this.setTitle(curr.name)
+        this.setCurrOrg(curr)
+        this.changeReageBecauseOforg(curr)
       }
     },
     // 选择机构
     onChoiceOrg(item) {
       uni.showToast({ title: `欢迎进入${item.name}`, icon: 'none' })
       uni.showTabBar()
-      this.defaultTitle = item.name
+      this.setTitle(item.name)
+      this.setCurrOrg(item)
+      this.changeReageBecauseOforg(item)
       this.$refs['popup-org'].close()
-      this.$store.dispatch('setOrgCurrent', item)
+    },
+    // 机构与地区问题处理
+    checkRegion() {
+      let cache = this.$store.getters.region
+      if (cache && cache.id) {
+        this.currLocation = cache
+      } else {
+        this.getLocation()
+      }
+    },
+    // 地区选择
+    onChangeRegion(detail) {
+      this.currLocation = detail
+      this.$store.commit('SET_REGION', detail)
+      this.changeOrgBecauseOfRegion(detail)
+    },
+    // 地区改变机构
+    changeReageBecauseOforg(item) {
+      let currLocation = this.regions.find(region => region.id == item.region_id )
+      if (currLocation) {
+        this.currLocation = currLocation
+        this.$store.commit('SET_REGION', currLocation)
+      }
     },
     // 点击筛选
     onOpenFilter() {
@@ -403,25 +460,12 @@ export default {
         this.librarys = res.data.list
       }
     },
-    // 地区选择
-    onChangeRegion(detail) {
-      this.currLocation = detail
-      this.$store.commit('SET_REGION', detail)
-    },
-    checkRegion() {
-      let cache = this.$store.getters.region
-      let currLocation = this.currLocation
-      if (cache.id !== currLocation.id) {
-        this.$store.commit('SET_REGION', currLocation)
-      }
-    },
     // 处理地区问题
     async getSystemRegion() {
       let res = await systemRegion()
       if (res.code === 0) {
         let regions = res.data.map(item => { item.checked = false; return item; })
         this.regions = regions
-        this.getLocation()
       }
     },
     async getLocation() {
@@ -430,7 +474,7 @@ export default {
         let currLocation = res.data
         currLocation.region = res.data.name
         this.currLocation = currLocation
-        this.checkRegion()
+        this.$store.commit('SET_REGION', currLocation)
       }
     },
   }, // methods end

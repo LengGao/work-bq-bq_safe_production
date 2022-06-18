@@ -38,7 +38,11 @@ export default {
   methods: {
     init(location) {
       this.buttons.forEach(button => {
-        if (button.id === location.id) button.checked = true
+        if (button.id === location.id) {
+          button.checked = true
+        } else {
+          button.checked = false
+        }
       })
     },
     onClick(index) {
