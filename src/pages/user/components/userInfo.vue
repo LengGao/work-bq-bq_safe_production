@@ -1,14 +1,14 @@
 <template>
-  <view class="user-info" :class="customClass" :style="customStyle">
+  <view class="user-userInfo" :class="customClass" :style="customStyle">
     <view class="avator">
-      <image class="avator" :src="info.avatar_url || Avator" mode="aspectFill" @click="() => previewImg(info.avator)" />
+      <image class="avator" :src="userInfo.avatar_url || Avator" mode="aspectFill" @click="() => previewImg(userInfo.avator)" />
     </view>
     <view class="infos" v-if="isLogin">
       <view class="user">
-        <text class="name"> {{ info.real_name || '--' }} </text>
+        <text class="name"> {{ userInfo.real_name || '--' }} </text>
       </view>
       <view v-if="orgInfo.name" class="days">所属机构：{{ orgInfo.name }}</view>
-      <view v-else class="days">加入东培学堂 {{ info.org_join_day }} 天</view>
+      <view v-else class="days">加入东培学堂 {{ userInfo.org_join_day }} 天</view>
     </view>
 
     <view v-else>
@@ -20,12 +20,11 @@
 </template>
 
 <script>
-import { uploadImage } from '@/api/user'
 import Avator from "@/static/img/user_avator.png";
 
 export default {
   props: {
-    info: { 
+    userInfo: { 
       type: Object, 
       default: () => ({})
     },
@@ -45,18 +44,10 @@ export default {
       Avator
     }
   },
-  watch: {
-    info(val) {
-      console.log('info', val);
-    },
-    orgInfo(val) {
-      console.log("orgInfo", val);
-    }
-  },
   methods: {
     // 图片预览
     previewImg(url) {
-        uni.previewImage({ urls: [url] })
+      uni.previewImage({ urls: [url] })
     },
     onLogin() {
       this.$emit('login')
@@ -69,7 +60,7 @@ export default {
 @import "@/styles/logan.scss";
 $height: 100rpx;
 
-.user-info {
+.user-userInfo {
   display: flex;
   flex-direction: row;
   align-items: center;

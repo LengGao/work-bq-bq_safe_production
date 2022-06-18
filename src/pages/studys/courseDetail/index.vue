@@ -239,7 +239,7 @@ export default {
     },
     // 课时目录更改
     onChangeVideo(detailArr) {
-      console.log('detailArr', detailArr);
+      // console.log('detailArr', detailArr);
       let curr = detailArr[detailArr.length -1]
       this.lesson_id = curr.id
       this.changeSend()
@@ -254,7 +254,6 @@ export default {
       if (code === 2201) {
         this.prev_time = +data.last_second
         this.finish_second = +data.finish_second
-        // this.jumpVideo(data.lesson_id)
       } else if (code === 2203) {
         if (!this.isFaceing) {
           this.needFaceVerifity(+data.start_second)
@@ -349,10 +348,6 @@ export default {
     },
     setCover(url) {
       if (this.player) this.player.setCover(url);
-    },
-    jumpVideo(lesson_id) {
-      let params = { lesson_id: lesson_id, course_id: this.course_id }
-      this.getCourseGetVideoAuth(params)
     },
     needFaceVerifity(currTime) {
       let faceTime = this.face[0]
@@ -498,7 +493,7 @@ export default {
           this.endedCallback()
         })
         player.on('timeupdate', () => {
-          console.log('timeupdate');
+          // console.log('timeupdate');
           let currTime = player.getCurrentTime()
           let start_second = this.start_second
           let is_free = this.lesson.is_free

@@ -41,7 +41,7 @@
 
       <view class="courses-list">
       <template v-if="courseData.length">
-      <scroll-view scroll-y @scrolltolower="() => upCallback(page)" style="height: 1000rpx">
+      <scroll-view scroll-y @scrolltolower="() => upCallback(page)" class="courses-list-scroll">
         <CardRow v-for="course in courseData" :key="course.id">
           <template v-slot:cardBodyLeft>
             <view class="card-body-left">
@@ -152,7 +152,7 @@ export default {
       page.num++;
       const data = {
         page: page.num,
-        page_size: 3,
+        page_size: 20,
       }
       const res = await userCourseList(data)
       if (res.code === 1000 || res.code === 1008) {
@@ -271,6 +271,11 @@ $padding: 16rpx 30rpx;
 .courses-list {
   width: 100%;
   padding: 24rpx 0;
+
+  &-scroll {
+    height: 800rpx;
+    margin-bottom: var(--window-bottom);
+  }
 
   .card-body-left {
     position: relative;

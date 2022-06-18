@@ -25,9 +25,9 @@
                v-if="questionList[index] && questionList[index].question_type === 6" />
       </swiper-item>
     </swiper>
-
+<!--  :time="questionList[currentIndex].timeout" @timeup="onTimeUp" -->
     <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" :test="true" v-if="questionList[currentIndex]"
-               :currentIndex="currentIndex" :time="questionList[currentIndex].timeout" @timeup="onTimeUp"
+               :currentIndex="currentIndex"
                @submit-paper="submitPaper" @next="handleNext" @prev="handlePrev">
     </AnswerBar>
   </view>
@@ -81,8 +81,6 @@ export default {
       answerSheet: [],
       questionList: [],
       userAnswerMap: {},
-
-      sss: false,
     };
   },
   computed: {
@@ -185,11 +183,8 @@ export default {
       }
     },
 
-     async onSwiperChange({ detail }) {
+    onSwiperChange({ detail }) {
       this.disableTouch = true
-      
-      // await this.submitAnswer(this.prevIndex)
-      await this.submitAnswer(this.currentIndex)
 
       if (detail.source === 'touch') {
         this.prevIndex = this.currentIndex
@@ -201,7 +196,6 @@ export default {
       } else if (this.isEnd) {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
       }
-      
       
       this.prevfetch()
     },
@@ -232,7 +226,6 @@ export default {
     getQuery(prevIndex) {
       let index = prevIndex !== undefined ? prevIndex : this.currentIndex
       let question = this.questionList[index]
-      console.log('getQuery', this.questionList, question, );
       let question_id = question.question_id
       let practice_id = this.practice_id
       let course_id = this.course_id
@@ -242,11 +235,11 @@ export default {
       return { practice_id, question_id, course_id, lesson_id, answer }
     },
 
-    async onTimeUp() {
+     onTimeUp() {
       if (this.isEnd) {
         this.submitPaper()
       } else {
-        await this.submitAnswer(this.currentIndex)
+        this.submitAnswer(this.currentIndex)
         this.prevIndex = this.currentIndex
         this.currentIndex = this.currentIndex + 1
       }
@@ -271,7 +264,6 @@ export default {
       let params = { practice_id, question_id: question_id, answer: answer.answer }
       
       let res = await practiceAnswer(params)
-
       if (res.code === 0) {
         this.disableTouch = false
       } else {  
@@ -280,7 +272,6 @@ export default {
     },
 
     async practiceQuestion(question_id, index) {
-
       let practice_id = this.practice_id
       let params = { question_id, practice_id }
       let res = await practiceQuestion(params)
@@ -295,22 +286,27 @@ export default {
       const data = { lesson_id: this.lesson_id };
       const res = await practiceStart(data);
       if (res.code === 0) {
+        let answerSheet = res.data.question
         this.practice_id = res.data.practice_id
-        this.answerSheet = res.data.question
         this.total = res.data.question.length
-        this.initQuestions()
+        this.answerSheet = answerSheet
+        
+        this.initQuestions(JSON.parse(JSON.stringify(answerSheet)))
       }
     },
 
-    async initQuestions() {
-      let question_id = this.answerSheet[0]
+    async initQuestions(list) {
+      let question_id = list[0]
+      this.questionList = list
+
       let practice_id = this.practice_id
       let params = { question_id, practice_id }
+
       let res = await practiceQuestion(params)
       if (res.code === 0) {
         let question = res.data
         this.questionList[0] = question
-        this.$forceUpdate()
+        // this.$forceUpdate()
       }
     }
   },

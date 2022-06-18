@@ -4,7 +4,7 @@
 
     <view class="user-header">
       <view class="user-card">
-        <UserInfo :info="userInfo" :orgInfo="orgInfo" :isLogin="isLogin" @login="login" />
+        <UserInfo :userInfo="userInfo" :orgInfo="orgInfo" :isLogin="isLogin" @login="login" />
         <view class="card-setting">
           <uni-icons v-if="isLogin" customPrefix="iconfont" type="icon-tuichu" color="#fff" size="40rpx"
                      class="card-setting-icon" @click="loginlout" />
@@ -40,7 +40,6 @@
 import UserInfo from "./components/userInfo";
 import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
-import { mapGetters } from 'vuex'
 
 export default {
   mixins: [browser],
@@ -51,7 +50,11 @@ export default {
   data() {
     return {
       defaultTitle: '个人中心',
-      loading: false,
+
+      isLogin: false,
+      userInfo: {},
+      orgInfo: {},
+
       gridIndex: 0,
       grids: [
         { id: 1, thumb: "https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/user_gird1.png", title: "我的课程", url: "/pages/users/userCourceList/index", blank: 'navigateTo' },
@@ -65,26 +68,16 @@ export default {
         { id: 3, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-Opinion' }, title: "意见反馈", url: "/pages/users/feedback/index" },
         { id: 4, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-lianxikefu' }, title: "联系客服", url: "/pages/users/contactService/index" },
       ],
-      isLogin: false,
     };
   },
-  computed: {
-    ...mapGetters(['userInfo', 'orgInfo'])
-  },
-  onLoad() {
-  },
-  mounted() {
+  onReady() {
+    this.getUserInfo()
   },
   onShow() {
-    if (this.userInfo.token) {
-      this.isLogin = true
-    } else {
-      this.isLogin = false
-    }
+    this.getUserInfo()
   },
   methods: {
     onClickList(detail) {
-      console.log("listIndex", detail);
       this.listIndex = detail;
     },
     onClickGrid(url, blank) {
@@ -94,22 +87,33 @@ export default {
         uni.navigateTo({ url: url })
       }
     },
+    getUserInfo() {      
+      let userInfo = uni.getStorageSync('userInfo') || {}
+      let orgInfo = uni.getStorageSync('orgInfo') || {}
+      this.userInfo = userInfo
+      this.orgInfo = orgInfo
+
+      if (userInfo && userInfo.real_name) {
+        this.isLogin = true
+      } else {
+        this.isLogin = false
+      }
+    },
     login() {
       uni.navigateTo({ url: '/pages/login/index' })
     },
     async loginlout() {
       if (!this.isLogin) return false;
+      
       let modal = await uni.showModal({ title: '提示', content: '确定要退出登录吗' })
       if (!modal[1].confirm) return;
+
       let res = await this.$store.dispatch('loginout')
       if (res.code === 0) {
         uni.showToast({ title: '退出成功', icon: 'success' })
       }
       /* #ifdef H5 */
       location.reload()
-      /* #endif */
-      /* #ifdef MP-WEIXIN */
-      this.onLoad()
       /* #endif */
     }
   },
