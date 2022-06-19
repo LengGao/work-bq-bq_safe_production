@@ -51,7 +51,6 @@ export default {
   },
   methods: {
     onChangeOpt(answer) {
-      if (this.options.hasAnswer) { return; }
       this.checkedAnswer = answer
       let data = { id: this.options.id, question_id: this.options.question_id, answer: [answer] }
       this.$emit("change", data);

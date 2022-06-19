@@ -60,8 +60,6 @@ export default {
   },
   methods: {
     onInput() {
-      if (this.options.hasAnswer) { return; }
-      
       let answer = this.inputItem.map(item => item.value)
       this.checkedAnswer = answer
       let data = { question_id: this.options.question_id, answer: answer }

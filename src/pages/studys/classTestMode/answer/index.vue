@@ -267,6 +267,11 @@ export default {
       let res = await practiceAnswer(params)
       if (res.code === 0) {
         uni.redirectTo({ url: path })
+      } else {
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
+        setTimeout(() => { 
+          uni.redirectTo({ url: path })
+        }, 800)
       }
     },
 
@@ -278,7 +283,6 @@ export default {
         this.disableTouch = false;
         return;
       }
-      this.questionList[prevIndex].hasAnswer = true
       
       let res = await practiceAnswer(params)
       if (res.code === 0) {
@@ -310,7 +314,6 @@ export default {
         this.frequency = res.data.times
         this.total = res.data.question.length
         this.questionList = res.data.question.map(item => {
-          item.hasAnswer = false
           item.answer = [];
           return item
         })
