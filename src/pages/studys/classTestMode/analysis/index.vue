@@ -1,6 +1,7 @@
 <template>
   <view class="answer">
-    <custom-header :title="defaultTitle"></custom-header>
+    <custom-header :title="defaultTitle" :customBack="onCustomBack"></custom-header>
+    <custom-header :title="defaultTitle" ></custom-header>
 
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
@@ -86,10 +87,17 @@ export default {
     this.lesson_id = lesson_id
     this.course_id = course_id
     this.next_lesson_id = next_lesson_id
-    this.pass = !!pass
+    this.pass = (pass == 'true' ? true : false);
+    
     this.createQuestion();
   },
   methods: {
+    onCustomBack() {
+      let url = `/pages/studys/courseDetail/index`
+      let query = `?lesson_id=${this.lesson_id}&course_id=${this.course_id}&autoplay=1`
+      uni.redirectTo({ url: url + query })
+    },
+
     handlePrev() {
       if (!this.isStart) {
         this.currentIndex = this.currentIndex - 1
@@ -111,8 +119,10 @@ export default {
     },
 
     submitPaper() {
+      // console.log(this.pass);
+      let course_id = this.course_id
+      
       if (this.pass) {
-        let course_id = this.course_id
         let url = '/pages/studys/courseDetail/index'
         let query = `?course_id=${course_id}&lesson_id=${this.next_lesson_id}`
         uni.redirectTo({ url: url + query })

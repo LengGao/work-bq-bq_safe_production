@@ -25,7 +25,8 @@
                v-if="questionList[currentIndex] && questionList[currentIndex].question_type === 6" />
       </swiper-item>
     </swiper>
-    <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" :test="true" v-if="questionList[currentIndex]"
+    <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" :test="true" 
+                v-if="questionList[currentIndex]"
                :currentIndex="currentIndex" 
                :time="time" @timeup="onTimeUp"
                @submit-paper="submitPaper" @next="handleNext" @prev="handlePrev">
@@ -81,12 +82,13 @@ export default {
       notice: false,
 
       total: 0,
-      time: 0,
+      time: 1000,
       frequency: 0,
 
       answerSheet: [],
       questionList: [],
       userAnswerMap: {},
+      answered: {},
     };
   },
   computed: {
@@ -145,15 +147,11 @@ export default {
         }
       })
     },
-    
 
     goBack() {
-      let pages = getCurrentPages()
-      if (pages.length > 1) {
-        uni.navigateBack()
-      } else {
-        history.back()
-      }
+      let url = `/pages/studys/courseDetail/index`
+      let query = `?lesson_id=${this.lesson_id}&course_id=${this.course_id}&autoplay=1`
+      uni.redirectTo({ url: url + query })
     },
 
     getPath(url, query) {
@@ -261,9 +259,10 @@ export default {
       let query = { practice_id, course_id, lesson_id }
       let path = this.getPath(url, query)
 
+      if (this.answered[question_id]) return uni.redirectTo({ url: path });
+
       let params = { practice_id, question_id: question_id, answer: answer.answer }
       let res = await practiceAnswer(params)
-
       if (res.code === 0) {
         uni.redirectTo({ url: path })
       }
@@ -272,11 +271,14 @@ export default {
     async submitAnswer(prevIndex) {
       let { practice_id, question_id, answer } = this.getQuery(prevIndex)
       let params = { practice_id, question_id: question_id, answer: answer.answer }
+
+      if (this.answered[question_id]) return this.disableTouch = false;
       
       let res = await practiceAnswer(params)
       if (res.code === 0) {
         this.disableTouch = false
         this.practiceQuestion(this.currentIndex)
+        this.answered[question_id] = answer
       } else {  
         uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
@@ -288,7 +290,6 @@ export default {
       if (!question_id) return;
       let params = { question_id, practice_id }
       let res = await practiceQuestion(params)
-
       if (res.code === 0) {        
         this.time = res.data.timeout
       }
@@ -304,11 +305,17 @@ export default {
         this.total = res.data.question.length
         this.questionList = res.data.question
         this.initQuestion(res.data.last_id, res.data.question)
+      } else {
+        uni.showToast({ title: `${res.message}`, icon: 'none'})
+        setTimeout(() => {
+          this.goBack()
+        }, 1500)
       }
     },
 
     initQuestion(last_question_id, list) {
       let index = list.findIndex(item => item.question_id === last_question_id)
+      console.log(index);
       this.currentIndex = (index !== -1 ? index : 0)
       this.practiceQuestion(this.currentIndex)
 

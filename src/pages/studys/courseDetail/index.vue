@@ -1,9 +1,9 @@
 <template>
   <view class="course-detail">
-    <custom-header :title="defaultTitle"></custom-header>
+    <custom-header :title="defaultTitle" ></custom-header>
     <!-- #ifdef H5 -->
     <view id="aliplayer">
-      <cover-view v-if="!player" class="course-cover">
+      <cover-view v-if="!player && !autoplay" class="course-cover">
         <image :src="courseInfo.cover" class="course-img" mode="aspectFill">
         <view class="play-icon">
           <uni-icons custom-prefix="iconfont" type="icon-play-filling" :size="64" color="#fff" @click="onStartVideo" />
@@ -119,6 +119,7 @@ export default {
       canPlay: false,
       isFaceing: false,
       autoplay: false,
+      getVideoErr: '',
     }
   },
   onLoad(query) {
@@ -136,12 +137,15 @@ export default {
       this.stopSend()
     })
   },
+  destroyed() {
+    clearInterval(this.intervalId)
+    this.intervalId = null  
+    // if (this.player) this.player.dispose();
+  },
   onUnload() {
     clearInterval(this.intervalId)
     this.intervalId = null
-    // #ifdef H5
     if (this.player) this.player.dispose();
-    // #endif
   },
   methods: {
     init(query) {
@@ -237,14 +241,11 @@ export default {
         let last_lesson_id = lesson_id ? lesson_id : res.data.learning_lesson_id
         this.lesson_id = last_lesson_id
         this.courseInfo = res.data
-        if (this.autoplay) {
-          this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: last_lesson_id })    
-        }
+        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: last_lesson_id })
       }
     },
     // 课时目录更改
     onChangeVideo(detailArr) {
-      // console.log('detailArr', detailArr);
       let curr = detailArr[detailArr.length -1]
       this.lesson_id = curr.id
       this.changeSend()
@@ -252,19 +253,18 @@ export default {
     },
     // 点击开始播放
     onStartVideo() {
-      this.autoplay = true
-      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
+      if (!this.getVideoErr) {
+        this.autoplay = true
+        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
+      } else {
+        uni.showToast({ title: `${this.getVideoErr}`, icon: 'none' })
+      }
     },
     // 错误码提示
     showToast(title, code, data) {
       if (code === 2201) {
         this.prev_time = +data.last_second
         this.finish_second = +data.finish_second
-      } else if (code === 2203) {
-        if (!this.isFaceing) {
-          this.needFaceVerifity(+data.start_second)
-        }
-        this.isFaceing = true
       } else {
         uni.showToast({ title, icon: 'none' })
       }
@@ -281,7 +281,9 @@ export default {
         success: (res) => {
           if (res.confirm) {
             this.$store.commit('SET_EXAMINATION', true)
-            uni.navigateTo({ url: path })
+            setTimeout(() => {
+              uni.redirectTo({ url: path })
+            }, 500)
           }
         }
       })
@@ -305,7 +307,9 @@ export default {
         confirmColor: '#199fff',
         success: (res) => {
           if (res.confirm) {
-            uni.redirectTo({ url: path })
+            setTimeout(() => {
+              uni.redirectTo({ url: path })
+            }, 500)
           }
         }
       })
@@ -329,7 +333,9 @@ export default {
         confirmColor: '#199fff',
         success: (res) => {
           if (res.confirm) {
-            uni.navigateTo({ url: path })
+            setTimeout(() => {
+              uni.navigateTo({ url: path })
+            }, 500)
           }
         }
       })
@@ -443,7 +449,7 @@ export default {
         width: '100%',
         height: '200px',
         controlBarVisibility: 'click',
-        autoplay: false,
+        autoplay: options.autoplay,
         isLive: false,
         playsinline: true,
         preload: true,
@@ -479,10 +485,8 @@ export default {
           console.log('ready');
           if (this.lesson.free_second) player.setPreviewTime(this.lesson.free_second);
           player.seek(this.start_second)
-          if (this.autoplay) player.play();
         })
         player.on('play', () => {
-          console.log('play');
           this.needFaceVerifity(this.start_second)
           if (this.canPlay) {
             this.isFaceing = false
@@ -491,6 +495,7 @@ export default {
             this.pauseSendData()
             player.pause()
           }
+          console.log('play', this.isFaceing);
         })
         player.on('pause', () => {
           console.log('pause');
@@ -521,8 +526,9 @@ export default {
               this.sendData(this.lesson_id, currTime, currTime)
             } else {
               this.start_second = currTime
-              if (faceTime !== undefined && (currTime - faceTime) >= 0 ) {
+              if (faceTime !== undefined && currTime > faceTime ) {
                 player.pause()
+                this.needFaceVerifity(currTime)
               }
             }
           }
@@ -564,11 +570,15 @@ export default {
         this.prev_time = +record.finish_second
 
         // #ifdef H5
-        this.createPlayer({ video })
+        this.createPlayer({ video, autoplay: this.autoplay})
         // #endif
       } else {
-        this.showToast(res.message, res.code, res.data)
+        if (this.autoplay) {
+          this.showToast(res.message, res.code, res.data)
+        }
         this.errSendData()
+        this.getVideoErr = res.message
+        
       }
     },
   }

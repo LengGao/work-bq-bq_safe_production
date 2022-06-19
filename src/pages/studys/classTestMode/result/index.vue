@@ -1,6 +1,6 @@
 <template>
   <view class="result">
-    <custom-header :title="defaultTitle"></custom-header>
+    <custom-header :title="defaultTitle" :customBack="onCustomBack"></custom-header>
 
     <view class="header">
       <view v-if="pass" class="header-row-one success">
@@ -77,6 +77,12 @@ export default {
     this.getData()
   },
   methods: {
+    onCustomBack() {
+      let url = `/pages/studys/courseDetail/index`
+      let query = `?lesson_id=${this.lesson_id}&course_id=${this.course_id}&autoplay=1`
+      uni.redirectTo({ url: url + query })
+    },
+
     getPath(url, query) {
       let params = ''
       Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })

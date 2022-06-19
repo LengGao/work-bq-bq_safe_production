@@ -147,9 +147,37 @@ export default {
     this.getAnswerSheet()
   },
   methods: {
-    onTouchmove() {
-      console.log('asd');
+    onCustomBack() {
+      if (this.model == 2) {
+        this.showModalForBack()
+      } else {
+        this.goBack()
+      }
     },
+
+    showModalForBack() {
+      uni.showModal({
+        title: '提示',
+        content: '随堂考试，您正在进行随堂考试，确定退出后本次学习将不计入相应学时',
+        showCancel: true,
+        success: ({ confirm, cancel }) => {
+          if (confirm) {
+            this.goBack()
+          }
+        }
+      })
+    },
+
+    goBack() {
+      let pages = getCurrentPages()
+      if (pages.length > 1) {
+        uni.navigateBack()
+      } else {
+        history.back()
+      }
+    },
+
+
     init(query) {
       let {
         chapter_id,
@@ -173,6 +201,9 @@ export default {
       this.restart = !!restart
 
       this.defaultTitle = title
+      if (this.isWeixinJSBridge) {
+        uni.setNavigationBarTitle({ title: title })
+      }
     },
 
     injectApi() {
@@ -285,6 +316,10 @@ export default {
 
     onAnimationfinish() {
       this.disableTouch = false
+    },
+
+    onTouchmove() {
+      // console.log('asd');
     },
 
     onCaseIndexChange(index) {
