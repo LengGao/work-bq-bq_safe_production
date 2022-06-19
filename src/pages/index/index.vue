@@ -127,7 +127,7 @@
             <template v-slot:cardBodyRight>
               <view class="card-body-right" @click="() => onClickLibrary(library.id)">
                 <view class="card-right-top">
-                  <uni-icons custom-prefix="iconfont" type="icon-file-pdf-fill" size="28rpx" color="#dd524d" />
+                  <uni-icons custom-prefix="iconfont" :type="fileTypeMap[library.file_type] || defaultFileType" size="28rpx" color="#aaa"/>
                   <text class="library-text">{{ library.title || '--' }}</text>
                 </view>
                 <view class="card-right-top">
@@ -205,7 +205,39 @@ export default {
       policys: [],
       librarys: [],
 
-      currOrganizationList: []
+      currOrganizationList: [],
+
+      defaultFileType: 'icon-wenjianleixing-suolvetu-wenjianjia',
+      fileTypeMap: {
+        'ppt': 'icon-PPT',
+        'txt': 'icon-txt',
+        'zip': 'icon-wenjianleixing-biaozhuntu-yasuowenjian',
+        'pdf': 'icon-wenjianleixing-biaozhuntu-PDFwendang',
+        'doc':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'docs':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'docx':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'xls':  'icon-wenjianleixing-suolvetu-gongzuobiao',
+        'xlsx':  'icon-wenjianleixing-suolvetu-gongzuobiao',
+        'jpg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'gif':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'png':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'jpeg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+      },
+      fileTypeColorMap: {
+        'ppt': 'icon-PPT',
+        'txt': 'icon-txt',
+        'zip': 'icon-wenjianleixing-biaozhuntu-yasuowenjian',
+        'pdf': 'icon-wenjianleixing-biaozhuntu-PDFwendang',
+        'doc':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'docs':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'docx':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'xls':  'icon-wenjianleixing-suolvetu-gongzuobiao',
+        'xlsx':  'icon-wenjianleixing-suolvetu-gongzuobiao',
+        'jpg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'gif':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'png':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'jpeg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+      }
     };
   },
   computed: {

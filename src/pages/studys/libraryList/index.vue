@@ -13,7 +13,7 @@
                  :rightFooter="library.time || '--'" @clickRight="() => onClickLibrary(library)" class="list-item">
           <template v-slot:rightTop>
             <view class="logan-card-right-top">
-              <uni-icons customPrefix="iconfont" type="icon-file-pdf-fill" size="28rpx" color="#dd524d" />
+              <uni-icons custom-prefix="iconfont" :type="fileTypeMap[library.file_type] || defaultFileType" size="28rpx" color="#aaa"/>
               <text class="library-text">{{ library.title }}</text>
             </view>
           </template>
@@ -48,6 +48,21 @@ export default {
       keyword: '',
       region_id: '',
       librarys: [],
+      fileTypeMap: {
+        'ppt': 'icon-PPT',
+        'txt': 'icon-txt',
+        'zip': 'icon-wenjianleixing-biaozhuntu-yasuowenjian',
+        'pdf': 'icon-wenjianleixing-biaozhuntu-PDFwendang',
+        'doc':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'docs':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'docx':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'xls':  'icon-wenjianleixing-suolvetu-gongzuobiao',
+        'xlsx':  'icon-wenjianleixing-suolvetu-gongzuobiao',
+        'jpg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'gif':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'png':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'jpeg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+      },
     }
   },
   onLoad() {
@@ -134,26 +149,8 @@ export default {
     font-size: $font-size-sm;
   }
 
-  .audience {
-    color: $color-primary;
-  }
-
-  .present-price {
-    font-size: $font-size-lg;
-    color: $color-warning;
-  }
-
-  .original-price {
-    margin-left: 8rpx;
-    font-size: $font-size-base;
-    text-decoration: line-through #999;
-  }
-
-  .tag {
-    position: relative;
-    bottom: 8rpx;
-    font-size: 24rpx;
-    font-weight: normal;
+  .library-text {
+    margin-left: 10rpx;
   }
 }
 
