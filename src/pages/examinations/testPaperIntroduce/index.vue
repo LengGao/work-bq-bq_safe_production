@@ -11,7 +11,7 @@
         <text class="desc-value">{{ configData.duration || 0 }}分钟</text>
       </view>
       <view class="desc">
-        <text class="iconfont">&#xe6aa;</text>
+        <!-- <text class="iconfont">&#xe6aa;</text> -->
         <text class="desc-title">考试总分：</text>
         <text class="desc-value">{{ configData.total_score || 0 }}分</text>
       </view>

@@ -191,9 +191,9 @@ export default {
       }
 
       if (detail.current <= 0) {
-        uni.showToast({ title: '已经是第一题了', icon: 'none' })
+        uni.showToast({ title: '已经是该案例题第一题了', icon: 'none' })
       } else if (detail.current >= this.total - 1) {
-        uni.showToast({ title: '已经是最后一题了', icon: 'none' })
+        uni.showToast({ title: '已经是该案例题最后一题了', icon: 'none' })
       }
 
       this.prevfetch()

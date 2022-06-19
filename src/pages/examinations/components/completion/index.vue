@@ -80,7 +80,11 @@ export default {
         this.inputItem = this.options.option.map((item, index) => {
           return {value: this.options.user_answer[index].trim() || '', status: '' }
         })
-        this.correctAnswer = this.options.true_answer.map(item => item.trim())
+        if (this.options.true_answer) {
+          this.correctAnswer = this.options.true_answer.map(item => item.trim())
+        } else {
+          this.correctAnswer = this.correctAnswer = this.options.option.map(item => item.is_right && item.content.trim()).filter(item => !!item)
+        }
       } else {
         this.inputItem = this.options.option.map(item => ({ value: '', status: '' }))
       }
@@ -123,7 +127,11 @@ export default {
 
     handleEyeChange(val) {
       if (val) {
-        this.correctAnswer = this.options.true_answer.map(item => item.trim())
+        if (this.options.true_answer) {
+          this.correctAnswer = this.options.true_answer.map(item => item.trim())
+        } else {
+          this.correctAnswer = this.correctAnswer = this.options.option.map(item => item.is_right && item.content.trim()).filter(item => !!item)
+        }
       } else {
         this.correctAnswer = "";
         // this.inputItem.forEach((item) => { item.status = ""})

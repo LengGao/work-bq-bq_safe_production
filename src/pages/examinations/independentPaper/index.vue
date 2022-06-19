@@ -166,10 +166,13 @@ export default {
           color: #888888;
           font-size: $uni-font-size-base;
           .item {
-            width: 220rpx;
+            min-width: 230rpx;
           }
-          .item:first-child {
-             width: 140rpx;
+          .item:nth-of-type(1) {
+            min-width: 150rpx;
+          }
+          .item:nth-of-type(2) {
+            min-width: 220rpx;
           }
           .text {
             color: $uni-color-primary;

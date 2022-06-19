@@ -24,7 +24,8 @@
         </view>
       </view>
     </view>
-    <Footer class="footer" :model="model" @submit="handleSubmit" @click="handleClick" />
+
+    <Footer class="footer" :noFinish="noFinish" :model="model" @submit="handleSubmit" @click="handleClick" />
   </view>
 </template>
 
@@ -64,8 +65,12 @@ export default {
       model: '',
       title: '',
 
+      noFinish: false,
+
       list: {},
       arr: [],
+      answerSheetApiMap: {},
+      typesNumber: {},
       statusMap: {
         1: {
           "0": "none",
@@ -92,10 +97,7 @@ export default {
         6: "简答题",
         7: "案例题",
       },
-      answerSheetApiMap: {}
     };
-  },
-  computed: {
   },
   onLoad(query) {
     this.init(query)
@@ -154,22 +156,33 @@ export default {
       }
     },
 
+    goBack() {
+      let pages = getCurrentPages()
+      if (pages.length > 1) {
+        uni.navigateBack()
+      } else {
+        history.back()
+      }
+    },
+
     getQuestionId(type, index) {
-      return this.list[type][index].id
+      console.log(this.list[type], index);
+      return this.list[type][index].id || this.list[type][index]
     },
 
     onSelect(type, index) {
+      
       let url = `/pages/examinations/answer/index`
       let question_id = this.getQuestionId(type, index)
       let {exam_log_id, chapter_id, question_bank_id,  model, source, title} = this.getQuery()
       let query = { exam_log_id, chapter_id, last_question_id: question_id, question_bank_id,  model, source, title }
       let path = this.getPath(url, query)
+      console.log('query',query);
       uni.redirectTo({ url: path })
     },
 
     handleSubmit() {
       let empty = this.arr.some(item => item.is_answered === 0)
-      
       uni.showModal({
         title: "提示", 
         content: empty ? '您还有题未作答，确认交卷吗？' : '您确认要交卷吗？',
@@ -182,7 +195,12 @@ export default {
       let {exam_log_id, chapter_id, question_id, question_bank_id,  model, source, title} = this.getQuery()
       let query = {exam_log_id, chapter_id, last_question_id: question_id, question_bank_id,  model, source, title}
       let path = this.getPath(url, query)
-      uni.redirectTo({ url: path })
+
+      if (this.noFinish) {
+        uni.redirectTo({ url: path })
+      } else { 
+        this.goBack()
+      }
     },
 
     async submitExamPaper() {
@@ -210,8 +228,27 @@ export default {
       if (res.code === 0) {
         this.arr = res.data.arr
         this.list = res.data.list;
+        this.checkIsFinish(this.arr)
       }
     },
+    
+    statisticsQuestions(list) {
+      let obj = {}
+      Object.keys(list).forEach(k => {
+        obj[k] = list[k]?.length
+      })
+      this.typesNumber = obj
+    },
+
+    checkIsFinish(arr) {
+      this.noFinish = arr.some(item => {
+        if (item.child) {
+          return item.child.some(c => c.is_answered === 0)
+        } else {
+          return item.is_answered === 0
+        }
+      })
+    }
   },
 };
 </script>

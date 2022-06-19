@@ -93,6 +93,11 @@ export default {
         uni.navigateTo({ url: url + query });
       }
 
+      const analysisCallback = () => {
+        query = `?chapter_id=${id}&question_bank_id=${question_bank_id}&last_question_id=${last_question_id}&model=3&source=${source}&title=${title}`
+        uni.navigateTo({ url: url + query });
+      }
+
       if (!question_count) { 
         uni.showToast({ title: '当前章节暂未配置题目', icon: 'none' })
       } else if (is_answer == 0) {
@@ -100,7 +105,20 @@ export default {
       } else if (is_answer == 1) {
         confirmCallback()
       } else if (is_answer == 2) {
-        cancelCallback()
+        uni.showModal({
+          title: '提示',
+          content: '您已完成本章节的练习，是否重新练习?',
+          showCancel: true,
+          cancelText: '查看解析',
+          confirmText: '重新练习',
+          success: ({ confirm, cancel }) => {
+            if (confirm) {
+              cancelCallback()
+            } else if (cancel) {
+              analysisCallback()
+            }
+          }
+        })
       }
     },
     goBack() {
@@ -205,13 +223,13 @@ export default {
           color: #888888;
           font-size: $uni-font-size-base;
           .item {
-            width: 220rpx;
+            min-width: 230rpx;
           }
           .item:nth-of-type(1) {
-             width: 180rpx;
+            min-width: 180rpx;
           }
           .item:nth-of-type(2) {
-             width: 160rpx;
+            min-width: 190rpx;
           }
           .text {
             color: $uni-color-primary;

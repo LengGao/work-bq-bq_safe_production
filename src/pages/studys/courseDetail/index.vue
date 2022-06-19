@@ -53,7 +53,7 @@
       <view class="close">
         <uni-icons type="close" color="#fff" size="42" @click="onClose" />
       </view>
-    </uni-popup>    
+    </uni-popup>
   </view>
 </template>
 

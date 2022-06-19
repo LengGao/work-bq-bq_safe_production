@@ -41,6 +41,7 @@ export default {
     return {
       correctAnswer: '',
       checkedAnswer: '',
+      // structureRightAnwser: [],
     };
   },
   created() {
@@ -54,7 +55,11 @@ export default {
     } else {
       if (this.options.user_answer.length) {
         this.checkedAnswer = this.options.user_answer.map(item => +item)[0]
-        this.correctAnswer = this.options.true_answer.map(item => +item)
+        if (this.options.true_answer) {
+          this.correctAnswer = this.options.true_answer.map(item => +item)
+        } else {
+          this.correctAnswer = this.options.option.map(item => item.is_right && +item.id).filter(item => !!item)
+        }
       }
     }
   },
@@ -62,7 +67,11 @@ export default {
     onChangeOpt(val) {
       // console.log('single onChangeOpt', val);
       if (val && this.model === 1) {
-        this.correctAnswer = this.options.true_answer.map(item => +item);
+        if (this.options.true_answer) {
+          this.correctAnswer = this.options.true_answer.map(item => +item);
+        } else {
+          this.correctAnswer = this.options.option.map(item => item.is_right && +item.id).filter(item => !!item)
+        }
       }
       this.checkedAnswer = val
       let data = { id: this.options.id, answer: [val] }

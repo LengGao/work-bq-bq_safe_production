@@ -3,7 +3,7 @@
     <view class="quetion-content">
       <u-parse :content="options.title" />
     </view>
-    <textarea :disabled="!!correctAnswer" class="text" @blur="onInput" :value="checkedAnswer" placeholder="请输入" />
+    <textarea :disabled="!!correctAnswer" class="text" @input="onInput" :value="checkedAnswer" placeholder="请输入" />
     <AnswerEye v-if="model !== 2" :correctAnswer="correctAnswer" @change="handleEyeChange" />
     <AnswerAnalysis v-if="model !== 2 && correctAnswer" short :question="options" :userAnswer="checkedAnswer" />
   </div>
@@ -39,6 +39,7 @@ export default {
     return {
       correctAnswer: "",
       checkedAnswer: "",
+      timer: 0,
     };
   },
   created() {
@@ -53,18 +54,28 @@ export default {
       if (this.options.user_answer.length) {
         this.checkedAnswer = this.options.user_answer[0]
         this.correctAnswer = this.options.true_answer
+        if (this.options.true_answer) {
+          this.correctAnswer = this.options.true_answer
+        } else {
+          this.correctAnswer = this.options.option[0].content
+        }
       }
     }
   },
   methods: {
     onInput({ detail }) {
+      // console.log('detail', detail);
       this.checkedAnswer = detail.value
       let data = { id: this.options.id, answer: detail.value }
       this.$emit("change", data);
     },
     handleEyeChange(val) {
       if (val) {
-        this.correctAnswer = this.options.true_answer;
+        if (this.options.true_answer) {
+          this.correctAnswer = this.options.true_answer
+        } else {
+          this.correctAnswer = this.options.option[0].content
+        }
       } else {
         this.correctAnswer = "";
       }

@@ -5,14 +5,14 @@
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" :current="currentIndex"
             :disable-touch="disableTouch"
-            :threshold="0"
-            :touchable="true"
-            @change="onSwiperChange">
+            :touchable="false"
+            @change="onSwiperChange"
+            @animationfinish="onAnimationfinish">
 
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    v-for="(item, index) in answerSheetArr" :key="index">
-
+          <template v-if="currentIndex === index || currentIndex === index - 1 || currentIndex === index + 1">
           <Single :options="questionList[index]" :model="model" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_type === 1" />
           <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
@@ -28,7 +28,8 @@
           <Case :options="questionList[index]" :serial-number="currentIndex + 1" :model="model"
                 v-if="questionList[index] && questionList[index].question_type === 7" :question-bank="question_bank_id"
                 :log-id="exam_log_id" @change="onCaseChange" @submitanswe-case="submitAnswerChild"
-                @index-change="onCaseIndexChange" />
+                />
+          </template>
       </swiper-item>
     </swiper>
 
@@ -237,7 +238,9 @@ export default {
     },
 
     onSwiperChange({ detail }) {
-      console.log('detail', detail);
+      // console.log('detail', detail);
+      this.disableTouch = true
+
       if (detail.source === 'touch') {
         this.prevIndex = this.currentIndex
         this.currentIndex = detail.current
@@ -272,13 +275,13 @@ export default {
         } else {
           question_id = inAnswerSheet.id
         }
-        console.log('getQuestionDetail', index, question_id, this.total);
+        // console.log('getQuestionDetail', index, question_id, this.total);
         this.getQuestionDetail(question_id, index)
       }
     },
 
-    onAnimationfinish({ detail }) {
-      // this.disableTouch = false
+    onAnimationfinish() {
+      this.disableTouch = false
     },
 
     onCaseIndexChange(index) {
@@ -328,9 +331,6 @@ export default {
       return { title, chapter_id, question_id, question_bank_id, exam_log_id, type, model, source, answer, answerCase }
     },
 
-    getParams() {
-    },
-
     onTimeUp() {
       uni.showModal({
         title: '提示',
@@ -378,7 +378,6 @@ export default {
       }
     },
 
-
     async endPractice() {
       let url = '/pages/examinations/answerSheet/index'
       let { title, chapter_id, question_id, question_bank_id, exam_log_id, type, model, source, answer, answerCase } = this.getQuery()
@@ -399,7 +398,6 @@ export default {
         uni.redirectTo({ url: path })
       }
     },
-
 
     async submitPaper() {
       let url = `/pages/examinations/answerResult/index`
@@ -446,7 +444,7 @@ export default {
     },
 
     async getQuestionDetail(question_id, index) {
-      console.log('getQuestionDetail', question_id, index);
+      // console.log('getQuestionDetail', question_id, index);
       let params = { question_id, question_bank_id: this.question_bank_id }
       let source = this.source
 
@@ -473,7 +471,7 @@ export default {
       let params = { chapter_id, exam_log_id, question_bank_id }
       let res = await api(params)
       if (res.code === 0) {
-        let lastId = last_question_id ? last_question_id : res.data.last_question_id
+        let lastId = last_question_id ? +last_question_id : +res.data.last_question_id
         let arr = res.data.arr
         let total = arr.length
         let prev = 0
@@ -481,13 +479,13 @@ export default {
         let next = 0
 
         if (!lastId) lastId = arr[0];
-        let index = arr.findIndex(item => item.id === lastId)
+        let index = arr.findIndex(item => item === lastId)
 
         if (index > 0 && index < total - 1) {
           prev = arr[index - 1]
           curr = arr[index]
           next = arr[index + 1]
-        } else if (index === total - 1 && total > 3) {
+        } else if (index === total - 1 && total >= 3) {
           prev = arr[index - 2]
           curr = arr[index - 1]
           next = arr[index]
@@ -517,7 +515,7 @@ export default {
       let params = { chapter_id, exam_log_id, question_bank_id }
       let res = await api(params)
       if (res.code === 0) {
-        let lastId = last_question_id ? last_question_id : res.data.last_question_id
+        let lastId = last_question_id ? +last_question_id : +res.data.last_question_id
         let arr = res.data.arr
         let total = arr.length
         let prev = 0
@@ -531,7 +529,7 @@ export default {
           prev = arr[index - 1].id
           curr = arr[index].id
           next = arr[index + 1].id
-        } else if (index === total - 1 && total > 3) {
+        } else if (index === total - 1 && total >= 3) {
           prev = arr[index - 2]?.id
           curr = arr[index - 1]?.id
           next = arr[index]?.id
@@ -575,7 +573,7 @@ export default {
         arr[index - 1] = list[0]
         arr[index] = list[1]
         arr[index + 1] = list[2]
-      } else if (index === total - 1 && total > 3) {
+      } else if (index === total - 1 && total >= 3) {
         arr[index - 2] = list[0]
         arr[index - 1] = list[1]
         arr[index] = list[2]
@@ -584,9 +582,9 @@ export default {
         if (list[1]) arr[index + 1] = list[1];
         if (list[2]) arr[index + 2] = list[2];
       } else if (index === total - 1) {
-        if (list[0]) arr[index - 2] = list[0]
-        if (list[1]) arr[index - 1] = list[1]
-        arr[index] = list[2]
+        if (list[index - 2]) arr[index - 2] = list[index - 2]
+        if (list[index - 1]) arr[index - 1] = list[index - 1]
+        arr[index] = list[index]
       } else {
         arr[index] = list[0];
         if (list[1]) arr[index + 1] = list[1];

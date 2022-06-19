@@ -1,7 +1,7 @@
 <template>
   <view class="footer">
     <template v-if="model === 1">
-      <view class="btn" @click="handleClick">继续练习</view>
+      <view class="btn" @click="handleClick">{{ noFinish ? '继续练习' : '返回' }}</view>
     </template>
     <template v-else-if="model === 2">
       <view class="btn plain" @click="handleClick">继续做题</view>
@@ -20,6 +20,10 @@ export default {
       type: [String, Number],
       default: 1,
     },
+    noFinish: {
+      type: Boolean,
+      default: true
+    }
   },
   methods: {
     handleClick(e) {
