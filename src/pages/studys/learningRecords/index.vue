@@ -42,19 +42,20 @@
           <view class="col type-4">{{ tableData.end_date }}</view>
         </view>
 
-        <view v-for="(item, index) in listData.data" :key="index">
-          <view class="row">
-            <view class="col type-3">课程名称</view>
-            <view class="col type-4"><text style="margin: 0px 10rpx;">{{ item.course_title }}</text></view>
+        <view class="row">
+          <view class="col type-3">课程名称</view>
+          <view class="col type-4">{{ listData.course_title }}</view>
 
-            <view class="col type-3">课程编号</view>
-            <view class="col type-4">{{ item.course_id }}</view>
-          </view>
-          <view class="row">
-            <view class="col type-5">单次学习开始时间</view>
-            <view class="col type-5">单次学习结束时间</view>
-            <view class="col type-5">IP地址</view>
-          </view>
+          <view class="col type-3">课程编号</view>
+          <view class="col type-4">{{ listData.course_id }}</view>
+        </view>
+
+        <view class="row">
+          <view class="col type-5">单次学习开始时间</view>
+          <view class="col type-5">单次学习结束时间</view>
+          <view class="col type-5">IP地址</view>
+        </view>
+        <view v-for="(item, index) in listData.data" :key="index">
           <view class="row">
             <view class="col type-6">{{ item.starttime }}</view>
             <view class="col type-6">{{ item.endtime }}</view>
@@ -64,6 +65,8 @@
       </view>
 
       <view class="seal" v-if="tableData.certificate_stamp">
+        <view class="text">{{ tableData.org_name }}</view>
+        <view class="text">{{ tableData.today }}</view>
         <image class="seal-img" :src="tableData.certificate_stamp" mode="aspectFit" />
       </view>
     </view>
@@ -97,8 +100,13 @@ export default {
       let params = { course_id: this.course_id }
       let res = await buildLearnRecord(params)
       if (res.code === 0) {
+        let listData = {}
+        listData.course_title = res.data.record.data[0].course_title
+        listData.course_id = res.data.record.data[0].course_id
+        listData.data = res.data.record.data.map(item => ({starttime: item.starttime, endtime: item.endtime, ip: item.ip}))
+
         this.tableData = res.data
-        this.listData = res.data.record
+        this.listData = listData
       }
       uni.hideLoading()
     }
@@ -186,13 +194,22 @@ export default {
 }
 
 .seal {
-  position: absolute;
-  right: 20rpx;
-  bottom: -120rpx;
+  position: relative;
+  float: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
   .seal-img {
-    
+    position: absolute;
     width: 160rpx;
     height: 160rpx;
+  }
+
+  .text {
+    font-size: 24rpx;
+    color: #666;
   }
 }
 

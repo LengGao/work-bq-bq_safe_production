@@ -189,11 +189,14 @@ export default {
       video.height = videoSize.height
       video.naturalWidth = videoSize.width
       video.naturalHeight = videoSize.height
-      canvas.width = videoSize.height * 2
-      canvas.height = videoSize.height * 2
+      // canvas.width = videoSize.height * 2
+      // canvas.height = videoSize.height * 2
+      canvas.width = 800
+      canvas.height = 800
 
       context.drawImage(video, 0, 0, clinp, clinp, 0, 0, scale, scale)
       image = canvas.toDataURL('image/png', 1)
+      // this.textSrc = image
       base64 = image.split(';base64,')[1]
       return { lesson_id: this.lesson_id, end_second: this.end_second, photo: base64 }
     },
