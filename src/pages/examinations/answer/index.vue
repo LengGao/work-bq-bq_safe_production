@@ -499,6 +499,7 @@ export default {
     },
 
     async getWrongCollectAnswerSheet() {
+      let restart = this.restart
       let source = this.source
       let chapter_id = this.chapter_id
       let exam_log_id = this.exam_log_id

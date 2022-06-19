@@ -11,14 +11,14 @@
             <template v-for="(parent, parentIndex) in item">
               <Circular v-for="(child, index) in parent.child" :key="child.id"
                         :type="statusMap[model][child.is_answered]" @click="onSelect(type, parentIndex)">
-                {{parentIndex + 1}}-{{ index + 1 }}
+                {{typesNumber[type] + parentIndex + 1}}-{{ index + 1 }}
               </Circular>
             </template>
           </template>
           <template v-else>
             <Circular v-for="(question, index) in item" :key="question.id"
                       :type="statusMap[model][question.is_answered]" @click="onSelect(type, index)">
-              {{ index + 1 }}
+              {{typesNumber[type] + index + 1 }}
             </Circular>
           </template>
         </view>
@@ -229,14 +229,23 @@ export default {
         this.arr = res.data.arr
         this.list = res.data.list;
         this.checkIsFinish(this.arr)
+        this.statisticsQuestions(res.data.list)
       }
     },
     
     statisticsQuestions(list) {
       let obj = {}
-      Object.keys(list).forEach(k => {
-        obj[k] = list[k]?.length
+
+      Object.keys(list).forEach((k) => {
+        let sun = 0
+        for (let i = +k - 1; i > 0; i--) {
+          if (list[`${i}`]) {
+            sun = sun + list[`${i}`].length
+          }
+        }
+        obj[k] = sun
       })
+
       this.typesNumber = obj
     },
 
