@@ -10,7 +10,6 @@
             v-if="questionList[currentIndex]"
             @change="onSwiperChange">
       <swiper-item class="swiper-item" v-for="(item, index) in questionList" :key="index">
-        <template v-if="currentIndex === index || currentIndex === index + 1">
         <Single :options="questionList[currentIndex]" @change="onSingleChange"
                 v-if="questionList[currentIndex] && questionList[currentIndex].question_type === 1" />
         <Multiple :options="questionList[currentIndex]" @change="onSingleChange"
@@ -23,7 +22,6 @@
                     v-if="questionList[currentIndex] && questionList[index].question_type === 5" />
         <Short :options="questionList[currentIndex]" @change="onInputChange"
                v-if="questionList[currentIndex] && questionList[currentIndex].question_type === 6" />
-        </template>
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" :test="true" 
@@ -304,7 +302,10 @@ export default {
         this.last_question_id = res.data.last_id
         this.frequency = res.data.times
         this.total = res.data.question.length
-        this.questionList = res.data.question
+        this.questionList = res.data.question.map(item => {
+          item.answer = [];
+          return item
+        })
         this.initQuestion(res.data.last_id, res.data.question)
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none'})
@@ -316,7 +317,6 @@ export default {
 
     initQuestion(last_question_id, list) {
       let index = list.findIndex(item => item.question_id === last_question_id)
-      console.log(index);
       this.currentIndex = (index !== -1 ? index : 0)
       this.practiceQuestion(this.currentIndex)
 
