@@ -21,7 +21,7 @@
         <button class="btn-primary" v-if="!showRestartBtn" :disabled="btndisabled" size="small"
         :class="btndisabled ? 'btn-disabled' : ''" @click="handleOk">开始认证</button>
         <button class="btn-primary" v-else size="small" 
-        @click="init">重新验证</button>
+        @click="reStart">重新验证</button>
       </view>
     </view>
 
@@ -160,18 +160,16 @@ export default {
         navigator[devicesState](constraints, this.handlerSuccess, this.handlerError)
       }
     },
+    // 重新认证
+    reStart() {
+      if (this.strem) { this.strem.getTracks().forEach((track) => track.stop()); }
+      this.checkSetting()
+    },
     // 开始雅正
     handleOk() {
       // console.log('handleOk');
       this.btndisabled = true
-      this.timer = setInterval(() => {
-        if (this.verificationStatus) {
-          clearInterval(this.timer)
-          this.timer = null
-        } else {
-          this.sendData()
-        }
-      }, 1000)
+      this.sendData()
     },
     // 获取数据 
     getMediaData() {
@@ -194,7 +192,7 @@ export default {
       canvas.width = 800
       canvas.height = 800
 
-      context.drawImage(video, 0, 0, clinp, clinp, 0, 0, scale, scale)
+      context.drawImage(video, 0, 0, 800, 800)
       image = canvas.toDataURL('image/png', 1)
       // this.textSrc = image
       base64 = image.split(';base64,')[1]
@@ -221,9 +219,9 @@ export default {
       this.verificationStatus = false
       this.countError++;
 
-      if (this.countError > 10) {
+      if (this.countError > 3) {
         this.btndisabled = false
-        clearInterval(this.timer)
+        clearTimeout(this.timer)
         this.timer = null
         this.toastMsg = '人脸验证失败, 请重新验证'
       }
@@ -237,6 +235,9 @@ export default {
       } else {
         this.toastMsg = res.message
         this.verifierror()
+        this.timer = setTimeout(() => {
+          this.sendData()
+        }, 1000)
       }
     },
   }
