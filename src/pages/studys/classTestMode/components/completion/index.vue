@@ -7,7 +7,8 @@
       <template v-slot:label>
         {{ index + 1  }}
       </template>
-      <input type="text" :disabled="analysis" v-model="item.value" placeholder="请输入" @blur="onInput" />
+      <input type="text" :disabled="analysis" v-model="item.value" placeholder="请输入" 
+        confirm-type="完成"  @blur="onInput" @confirm="handlBlur" />
     </i-option>
     <AnswerAnalysis v-if="analysis" :question="options" />
   </view>
@@ -59,6 +60,8 @@ export default {
   },
   methods: {
     onInput() {
+      if (this.options.hasAnswer) { return; }
+      
       let answer = this.inputItem.map(item => item.value)
       this.checkedAnswer = answer
       let data = { question_id: this.options.question_id, answer: answer }

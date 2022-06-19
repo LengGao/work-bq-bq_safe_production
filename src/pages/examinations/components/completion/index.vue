@@ -8,7 +8,7 @@
         <text> {{ index + 1 }}</text>
       </template>
       <input type="text" class="input" :disabled="!!correctAnswer" v-model="item.value" placeholder="请输入"
-             @blur="handlBlur" />
+              confirm-type="完成" @blur="handlBlur" @confirm="handlBlur" />
     </IOption>
     <AnswerEye v-if="model !== 2" :correct-answer="correctAnswer" @change="handleEyeChange" />
     <AnswerAnalysis v-if="model !== 2 && correctAnswer" :question="options" :userAnswer="checkedAnswer" />

@@ -149,7 +149,7 @@ export default {
 
     goBack() {
       let url = `/pages/studys/courseDetail/index`
-      let query = `?lesson_id=${this.lesson_id}&course_id=${this.course_id}&autoplay=1`
+      let query = `?lesson_id=${this.lesson_id}&course_id=${this.course_id}&autoplay=0`
       uni.redirectTo({ url: url + query })
     },
 
@@ -258,7 +258,10 @@ export default {
       let query = { practice_id, course_id, lesson_id }
       let path = this.getPath(url, query)
 
-      if (this.answered[question_id]) return uni.redirectTo({ url: path });
+      if (this.answered[question_id]) {
+        uni.redirectTo({ url: path });
+        return;
+      }
 
       let params = { practice_id, question_id: question_id, answer: answer.answer }
       let res = await practiceAnswer(params)
@@ -271,7 +274,11 @@ export default {
       let { practice_id, question_id, answer } = this.getQuery(prevIndex)
       let params = { practice_id, question_id: question_id, answer: answer.answer }
 
-      if (this.answered[question_id]) return this.disableTouch = false;
+      if (this.answered[question_id]) {
+        this.disableTouch = false;
+        return;
+      }
+      this.questionList[prevIndex].hasAnswer = true
       
       let res = await practiceAnswer(params)
       if (res.code === 0) {
@@ -303,6 +310,7 @@ export default {
         this.frequency = res.data.times
         this.total = res.data.question.length
         this.questionList = res.data.question.map(item => {
+          item.hasAnswer = false
           item.answer = [];
           return item
         })

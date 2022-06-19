@@ -51,6 +51,7 @@ export default {
   },
   methods: {
     onInput({ detail }) {
+      if (this.options.hasAnswer) { return; }
       let data = {question_id: this.options.question_id, answer: [detail.value]}
       this.$emit("change", data)
     },

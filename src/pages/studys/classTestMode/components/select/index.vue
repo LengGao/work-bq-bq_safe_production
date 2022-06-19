@@ -102,7 +102,7 @@ export default {
     },
     // 单选 多选
     onOptionChange(val) {
-      if (this.analysis) return;
+      if (this.analysis || this.checkedAnswer.length) return;
       if (this.multiple) {
         this.multipleChoice(val)
         this.$emit("change", this.checkedAnswer);

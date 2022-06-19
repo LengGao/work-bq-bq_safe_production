@@ -343,6 +343,7 @@ export default {
               position: relative;
               top: -4rpx;
               color:  #fff;
+              font-weight: 500;
               background-color: #199fff;
               border-color: #199fff;
             }

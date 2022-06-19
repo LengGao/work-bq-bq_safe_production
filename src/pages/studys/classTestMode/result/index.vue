@@ -107,7 +107,7 @@ export default {
     },
     onNext() {
       let url = `/pages/studys/courseDetail/index`
-      let query = `?lesson_id=${this.next_lesson_id}&course_id=${this.course_id}`
+      let query = `?lesson_id=${this.next_lesson_id}&course_id=${this.course_id}&autoplay=1`
       uni.reLaunch({ url: url + query })
     },
     onRestart(type) {
@@ -115,7 +115,7 @@ export default {
       let query = ''
       if (type === 'study') {
         url = `/pages/studys/courseDetail/index`
-        query = `?lesson_id=${this.lesson_id}&course_id=${this.course_id}`
+        query = `?lesson_id=${this.lesson_id}&course_id=${this.course_id}&autoplay=1`
         uni.redirectTo({ url: url + query })
       } else {
         url = `/pages/studys/classTestMode/answer/index`

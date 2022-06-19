@@ -449,7 +449,7 @@ export default {
         width: '100%',
         height: '200px',
         controlBarVisibility: 'click',
-        autoplay: false,
+        autoplay: options.autoplay,
         isLive: false,
         playsinline: true,
         preload: true,
@@ -485,7 +485,6 @@ export default {
           console.log('ready');
           if (this.lesson.free_second) player.setPreviewTime(this.lesson.free_second);
           player.seek(this.start_second)
-          if (options.autoplay) player.play();
         })
         player.on('play', () => {
           this.needFaceVerifity(this.start_second)

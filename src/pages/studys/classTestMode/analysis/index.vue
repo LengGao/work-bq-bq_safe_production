@@ -124,11 +124,11 @@ export default {
       
       if (this.pass) {
         let url = '/pages/studys/courseDetail/index'
-        let query = `?course_id=${course_id}&lesson_id=${this.next_lesson_id}`
+        let query = `?course_id=${course_id}&lesson_id=${this.next_lesson_id}&autoplay=1`
         uni.redirectTo({ url: url + query })
       } else {
         let url = `/pages/studys/classTestMode/answer/index`
-        let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${course_id}`
+        let query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${course_id}&autoplay=1`
         uni.redirectTo({ url: url + query })
       }
     },
