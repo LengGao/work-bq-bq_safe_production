@@ -94,7 +94,7 @@ export default {
       }
 
       const analysisCallback = () => {
-        query = `?chapter_id=${id}&question_bank_id=${question_bank_id}&last_question_id=${last_question_id}&model=3&source=${source}&title=${title}`
+        query = `?chapter_id=${id}&question_bank_id=${question_bank_id}&source=${source}&title=${title}&model=3&restart=1`
         uni.navigateTo({ url: url + query });
       }
 

@@ -86,6 +86,7 @@ export default {
       defaultTitle: '',
       throttle: false,
       disableTouch: false,
+      restart: 0,
 
       prevIndex: -1,
       currentIndex: 0,
@@ -158,6 +159,7 @@ export default {
         title = "",
         model = 0,
         source = "",
+        restart
       } = query
       if (!source) uni.showToast({ title: '无效答题来源' })
 
@@ -168,6 +170,7 @@ export default {
       this.title = title
       this.source = source
       this.model = !!model ? +model : this.sourceMap[source]
+      this.restart = !!restart
 
       this.defaultTitle = title
     },
@@ -478,7 +481,7 @@ export default {
         let curr = 0
         let next = 0
 
-        if (!lastId) lastId = arr[0];
+        if (!lastId || restart) lastId = arr[0];
         let index = arr.findIndex(item => item === lastId)
 
         if (index > 0 && index < total - 1) {
@@ -505,6 +508,7 @@ export default {
     },
 
     async getPracticeAnswerSheet() {
+      let restart = this.restart
       let source = this.source
       let chapter_id = this.chapter_id
       let exam_log_id = this.exam_log_id
@@ -522,7 +526,8 @@ export default {
         let curr = 0
         let next = 0
 
-        if (!lastId) lastId = arr[0].id;
+        if (!lastId || restart) lastId = arr[0].id;
+
         let index = arr.findIndex(item => item.id === lastId)
 
         if (index > 0 && index < total - 1) {

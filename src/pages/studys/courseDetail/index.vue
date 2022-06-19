@@ -124,6 +124,11 @@ export default {
   onLoad(query) {
     this.init(query)
   },
+  onHide() {
+    if (this.player) {
+      this.player.pause()
+    }
+  },
   mounted() {
     document.addEventListener('visibilitychange', (state) => {
       console.log('visibilitychange', state);
@@ -444,6 +449,7 @@ export default {
         preload: true,
         useH5Prism: true,
         x5_type: "H5",
+        
         skinLayout: [
           { name: "bigPlayButton", align: "cc", x: 30, y: 80 },
           { name: "H5Loading", align: "cc", },
@@ -458,6 +464,7 @@ export default {
               { name: "playButton", align: "tl", x: 15, y: 12 },
               { name: "timeDisplay", align: "tl", x: 10, y: 7 },
               { name: "fullScreenButton", align: "tr", x: 10, y: 12 },
+              {name:"setting", align:"tr",x:15, y:12},
               { name: "volume", align: "tr", x: 5, y: 10 }
             ]
           }
@@ -597,6 +604,10 @@ export default {
   border-radius: 50%;
   z-index: 999;
   background-color: #000;
+}
+
+::v-deep .prism-setting-speed {
+  display: none !important;
 }
 
 .course-img {

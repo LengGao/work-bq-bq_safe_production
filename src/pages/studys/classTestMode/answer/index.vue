@@ -2,32 +2,32 @@
   <view class="answer">
     <custom-header :title="defaultTitle" :customBack="onCustomBack"></custom-header>
 
-    <uni-notice-bar v-if="notice" showIcon color="#E2E227" background-color="#f8f8f8"
-                    text="在考试过程中不得弄虚作假，严禁采用任何作弊手段，遵纪守法，保证考试数据真实可信。" class="notice" />
+    <uni-notice-bar class="notice"  v-if="notice" showIcon :text="noticeText"  />
 
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" :current="currentIndex" :disable-touch="disableTouch"
             v-if="questionList[currentIndex]"
             @change="onSwiperChange">
-      <swiper-item class="swiper-item" v-for="(item, index) in answerSheet" :key="index">
-        <Single :options="questionList[index]" @change="onSingleChange"
-                v-if="questionList[index] && questionList[index].question_type === 1" />
-        <Multiple :options="questionList[index]" @change="onSingleChange"
-                  v-if="questionList[index] && questionList[index].question_type === 2" />
-        <Indefinite :options="questionList[index]" @change="onSingleChange"
-                    v-if="questionList[index] && questionList[index].question_type === 3" />
-        <Judg :options="questionList[index]" @change="onSingleChange"
-              v-if="questionList[index] && questionList[index].question_type === 4" />
-        <Completion :options="questionList[index]" @change="onInputChange"
-                    v-if="questionList[index] && questionList[index].question_type === 5" />
-        <Short :options="questionList[index]" @change="onInputChange"
-               v-if="questionList[index] && questionList[index].question_type === 6" />
+      <swiper-item class="swiper-item" v-for="(item, index) in questionList" :key="index">
+
+        <Single :options="questionList[currentIndex]" @change="onSingleChange"
+                v-if="questionList[currentIndex] && questionList[currentIndex].question_type === 1" />
+        <Multiple :options="questionList[currentIndex]" @change="onSingleChange"
+                  v-if="questionList[currentIndex] && questionList[index].question_type === 2" />
+        <Indefinite :options="questionList[currentIndex]" @change="onSingleChange"
+                    v-if="questionList[currentIndex] && questionList[index].question_type === 3" />
+        <Judg :options="questionList[currentIndex]" @change="onSingleChange"
+              v-if="questionList[currentIndex] && questionList[index].question_type === 4" />
+        <Completion :options="questionList[currentIndex]" @change="onInputChange"
+                    v-if="questionList[currentIndex] && questionList[index].question_type === 5" />
+        <Short :options="questionList[currentIndex]" @change="onInputChange"
+               v-if="questionList[currentIndex] && questionList[currentIndex].question_type === 6" />
       </swiper-item>
     </swiper>
-<!--  :time="questionList[currentIndex].timeout" @timeup="onTimeUp" -->
     <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" :test="true" v-if="questionList[currentIndex]"
-               :currentIndex="currentIndex"
+               :currentIndex="currentIndex" 
+               :time="time" @timeup="onTimeUp"
                @submit-paper="submitPaper" @next="handleNext" @prev="handlePrev">
     </AnswerBar>
   </view>
@@ -68,8 +68,11 @@ export default {
   data() {
     return {
       defaultTitle: '随堂练习',
+      noticeText: '在考试过程中不得弄虚作假，严禁采用任何作弊手段，遵纪守法，保证考试数据真实可信。',
+
       lesson_id: 0,
       course_id: 0,
+      last_question_id: 0,
 
       prevIndex: -1,
       currentIndex: 0,
@@ -78,6 +81,9 @@ export default {
       notice: false,
 
       total: 0,
+      time: 0,
+      frequency: 0,
+
       answerSheet: [],
       questionList: [],
       userAnswerMap: {},
@@ -101,7 +107,6 @@ export default {
     this.createQuestion();
   },
   onReady() {
-    // console.log('this.$store.getters.is_examination', this.$store.getters.is_examination);
     if (!this.$store.getters.is_examination) {
       this.notice = true
       this.$store.commit('SET_EXAMINATION', true)
@@ -126,6 +131,22 @@ export default {
       })
     },
 
+    showModalForNoPass() {
+      uni.showModal({
+        title: '提示',
+        content: `每次考试有5次机会，您当前剩余${this.frequency}次`,
+        showCancel: false,
+        success: ({ confirm, cancel }) => {
+          if (confirm) {
+            if (this.frequency === 0) {
+              this.goBack()
+            }
+          }
+        }
+      })
+    },
+    
+
     goBack() {
       let pages = getCurrentPages()
       if (pages.length > 1) {
@@ -133,6 +154,25 @@ export default {
       } else {
         history.back()
       }
+    },
+
+    getPath(url, query) {
+      let params = ''
+      Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
+      params = params.replace(/&?/, '?')
+      return url + params
+    },
+
+    getQuery(prevIndex) {
+      let index = prevIndex !== undefined ? prevIndex : this.currentIndex
+      let question = this.questionList[index]
+      let question_id = question.question_id
+      let practice_id = this.practice_id
+      let course_id = this.course_id
+      let lesson_id = this.lesson_id
+      let answer = this.userAnswerMap[question_id] || {answer: []}
+
+      return { practice_id, question_id, course_id, lesson_id, answer }
     },
 
     checkInputAnswer(answer) {
@@ -149,7 +189,6 @@ export default {
       let flag = this.checkInputAnswer(answer.answer)
       if (flag) {
         this.cacheAnswer(answer)
-        this.disableTouch = false
       }
     },
 
@@ -157,7 +196,6 @@ export default {
       let flag = this.checkInputAnswer(answer.answer)
       if (flag) {
         this.cacheAnswer(answer)
-        this.disableTouch = false
       }
     },
 
@@ -196,43 +234,15 @@ export default {
       } else if (this.isEnd) {
         uni.showToast({ title: '已经是最后一题了', icon: 'none' })
       }
-      
-      this.prevfetch()
+
+      this.submitAnswer(this.prevIndex)
     },
 
-    prevfetch() {
-      if (!this.isEnd) {
-        let index = this.currentIndex + 1
-        let question_id = this.answerSheet[index]
-        let question = this.questionList[index]
-        if (question_id && !question) {
-          this.practiceQuestion(question_id, index)
-        }
-      }
-    },
 
     cacheAnswer(answer) {
+      this.disableTouch = false
       let key = answer.question_id
       this.userAnswerMap[key] = answer
-    },
-
-    getPath(url, query) {
-      let params = ''
-      Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
-      params = params.replace(/&?/, '?')
-      return url + params
-    },
-
-    getQuery(prevIndex) {
-      let index = prevIndex !== undefined ? prevIndex : this.currentIndex
-      let question = this.questionList[index]
-      let question_id = question.question_id
-      let practice_id = this.practice_id
-      let course_id = this.course_id
-      let lesson_id = this.lesson_id
-      let answer = this.userAnswerMap[question_id] || {answer: []}
-
-      return { practice_id, question_id, course_id, lesson_id, answer }
     },
 
      onTimeUp() {
@@ -266,19 +276,21 @@ export default {
       let res = await practiceAnswer(params)
       if (res.code === 0) {
         this.disableTouch = false
+        this.practiceQuestion(this.currentIndex)
       } else {  
         uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
     },
 
-    async practiceQuestion(question_id, index) {
+    async practiceQuestion(index) {
       let practice_id = this.practice_id
+      let question_id = this.questionList[index].question_id
+      if (!question_id) return;
       let params = { question_id, practice_id }
       let res = await practiceQuestion(params)
 
-      if (res.code === 0) {
-        let question = res.data
-        this.questionList[index] = question
+      if (res.code === 0) {        
+        this.time = res.data.timeout
       }
     },
 
@@ -286,29 +298,25 @@ export default {
       const data = { lesson_id: this.lesson_id };
       const res = await practiceStart(data);
       if (res.code === 0) {
-        let answerSheet = res.data.question
         this.practice_id = res.data.practice_id
+        this.last_question_id = res.data.last_id
+        this.frequency = res.data.times
         this.total = res.data.question.length
-        this.answerSheet = answerSheet
-        
-        this.initQuestions(JSON.parse(JSON.stringify(answerSheet)))
+        this.questionList = res.data.question
+        this.initQuestion(res.data.last_id, res.data.question)
       }
     },
 
-    async initQuestions(list) {
-      let question_id = list[0]
-      this.questionList = list
+    initQuestion(last_question_id, list) {
+      let index = list.findIndex(item => item.question_id === last_question_id)
+      this.currentIndex = (index !== -1 ? index : 0)
+      this.practiceQuestion(this.currentIndex)
 
-      let practice_id = this.practice_id
-      let params = { question_id, practice_id }
-
-      let res = await practiceQuestion(params)
-      if (res.code === 0) {
-        let question = res.data
-        this.questionList[0] = question
-        // this.$forceUpdate()
+      if (last_question_id === 0) {
+        this.showModalForNoPass()
       }
     }
+
   },
 };
 </script>

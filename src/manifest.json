@@ -53,7 +53,7 @@
 	"h5": {
 		"publickPath": "./static",
 		"devServer": {
-			"https": true
+			"https": false
 		},
 		"optimization": {
 			"prefetch": true,
