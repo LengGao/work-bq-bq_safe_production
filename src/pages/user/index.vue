@@ -63,10 +63,10 @@ export default {
       ],
       listIndex: 0,
       links: [
-        { id: 1, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-shoucang3' }, title: "课程收藏", url: "/pages/users/userCollectCource/index" },
-        { id: 2, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-guanyuwomen-2' }, title: "关于我们", url: "/pages/users/aboutUs/index" },
-        { id: 3, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-Opinion' }, title: "意见反馈", url: "/pages/users/feedback/index" },
-        { id: 4, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '60rpx', type: 'icon-lianxikefu' }, title: "联系客服", url: "/pages/users/contactService/index" },
+        { id: 1, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '56rpx', type: 'icon-shoucang3' }, title: "课程收藏", url: "/pages/users/userCollectCource/index" },
+        { id: 2, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '56rpx', type: 'icon-guanyuwomen-2' }, title: "关于我们", url: "/pages/users/aboutUs/index" },
+        { id: 3, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '56rpx', type: 'icon-Opinion' }, title: "意见反馈", url: "/pages/users/feedback/index" },
+        { id: 4, showExtraIcon: { customPrefix: 'iconfont', color: '#1296db', size: '56rpx', type: 'icon-lianxikefu' }, title: "联系客服", url: "/pages/users/contactService/index" },
       ],
     };
   },

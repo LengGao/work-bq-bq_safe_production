@@ -34,7 +34,7 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left"> 学习课程 </view>
         <view class="logan-list-head-right" @click="onClickAll">
-          <text>查看全部课程</text>
+          <text style="font-size: 28rpx">查看全部课程</text>
           <uni-icons type="forward" size="32rpx" />
         </view>
       </view>

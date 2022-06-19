@@ -205,6 +205,12 @@ export default {
   font-size: $font-size-base;
 }
 
+.title-box {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+
 .one-title {
   font-weight: bold;
 }

@@ -29,7 +29,7 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left">安全生产资格培训</view>
         <view class="logan-list-head-right" @click="() => onClickAll(1)">
-          <text>全部课程</text>
+          <text style="font-size: 28rpx">全部课程</text>
           <uni-icons type="forward" size="28rpx" />
         </view>
       </view>
@@ -45,7 +45,7 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left">推荐课程</view>
         <view class="logan-list-head-right" @click="() => onClickAll(2)">
-          <text>查看全部</text>
+          <text style="font-size: 28rpx">全部课程 </text>
           <uni-icons type="forward" size="28rpx" />
         </view>
       </view>
@@ -94,7 +94,7 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left">政策专栏</view>
         <view class="logan-list-head-right" @click="() => onClickAll(3)">
-          <text>全部政策</text>
+          <text style="font-size: 28rpx">全部政策</text>
           <uni-icons type="forward" size="28rpx" />
         </view>
       </view>
@@ -116,7 +116,7 @@
       <view class="logan-list-head">
         <view class="logan-list-head-left">文库资料</view>
         <view class="logan-list-head-right" @click="onClickAll(4)">
-          <text>全部资料</text>
+          <text style="font-size: 28rpx">全部资料</text>
           <uni-icons type="forward" size="28rpx" />
         </view>
       </view>

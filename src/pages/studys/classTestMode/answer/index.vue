@@ -10,7 +10,7 @@
             v-if="questionList[currentIndex]"
             @change="onSwiperChange">
       <swiper-item class="swiper-item" v-for="(item, index) in questionList" :key="index">
-
+        <template v-if="currentIndex === index || currentIndex === index + 1">
         <Single :options="questionList[currentIndex]" @change="onSingleChange"
                 v-if="questionList[currentIndex] && questionList[currentIndex].question_type === 1" />
         <Multiple :options="questionList[currentIndex]" @change="onSingleChange"
@@ -23,6 +23,7 @@
                     v-if="questionList[currentIndex] && questionList[index].question_type === 5" />
         <Short :options="questionList[currentIndex]" @change="onInputChange"
                v-if="questionList[currentIndex] && questionList[currentIndex].question_type === 6" />
+        </template>
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" :test="true" 

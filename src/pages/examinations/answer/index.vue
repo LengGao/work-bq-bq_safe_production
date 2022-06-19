@@ -5,12 +5,12 @@
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" :current="currentIndex"
             :disable-touch="disableTouch"
-            :touchable="false"
             @change="onSwiperChange"
             @animationfinish="onAnimationfinish">
 
       <swiper-item class="swiper-item"
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
+                   @touchmove="onTouchmove"
                    v-for="(item, index) in answerSheetArr" :key="index">
           <template v-if="currentIndex === index || currentIndex === index - 1 || currentIndex === index + 1">
           <Single :options="questionList[index]" :model="model" @change="onSingleChange"
@@ -318,8 +318,9 @@ export default {
       this.disableTouch = false
     },
 
-    onTouchmove() {
-      // console.log('asd');
+    onTouchmove(e) {
+      // console.log('onTouchmove', e);
+      e.preventDefault()
     },
 
     onCaseIndexChange(index) {

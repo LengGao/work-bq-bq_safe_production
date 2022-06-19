@@ -3,21 +3,24 @@
     <custom-header :title="defaultTitle"></custom-header>
 
     <view class="search-bar">
-      <uni-search-bar v-model="keyword" placeholder="请输入您想要搜索的关键词" bgColor="#fff" cancelButton="none" 
-        @confirm="onSearch" @clear="onClear"  @cancel="onCancel" />
+      <uni-search-bar v-model="keyword" placeholder="请输入您想要搜索的关键词" bgColor="#fff" cancelButton="none"
+                      @confirm="onSearch" @clear="onClear" @cancel="onCancel" />
     </view>
     <view class="list">
       <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
                      :topbar="true" :safearea="true">
-        <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.cover"
-                 :rightFooter="library.time || '--'" @clickRight="() => onClickLibrary(library)" class="list-item">
-          <template v-slot:rightTop>
-            <view class="logan-card-right-top">
-              <uni-icons custom-prefix="iconfont" :type="fileTypeMap[library.file_type] || defaultFileType" size="28rpx" color="#aaa"/>
-              <text class="library-text">{{ library.title }}</text>
-            </view>
-          </template>
-        </CardRow>
+        <view class="list-item" v-for="library in librarys" :key="library.id">
+          <CardRow :leftImage="library.cover" :rightFooter="library.time || '--'"
+                   @clickRight="() => onClickLibrary(library)">
+            <template v-slot:rightTop>
+              <view class="logan-card-right-top">
+                <uni-icons custom-prefix="iconfont" :type="fileTypeMap[library.file_type] || defaultFileType"
+                           size="28rpx" color="#aaa" />
+                <text class="library-text">{{ library.title }}</text>
+              </view>
+            </template>
+          </CardRow>
+        </view>
       </mescroll-body>
     </view>
   </view>
@@ -31,7 +34,7 @@ import { libraryList } from '@/api/index'
 
 export default {
   mixins: [MescrollMixin],
-  components: { 
+  components: {
     CardRow,
     CustomHeader,
   },
@@ -53,15 +56,15 @@ export default {
         'txt': 'icon-txt',
         'zip': 'icon-wenjianleixing-biaozhuntu-yasuowenjian',
         'pdf': 'icon-wenjianleixing-biaozhuntu-PDFwendang',
-        'doc':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
-        'docs':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
-        'docx':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
-        'xls':  'icon-wenjianleixing-suolvetu-gongzuobiao',
-        'xlsx':  'icon-wenjianleixing-suolvetu-gongzuobiao',
-        'jpg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-        'gif':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-        'png':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-        'jpeg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'doc': 'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'docs': 'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'docx': 'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'xls': 'icon-wenjianleixing-suolvetu-gongzuobiao',
+        'xlsx': 'icon-wenjianleixing-suolvetu-gongzuobiao',
+        'jpg': 'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'gif': 'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'png': 'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'jpeg': 'icon-wenjianleixing-suolvetu-tupianwenjian',
       },
     }
   },
@@ -103,7 +106,6 @@ export default {
         keyword: this.keyword,
       }
       const res = await libraryList(data)
-      if (res.code !== 0) return this.mescroll.endBySize(0, 0);
       let curPageData = res.data.list;
       let curPageLen = curPageData.length;
       let totalSize = res.data.total;
@@ -119,7 +121,8 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 .library-list {
-  height: 100%;
+  width: 100%;
+  height: 100vh;
   background-color: #f8f8f8;
 }
 
@@ -130,14 +133,14 @@ export default {
 .list {
   padding: 0 30rpx;
   height: 100%;
+  background-color: #f8f8f8;
+  overflow: auto;
 
   &-item {
+    overflow: hidden;
     margin-top: 20rpx;
     background-color: #fff;
-  }
-
-  &-item:nth-child(2) {
-    margin-top: 0;
+    border: none;
   }
 
   .logan-card-right-center {
