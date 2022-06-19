@@ -62,11 +62,13 @@ export default {
       visibility: false,
       isRead: false,
       loading: false,
-      logImag: logImag
+      logImag: logImag,
+      from: '',
     }
   },
   onLoad(query) {
     this.isRead = !!query.isRead
+    this.from = query.from
   },
   onShow() {
     console.log('this.isRead', this.isRead);
@@ -114,7 +116,11 @@ export default {
       let res = await this.$store.dispatch('login', params)
       if (res.code === 0) {
         uni.showToast({ icon: 'success', title: '登录成功' })
-        uni.switchTab({ url: '/pages/index/index' })
+        if (this.from === 'pc') {
+          history.back()
+        } else {
+          uni.switchTab({ url: '/pages/index/index' })
+        }
       } else {
         uni.showToast({ icon: 'none', title: `${res.message}` })
       }

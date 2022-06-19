@@ -62,12 +62,19 @@ export default {
       source: '',
       configData: { list: [] },
       questionTypes: ['', '单选', '多选', '不定项', '判断', '填空', '简答', '案例'],
+      from: ''
     };
   },
-  onLoad({ exam_id, source }) {
+  onLoad({ exam_id, source, from}) {
     this.exam_id = exam_id
     this.source = source
     this.question_bank_id = this.$store.getters.questionBankInfo.id
+    this.from = from
+    if (from === 'pc') {
+      uni.navigateTo({ url: `/pages/login/index?from=${from}`})
+    }
+  },
+  onShow() {
     this.getConfig();
   },
   methods: {
