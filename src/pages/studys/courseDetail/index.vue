@@ -152,7 +152,9 @@ export default {
       let { course_id, lesson_id, autoplay } = query
       this.course_id = +course_id
       this.lesson_id = +lesson_id
-      this.autoplay = !!autoplay
+      this.autoplay = (+autoplay ? true : false); 
+
+      console.log('autoplay' , this.autoplay);
       this.region_id = this.$store.getters.region.id
       uni.setStorageSync('course_id', course_id)
       this.getCourseInfo()
@@ -487,6 +489,7 @@ export default {
           player.seek(this.start_second)
         })
         player.on('play', () => {
+          console.log('play', options.autoplay);
           this.needFaceVerifity(this.start_second)
           if (this.canPlay) {
             this.isFaceing = false
@@ -495,7 +498,6 @@ export default {
             this.pauseSendData()
             player.pause()
           }
-          console.log('play', this.isFaceing);
         })
         player.on('pause', () => {
           console.log('pause');
