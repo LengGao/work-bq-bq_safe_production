@@ -682,6 +682,7 @@ $padding-lr: 30rpx;
       position: relative;
       top: -4rpx;
       color: #fff;
+      font-weight: 700;
       background-color: #199fff;
       border-color: #199fff;
     }
