@@ -118,7 +118,7 @@ export default {
       // 实名与人脸验证
       canPlay: false,
       isFaceing: false,
-      autoplay: false,
+      autoplay: 0,
       getVideoErr: '',
     }
   },
@@ -132,7 +132,7 @@ export default {
   },
   mounted() {
     document.addEventListener('visibilitychange', (state) => {
-      console.log('visibilitychange', state);
+      // console.log('visibilitychange', state);
       this.pausePlay()
       this.stopSend()
     })
@@ -152,9 +152,9 @@ export default {
       let { course_id, lesson_id, autoplay } = query
       this.course_id = +course_id
       this.lesson_id = +lesson_id
-      this.autoplay = (+autoplay ? true : false); 
+      this.autoplay = +autoplay
 
-      console.log('autoplay' , this.autoplay);
+      // console.log('autoplay' , this.autoplay);
       this.region_id = this.$store.getters.region.id
       uni.setStorageSync('course_id', course_id)
       this.getCourseInfo()
@@ -444,14 +444,14 @@ export default {
     // 创建播放器
     createPlayer(options) {
       if (this.player) this.player.dispose();
-      let { video, } = options
+      let { video, autoplay} = options
 
       this.player = new Aliplayer({
         id: 'aliplayer',
         width: '100%',
         height: '200px',
         controlBarVisibility: 'click',
-        autoplay: options.autoplay,
+        autoplay: autoplay,
         isLive: false,
         playsinline: true,
         preload: true,
@@ -487,6 +487,7 @@ export default {
           console.log('ready');
           if (this.lesson.free_second) player.setPreviewTime(this.lesson.free_second);
           player.seek(this.start_second)
+          if (this.autoplay) player.play(); 
         })
         player.on('play', () => {
           console.log('play', options.autoplay);
@@ -580,7 +581,6 @@ export default {
         }
         this.errSendData()
         this.getVideoErr = res.message
-        
       }
     },
   }
