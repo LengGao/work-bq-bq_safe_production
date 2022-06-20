@@ -107,7 +107,7 @@ export default {
       defaultTitle: '我的课程证书',
       active: 0,
       actives: [{ name: '学习课程', value: 0 }, { name: '我的证书', value: 1 }],
-      up: { page: { num: 0, size: 1 } },
+      up: { page: { num: 0, size: 20 } },
 
       courseData: [],
       certificateData: [],
@@ -142,8 +142,8 @@ export default {
       this.canScroll = true
     },
     generatorLearnRecond(course) {
-      // if (course.learning_progress <= 0 || course.learning_progress >= 100) return;
-      // if (!course.status) return uni.showToast({ title: '该课程已下架', icon: 'none' });
+      if (course.learning_progress <= 0 || course.learning_progress >= 100) return;
+      if (!course.status) return uni.showToast({ title: '该课程已下架', icon: 'none' });
 
       let url = '/pages/studys/learningRecords/index'
       let query = `?course_id=${course.id}`

@@ -197,8 +197,8 @@ export default {
       this.question_bank_id = +question_bank_id
       this.title = title
       this.source = source
-      this.model = !!model ? +model : this.sourceMap[source]
-      this.restart = !!restart
+      this.model = +model ? +model : this.sourceMap[source]
+      this.restart = +restart
 
       this.defaultTitle = title
       if (this.isWeixinJSBridge) {

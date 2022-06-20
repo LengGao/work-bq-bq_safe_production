@@ -107,17 +107,14 @@ export default {
       defaultTitle: '课程',
       isFinish: false,
       page: { num: 0, size: 1 },
+      courseData: [],
 
       titleBg: 'https://safetysystem.oss-cn-guangzhou.aliyuncs.com/icon/study_swiper.png',
       dataIcon: '/static/img/study_iicon_data.png',
       voucherIcon: '/static/img/study_icon_voucher.png',
-      // 推荐课程
-      courseData: [],
-
-      needLogin: false
     };
   },
-  mounted() {
+  onShow() {
     this.downCallback()
   },
   methods: {
