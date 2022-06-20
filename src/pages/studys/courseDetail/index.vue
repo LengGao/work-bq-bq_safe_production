@@ -125,33 +125,15 @@ export default {
   onLoad(query) {
     this.init(query)
   },
-  onHide() {
-    if (this.player) {
-      this.player.pause()
-    }
-  },
   mounted() {
-    document.addEventListener('visibilitychange', (state) => {
-      // console.log('visibilitychange', state);
-      this.pausePlay()
-      this.stopSend()
-    })
-  }, 
-  destroyed() {
-    clearInterval(this.intervalId)
-    this.intervalId = null  
-    if (this.player) {
-      this.player.dispose();
-      this.player = null
-    }
+    document.addEventListener('visibilitychange', this.documentHide)
+  },
+  beforeDestroy() {
+    document.removeEventListener("visibilitychange", this.documentIsHidden);
   },
   onUnload() {
-    clearInterval(this.intervalId)
-    this.intervalId = null
-    if (this.player) {
-      this.player.dispose();
-      this.player = null
-    }
+    this.destroyInterval()
+    this.clearPlayer()
   },
   methods: {
     init(query) {
@@ -165,6 +147,12 @@ export default {
       uni.setStorageSync('course_id', course_id)
       this.getCourseInfo()
       this.getCommentHotWord()
+    },
+    documentHide() {
+      if (document.hidden) {
+        this.player && this.player.pause();
+        document.querySelector(".prism-big-play-btn").style.display = "block";
+      }
     },
     getPath(url, query) {
       let params = ''
@@ -392,25 +380,25 @@ export default {
         playauth: video.auth_data.PlayAuth,
         cover: video.cover,
         encryptType: 0,
-        skinLayout: [
-          { name: "bigPlayButton", align: "cc", x: 30, y: 80 },
-          { name: "H5Loading", align: "cc", },
-          { name: "errorDisplay", align: "tlabs", x: 0, y: 0 },
-          { name: "infoDisplay" },
-          { name: "tooltip", align: "blabs", x: 0, y: 56 },
-          { name: "thumbnail" },
-          {
-            name: "controlBar", align: "blabs", x: 0, y: 0,
-            children: [
-              { name: "progress", align: "blabs", x: 0, y: 44 },
-              { name: "playButton", align: "xtl", x: 15, y: 12 },
-              { name: "timeDisplay", align: "tl", x: 10, y: 7 },
-              { name: "fullScreenButton", align: "tr", x: 10, y: 12 },
-              {name:"setting", align:"tr",x:15, y:12},
-              { name: "volume", align: "tr", x: 5, y: 10 }
-            ]
-          }
-        ],
+         skinLayout: [
+            { name: "bigPlayButton", align: "cc" },
+            { name: "H5Loading", align: "cc" },
+            { name: "errorDisplay", align: "tlabs", x: 0, y: 0 },
+            { name: "infoDisplay" },
+            { name: "tooltip", align: "blabs", x: 0, y: 56 },
+            { name: "thumbnail" },
+            { name: "controlBar", align: "blabs", x: 0, y: 0,
+              children: [
+                { name: "progress", align: "blabs", x: 0, y: 44 },
+                { name: "playButton", align: "tl", x: 15, y: 12 },
+                { name: "timeDisplay", align: "tl", x: 10, y: 7 },
+                { name: "fullScreenButton", align: "tr", x: 10, y: 12 },
+                { name: "subtitle", align: "tr", x: 15, y: 12 },
+                { name: "setting", align: "tr", x: 15, y: 12 },
+                { name: "volume", align: "tr", x: 5, y: 10 },
+              ],
+            },
+          ],
       }, (player) => {
           // 隐藏倍速按钮
           if (!lesson.is_free && !lesson.is_forward) {
@@ -497,6 +485,13 @@ export default {
         })
 
       })
+    },
+
+    destroyInterval() {
+      if (this.intervalId) { 
+        clearInterval(this.intervalId) 
+        this.intervalId = null
+      }
     },
 
     stopInterval() {
