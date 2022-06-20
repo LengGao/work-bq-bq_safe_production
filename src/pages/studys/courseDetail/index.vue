@@ -107,7 +107,6 @@ export default {
       lesson: {}, // 课时记录
       record: {}, // 学习记录
       face: [], // 人脸信息
-      faceNap: {},  // 缓存验证记录
       user: [], // 用户信息相关
       intervalId: 0, //计时器
       time: 1000 * 10, // 记录时间
@@ -118,6 +117,7 @@ export default {
       // 实名与人脸验证
       canPlay: false,
       isFaceing: false,
+      isTesting: false,
       autoplay: 0,
       getVideoErr: '',
     }
@@ -136,16 +136,22 @@ export default {
       this.pausePlay()
       this.stopSend()
     })
-  },
+  }, 
   destroyed() {
     clearInterval(this.intervalId)
     this.intervalId = null  
-    // if (this.player) this.player.dispose();
+    if (this.player) {
+      this.player.dispose();
+      this.player = null
+    }
   },
   onUnload() {
     clearInterval(this.intervalId)
     this.intervalId = null
-    if (this.player) this.player.dispose();
+    if (this.player) {
+      this.player.dispose();
+      this.player = null
+    }
   },
   methods: {
     init(query) {
@@ -241,8 +247,9 @@ export default {
       let res = await courseInfo(param)
       if (res.code === 0) {
         let last_lesson_id = lesson_id ? lesson_id : res.data.learning_lesson_id
-        this.lesson_id = last_lesson_id
+        
         this.courseInfo = res.data
+        this.lesson_id = last_lesson_id
         this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: last_lesson_id })
       }
     },
@@ -262,17 +269,13 @@ export default {
         uni.showToast({ title: `${this.getVideoErr}`, icon: 'none' })
       }
     },
-    // 错误码提示
-    showToast(title, code, data) {
-      if (code === 2201) {
-        this.prev_time = +data.last_second
-        this.finish_second = +data.finish_second
-      } else {
-        uni.showToast({ title, icon: 'none' })
-      }
-    },
     // 随堂测试
-    showModalForExamination(path) {
+    showModalForExamination() {
+      let url = `/pages/studys/classTestMode/answer/index`
+      let { lesson_id, course_id } = this.getQuery()
+      let query = { lesson_id, course_id }
+      let path = this.getPath(url, query)
+
       uni.showModal({
         title: '提示',
         content: '本次学习需要进行随堂考试,每道题目限时60秒,每次考试有5次机会,测评合格后(≥80分)将计入相应学时',
@@ -283,9 +286,7 @@ export default {
         success: (res) => {
           if (res.confirm) {
             this.$store.commit('SET_EXAMINATION', true)
-            setTimeout(() => {
-              uni.redirectTo({ url: path })
-            }, 500)
+            setTimeout(() => { uni.redirectTo({ url: path }) }, 500)
           }
         }
       })
@@ -309,9 +310,7 @@ export default {
         confirmColor: '#199fff',
         success: (res) => {
           if (res.confirm) {
-            setTimeout(() => {
-              uni.redirectTo({ url: path })
-            }, 500)
+            setTimeout(() => { uni.redirectTo({ url: path }) }, 500)
           }
         }
       })
@@ -335,129 +334,64 @@ export default {
         confirmColor: '#199fff',
         success: (res) => {
           if (res.confirm) {
-            setTimeout(() => {
-              uni.navigateTo({ url: path })
-            }, 500)
+            setTimeout(() => { uni.navigateTo({ url: path }) }, 500)
           }
         }
       })
     },
-    // 播放结束提示框
-    showModal() {
-      let url = `/pages/studys/classTestMode/answer/index`
-      let { lesson_id, course_id, lesson, start_second } = this.getQuery()
-      let query = { lesson_id, course_id }
-      let path = this.getPath(url, query)
-      let is_free = lesson.is_free
-      let free_second = lesson.free_second
-      let distance = Math.abs(free_second - start_second)
-      let is_practice = lesson.is_practice
-      let is_done = lesson.is_done
-      
-      if (free_second && distance <= 2) {
-        this.showToast('试看结束')
-      } else if (is_practice && !is_done) {
-        this.showModalForExamination(path)
-      }
-    },
+
     setCover(url) {
       if (this.player) this.player.setCover(url);
     },
-    needFaceVerifity(currTime) {
-      let faceTime = this.face[0]
-
-      if (faceTime !== undefined && currTime - faceTime >= 0 ) {
-        this.canPlay = false
-        if (this.user.real_status) {
-          this.showModalForFaceVerifity(faceTime)
-        } else {
-          this.showModalForRealVerification()
-        }
-      } else {
-        this.canPlay = true
-      }
+    getVideoMessage(res) {
+      uni.showToast({ title: res.message, icon: 'none' })
     },
-
-    // 停止计时器
-    stopInterval() {
-      clearInterval(this.intervalId)
-      this.intervalId = null
+    recondMessage(res) {
+      uni.showToast({ title: res.message, icon: 'none' })
     },
-    stopSend() {
-      this.stopInterval()
-      let end_time = this.player.getCurrentTime()
-      this.sendData(this.lesson_id, end_time, end_time)
-    },
-    changeSend() {
-      this.stopInterval()
-      if (this.player) {
-        let end_time = this.player.getCurrentTime()
-        this.sendData(this.lesson_id, end_time, end_time)
-      }
-    },
-    // 不同状态数据发送
-    playSendData() {
-      if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
-      this.intervalId = setInterval(() => {
-        let end_time = this.player.getCurrentTime()
-        this.sendData(this.lesson_id, this.prev_time, end_time)
-      }, this.time)
-    },
-    pauseSendData() {
-      this.stopInterval()
-      let end_time = this.player.getCurrentTime()
-      this.sendData(this.lesson_id, this.prev_time, end_time)
-    },
-    seekSendData() {
-      let end_time = this.player.getCurrentTime()
-      this.sendData(this.lesson_id, end_time, end_time)
-    },
-    endedSendData() {
-      this.stopInterval()
-      let end_time = this.player.getCurrentTime()
-      this.sendData(this.lesson_id, this.prev_time, end_time)
-    },
-    errSendData() {
-      this.stopInterval()
-      if (this.player) {
-        this.player.setCover(this.courseInfo.cover);
-        let end_time = this.player.getCurrentTime()
-        this.sendData(this.lesson_id, this.prev_time, end_time)
-      } else {
-        this.setCover(this.courseInfo.cover)
-      }
-    },
-    // 不同状态事件回调
-    endedCallback() {
-      this.endedSendData()
-      this.showModal()
-    },
-    pauseAndSendData() {
-      if (this.player) this.player.pause();
-      this.pauseSendData()
-    },
-    pausePlay() {
-      if (this.player) this.player.pause();
-      this.stopInterval()
+    showVideoMessage(message) {
+      uni.showToast({ title: message, icon: 'none' })
     },
     
+    // 隐藏播放器部分按钮
+    hidePlayerBtns(otherSelector = []) {
+      const selectors = [
+        ".prism-setting-audio",
+        ".prism-setting-cc",
+        ".prism-cc-btn",
+      ].concat(otherSelector);
+      selectors.forEach((selector) => {
+        document.querySelector(selector).style.display = "none";
+      });
+    },
+
+    // 销毁播放器
+    clearPlayer() {
+      if (this.player) {
+        this.player.dispose()
+        this.player = null
+      }
+    },
     // 创建播放器
     createPlayer(options) {
-      if (this.player) this.player.dispose();
-      let { video, autoplay} = options
+      this.clearPlayer()
+      let { video, lesson, record, face, user, autoplay } = options
 
       this.player = new Aliplayer({
         id: 'aliplayer',
         width: '100%',
         height: '200px',
         controlBarVisibility: 'click',
-        autoplay: autoplay,
+        autoplay: true,
         isLive: false,
         playsinline: true,
         preload: true,
         useH5Prism: true,
         x5_type: "H5",
-        
+        vid: video.id,
+        playauth: video.auth_data.PlayAuth,
+        cover: video.cover,
+        encryptType: 0,
         skinLayout: [
           { name: "bigPlayButton", align: "cc", x: 30, y: 80 },
           { name: "H5Loading", align: "cc", },
@@ -469,7 +403,7 @@ export default {
             name: "controlBar", align: "blabs", x: 0, y: 0,
             children: [
               { name: "progress", align: "blabs", x: 0, y: 44 },
-              { name: "playButton", align: "tl", x: 15, y: 12 },
+              { name: "playButton", align: "xtl", x: 15, y: 12 },
               { name: "timeDisplay", align: "tl", x: 10, y: 7 },
               { name: "fullScreenButton", align: "tr", x: 10, y: 12 },
               {name:"setting", align:"tr",x:15, y:12},
@@ -477,89 +411,139 @@ export default {
             ]
           }
         ],
-        vid: video.id,
-        playauth: video.auth_data.PlayAuth,
-        cover: video.cover,
-        duration: video.duration,
-        encryptType: 0
       }, (player) => {
-        player.on('ready', () => {
-          console.log('ready');
-          if (this.lesson.free_second) player.setPreviewTime(this.lesson.free_second);
-          player.seek(this.start_second)
-          if (this.autoplay) player.play(); 
-        })
-        player.on('play', () => {
-          console.log('play', options.autoplay);
-          this.needFaceVerifity(this.start_second)
-          if (this.canPlay) {
-            this.isFaceing = false
-            this.playSendData()
+          // 隐藏倍速按钮
+          if (!lesson.is_free && !lesson.is_forward) {
+            this.hidePlayerBtns([".prism-setting-speed"]);
           } else {
-            this.pauseSendData()
-            player.pause()
+            this.hidePlayerBtns();
           }
-        })
+
+        // 已完成的课时时长
+        let finish_second = lesson.finish_second || 0;
+        // 
+        let faceTime = face[0]
+        //播放结束
+        let isPlayEnd = false;
+        // // 设置上次播放时间
+        this.start_second = record.startSecond;
+        player.seek(this.start_second);
+
         player.on('pause', () => {
           console.log('pause');
-          this.pauseSendData()
+          this.stopInterval()
         })
+
+        player.on('play', () => {
+          console.log('play', options.autoplay);
+          this.startInterval()    
+        })
+
+        // 开始拖拽
+        player.on("startSeek", (e) => {
+          this.stopSend();
+        })
+        // 结束拖拽
+        player.on("completeSeek", () => {
+          this.intervalSend();
+        })
+
         player.on('ended', () => {
           console.log("ended");
-          this.endedCallback()
+          isPlayEnd = true;
+          // 看完显示倍速
+          if (!lesson.is_free && !lesson.is_forward) {
+            document.querySelector(".prism-setting-speed").style.display ="block";
+          }
+          // 随堂考试
+          if (lesson.is_practice && !lesson.is_done) {
+            this.isTesting = true;
+            this.clearPlayer();
+            this.showModalForExamination()
+            return;
+          }
+          // 重置播放开始时间
+          this.start_second = 0;
+          player.seek(this.start_second);
         })
-        player.on('timeupdate', () => {
-          // console.log('timeupdate');
-          let currTime = player.getCurrentTime()
-          let start_second = this.start_second
-          let is_free = this.lesson.is_free
-          let is_forward = this.lesson.is_forward
-          let finish_second = this.record.finish_second
-          let distance = currTime - start_second
-          let faceTime = this.face[0]
 
-          if (is_free || is_forward || start_second < finish_second) {
-            this.start_second = currTime
-            if (Math.abs(distance) >= 2) this.sendData(this.lesson_id, currTime, currTime);
-          } else {
-            if (distance >= 2) {
-              player.seek(start_second)
-            } else if (Math.abs(distance) >= 2) {
-              this.start_second = currTime
-              this.sendData(this.lesson_id, currTime, currTime)
+        player.on('timeupdate', () => {           
+          // 当前时间
+          const currentTime = player.getCurrentTime();
+          // 没看完禁止拖拽进度条
+          if (!lesson.is_free && !lesson.is_forward && !isPlayEnd) {
+            if (currentTime - finish_second >= 1) {
+              player.seek(finish_second);
+              uni.showToast({ title: '禁止快进学习', icon : 'none' })
+              return;
             } else {
-              this.start_second = currTime
-              if (faceTime !== undefined && currTime > faceTime ) {
-                player.pause()
-                this.needFaceVerifity(currTime)
-              }
+              currentTime > finish_second && (finish_second = currentTime);
             }
           }
+          
+          // 试看结束 freeSecond:试看时长（秒）
+          if (lesson.free_second && currentTime >= lesson.free_second) {
+            this.clearPlayer()
+            this.showVideoMessage('试看结束，如需购买前联系客服');
+          }
+          // 到达人脸核验时间
+          if (faceTime && currentTime >= faceTime) {
+            this.stopInterval()
+            this.clearPlayer()
+            this.showVideoMessage('请完成人脸核验后继续学习');
+            this.showModalForExamination(currentTime)
+            this.isFaceing = true
+          }
         })
-        player.on('completeSeek', (e) => {
-          console.log('completeSeek');
-          this.seekSendData()
-        })
-        player.on('error', () => {
-          console.log('error');
-          this.player.pause()
-          this.errSendData()
-        })
+
       })
     },
-    // 发送数据
-    async sendData(lesson_id, start_second, end_second) {
-      let params = { lesson_id, start_second, end_second }
-      let res = await courseRecordLearn(params)
-      if (res.code === 0) {
-        this.finish_second = +res.data.finish_second
-        this.prev_time = +res.data.last_second
-      } else {
-        this.showToast(res.message, res.code, res.data)
+
+    stopInterval() {
+      if (this.intervalId) {
+        clearInterval(this.intervalId)
+        this.intervalId = null
+        this.sendData()
       }
     },
+    
+    startInterval() {
+      if (this.intervalId) {
+        clearInterval(this.intervalId)
+        this.intervalId = null
+      }
+
+      this.intervalId = setInterval(() => {
+        this.sendData()
+      }, this.time)
+    },
+
+    // 发送数据
+    async sendData() {
+      const currentTime = this.player.getCurrentTime();
+
+      const params = {
+        start_second: this.start_second,
+        end_second: currentTime,
+        lesson_id: this.lesson_id,
+        region_id: this.region_id,
+      };
+
+      let res = await courseRecordLearn(params)
+      if (res.code !== 0) {
+        if (res.data.finish_second !== undefined) {
+          this.player.seek(error.data.finish_second);
+          this.start_second = error.data.finish_second;
+          return;
+        } else {
+          this.player.pause()
+        }
+      }
+
+      this.start_second = currentTime;
+    },
     // 获取视频凭证
-    async getCourseGetVideoAuth(params) {
+    async getCourseGetVideoAuth(params, autoplay = true) {
       let res = await courseGetVideoAuth(params)
       let { video, lesson, record, face, user } = res.data
       
@@ -571,16 +555,33 @@ export default {
         this.user = user
         this.start_second = +record.start_second
         this.prev_time = +record.finish_second
+        let faceTime = face[0]
 
+        if (!user.real_status) {
+          this.showModalForRealVerification()
+          return;
+        }
+
+        if (faceTime === 0) {
+          this.showModalForFaceVerifity(faceTime)
+          this.isFaceing = true;
+          return;
+        }
+
+       // 随堂考试中
+        if (lesson.is_in_exam && lesson.is_practice) {
+          this.isTesting = true;
+          this.openQuestionDialog()
+          this.clearPlayer()
+          this.showModalForExamination()
+          return;
+        }
+        
         // #ifdef H5
-        this.createPlayer({ video, autoplay: this.autoplay})
+        this.createPlayer({ video, lesson, record, face, user, autoplay })
         // #endif
       } else {
-        if (this.autoplay) {
-          this.showToast(res.message, res.code, res.data)
-        }
-        this.errSendData()
-        this.getVideoErr = res.message
+        this.getVideoMessage(ree)
       }
     },
   }
