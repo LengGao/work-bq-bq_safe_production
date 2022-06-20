@@ -15,7 +15,7 @@
             <template v-slot:rightTop>
               <view class="logan-card-right-top">
                 <uni-icons custom-prefix="iconfont" :type="fileTypeMap[library.file_type] || defaultFileType"
-                           size="28rpx" color="#aaa" />
+                           size="28rpx" :color="fileTypeColorMap[library.file_type] || defaultFileTypeColor" />
                 <text class="library-text">{{ library.title }}</text>
               </view>
             </template>
@@ -51,6 +51,9 @@ export default {
       keyword: '',
       region_id: '',
       librarys: [],
+
+      defaultFileType: 'icon-wenjianleixing-suolvetu-wenjianjia',
+      defaultFileTypeColor: '#ffbb49',
       fileTypeMap: {
         'ppt': 'icon-PPT',
         'txt': 'icon-txt',
@@ -65,6 +68,20 @@ export default {
         'gif': 'icon-wenjianleixing-suolvetu-tupianwenjian',
         'png': 'icon-wenjianleixing-suolvetu-tupianwenjian',
         'jpeg': 'icon-wenjianleixing-suolvetu-tupianwenjian',
+      },
+      fileTypeColorMap: {
+        'ppt': '#f98950',
+        'txt': '#4fd397',
+        'zip': '#576a95',
+        'pdf': '#fa4e4e',
+        'doc':  '#4876f9',
+        'docx':  '#4876f9',
+        'xls':  '#4cb050',
+        'xlsx':  '#4cb050',
+        'jpg':  '#f6ad00',
+        'gif':  '#f6ad00',
+        'png':  '#f6ad00',
+        'jpeg':  '#f6ad00',
       },
     }
   },

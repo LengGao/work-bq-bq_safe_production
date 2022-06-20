@@ -127,7 +127,8 @@
             <template v-slot:cardBodyRight>
               <view class="card-body-right" @click="() => onClickLibrary(library.id)">
                 <view class="card-right-top">
-                  <uni-icons custom-prefix="iconfont" :type="fileTypeMap[library.file_type] || defaultFileType" size="28rpx" color="#aaa"/>
+                  <uni-icons custom-prefix="iconfont" size="28rpx" :type="fileTypeMap[library.file_type] || defaultFileType" 
+                  :color="fileTypeColorMap[librarys.file_type] || defaultFileTypeColor"/>
                   <text class="library-text">{{ library.title || '--' }}</text>
                 </view>
                 <view class="card-right-top">
@@ -208,13 +209,13 @@ export default {
       currOrganizationList: [],
 
       defaultFileType: 'icon-wenjianleixing-suolvetu-wenjianjia',
+      defaultFileTypeColor: '#ffbb49',
       fileTypeMap: {
         'ppt': 'icon-PPT',
         'txt': 'icon-txt',
         'zip': 'icon-wenjianleixing-biaozhuntu-yasuowenjian',
         'pdf': 'icon-wenjianleixing-biaozhuntu-PDFwendang',
         'doc':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
-        'docs':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
         'docx':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
         'xls':  'icon-wenjianleixing-suolvetu-gongzuobiao',
         'xlsx':  'icon-wenjianleixing-suolvetu-gongzuobiao',
@@ -222,22 +223,21 @@ export default {
         'gif':  'icon-wenjianleixing-suolvetu-tupianwenjian',
         'png':  'icon-wenjianleixing-suolvetu-tupianwenjian',
         'jpeg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-      },
+      },            
       fileTypeColorMap: {
-        'ppt': 'icon-PPT',
-        'txt': 'icon-txt',
-        'zip': 'icon-wenjianleixing-biaozhuntu-yasuowenjian',
-        'pdf': 'icon-wenjianleixing-biaozhuntu-PDFwendang',
-        'doc':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
-        'docs':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
-        'docx':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
-        'xls':  'icon-wenjianleixing-suolvetu-gongzuobiao',
-        'xlsx':  'icon-wenjianleixing-suolvetu-gongzuobiao',
-        'jpg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-        'gif':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-        'png':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-        'jpeg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-      }
+        'ppt': '#f98950',
+        'txt': '#4fd397',
+        'zip': '#576a95',
+        'pdf': '#fa4e4e',
+        'doc':  '#4876f9',
+        'docx':  '#4876f9',
+        'xls':  '#4cb050',
+        'xlsx':  '#4cb050',
+        'jpg':  '#f6ad00',
+        'gif':  '#f6ad00',
+        'png':  '#f6ad00',
+        'jpeg':  '#f6ad00',
+      },
     };
   },
   computed: {
