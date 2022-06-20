@@ -3,7 +3,7 @@
     <custom-header :title="defaultTitle" ></custom-header>
     <!-- #ifdef H5 -->
     <view id="aliplayer">
-      <cover-view v-if="!player && !autoplay" class="course-cover">
+      <cover-view v-if="!canPlay" class="course-cover">
         <image :src="courseInfo.cover" class="course-img" mode="aspectFill">
         <view class="play-icon">
           <uni-icons custom-prefix="iconfont" type="icon-play-filling" :size="64" color="#fff" @click="onStartVideo" />
@@ -142,11 +142,15 @@ export default {
       this.lesson_id = +lesson_id
       this.autoplay = +autoplay
 
-      // console.log('autoplay' , this.autoplay);
       this.region_id = this.$store.getters.region.id
       uni.setStorageSync('course_id', course_id)
+
       this.getCourseInfo()
       this.getCommentHotWord()
+      if (this.lesson_id) {
+        this.canPlay = true
+        this.getCourseGetVideoAuth({ lesson_id: this.lesson_id, region_id: this.region_id  })
+      }
     },
     documentHide() {
       if (document.hidden) {
@@ -235,28 +239,18 @@ export default {
       let res = await courseInfo(param)
       if (res.code === 0) {
         let last_lesson_id = lesson_id ? lesson_id : res.data.learning_lesson_id
-        
         this.courseInfo = res.data
         this.lesson_id = last_lesson_id
-        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: last_lesson_id })
+
+      } else if (res.code === 2998) {
+        uni.showToast({ title: '课程已下架', icon: 'none' })
+        goBack()  
+      } else if (res.code === 2999) {
+        uni.showToast({ title: '课程不存在或被删除', icon: 'none' })
+        goBack()
       }
     },
-    // 课时目录更改
-    onChangeVideo(detailArr) {
-      let curr = detailArr[detailArr.length -1]
-      this.lesson_id = curr.id
-      this.changeSend()
-      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
-    },
-    // 点击开始播放
-    onStartVideo() {
-      if (!this.getVideoErr) {
-        this.autoplay = true
-        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
-      } else {
-        uni.showToast({ title: `${this.getVideoErr}`, icon: 'none' })
-      }
-    },
+
     // 随堂测试
     showModalForExamination() {
       let url = `/pages/studys/classTestMode/answer/index`
@@ -328,10 +322,25 @@ export default {
       })
     },
 
+    // 课时目录更改
+    onChangeVideo(detailArr) {
+      let curr = detailArr[detailArr.length -1]
+      this.lesson_id = curr.id
+      this.changeSend()
+      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
+    },
+    // 点击开始播放
+    onStartVideo() {
+      this.canPlay = true
+      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
+    },
     setCover(url) {
       if (this.player) this.player.setCover(url);
     },
     getVideoMessage(res) {
+      if (res.data.cover) this.setCover(res.data.cover);
+      this.getVideoErr = res.message
+      this.canPlay = false
       uni.showToast({ title: res.message, icon: 'none' })
     },
     recondMessage(res) {
@@ -370,7 +379,6 @@ export default {
         width: '100%',
         height: '200px',
         controlBarVisibility: 'click',
-        autoplay: true,
         isLive: false,
         playsinline: true,
         preload: true,
@@ -379,6 +387,7 @@ export default {
         vid: video.id,
         playauth: video.auth_data.PlayAuth,
         cover: video.cover,
+        autoplay: true,
         encryptType: 0,
          skinLayout: [
             { name: "bigPlayButton", align: "cc" },
@@ -406,16 +415,22 @@ export default {
           } else {
             this.hidePlayerBtns();
           }
-
-        // 已完成的课时时长
-        let finish_second = lesson.finish_second || 0;
-        // 
-        let faceTime = face[0]
-        //播放结束
+        // 播放结束
         let isPlayEnd = false;
-        // // 设置上次播放时间
-        this.start_second = record.startSecond;
+        // 已完成的课时时长
+        let finish_second = record.finish_second;
+        // 设置上次播放时间
+        this.start_second = record.start_second;
+        // 人脸时间
+        let faceTime = face[0]
+
         player.seek(this.start_second);
+
+        player.on('canplay', () => {
+          console.log('canPlay');
+          this.canPlay = true
+          // player.play()
+        })
 
         player.on('pause', () => {
           console.log('pause');
@@ -428,12 +443,14 @@ export default {
         })
 
         // 开始拖拽
-        player.on("startSeek", (e) => {
-          this.stopSend();
+        player.on("startSeek", () => {
+          console.log('startSeek');
+          this.stopInterval();
         })
+
         // 结束拖拽
         player.on("completeSeek", () => {
-          this.intervalSend();
+          this.startInterval();
         })
 
         player.on('ended', () => {
@@ -455,9 +472,10 @@ export default {
           player.seek(this.start_second);
         })
 
-        player.on('timeupdate', () => {           
+        player.on('timeupdate', () => {
           // 当前时间
           const currentTime = player.getCurrentTime();
+          // console.log(currentTime, faceTime);
           // 没看完禁止拖拽进度条
           if (!lesson.is_free && !lesson.is_forward && !isPlayEnd) {
             if (currentTime - finish_second >= 1) {
@@ -471,15 +489,15 @@ export default {
           
           // 试看结束 freeSecond:试看时长（秒）
           if (lesson.free_second && currentTime >= lesson.free_second) {
-            this.clearPlayer()
+            player.pause()
             this.showVideoMessage('试看结束，如需购买前联系客服');
           }
           // 到达人脸核验时间
-          if (faceTime && currentTime >= faceTime) {
+          if (faceTime !== undefined && currentTime >= faceTime) {
+            player.pause()
             this.stopInterval()
-            this.clearPlayer()
             this.showVideoMessage('请完成人脸核验后继续学习');
-            this.showModalForExamination(currentTime)
+            this.showModalForFaceVerifity(faceTime)
             this.isFaceing = true
           }
         })
@@ -527,8 +545,8 @@ export default {
       let res = await courseRecordLearn(params)
       if (res.code !== 0) {
         if (res.data.finish_second !== undefined) {
-          this.player.seek(error.data.finish_second);
-          this.start_second = error.data.finish_second;
+          this.player.seek(res.data.finish_second);
+          this.start_second = res.data.finish_second;
           return;
         } else {
           this.player.pause()
@@ -553,20 +571,24 @@ export default {
         let faceTime = face[0]
 
         if (!user.real_status) {
+          this.canPlay = false
+          this.clearPlayer()       
           this.showModalForRealVerification()
           return;
         }
 
-        if (faceTime === 0) {
-          this.showModalForFaceVerifity(faceTime)
-          this.isFaceing = true;
-          return;
-        }
+        // if (faceTime === 0) {
+        //   this.isFaceing = true
+        //   this.canPlay = false
+        //   this.clearPlayer()
+        //   this.showModalForFaceVerifity(faceTime)
+        //   return;
+        // }
 
        // 随堂考试中
         if (lesson.is_in_exam && lesson.is_practice) {
-          this.isTesting = true;
-          this.openQuestionDialog()
+          this.isTesting = true
+          this.canPlay = false
           this.clearPlayer()
           this.showModalForExamination()
           return;
@@ -576,7 +598,7 @@ export default {
         this.createPlayer({ video, lesson, record, face, user, autoplay })
         // #endif
       } else {
-        this.getVideoMessage(ree)
+        this.getVideoMessage(res)
       }
     },
   }

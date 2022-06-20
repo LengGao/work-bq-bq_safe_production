@@ -42,18 +42,6 @@ const handlerError = {
   '1009': async () => {
     uni.showToast({ title: '登录信息已过期，请重新登录', icon: 'none' })
   },
-  '2998': async () => {
-    uni.showToast({ title: '课程已下架', icon: 'none' })
-    goBack()
-  },
-  '2999': async () => {
-    uni.showToast({ title: '课程不存在或被删除', icon: 'none' })
-    goBack()
-  },
-  '3999': async () => {
-    uni.showToast({ title: '题库不存在或已下架', icon: 'none' })
-    goBack()
-  }
 }
 
 service.useRequestInterceptor((config) => {

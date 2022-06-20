@@ -541,6 +541,9 @@ export default {
         this.currentIndex = (index > 0 ? index : 0)
         this.time = res.data.expires_time || 0
         this.initQuestion(prev, curr, next)
+      } else if (res.code === 3999) {
+        uni.showToast({ title: '题库不存在或已下架', icon: 'none' })
+        goBack()
       }
     },
 
@@ -587,6 +590,9 @@ export default {
         this.currentIndex = (index > 0 ? index : 0)
         this.time = res.data.expires_time || 0
         this.initQuestion(prev, curr, next)
+      } else if (res.code === 3999) {
+        uni.showToast({ title: '题库不存在或已下架', icon: 'none' })
+        goBack()
       }
     },
 
