@@ -78,7 +78,7 @@ export default {
       let res = await feedback(params)
       if (res.code === 0) {
         this.onReset() 
-        uni.showToast({ title: '提交陈功', icon: 'success' })
+        uni.showToast({ title: '提交成功', icon: 'success' })
         setTimeout(() => { this.goBack() }, 800)
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none' })
