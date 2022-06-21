@@ -56,7 +56,7 @@
     </uni-popup>
 
     <uni-popup ref="faceVerification" class="face-verification" type="center" @change="onfaceVerificationChange">
-      <FaceVerification        
+      <FaceVerification
         :lessonId="lesson_id"
         :courseId="course_id"
         :endSecond="faceTime"
@@ -144,6 +144,7 @@ export default {
       overFinish: false,
       autoplay: 0,
       getVideoErr: '',
+      jumpCount: 0,
     }
   },
   onLoad(query) {
@@ -399,7 +400,10 @@ export default {
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
     },
     jumpVideo(lesson_id) {
-      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: lesson_id })
+      if (!this.jumpCount) {
+        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: lesson_id })
+        this.jumpCount = 1
+      }
     },
     setCover(url) {
       if (this.player) this.player.setCover(url);
@@ -408,6 +412,7 @@ export default {
       uni.showToast({ title: res.message, icon: 'none' })
       
       if (res.code === 2201) {
+        this.
         this.lesson_id = res.data.lesson_id
         this.jumpVideo(res.data.lesson_id)
         return;
