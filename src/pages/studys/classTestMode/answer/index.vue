@@ -135,7 +135,7 @@ export default {
     showModalForNoPass() {
       uni.showModal({
         title: '提示',
-        content: `每次考试有5次机会，您当前剩余${this.frequency}次`,
+        content: `本次学习需要进行随堂考试,每道题目限时60秒,每次考试有5次机会,测评合格后(≥80分)将计入相应学时,您还剩${this.frequency}次`,
         showCancel: false,
         success: ({ confirm, cancel }) => {
           if (confirm) {
@@ -184,16 +184,12 @@ export default {
 
     onSingleChange(answer) {
       let flag = this.checkInputAnswer(answer.answer)
-      if (flag) {
-        this.cacheAnswer(answer)
-      }
+      if (flag) { this.cacheAnswer(answer) }
     },
 
     onInputChange(answer) {
       let flag = this.checkInputAnswer(answer.answer)
-      if (flag) {
-        this.cacheAnswer(answer)
-      }
+      if (flag) { this.cacheAnswer(answer) }
     },
 
     handlePrev() {
@@ -320,9 +316,6 @@ export default {
         this.initQuestion(res.data.last_id, res.data.question)
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none'})
-        setTimeout(() => {
-          this.goBack()
-        }, 1500)
       }
     },
 
@@ -330,7 +323,6 @@ export default {
       let index = list.findIndex(item => item.question_id === last_question_id)
       this.currentIndex = (index !== -1 ? index : 0)
       this.practiceQuestion(this.currentIndex)
-
       if (last_question_id === 0) {
         this.showModalForNoPass()
       }

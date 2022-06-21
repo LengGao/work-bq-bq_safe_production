@@ -64,6 +64,13 @@
       />
     </uni-popup>
 
+    <uni-popup ref="realVerification" class="real-verification" type="center" @change="onfaceVerificationChange">
+      <RealVerification
+        @RealVerifitynSuccess="onRealVerifitynSuccess"
+      />
+
+    </uni-popup>
+
   </view>
 </template>
 
@@ -72,6 +79,7 @@ import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
 import FaceVerification from './components/faceVerification'
+import RealVerification from './components/realVerification'
 import CustomHeader from "@/components/custom-header"
 import { browser, userStatus } from '@/mixins/index'
 import {
@@ -89,6 +97,7 @@ export default {
     Catalogue,
     Rate,
     FaceVerification,
+    RealVerification,
     CustomHeader,
   },
   data() {
@@ -131,6 +140,7 @@ export default {
       faceTime: 0,
       isFaceing: false,
       isTesting: false,
+      isRealing: false,
       autoplay: 0,
       getVideoErr: '',
     }
@@ -142,7 +152,7 @@ export default {
     document.addEventListener('visibilitychange', this.documentHide)
   },
   beforeDestroy() {
-    document.removeEventListener("visibilitychange", this.documentIsHidden);
+    document.removeEventListener("visibilitychange", this.documentHide);
   },
   onUnload() {
     this.destroyInterval()
@@ -266,6 +276,7 @@ export default {
 
     // 随堂测试
     showModalForExamination() {
+      this.isTesting = true
       let url = `/pages/studys/classTestMode/answer/index`
       let { lesson_id, course_id } = this.getQuery()
       let query = { lesson_id, course_id }
@@ -273,7 +284,7 @@ export default {
 
       uni.showModal({
         title: '提示',
-        content: '本次学习需要进行随堂考试,每道题目限时60秒,每次考试有5次机会,测评合格后(≥80分)将计入相应学时',
+        content: `本次学习需要进行随堂考试,每道题目限时60秒,每次考试有5次机会,测评合格后(≥80分)将计入相应学时`,
         cancelText: '取消',
         confirmText: '开始考试',
         cancelColor: '#199fff',
@@ -319,16 +330,19 @@ export default {
         }
       })
     },
+    onRealVerifitynSuccess() {
+      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
+      this.closeRealVerifity()
+    },
+    showRealVerifity() {
+      this.$refs['realVerification'].open()
+    },
+    closeRealVerifity() {
+      this.$refs['realVerification'].close()
+    },
     // 实名认证
     showModalForRealVerification() {
-      let url = `/pages/studys/realVerification/index`
-      let query = { 
-        lesson_id: this.lesson_id,
-        course_id: this.course_id,
-        end_second: this.player.getCurrentTime()
-      }
-      let path = this.getPath(url, query)
-
+      this.isRealing = true
       uni.showModal({
         title: '提示',
         content: '根据安全生产资格考试网络培训管理办法规定， 此 课程需要通过实名认证后才能开始学习。',
@@ -338,21 +352,17 @@ export default {
         confirmColor: '#199fff',
         success: (res) => {
           if (res.confirm) {
-            setTimeout(() => { uni.navigateTo({ url: path }) }, 500)
+            this.showRealVerifity()
           }
         }
       })
     },
-
-
-    // 课时目录更改
     onChangeVideo(detailArr) {
       let curr = detailArr[detailArr.length -1]
       this.lesson_id = curr.id
       this.stopInterval()
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
     },
-    // 点击开始播放
     onStartVideo() {
       this.canPlay = true
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
@@ -372,8 +382,6 @@ export default {
     showVideoMessage(message) {
       uni.showToast({ title: message, icon: 'none' })
     },
-    
-    // 隐藏播放器部分按钮
     hidePlayerBtns(otherSelector = []) {
       const selectors = [
         ".prism-setting-audio",
@@ -384,15 +392,12 @@ export default {
         document.querySelector(selector).style.display = "none";
       });
     },
-
-    // 销毁播放器
     clearPlayer() {
       if (this.player) {
         this.player.dispose()
         this.player = null
       }
     },
-    // 创建播放器
     createPlayer(options) {
       this.clearPlayer()
       let { video, lesson, record, face, user, autoplay } = options
@@ -433,11 +438,11 @@ export default {
           ],
       }, (player) => {
           // 隐藏倍速按钮
-          if (!lesson.is_free && !lesson.is_forward) {
-            this.hidePlayerBtns([".prism-setting-speed"]);
-          } else {
-            this.hidePlayerBtns();
-          }
+        if (!lesson.is_free && !lesson.is_forward) {
+          this.hidePlayerBtns([".prism-setting-speed"]);
+        } else {
+          this.hidePlayerBtns();
+        }
         // 播放结束
         let isPlayEnd = false;
         // 已完成的课时时长
@@ -460,18 +465,18 @@ export default {
         })
 
         player.on('pause', () => {
-          console.log('pause');
+          // console.log('pause');
           this.stopInterval()
         })
 
         player.on('play', () => {
-          console.log('play', options.autoplay);
+          // console.log('play');
           this.startInterval()    
         })
 
         // 开始拖拽
         player.on("startSeek", () => {
-          console.log('startSeek');
+          // console.log('startSeek');
           this.stopInterval();
         })
 
@@ -481,7 +486,7 @@ export default {
         })
 
         player.on('ended', () => {
-          console.log("ended");
+          // console.log("ended");
           isPlayEnd = true;
           // 看完显示倍速
           if (!lesson.is_free && !lesson.is_forward) {
@@ -506,7 +511,7 @@ export default {
           // console.log(currentTime, faceTime);
           // 没看完禁止拖拽进度条
           if (!lesson.is_free && !lesson.is_forward && !isPlayEnd) {
-            if (currentTime - finish_second >= 1) {
+            if (currentTime - finish_second >= 2) {
               player.seek(finish_second);
               uni.showToast({ title: '禁止快进学习', icon : 'none' })
               return;
@@ -526,20 +531,16 @@ export default {
             this.stopInterval()
             this.showVideoMessage('请完成人脸核验后继续学习');
             this.showModalForFaceVerifity(faceTime)
-            this.isFaceing = true
           }
         })
-
       })
     },
-
     destroyInterval() {
       if (this.intervalId) { 
         clearInterval(this.intervalId) 
         this.intervalId = null
       }
     },
-
     stopInterval() {
       if (this.intervalId) {
         clearInterval(this.intervalId)
@@ -547,7 +548,6 @@ export default {
         this.sendData()
       }
     },
-    
     startInterval() {
       if (this.intervalId) {
         clearInterval(this.intervalId)
@@ -559,7 +559,6 @@ export default {
       }, this.time)
     },
 
-    // 发送数据
     async sendData() {
       const currentTime = this.player.getCurrentTime();
 
@@ -583,7 +582,6 @@ export default {
 
       this.start_second = currentTime;
     },
-    // 获取视频凭证
     async getCourseGetVideoAuth(params, autoplay = true) {
       let res = await courseGetVideoAuth(params)
       let { video, lesson, record, face, user } = res.data
@@ -596,28 +594,17 @@ export default {
         this.user = user
         this.start_second = +record.start_second
         this.prev_time = +record.finish_second
-        let faceTime = face[0]
-
-        if (!user.real_status) {
+        
+        if (!user.real_status || !this.isRealing) {
           this.canPlay = false
-          // this.clearPlayer()   
+          this.clearPlayer()
           this.showModalForRealVerification()
           return;
         }
 
-        // if (faceTime === 0) {
-        //   this.isFaceing = true
-        //   this.canPlay = false
-        //   this.clearPlayer()
-        //   this.showModalForFaceVerifity(faceTime)
-        //   return;
-        // }
-
-       // 随堂考试中
         if (lesson.is_in_exam && lesson.is_practice) {
-          this.isTesting = true
           this.canPlay = false
-          // this.clearPlayer()
+          this.clearPlayer()
           this.showModalForExamination()
           return;
         }
@@ -797,4 +784,12 @@ export default {
   z-index: 999;
 }
 
+.real-verification {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+}
 </style>

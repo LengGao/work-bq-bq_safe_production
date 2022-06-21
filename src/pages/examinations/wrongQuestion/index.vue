@@ -12,7 +12,7 @@
       </view>
     </view>
     </template>
-    <NoData top="35%" v-else>暂无考试记录</NoData>
+    <NoData top="35%" v-else>暂无错题记录</NoData>
   </view>
 </template>
 

@@ -337,6 +337,8 @@ export default {
     // 改变机构改变地区
     changeOrgBecauseOfRegion(item) {
       console.log('organizationList', this.organizationList, item);
+      if (!this.organizationList || !this.organizationList.length) return;
+
       let organizations = this.organizationList.filter(org => org.region_id == item.id)
       if (organizations.length > 1) {
         this.openPopup(organizations, organizations)
