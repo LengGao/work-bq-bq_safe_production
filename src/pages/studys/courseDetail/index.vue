@@ -595,7 +595,7 @@ export default {
         this.start_second = +record.start_second
         this.prev_time = +record.finish_second
         
-        if (!user.real_status || !this.isRealing) {
+        if (!user.real_status) {
           this.canPlay = false
           this.clearPlayer()
           this.showModalForRealVerification()
@@ -627,6 +627,10 @@ export default {
   overflow: hidden;
   width: 100%;
   padding-bottom: 100rpx;
+}
+
+#aliplayer {
+  height: 200px;
 }
 
 .course-cover {

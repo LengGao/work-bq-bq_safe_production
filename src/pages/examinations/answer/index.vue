@@ -12,7 +12,7 @@
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    @touchmove="onTouchmove"
                    v-for="(item, index) in answerSheetArr" :key="index">
-          <template v-if="currentIndex === index || currentIndex === index - 1 || currentIndex === index + 1">
+          <!-- <template v-if="currentIndex === index || currentIndex === index - 1 || currentIndex === index + 1"> -->
           <Single :options="questionList[index]" :model="model" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_type === 1" />
           <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
@@ -29,7 +29,7 @@
                 v-if="questionList[index] && questionList[index].question_type === 7" :question-bank="question_bank_id"
                 :log-id="exam_log_id" @change="onCaseChange" @submitanswe-case="submitAnswerChild"
                 />
-          </template>
+          <!-- </template> -->
       </swiper-item>
     </swiper>
 

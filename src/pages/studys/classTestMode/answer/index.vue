@@ -290,10 +290,16 @@ export default {
       const data = { lesson_id: this.lesson_id };
       const res = await practiceStart(data);
       if (res.code === 0) {
-        this.practice_id = res.data.practice_id
-        this.last_question_id = res.data.last_id
-        this.frequency = res.data.times
-        this.total = res.data.question.length
+        let { practice_id, last_id, times } = res.data
+
+        let list = res.data.question.map(item => { item.answer = []; return item; })
+        let index = list.findIndex(item => item.question_id === last_id)
+        
+
+        this.practice_id = practice_id
+        this.last_question_id = last_id
+        this.frequency = times
+        this.total = list.length
         this.initQuestion(res.data.last_id, res.data.question)
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none'})
@@ -301,7 +307,8 @@ export default {
     },
 
     initQuestion(last_question_id, list) {
-      let index = list.findIndex(item => item.question_id === last_question_id)
+      console.log('list', list, last_question_id);
+      
 
       this.questionList = list.slice(index).map(item => {
         item.answer = [];
