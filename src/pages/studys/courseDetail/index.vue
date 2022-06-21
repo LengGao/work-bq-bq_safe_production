@@ -317,6 +317,7 @@ export default {
     showModalForFaceVerifity(faceTime) {
       this.isFaceing = true
       this.faceTime = faceTime
+      
       uni.showModal({
         title: '提示',
         content: '请人脸核验成功后再继续学习',
@@ -371,22 +372,22 @@ export default {
         uni.navigateTo({ url })
       }
 
-      uni.showModal({
-        title: '提示',
-        content: `您已完成本课程所有课时的学习和考试，顺利毕业啦(*^▽^*)！`,
-        cancelText: '查看学习记录',
-        confirmText: '生成证书',
-        cancelColor: '#199fff',
-        confirmColor: '#199fff',
-        success: (res) => {
-          if (res.confirm) {
-            confirmCallback()
-          }
-          if (res.cancel) {
-            cancelCallback()
-          }
-        }
-      })
+      // uni.showModal({
+      //   title: '提示',
+      //   content: `您已完成本课程所有课时的学习和考试，顺利毕业啦(*^▽^*)！`,
+      //   cancelText: '查看学习记录',
+      //   confirmText: '生成证书',
+      //   cancelColor: '#199fff',
+      //   confirmColor: '#199fff',
+      //   success: (res) => {
+      //     if (res.confirm) {
+      //       confirmCallback()
+      //     }
+      //     if (res.cancel) {
+      //       cancelCallback()
+      //     }
+      //   }
+      // })
     },
 
     onChangeVideo(detailArr) {
@@ -412,7 +413,6 @@ export default {
       uni.showToast({ title: res.message, icon: 'none' })
       
       if (res.code === 2201) {
-        this.
         this.lesson_id = res.data.lesson_id
         this.jumpVideo(res.data.lesson_id)
         return;
@@ -539,12 +539,12 @@ export default {
             document.querySelector(".prism-setting-speed").style.display ="block";
           }
           // 随堂考试
-          // if (lesson.is_practice && !lesson.is_done) {
-          //   this.isTesting = true;
-          //   player.pause()
-          //   this.showModalForExamination()
-          //   return;
-          // }
+          if (lesson.is_practice && !lesson.is_done) {
+            this.isTesting = true;
+            player.pause()
+            this.showModalForExamination()
+            return;
+          }
           // 是否学完
           if (lesson.is_free) {
             this.checkCourseGraduated()
@@ -646,14 +646,14 @@ export default {
         this.start_second = +record.start_second
         this.prev_time = +record.finish_second
         
-        if (lesson.is_in_exam && lesson.is_practice) {
+        if (lesson.is_in_exam && lesson.is_practice && this.userStatus === 1) {
           this.canPlay = false
           this.clearPlayer()
           this.showModalForExamination()
           return;
         }
 
-        if (!user.real_status) {
+        if (!user.real_status && this.userStatus === 1) {
           this.canPlay = false
           this.clearPlayer()
           this.showModalForRealVerification()

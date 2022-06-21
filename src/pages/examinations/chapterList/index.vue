@@ -138,6 +138,8 @@ export default {
       if (res.code === 0) {
         this.question_bank_id = params.question_bank_id
         this.chapterList = res.data
+      } else {
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
     },
   },

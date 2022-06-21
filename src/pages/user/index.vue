@@ -40,6 +40,7 @@
 import UserInfo from "./components/userInfo";
 import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
+import { getQuestionBankList } from '@/api/question'
 
 export default {
   mixins: [browser],
@@ -70,11 +71,10 @@ export default {
       ],
     };
   },
-  onReady() {
-    this.getUserInfo()
-  },
   onShow() {
-    this.getUserInfo()
+    getQuestionBankList().then(res => {
+      this.getUserInfo()
+    })
   },
   methods: {
     onClickList(detail) {

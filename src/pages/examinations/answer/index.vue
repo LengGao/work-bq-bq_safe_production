@@ -304,11 +304,11 @@ export default {
       let question_id = ''
 
       if (inAnswerSheet && !inQuestionList) {
-        if (this.needChangeSheet.includes(this.source)) {
-          question_id = inAnswerSheet
-        } else {
+        // if (this.needChangeSheet.includes(this.source)) {
+          // question_id = inAnswerSheet
+        // } else {
           question_id = inAnswerSheet.id
-        }
+        // }
         // console.log('getQuestionDetail', index, question_id, this.total);
         this.getQuestionDetail(question_id, index)
       }

@@ -87,6 +87,8 @@ export default {
       const res = await customExamList(params);
       if (res.code === 0) {
         this.list = res.data
+      } else {
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
     },
   },
