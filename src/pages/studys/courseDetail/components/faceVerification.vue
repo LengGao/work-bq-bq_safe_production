@@ -1,9 +1,13 @@
 <template>
   <view class="face-verification">
-    <custom-header :title="defaultTitle" ></custom-header>
+    <view class="nav-bar">    
+      <uni-icons class="nav-bar-back" type="back" color="#fff" size="16px" @click="goBack" />
+      <slot name="title"><text class="nav-bar-title"> {{ defaultTitle }} </text></slot>
+    </view>
 
     <view class="face">
-      <view class="title">
+      <view class="face-title">
+        <uni-icons class="nav-bar-back" type="back" color="#fff" size="16px" @click="goBack" />
         {{ toastMsg }}
       </view>
 
@@ -28,11 +32,22 @@
 
 <script>
 import { faceUpload } from '@/api/course'
-import CustomHeader from "@/components/custom-header"
 
 export default {
-  components: {
-    CustomHeader
+  name: 'FaceVerification',
+  props: {
+    lessonId: {
+      type: [String, Number],
+      default: ''
+    },
+    courseId: {
+      type: [String, Number],
+      default: ''
+    },
+    endSecond: {
+      type: [Number],
+      default: 0
+    }
   },
   data() {
     return {
@@ -52,10 +67,6 @@ export default {
       fragment: null,
       videoSize: { facingMode: 'user', width: 300, height: 300 },
 
-      endSecond: 0,
-      lessonId: 0,
-
-
       errMsgMap: {
         'AbortError': '终止错误',
         'NotAllowedError': '摄像头启用被禁止，请允许后重试',
@@ -68,10 +79,7 @@ export default {
       }
     }
   },
-  onLoad(query) {
-    let { lesson_id, end_second } = query
-    this.lessonId = +lesson_id
-    this.endSecond = +end_second
+  created() {
     this.init()
   },
   mounted() {
@@ -143,14 +151,15 @@ export default {
       this.init()
     },
     handleOk() {
+      this.countError = 0
       this.btndisabled = true
       this.sendData()
     },
-    goback() {
-      history.back()
+    goBack() {
+      this.$emit('FaceVerifitySuccess', this.verificationStatus)
     },
     handlerSuccess(strem) {
-      console.log('strem', strem)      
+      console.log('strem', strem)  
       this.showRestartBtn = false
       this.strem = strem
       this.video.srcObject = strem
@@ -182,40 +191,34 @@ export default {
       base64 = image.split(';base64,')[1]
       return { lesson_id: this.lessonId, end_second: this.endSecond, photo: base64 }
     },
-
-    // 验证成功
     verifiSuccess() {
       this.verificationStatus = true
       this.btndisabled = false
       this.toastMsg = '验证通过'
       uni.showToast({ title: '验证通过', icon: 'none' })
       this.clearStrem()
-      setTimeout(() => { this.goback() }, 800)
+      setTimeout(() => { this.goBack() }, 800)
     },
-    // 验证失败
     verifierror(message) {
       this.verificationStatus = false
       this.toastMsg = message
       this.countError++;
-
-      if (this.countError > 3) {
-        this.btndisabled = false
-        this.clearTimer()
-        this.toastMsg = '人脸验证失败, 请重新验证'
-      }
     },
-    // 发送数据
     async sendData() {
       let params = this.getMediaData()
       let res = await faceUpload(params)
       if (res.code === 0) {
         this.verifiSuccess()
       } else {
-        this.verifierror(res.message)
-        this.timer = setTimeout(() => { this.sendData() }, 500)
+        if (this.countError <= 3) {
+          this.timer = setTimeout(() => { this.sendData() }, 500)   
+          this.verifierror(res.message)
+        } else {
+          this.btndisabled = false
+          this.verifierror('人脸验证失败, 请重新验证')
+        }
       }
     },
-
     clearStrem() {
       if (this.strem) {
         this.strem.getTracks().forEach((track) => track.stop());
@@ -246,11 +249,34 @@ export default {
 .face-verification {
   width: 100%;
   height: 100%;
+  background-color: #fff;
+}
+
+.nav-bar {
+  display: flex;
+  height: 44px; // 固定值
+  font-size: 16px;
+  line-height: 44px;
+  color: #fff;
+  padding-left: 10px;
+  background-color: #199fff;
+
+  &-back {
+    z-index: 99;
+  }
+
+  &-title {
+    flex: 1;
+    margin-left: -26px;
+    text-align: center;
+    z-index: 90;
+  }
 }
 
 .face {
-  margin-top: 60rpx;
-  .title {
+  
+  .face-title {
+    margin-top: 60rpx;
     text-align: center;
   }
   .face-container {

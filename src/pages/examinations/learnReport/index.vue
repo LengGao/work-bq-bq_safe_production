@@ -86,7 +86,7 @@
           </view>
         </view>
         <view class="learn-report-card-contetn">
-          <view class="charts-line-title">最近7次模拟考试成绩</view>
+          <view class="charts-line-title">最近7次考试成绩</view>
           <view class="charts-line-box">
             <qiun-data-charts type="line" :chartData="chartLineData" :opts="chartsLineOpts" />
           </view>
@@ -94,7 +94,7 @@
         <view class="learn-report-card-statistics statistics-data">
           <view class="statistics-data-item">
             <view class="statistics-data-item-value">{{mockData.total_exam_num | empty}}</view>
-            <view class="statistics-data-item-title">模拟考试次数</view>
+            <view class="statistics-data-item-title">考试次数</view>
           </view>
           <view class="statistics-data-item">
             <view class="statistics-data-item-value">{{mockData.total_answer_num | empty}}</view>
@@ -102,7 +102,7 @@
           </view>
           <view class="statistics-data-item none">
             <view class="statistics-data-item-value">{{mockData.top_score | empty}}</view>
-            <view class="statistics-data-item-title">模拟考试最高分</view>
+            <view class="statistics-data-item-title">考试最高分</view>
           </view>
         </view>
       </view>

@@ -32,8 +32,8 @@
 
     <uni-popup ref="popup" type="center" class="popup">
       <div class="dialog">
-        <view class="dialog-title"> 我的评价</view>
-        <view class="dialog-content">
+        <view class="dialog-title">我的评价</view>
+        <view class="dialog-content"> 
           <view class="rate">
             <uni-rate :value="rateForm.star" @change="onChangeRate" :size="42" />
             <view class="rate-content">{{ starText[rateForm.star] }}</view>
@@ -54,6 +54,16 @@
         <uni-icons type="close" color="#fff" size="42" @click="onClose" />
       </view>
     </uni-popup>
+
+    <uni-popup ref="faceVerification" class="face-verification" type="center" @change="onfaceVerificationChange">
+      <FaceVerification        
+        :lessonId="lesson_id"
+        :courseId="course_id"
+        :endSecond="faceTime"
+        @FaceVerifitySuccess="onFaceVerifitySuccess"
+      />
+    </uni-popup>
+
   </view>
 </template>
 
@@ -61,6 +71,7 @@
 import Details from './components/Details'
 import Catalogue from "./components/Catalogue"
 import Rate from './components/Rate'
+import FaceVerification from './components/faceVerification'
 import CustomHeader from "@/components/custom-header"
 import { browser, userStatus } from '@/mixins/index'
 import {
@@ -77,6 +88,7 @@ export default {
     Details,
     Catalogue,
     Rate,
+    FaceVerification,
     CustomHeader,
   },
   data() {
@@ -116,6 +128,7 @@ export default {
       
       // 实名与人脸验证
       canPlay: false,
+      faceTime: 0,
       isFaceing: false,
       isTesting: false,
       autoplay: 0,
@@ -273,16 +286,25 @@ export default {
         }
       })
     },
+    onFaceVerifitySuccess(result) {
+      if (result) {
+        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
+      }
+      this.closeFaceVerifity()
+    },
+    showFaceVerifity() {
+      this.$refs['faceVerification'].open()
+    },
+    closeFaceVerifity() {
+      this.$refs['faceVerification'].close()
+    },
+    onfaceVerificationChange(e) {
+      console.log('onfaceVerificationChange' ,e);
+    },
     // 人脸验证
     showModalForFaceVerifity(faceTime) {
-      let url = `/pages/studys/faceVerification/index`
-      let query = {
-        lesson_id: this.lesson_id, 
-        course_id: this.course_id,
-        end_second: faceTime
-      }
-      let path = this.getPath(url, query)
-
+      this.isFaceing = true
+      this.faceTime = faceTime
       uni.showModal({
         title: '提示',
         content: '请人脸核验成功后再继续学习',
@@ -292,7 +314,7 @@ export default {
         confirmColor: '#199fff',
         success: (res) => {
           if (res.confirm) {
-            setTimeout(() => { uni.redirectTo({ url: path }) }, 500)
+            this.showFaceVerifity()
           }
         }
       })
@@ -322,11 +344,12 @@ export default {
       })
     },
 
+
     // 课时目录更改
     onChangeVideo(detailArr) {
       let curr = detailArr[detailArr.length -1]
       this.lesson_id = curr.id
-      this.changeSend()
+      this.stopInterval()
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
     },
     // 点击开始播放
@@ -424,12 +447,16 @@ export default {
         // 人脸时间
         let faceTime = face[0]
 
-        player.seek(this.start_second);
+        player.on('ready', () => {
+          player.play()
+        })
 
         player.on('canplay', () => {
-          console.log('canPlay');
           this.canPlay = true
-          // player.play()
+        })
+
+        player.on('loadeddata', () => {
+          player.seek(this.start_second);
         })
 
         player.on('pause', () => {
@@ -463,7 +490,7 @@ export default {
           // 随堂考试
           if (lesson.is_practice && !lesson.is_done) {
             this.isTesting = true;
-            this.clearPlayer();
+            player.pause()
             this.showModalForExamination()
             return;
           }
@@ -473,6 +500,7 @@ export default {
         })
 
         player.on('timeupdate', () => {
+   
           // 当前时间
           const currentTime = player.getCurrentTime();
           // console.log(currentTime, faceTime);
@@ -572,7 +600,7 @@ export default {
 
         if (!user.real_status) {
           this.canPlay = false
-          this.clearPlayer()       
+          // this.clearPlayer()   
           this.showModalForRealVerification()
           return;
         }
@@ -589,7 +617,7 @@ export default {
         if (lesson.is_in_exam && lesson.is_practice) {
           this.isTesting = true
           this.canPlay = false
-          this.clearPlayer()
+          // this.clearPlayer()
           this.showModalForExamination()
           return;
         }
@@ -632,12 +660,16 @@ export default {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  z-index: 999;
+  z-index: 100;
   background-color: #000;
 }
 
 ::v-deep .prism-setting-speed {
   display: none !important;
+}
+
+::v-deep .prism-big-play-btn {
+  z-index: 555;
 }
 
 .course-img {
@@ -755,4 +787,14 @@ export default {
     }
   }
 }
+
+.face-verification {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+}
+
 </style>
