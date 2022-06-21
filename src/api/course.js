@@ -208,3 +208,11 @@ export function practiceAnalyse(data) {
     data   
   })
 }
+
+export function checkCourseGraduated(data) {
+  return request({
+    url: 'course/checkCourseGraduated',
+    method: 'post',
+    data   
+  })
+}

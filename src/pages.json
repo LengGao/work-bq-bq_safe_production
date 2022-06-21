@@ -149,6 +149,12 @@
 					}
 				},
 				{
+					"path": "learningCertificate/index",
+					"style": {
+						"navigationBarTitleText": "学习证书"
+					}
+				},
+				{
 					"path": "learnData/index",
 					"style": {
 						"navigationBarTitleText": "学习数据"

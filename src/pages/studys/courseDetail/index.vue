@@ -68,7 +68,6 @@
       <RealVerification
         @RealVerifitynSuccess="onRealVerifitynSuccess"
       />
-
     </uni-popup>
 
   </view>
@@ -88,6 +87,7 @@ import {
   courseGetVideoAuth,
   courseRecordLearn,
   courseCommentHotWord,
+  checkCourseGraduated,
 } from '@/api/course'
 
 export default {
@@ -141,6 +141,7 @@ export default {
       isFaceing: false,
       isTesting: false,
       isRealing: false,
+      overFinish: false,
       autoplay: 0,
       getVideoErr: '',
     }
@@ -273,7 +274,6 @@ export default {
         goBack()
       }
     },
-
     // 随堂测试
     showModalForExamination() {
       this.isTesting = true
@@ -357,6 +357,37 @@ export default {
         }
       })
     },
+    // 生成证书
+    showModalForFininsh() {
+      let course_id = this.course_id
+      const cancelCallback = () => {
+        let url = `/pages/studys/learningRecords/index?course_id=${course_id}`
+        uni.navigateTo({ url })
+      }
+
+      const confirmCallback = () => {
+        let url = `/pages/studys/learningCertificate/index?course_id=${course_id}`
+        uni.navigateTo({ url })
+      }
+
+      uni.showModal({
+        title: '提示',
+        content: `您已完成本课程所有课时的学习和考试，顺利毕业啦(*^▽^*)！`,
+        cancelText: '查看学习记录',
+        confirmText: '生成证书',
+        cancelColor: '#199fff',
+        confirmColor: '#199fff',
+        success: (res) => {
+          if (res.confirm) {
+            confirmCallback()
+          }
+          if (res.cancel) {
+            cancelCallback()
+          }
+        }
+      })
+    },
+
     onChangeVideo(detailArr) {
       let curr = detailArr[detailArr.length -1]
       this.lesson_id = curr.id
@@ -367,14 +398,24 @@ export default {
       this.canPlay = true
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
     },
+    jumpVideo(lesson_id) {
+      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: lesson_id })
+    },
     setCover(url) {
       if (this.player) this.player.setCover(url);
     },
     getVideoMessage(res) {
+      uni.showToast({ title: res.message, icon: 'none' })
+      
+      if (res.code === 2201) {
+        this.lesson_id = res.data.lesson_id
+        this.jumpVideo(res.data.lesson_id)
+        return;
+      }
+
       if (res.data.cover) this.setCover(res.data.cover);
       this.getVideoErr = res.message
       this.canPlay = false
-      uni.showToast({ title: res.message, icon: 'none' })
     },
     recondMessage(res) {
       uni.showToast({ title: res.message, icon: 'none' })
@@ -493,12 +534,17 @@ export default {
             document.querySelector(".prism-setting-speed").style.display ="block";
           }
           // 随堂考试
-          if (lesson.is_practice && !lesson.is_done) {
-            this.isTesting = true;
-            player.pause()
-            this.showModalForExamination()
-            return;
+          // if (lesson.is_practice && !lesson.is_done) {
+          //   this.isTesting = true;
+          //   player.pause()
+          //   this.showModalForExamination()
+          //   return;
+          // }
+          // 是否学完
+          if (lesson.is_free) {
+            this.checkCourseGraduated()
           }
+
           // 重置播放开始时间
           this.start_second = 0;
           player.seek(this.start_second);
@@ -595,17 +641,17 @@ export default {
         this.start_second = +record.start_second
         this.prev_time = +record.finish_second
         
-        if (!user.real_status) {
-          this.canPlay = false
-          this.clearPlayer()
-          this.showModalForRealVerification()
-          return;
-        }
-
         if (lesson.is_in_exam && lesson.is_practice) {
           this.canPlay = false
           this.clearPlayer()
           this.showModalForExamination()
+          return;
+        }
+
+        if (!user.real_status) {
+          this.canPlay = false
+          this.clearPlayer()
+          this.showModalForRealVerification()
           return;
         }
         
@@ -616,6 +662,15 @@ export default {
         this.getVideoMessage(res)
       }
     },
+
+    async checkCourseGraduated() {
+      let res = await checkCourseGraduated({ course_id: this.course_id})
+      if (res.code === 0) {
+        if (res.data) {
+          this.showModalForFininsh()
+        }
+      }
+    }
   } 
 }
 </script>

@@ -455,7 +455,6 @@ export default {
 
   .certificate-img {
     width: 680rpx;
-    // height: 800rpx;
   }
 
   .footer {

@@ -6,7 +6,9 @@
         <template v-slot:title>
           <view class="title one-title" :class="item1.checked ? 'title-active' : ''">
             <view class="title-box">
-              {{ item1.title }}
+              <view class="title-text">
+                {{ item1.title }}
+              </view>
               <view v-if="item1.is_try" class="tag">试看</view>
             </view>
           </view>
@@ -18,8 +20,10 @@
             <template v-slot:title>
               <view class="title two-title" :class="item2.checked ? 'title-active' : ''">
                 <view class="title-box">
-                  {{ item2.title }}
-                  <view v-if="item2.is_try" class="tag">试看</view>
+                  <view class="title-text">
+                    {{ item2.title }}
+                  </view>
+                  <view v-if="!is_buy && item2.is_try" class="tag">试看</view>
                 </view>
               </view>
             </template>
@@ -29,10 +33,14 @@
               <view v-for="item3 in item2.lesson" :key="item3.id" class="title three-title"
                     :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item2, item1)">
                 <view class="title-box">
-                  <uni-icons v-if="item3.learn_status === 0" type="locked-filled" size="32rpx" color="#999" style="margin-right: 8rpx" />
-                  <uni-icons v-else type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'" style="margin-right: 8rpx" />
-                  {{ item3.title }}
-                  <view v-if="item3.is_try" class="tag">试看</view>
+                  <uni-icons v-if="item3.learn_status === 0" type="locked-filled" size="32rpx" color="#999"
+                             style="margin-right: 8rpx" />
+                  <uni-icons v-else type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'"
+                             style="margin-right: 8rpx" />
+                  <view class="title-text">
+                    {{ item3.title }}
+                  </view>
+                  <view v-if="!is_buy && !item3.is_try" class="tag">试看</view>
                 </view>
                 <text>{{ item3.duration }}</text>
               </view>
@@ -51,10 +59,14 @@
           <view v-for="item3 in item1.lesson" :key="item3.id" class="title three-title"
                 :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item1)">
             <view class="title-box">
-              <uni-icons v-if="item3.learn_status === 0" type="locked-filled" size="32rpx" color="#999" style="margin-right: 8rpx" />
-              <uni-icons v-else type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'" style="margin-right: 8rpx" />
-              {{ item3.title }}
-              <view v-if="item3.is_try" class="tag">试看</view>
+              <uni-icons v-if="item3.learn_status === 0" type="locked-filled" size="32rpx" color="#999"
+                         style="margin-right: 8rpx" />
+              <uni-icons v-else type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'"
+                         style="margin-right: 8rpx" />
+              <view class="title-text">
+                {{ item3.title }}
+              </view>
+              <view v-if="!is_buy && item3.is_try" class="tag">试看</view>
             </view>
             <text>{{ item3.duration }}</text>
           </view>
@@ -102,6 +114,7 @@ export default {
   },
   data() {
     return {
+      is_buy: 0,
       checkeds: [], // 当前选择
       chapterList: [], // 目录
     }
@@ -135,7 +148,7 @@ export default {
         }
 
         if (parent.chapter_id === item.id || parent.parent_id === item.id) {
-          item.checked = true; 
+          item.checked = true;
           this.checkeds.push(item);
           // parent = item;
           return parent = item;
@@ -183,6 +196,7 @@ export default {
       if (res.code == 0) {
         let list = this.assembleData(res.data.chapter)
         this.chapterList = list
+        this.is_buy = res.data.is_buy
         if (this.lessonId) {
           this.toFlushBack(this.lessonId, list)
         }
@@ -208,7 +222,7 @@ export default {
 .title-box {
   display: flex;
   flex-direction: row;
-  align-items: baseline;
+  align-items: center;
 }
 
 .one-title {
@@ -216,7 +230,7 @@ export default {
 }
 
 .two-title {
-  margin-left: 30rpx;
+  margin-left: 20rpx;
   color: #333;
 }
 
@@ -227,21 +241,29 @@ export default {
   border-bottom: 2rpx solid #ebeef5;
 }
 
+.title-text {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  width: 100%;
+}
+
 .title-active {
   color: #199fff;
 }
 
 .tag {
   display: inline-block;
-  margin-left: 16rpx;
+  margin: 0 10rpx;
   padding: 2rpx 6rpx 6rpx;
   font-size: $font-size-sm;
   line-height: $font-size-sm;
   height: $font-size-sm;
   text-align: center;
   color: $color-primary;
+  white-space: nowrap;
   border: 2rpx solid $color-primary;
-  box-sizing: content-box;
 }
 </style>
 

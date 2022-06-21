@@ -87,7 +87,7 @@ export default {
         uni.navigateTo({ url: url })
       }
     },
-    getUserInfo() {      
+    getUserInfo() {
       let userInfo = uni.getStorageSync('userInfo') || {}
       let orgInfo = uni.getStorageSync('orgInfo') || {}
       this.userInfo = userInfo

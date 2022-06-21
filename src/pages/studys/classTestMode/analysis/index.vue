@@ -1,7 +1,6 @@
 <template>
   <view class="answer">
     <custom-header :title="defaultTitle" :customBack="onCustomBack"></custom-header>
-    <custom-header :title="defaultTitle" ></custom-header>
 
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />

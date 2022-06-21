@@ -184,7 +184,7 @@ export default {
 .main {
   height: 620rpx;
   overflow-y: auto;
-  margin-top: 60rpx;
+  margin-top: 90rpx;
   padding: 0 60rpx;
 
   .gird {
