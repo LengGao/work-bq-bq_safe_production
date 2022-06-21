@@ -508,8 +508,9 @@ export default {
 
         player.on('loadeddata', () => {
           player.seek(this.start_second);
-          player.play()
         })
+
+        player.play()
 
         player.on('pause', () => {
           // console.log('pause');
@@ -649,14 +650,16 @@ export default {
         
         if (lesson.is_in_exam && lesson.is_practice && this.userStatus === 1) {
           this.canPlay = false
-          this.clearPlayer()
+          // this.clearPlayer()
+          if (this.player) this.player.pause();
           this.showModalForExamination()
           return;
         }
 
         if (!user.real_status && this.userStatus === 1) {
           this.canPlay = false
-          this.clearPlayer()
+          // this.clearPlayer()
+          if (this.player) this.player.pause();
           this.showModalForRealVerification()
           return;
         }
