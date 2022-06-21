@@ -2,9 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { service } from '@/request/index'
 import {
-    systemRegion
-} from '@/api/index'
-import {
     login,
     loginout,
     renewal,

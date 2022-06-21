@@ -6,8 +6,7 @@
 
     <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
-    <swiper class="swiper" :duration="duration" :current="currentIndex" :disable-touch="disableTouch"
-            v-if="questionList[currentIndex]"
+    <swiper class="swiper" :duration="duration" :current="currentIndex" :disable-touch="true"
             @change="onSwiperChange">
       <swiper-item class="swiper-item" v-for="(item, index) in questionList" :key="index">
         <Single :options="questionList[currentIndex]" @change="onSingleChange"
@@ -74,6 +73,7 @@ export default {
       course_id: 0,
       last_question_id: 0,
 
+      serialNumber: 0,
       prevIndex: -1,
       currentIndex: 0,
       disableTouch: true,
@@ -87,7 +87,6 @@ export default {
       answerSheet: [],
       questionList: [],
       userAnswerMap: {},
-      answered: {},
     };
   },
   computed: {
@@ -216,11 +215,10 @@ export default {
       this.submitAnswer(this.prevIndex)
     },
 
-
     cacheAnswer(answer) {
-      this.disableTouch = false
       let key = answer.question_id
       this.userAnswerMap[key] = answer
+      this.disableTouch = false
     },
 
      onTimeUp() {
@@ -239,45 +237,31 @@ export default {
       let query = { practice_id, course_id, lesson_id }
       let path = this.getPath(url, query)
 
-      if (this.answered[question_id]) {
-        uni.redirectTo({ url: path });
-        return;
-      }
-
       let params = { practice_id, question_id: question_id, answer: answer.answer }
       let res = await practiceAnswer(params)
       if (res.code === 0) {
         uni.redirectTo({ url: path })
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none' })
-        setTimeout(() => { 
-          uni.redirectTo({ url: path })
-        }, 800)
+        setTimeout(() => { uni.redirectTo({ url: path })}, 800)
       }
     },
 
     async submitAnswer(prevIndex) {
       let { practice_id, question_id, answer } = this.getQuery(prevIndex)
       let params = { practice_id, question_id: question_id, answer: answer.answer }
-
-      if (this.answered[question_id]) {
-        this.disableTouch = false;
-        return;
-      }
       
       let res = await practiceAnswer(params)
       if (res.code === 0) {
-        this.disableTouch = false
         this.practiceQuestion(this.currentIndex)
-        this.answered[question_id] = answer
-      } else {  
+      } else {
         uni.showToast({ title: `${res.message}`, icon: 'none' })
       }
     },
 
     async practiceQuestion(index) {
       let practice_id = this.practice_id
-      let question_id = this.questionList[index].question_id
+      let question_id = this.questionList[index]?.question_id
       if (!question_id) return;
       let params = { question_id, practice_id }
       let res = await practiceQuestion(params)
@@ -290,35 +274,26 @@ export default {
       const data = { lesson_id: this.lesson_id };
       const res = await practiceStart(data);
       if (res.code === 0) {
-        let { practice_id, last_id, times } = res.data
-
-        let list = res.data.question.map(item => { item.answer = []; return item; })
+        let { practice_id, question, last_id, times } = res.data
+        let list = question.map(item => { item.answer = []; return item; })
         let index = list.findIndex(item => item.question_id === last_id)
-        
 
+        this.currentIndex = (index !== -1 ? index : 0)
+        this.total = list.length
+        this.frequency = times
+        this.questionList = list
         this.practice_id = practice_id
         this.last_question_id = last_id
-        this.frequency = times
-        this.total = list.length
-        this.initQuestion(res.data.last_id, res.data.question)
+
+        this.initQuestion(last_id, question)
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none'})
       }
     },
 
-    initQuestion(last_question_id, list) {
-      console.log('list', list, last_question_id);
-      
-
-      this.questionList = list.slice(index).map(item => {
-        item.answer = [];
-        return item
-      })
-
-      console.log(this.questionList, index)
+    initQuestion() {
       this.practiceQuestion(this.currentIndex)
     }
-
   },
 };
 </script>

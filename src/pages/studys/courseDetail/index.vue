@@ -616,7 +616,7 @@ export default {
         this.getVideoMessage(res)
       }
     },
-  }
+  } 
 }
 </script>
 

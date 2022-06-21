@@ -156,10 +156,12 @@ export default {
 }
 
 .header {
-  margin-top: 80rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 80rpx;
+  padding-right: 30rpx;
+  padding-left: 60rpx;
 
   &-row-one {
     display: flex;
@@ -171,25 +173,26 @@ export default {
   }
 
   &-row-two {
-    margin: 24rpx auto 0;
-    letter-spacing: 3rpx;    
-    font-size: 36rpx;
+    margin-top: 24rpx;
+    width: 100%;
     color: #999;
+    font-size: 36rpx;
+    text-align: center;
   }
 }
 
 .main {
   height: 620rpx;
   overflow-y: auto;
-  margin-top: 30rpx;
-  padding: 40rpx 60rpx 0 60rpx;
+  margin-top: 60rpx;
+  padding: 0 60rpx;
 
   .gird {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     grid-auto-rows: minmax(80rpx, auto);
-    grid-gap: 40rpx;;
-    gap: 40rpx;  
+    grid-gap: 40rpx;
+    gap: 40rpx;
   }
 
   .box {
@@ -197,6 +200,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0 auto;
     width:  80rpx;
     height: 80rpx;
     font-size: 36rpx;

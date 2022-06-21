@@ -146,13 +146,13 @@ export default {
     async sendData(id_card_front, id_card_reverse) {
       let params = { id_card_front, id_card_reverse }
       let res = await updateIdCardImg(params)
-      // if (res.code === 0) {
-      //   this.verificationStatus = true
-      //   uni.showToast({ title: '实名认证通过', icon: 'none' })
+      if (res.code === 0) {
+        this.verificationStatus = true
+        uni.showToast({ title: '实名认证通过', icon: 'none' })
       this.goBack()
-      // } else {
-      //   uni.showToast({ title: `${res.message}`, icon: 'none' })
-      // }
+      } else {
+        uni.showToast({ title: `${res.message}`, icon: 'none' })
+      }
     }
   }
 }
