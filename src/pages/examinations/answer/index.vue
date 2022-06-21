@@ -1,7 +1,7 @@
 <template>
   <view class="answer">
     <custom-header :title="defaultTitle"></custom-header>
-    <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
+    <AnswerHead v-if="questionList[currentIndex] && questionList[currentIndex].question_type" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" :current="currentIndex"
             :disable-touch="disableTouch"
@@ -12,7 +12,7 @@
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    @touchmove="onTouchmove"
                    v-for="(item, index) in answerSheetArr" :key="index">
-          <!-- <template v-if="currentIndex === index || currentIndex === index - 1 || currentIndex === index + 1"> -->
+          <template v-if="currentIndex === index || currentIndex === index - 1 || currentIndex === index + 1">
           <Single :options="questionList[index]" :model="model" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_type === 1" />
           <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
@@ -29,11 +29,11 @@
                 v-if="questionList[index] && questionList[index].question_type === 7" :question-bank="question_bank_id"
                 :log-id="exam_log_id" @change="onCaseChange" @submitanswe-case="submitAnswerChild"
                 />
-          <!-- </template> -->
+          </template>
       </swiper-item>
     </swiper>
 
-    <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar" :is-end="isEnd" :is-start="isStart"
+    <AnswerBar class="bar" v-if="questionList[currentIndex] && questionList[currentIndex].question_type" ref="answerbar" :is-end="isEnd" :is-start="isStart"
                :time="time" :model="model" :isCollection="questionList[currentIndex].is_collect" @card="toCard"
                @submit-paper="submitPaper" @end-practice="endPractice" @collect="setCollection" @timeup="onTimeUp"
                @prev="handlePrev" @next="handleNext">
@@ -360,7 +360,7 @@ export default {
       let chapter_id = this.chapter_id
       let question_bank_id = this.question_bank_id
       let exam_log_id = this.exam_log_id
-      let type = quetion.question_type
+      let type = quetion?.question_type
       let question_id = quetion.id
       let answer = this.userAnswerMap[question_id]
       let answerCase = this.userAnswerMapCase[this.caseIndex]
@@ -495,7 +495,10 @@ export default {
 
       if (question_id) {
         let res = await getQuestionDetail(params)
-        if (res.code === 0) { this.questionList[index] = res.data }
+        if (res.code === 0) {
+           this.questionList[index] = res.data
+           this.$forceUpdate()
+        }
       }
     },
 
@@ -616,7 +619,7 @@ export default {
     },
 
     fiilQuestion(list) {
-      let total = this.total, index = this.currentIndex, arr = [].fill('', 0, total)
+      let total = this.total, index = this.currentIndex, arr = [].fill({}, 0, total)
       if (index > 0 && index < total - 1) {
         arr[index - 1] = list[0]
         arr[index] = list[1]
@@ -640,7 +643,7 @@ export default {
       }
       // console.log(total, arr, index);
 
-      this.questionList = JSON.parse(JSON.stringify(arr))
+      this.questionList = arr
     },
   }
 }
