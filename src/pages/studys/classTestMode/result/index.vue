@@ -165,7 +165,6 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    // width: 540rpx;
     font-size: 46rpx;
     letter-spacing: 2rpx;
     font-weight: 600;
@@ -208,8 +207,9 @@ export default {
 }
 
 .footer {
-  position: absolute;  
-  bottom: calc(20rpx + var(--window-bottom));
+  position: absolute;
+  bottom: calc(40rpx + var(--window-bottom));
+  padding: 0 30rpx;
   width: 100%;
   box-sizing: border-box;
 

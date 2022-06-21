@@ -132,21 +132,6 @@ export default {
       })
     },
 
-    showModalForNoPass() {
-      uni.showModal({
-        title: '提示',
-        content: `本次学习需要进行随堂考试,每道题目限时60秒,每次考试有5次机会,测评合格后(≥80分)将计入相应学时,您还剩${this.frequency}次`,
-        showCancel: false,
-        success: ({ confirm, cancel }) => {
-          if (confirm) {
-            if (this.frequency === 0) {
-              this.goBack()
-            }
-          }
-        }
-      })
-    },
-
     goBack() {
       let url = `/pages/studys/courseDetail/index`
       let query = `?lesson_id=${this.lesson_id}&course_id=${this.course_id}&autoplay=0`
@@ -296,7 +281,7 @@ export default {
       if (!question_id) return;
       let params = { question_id, practice_id }
       let res = await practiceQuestion(params)
-      if (res.code === 0) {        
+      if (res.code === 0) {
         this.time = res.data.timeout
       }
     },
@@ -309,10 +294,6 @@ export default {
         this.last_question_id = res.data.last_id
         this.frequency = res.data.times
         this.total = res.data.question.length
-        this.questionList = res.data.question.map(item => {
-          item.answer = [];
-          return item
-        })
         this.initQuestion(res.data.last_id, res.data.question)
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none'})
@@ -321,11 +302,14 @@ export default {
 
     initQuestion(last_question_id, list) {
       let index = list.findIndex(item => item.question_id === last_question_id)
-      this.currentIndex = (index !== -1 ? index : 0)
+
+      this.questionList = list.slice(index).map(item => {
+        item.answer = [];
+        return item
+      })
+
+      console.log(this.questionList, index)
       this.practiceQuestion(this.currentIndex)
-      if (last_question_id === 0) {
-        this.showModalForNoPass()
-      }
     }
 
   },
