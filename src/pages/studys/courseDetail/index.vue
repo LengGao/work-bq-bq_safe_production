@@ -333,8 +333,8 @@ export default {
       })
     },
     onRealVerifitynSuccess() {
-      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
       this.closeRealVerifity()
+      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
     },
     showRealVerifity() {
       this.$refs['realVerification'].open()
@@ -498,9 +498,9 @@ export default {
         // 人脸时间
         let faceTime = face[0]
 
-        player.on('ready', () => {
-          player.play()
-        })
+        // player.on('ready', () => {
+        //   player.play()
+        // })
 
         player.on('canplay', () => {
           this.canPlay = true
@@ -508,6 +508,7 @@ export default {
 
         player.on('loadeddata', () => {
           player.seek(this.start_second);
+          player.play()
         })
 
         player.on('pause', () => {
