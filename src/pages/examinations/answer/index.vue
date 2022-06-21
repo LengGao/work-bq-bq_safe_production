@@ -12,7 +12,7 @@
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    @touchmove="onTouchmove"
                    v-for="(item, index) in answerSheetArr" :key="index">
-          <template v-if="currentIndex === index || currentIndex === index - 1 || currentIndex === index + 1">
+          <!-- <template v-if="currentIndex === index || currentIndex === index - 1 || currentIndex === index + 1"> -->
           <Single :options="questionList[index]" :model="model" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_type === 1" />
           <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
@@ -29,7 +29,7 @@
                 v-if="questionList[index] && questionList[index].question_type === 7" :question-bank="question_bank_id"
                 :log-id="exam_log_id" @change="onCaseChange" @submitanswe-case="submitAnswerChild"
                 />
-          </template>
+          <!-- </template> -->
       </swiper-item>
     </swiper>
 
@@ -90,7 +90,7 @@ export default {
 
       prevIndex: -1,
       currentIndex: 0,
-      duration: 600,
+      duration: 800,
 
       total: 0,
       questionList: [],
@@ -340,6 +340,7 @@ export default {
     cacheAnswer(answer) {
       let key = answer.id
       this.userAnswerMap[key] = answer
+      // this.questionList[this.currentIndex].user_answer = answer.answer
       if (this.isEnd) {
         this.submitAnswer()
       }
@@ -356,12 +357,12 @@ export default {
     getQuery(prevIndex) {
       let index = prevIndex !== undefined ? prevIndex : this.currentIndex
       let quetion = this.questionList[index]
+      let type = quetion?.question_type
+      let question_id = quetion?.id
       let title = this.title
       let chapter_id = this.chapter_id
       let question_bank_id = this.question_bank_id
       let exam_log_id = this.exam_log_id
-      let type = quetion?.question_type
-      let question_id = quetion.id
       let answer = this.userAnswerMap[question_id]
       let answerCase = this.userAnswerMapCase[this.caseIndex]
       let model = this.model
@@ -496,8 +497,9 @@ export default {
       if (question_id) {
         let res = await getQuestionDetail(params)
         if (res.code === 0) {
-           this.questionList[index] = res.data
-           this.$forceUpdate()
+          this.questionList[index] = { ...res.data}
+          this.$forceUpdate()
+          //  this.$set(this.questionList, index, res.data)
         }
       }
     },
@@ -520,24 +522,24 @@ export default {
         let prev = 0
         let curr = 0
         let next = 0
+        
+        if (!lastId || restart) lastId = arr[0].id;
 
-        if (!lastId || restart) lastId = arr[0];
-        let index = arr.findIndex(item => item === lastId)
+        let index = arr.findIndex(item => item.id === lastId)
 
         if (index > 0 && index < total - 1) {
-          prev = arr[index - 1]
-          curr = arr[index]
-          next = arr[index + 1]
+          prev = arr[index - 1].id
+          curr = arr[index].id
+          next = arr[index + 1].id
         } else if (index === total - 1 && total >= 3) {
-          prev = arr[index - 2]
-          curr = arr[index - 1]
-          next = arr[index]
+          prev = arr[index - 2]?.id
+          curr = arr[index - 1]?.id
+          next = arr[index]?.id
         } else {
-          prev = arr[0]
-          curr = arr[1]
-          next = arr[2]
+          prev = arr[0]?.id
+          curr = arr[1]?.id
+          next = arr[2]?.id
         }
-
         this.last_question_id = lastId
         this.answerSheetArr = arr
         this.total = total
@@ -659,10 +661,11 @@ export default {
   .swiper {
     flex: 1;
     &-item {
-      position: relative;
       overflow-y: auto;
-      box-sizing: border-box;
+      position: relative;
       padding: 20rpx 40rpx;
+      z-index: 999;
+      box-sizing: border-box;
       &--hidden {
         overflow: hidden;
         padding: 0;
