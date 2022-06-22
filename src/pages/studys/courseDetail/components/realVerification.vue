@@ -265,8 +265,9 @@ export default {
 }
 
 .dialog-footer {
-  margin-top: 100rpx;
-  width: 100%;
+  position: absolute;
+  bottom: 40rpx;
+  left: 0;
 
   .btn-primary {
     color: #fff;

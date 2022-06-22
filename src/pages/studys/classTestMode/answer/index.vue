@@ -9,18 +9,20 @@
     <swiper class="swiper" :duration="duration" :current="currentIndex" :disable-touch="true"
             @change="onSwiperChange">
       <swiper-item class="swiper-item" v-for="(item, index) in questionList" :key="index">
-        <Single :options="questionList[currentIndex]" @change="onSingleChange"
-                v-if="questionList[currentIndex] && questionList[currentIndex].question_type === 1" />
-        <Multiple :options="questionList[currentIndex]" @change="onSingleChange"
-                  v-if="questionList[currentIndex] && questionList[index].question_type === 2" />
-        <Indefinite :options="questionList[currentIndex]" @change="onSingleChange"
-                    v-if="questionList[currentIndex] && questionList[index].question_type === 3" />
-        <Judg :options="questionList[currentIndex]" @change="onSingleChange"
-              v-if="questionList[currentIndex] && questionList[index].question_type === 4" />
-        <Completion :options="questionList[currentIndex]" @change="onInputChange"
-                    v-if="questionList[currentIndex] && questionList[index].question_type === 5" />
-        <Short :options="questionList[currentIndex]" @change="onInputChange"
-               v-if="questionList[currentIndex] && questionList[currentIndex].question_type === 6" />
+
+        <Single :options="questionList[index]" @change="onSingleChange"
+                v-if="questionList[index] && questionList[index].question_type === 1" />
+        <Multiple :options="questionList[index]" @change="onSingleChange"
+                  v-if="questionList[index] && questionList[index].question_type === 2" />
+        <Indefinite :options="questionList[index]" @change="onSingleChange"
+                    v-if="questionList[index] && questionList[index].question_type === 3" />
+        <Judg :options="questionList[index]" @change="onSingleChange"
+              v-if="questionList[index] && questionList[index].question_type === 4" />
+        <Completion :options="questionList[index]" @change="onInputChange"
+                    v-if="questionList[index] && questionList[index].question_type === 5" />
+        <Short :options="questionList[index]" @change="onInputChange"
+               v-if="questionList[index] && questionList[index].question_type === 6" />
+               
       </swiper-item>
     </swiper>
     <AnswerBar class="bar" :is-end="isEnd" :is-start="isStart" :test="true" 

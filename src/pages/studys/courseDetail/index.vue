@@ -554,7 +554,7 @@ export default {
             this.showModalForExamination()
           }
           // 是否学完
-          if (this.userStatus === 1) {
+          if (!isTesting && this.userStatus === 1) {
             player.pause()
             this.checkCourseGraduated()
           }

@@ -11,7 +11,7 @@ import request from '@/request/index';
     data,
   })
 }
-
+// 价格类型
  export function coursePriceType(data) {
   return request({
     url: 'course/priceType',
@@ -127,7 +127,7 @@ export function courseFavorites(data) {
   })
 }
 
-
+// 学习记录
 export function getLearnData(data) {
   return request({
     url: 'course/learnData',
@@ -137,6 +137,7 @@ export function getLearnData(data) {
   })
 }
 
+// 生成证书
 export function buildLearnRecord(data) {
   return request({
     url: 'course/getLearnRecord',
@@ -167,7 +168,7 @@ export function buildLearnCert(data) {
   })
 }
 
-
+// 题库开始
 export function practiceStart(data) {
   return request({
     url: 'course/practiceStart',
@@ -176,6 +177,7 @@ export function practiceStart(data) {
   })
 }
 
+// 练习题目 
 export function practiceQuestion(data) {
   return request({
     url: 'course/practiceQuestion',
@@ -184,7 +186,7 @@ export function practiceQuestion(data) {
     loading: false,
   })
 }
-
+// 题库答题
 export function practiceAnswer(data) {
   return request({
     url: 'course/practiceAnswer',
@@ -193,6 +195,7 @@ export function practiceAnswer(data) {
   })
 }
 
+// 题目提交
 export function practiceSubmit(data) {
   return request({
     url: 'course/practiceSubmit',
@@ -201,6 +204,7 @@ export function practiceSubmit(data) {
   })
 }
 
+// 题目解析
 export function practiceAnalyse(data) {
   return request({
     url: 'course/practiceAnalyse',
@@ -209,6 +213,7 @@ export function practiceAnalyse(data) {
   })
 }
 
+// 是否学完
 export function checkCourseGraduated(data) {
   return request({
     url: 'course/checkCourseGraduated',

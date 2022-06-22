@@ -1,12 +1,12 @@
 import request from '@/request/index'
-
+// 系统配置
 export function systemConfig() {
   return request({
     url: 'index/site',
     method: 'get'
   })
 }
-
+// 系统地区
 export function systemRegion(data) {
   return request({
     url: 'index/systemRegion',
@@ -14,7 +14,7 @@ export function systemRegion(data) {
     data
   })
 }
-
+// 获取地区
 export function getLocation(data) {
   return request({
     url: 'index/getLocation',
@@ -22,7 +22,7 @@ export function getLocation(data) {
     data
   })
 }
-
+// 轮播图
 export function banner(data) {
   return request({
     url: 'index/banner',
