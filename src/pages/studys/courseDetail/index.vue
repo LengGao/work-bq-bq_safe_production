@@ -444,8 +444,9 @@ export default {
       }
     },
     createPlayer(options) {
-      this.clearPlayer()
       let { video, lesson, record, face, user, autoplay } = options
+      
+      this.clearPlayer()
 
       this.player = new Aliplayer({
         id: 'aliplayer',
@@ -499,7 +500,7 @@ export default {
         let faceTime = face[0]
 
         player.on('ready', () => {
-          alert('ready')
+          // alert('ready')
           player.play()
         })
 
@@ -517,7 +518,6 @@ export default {
         })
 
         player.on('play', () => {
-          // console.log('play');
           this.startInterval()
         })
 
@@ -529,11 +529,11 @@ export default {
 
         // 结束拖拽
         player.on("completeSeek", () => {
-          this.startInterval();
+          this.startInterval()
         })
 
         player.on('ended', () => {
-          // console.log("ended");
+          console.log("ended");
           isPlayEnd = true;
           // 看完显示倍速
           if (!lesson.is_free && !lesson.is_forward) {
@@ -544,10 +544,10 @@ export default {
             this.isTesting = true;
             player.pause()
             this.showModalForExamination()
-            return;
           }
           // 是否学完
-          if (lesson.is_free && this.userStatus === 1) {
+          if (this.userStatus === 1) {
+            player.pause()
             this.checkCourseGraduated()
           }
 
@@ -557,13 +557,12 @@ export default {
         })
 
         player.on('timeupdate', () => {
-
           // 当前时间
           const currentTime = player.getCurrentTime();
           // console.log(currentTime, faceTime);
           // 没看完禁止拖拽进度条
           if (!lesson.is_free && !lesson.is_forward && !isPlayEnd) {
-            if (currentTime - finish_second >= 2) {
+            if (currentTime - finish_second >= 1) {
               player.seek(finish_second);
               uni.showToast({ title: '禁止快进学习', icon: 'none' })
               return;
