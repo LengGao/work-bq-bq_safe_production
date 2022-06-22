@@ -1,13 +1,14 @@
 <template>
   <view class="course-detail">
-    <custom-header :title="defaultTitle" ></custom-header>
+    <custom-header :title="defaultTitle"></custom-header>
     <!-- #ifdef H5 -->
     <view id="aliplayer">
       <cover-view v-if="!canPlay" class="course-cover">
         <image :src="courseInfo.cover" class="course-img" mode="aspectFill">
-        <view class="play-icon">
-          <uni-icons custom-prefix="iconfont" type="icon-play-filling" :size="64" color="#fff" @click="onStartVideo" />
-        </view>
+          <view class="play-icon">
+            <uni-icons custom-prefix="iconfont" type="icon-play-filling" :size="64" color="#fff"
+                       @click="onStartVideo" />
+          </view>
       </cover-view>
     </view>
     <!-- #endif -->
@@ -22,7 +23,7 @@
         </view>
         <view v-show="current === 1" class="segmented-pane">
           <Catalogue v-if="course_id && lesson_id" :courseId="course_id" :lessonId="lesson_id"
-                     @videoChange="onChangeVideo" />
+                     @videoChange="onChangeVideo" @last-lesson-id="getLastLessonId" />
         </view>
         <view v-show="current === 2" class="segmented-pane">
           <Rate ref="rate" :courseId="course_id" @openComment="onComment" />
@@ -33,7 +34,7 @@
     <uni-popup ref="popup" type="center" class="popup">
       <div class="dialog">
         <view class="dialog-title">我的评价</view>
-        <view class="dialog-content"> 
+        <view class="dialog-content">
           <view class="rate">
             <uni-rate :value="rateForm.star" @change="onChangeRate" :size="42" />
             <view class="rate-content">{{ starText[rateForm.star] }}</view>
@@ -56,18 +57,12 @@
     </uni-popup>
 
     <uni-popup ref="faceVerification" class="face-verification" type="center" @change="onfaceVerificationChange">
-      <FaceVerification
-        :lessonId="lesson_id"
-        :courseId="course_id"
-        :endSecond="faceTime"
-        @FaceVerifitySuccess="onFaceVerifitySuccess"
-      />
+      <FaceVerification :lessonId="lesson_id" :courseId="course_id" :endSecond="faceTime"
+                        @FaceVerifitySuccess="onFaceVerifitySuccess" />
     </uni-popup>
 
     <uni-popup ref="realVerification" class="real-verification" type="center" @change="onfaceVerificationChange">
-      <RealVerification
-        @RealVerifitynSuccess="onRealVerifitynSuccess"
-      />
+      <RealVerification @RealVerifitynSuccess="onRealVerifitynSuccess" />
     </uni-popup>
 
   </view>
@@ -134,7 +129,7 @@ export default {
       end_time: 0,    // 终止时间
       prev_time: 0,   // 上次时间
       start_second: 0, // 当前时间
-      
+
       // 实名与人脸验证
       canPlay: false,
       faceTime: 0,
@@ -174,7 +169,7 @@ export default {
       this.getCommentHotWord()
       if (this.lesson_id) {
         this.canPlay = true
-        this.getCourseGetVideoAuth({ lesson_id: this.lesson_id, region_id: this.region_id  })
+        this.getCourseGetVideoAuth({ lesson_id: this.lesson_id, region_id: this.region_id })
       }
     },
     documentHide() {
@@ -249,7 +244,7 @@ export default {
 
       let res = await courseCommentSubmit(params)
       if (res.code === 0) {
-        uni.showToast({ title: '评论陈功' , icon: 'icon' })
+        uni.showToast({ title: '评论陈功', icon: 'icon' })
         this.$refs['rate'].downCallback()
         this.$refs['rate'].getCourseCommentCount()
         this.onClose()
@@ -269,7 +264,7 @@ export default {
 
       } else if (res.code === 2998) {
         uni.showToast({ title: '课程已下架', icon: 'none' })
-        goBack()  
+        goBack()
       } else if (res.code === 2999) {
         uni.showToast({ title: '课程不存在或被删除', icon: 'none' })
         goBack()
@@ -311,13 +306,13 @@ export default {
       this.$refs['faceVerification'].close()
     },
     onfaceVerificationChange(e) {
-      console.log('onfaceVerificationChange' ,e);
+      console.log('onfaceVerificationChange', e);
     },
     // 人脸验证
     showModalForFaceVerifity(faceTime) {
       this.isFaceing = true
       this.faceTime = faceTime
-      
+
       uni.showModal({
         title: '提示',
         content: '请人脸核验成功后再继续学习',
@@ -389,11 +384,15 @@ export default {
       //   }
       // })
     },
-
+    getLastLessonId(lessonId) {
+      this.lesson_id = lessonId
+    },
     onChangeVideo(detailArr) {
-      let curr = detailArr[detailArr.length -1]
-      this.lesson_id = curr.id
+      // 先发送记录
       this.stopInterval()
+      // 再更新
+      let curr = detailArr[detailArr.length - 1]
+      this.lesson_id = curr.id
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
     },
     onStartVideo() {
@@ -411,7 +410,7 @@ export default {
     },
     getVideoMessage(res) {
       uni.showToast({ title: res.message, icon: 'none' })
-      
+
       if (res.code === 2201) {
         this.lesson_id = res.data.lesson_id
         this.jumpVideo(res.data.lesson_id)
@@ -463,27 +462,28 @@ export default {
         cover: video.cover,
         autoplay: true,
         encryptType: 0,
-         skinLayout: [
-            { name: "bigPlayButton", align: "cc" },
-            { name: "H5Loading", align: "cc" },
-            { name: "errorDisplay", align: "tlabs", x: 0, y: 0 },
-            { name: "infoDisplay" },
-            { name: "tooltip", align: "blabs", x: 0, y: 56 },
-            { name: "thumbnail" },
-            { name: "controlBar", align: "blabs", x: 0, y: 0,
-              children: [
-                { name: "progress", align: "blabs", x: 0, y: 44 },
-                { name: "playButton", align: "tl", x: 15, y: 12 },
-                { name: "timeDisplay", align: "tl", x: 10, y: 7 },
-                { name: "fullScreenButton", align: "tr", x: 10, y: 12 },
-                { name: "subtitle", align: "tr", x: 15, y: 12 },
-                { name: "setting", align: "tr", x: 15, y: 12 },
-                { name: "volume", align: "tr", x: 5, y: 10 },
-              ],
-            },
-          ],
+        skinLayout: [
+          { name: "bigPlayButton", align: "cc" },
+          { name: "H5Loading", align: "cc" },
+          { name: "errorDisplay", align: "tlabs", x: 0, y: 0 },
+          { name: "infoDisplay" },
+          { name: "tooltip", align: "blabs", x: 0, y: 56 },
+          { name: "thumbnail" },
+          {
+            name: "controlBar", align: "blabs", x: 0, y: 0,
+            children: [
+              { name: "progress", align: "blabs", x: 0, y: 44 },
+              { name: "playButton", align: "tl", x: 15, y: 12 },
+              { name: "timeDisplay", align: "tl", x: 10, y: 7 },
+              { name: "fullScreenButton", align: "tr", x: 10, y: 12 },
+              { name: "subtitle", align: "tr", x: 15, y: 12 },
+              { name: "setting", align: "tr", x: 15, y: 12 },
+              { name: "volume", align: "tr", x: 5, y: 10 },
+            ],
+          },
+        ],
       }, (player) => {
-          // 隐藏倍速按钮
+        // 隐藏倍速按钮
         if (!lesson.is_free && !lesson.is_forward) {
           this.hidePlayerBtns([".prism-setting-speed"]);
         } else {
@@ -517,7 +517,7 @@ export default {
 
         player.on('play', () => {
           // console.log('play');
-          this.startInterval()    
+          this.startInterval()
         })
 
         // 开始拖拽
@@ -536,7 +536,7 @@ export default {
           isPlayEnd = true;
           // 看完显示倍速
           if (!lesson.is_free && !lesson.is_forward) {
-            document.querySelector(".prism-setting-speed").style.display ="block";
+            document.querySelector(".prism-setting-speed").style.display = "block";
           }
           // 随堂考试
           if (lesson.is_practice && !lesson.is_done) {
@@ -556,7 +556,7 @@ export default {
         })
 
         player.on('timeupdate', () => {
-   
+
           // 当前时间
           const currentTime = player.getCurrentTime();
           // console.log(currentTime, faceTime);
@@ -564,13 +564,13 @@ export default {
           if (!lesson.is_free && !lesson.is_forward && !isPlayEnd) {
             if (currentTime - finish_second >= 2) {
               player.seek(finish_second);
-              uni.showToast({ title: '禁止快进学习', icon : 'none' })
+              uni.showToast({ title: '禁止快进学习', icon: 'none' })
               return;
             } else {
               currentTime > finish_second && (finish_second = currentTime);
             }
           }
-          
+
           // 试看结束 freeSecond:试看时长（秒）
           if (lesson.free_second && currentTime >= lesson.free_second) {
             player.pause()
@@ -587,8 +587,8 @@ export default {
       })
     },
     destroyInterval() {
-      if (this.intervalId) { 
-        clearInterval(this.intervalId) 
+      if (this.intervalId) {
+        clearInterval(this.intervalId)
         this.intervalId = null
       }
     },
@@ -636,7 +636,7 @@ export default {
     async getCourseGetVideoAuth(params, autoplay = true) {
       let res = await courseGetVideoAuth(params)
       let { video, lesson, record, face, user } = res.data
-      
+
       if (res.code === 0) {
         this.video = video
         this.lesson = lesson
@@ -645,7 +645,7 @@ export default {
         this.user = user
         this.start_second = +record.start_second
         this.prev_time = +record.finish_second
-        
+
         if (lesson.is_in_exam && lesson.is_practice && this.userStatus === 1) {
           this.canPlay = false
           // this.clearPlayer()
@@ -661,7 +661,7 @@ export default {
           this.showModalForRealVerification()
           return;
         }
-        
+
         // #ifdef H5
         this.createPlayer({ video, lesson, record, face, user, autoplay })
         // #endif
@@ -671,14 +671,14 @@ export default {
     },
 
     async checkCourseGraduated() {
-      let res = await checkCourseGraduated({ course_id: this.course_id})
+      let res = await checkCourseGraduated({ course_id: this.course_id })
       if (res.code === 0) {
         if (res.data) {
           this.showModalForFininsh()
         }
       }
     }
-  } 
+  }
 }
 </script>
 

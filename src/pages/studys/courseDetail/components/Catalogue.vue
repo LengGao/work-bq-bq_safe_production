@@ -33,14 +33,14 @@
               <view v-for="item3 in item2.lesson" :key="item3.id" class="title three-title"
                     :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item2, item1)">
                 <view class="title-box">
-                  <uni-icons v-if="item3.learn_status === 0" type="locked-filled" size="32rpx" color="#999"
+                  <uni-icons v-if="isLocked(item3)" type="locked-filled" size="32rpx" color="#999"
                              style="margin-right: 8rpx" />
                   <uni-icons v-else type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'"
                              style="margin-right: 8rpx" />
                   <view class="title-text">
                     {{ item3.title }}
                   </view>
-                  <view v-if="!is_buy && !item3.is_try" class="tag">试看</view>
+                  <view v-if="!is_buy && item3.is_try" class="tag">试看</view>
                 </view>
                 <text>{{ item3.duration }}</text>
               </view>
@@ -59,7 +59,7 @@
           <view v-for="item3 in item1.lesson" :key="item3.id" class="title three-title"
                 :class="item3.checked ? 'title-active' : ''" @click="() => onClickThree(item3, item1)">
             <view class="title-box">
-              <uni-icons v-if="item3.learn_status === 0" type="locked-filled" size="32rpx" color="#999"
+              <uni-icons v-if="isLocked(item3)" type="locked-filled" size="32rpx" color="#999"
                          style="margin-right: 8rpx" />
               <uni-icons v-else type="videocam-filled" size="32rpx" :color="item3.checked ? '#199fff' : '#999'"
                          style="margin-right: 8rpx" />
@@ -120,14 +120,31 @@ export default {
     }
   },
   methods: {
+    // 上锁
+    isLocked(lesson) {
+      return (
+        (!this.is_buy && !lesson.is_try) ||
+        (this.is_buy && !lesson.learn_status)
+      );
+    },
     // 三级目录
     onClickThree(item3, item2, item1) {
-      // learn_status 0 未学习 1 学习中 2，已学完
-      if (item3.learn_status !== 0) {
-        let args = [item1, item2, item3]
-        this.checkeds = this.updateChapterList(this.checkeds, args)
-        this.$emit('videoChange', args)
+      if (this.isLocked(item3)) {
+        uni.showToast({
+          icon: 'none',
+          title: this.is_buy ? '请按顺序学习课程' : '请购买课程'
+        })
+        return
       }
+      // learn_status 0 未学习 1 学习中 2，已学完
+      let args = [item1, item2, item3]
+      this.checkeds = this.updateChapterList(this.checkeds, args)
+      this.$emit('videoChange', args)
+      // if (item3.learn_status !== 0) {
+      //   let args = [item1, item2, item3]
+      //   this.checkeds = this.updateChapterList(this.checkeds, args)
+      //   this.$emit('videoChange', args)
+      // }
     },
     resetChapterList() {
       this.checkeds = this.updateChapterList(this.checkeds, [])
@@ -197,9 +214,14 @@ export default {
         let list = this.assembleData(res.data.chapter)
         this.chapterList = list
         this.is_buy = res.data.is_buy
-        if (this.lessonId) {
-          this.toFlushBack(this.lessonId, list)
+        const lastLessonId = res.data.learning_lesson_id
+        if (lastLessonId) {
+          this.$emit('last-lesson-id', lastLessonId)
+          this.toFlushBack(lastLessonId, list)
         }
+        // if (this.lessonId) {
+        //   this.toFlushBack(this.lessonId, list)
+        // }
       }
     },
   }, // methods end
@@ -244,7 +266,7 @@ export default {
 .title-text {
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   width: 100%;
 }
