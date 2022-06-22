@@ -1,7 +1,7 @@
 <template>
   <view class="answer">
     <custom-header :title="defaultTitle" :customBack="onCustomBack"></custom-header>
-    <AnswerHead v-if="questionList[currentIndex] && questionList[currentIndex].question_type" :type="questionList[currentIndex].question_type" :total="total"
+    <AnswerHead v-if="questionList[currentIndex]" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" :current="currentIndex"
             :disable-touch="disableTouch"
@@ -12,7 +12,7 @@
                    :class="{ 'swiper-item--hidden': questionList[currentIndex] && questionList[currentIndex].question_type === 7 }"
                    @touchmove="onTouchmove"
                    v-for="(item, index) in answerSheetArr" :key="index">
-          <!-- <template v-if="currentIndex === index || currentIndex === index - 1 || currentIndex === index + 1"> -->
+          <template v-if="currentIndex === index || currentIndex === index - 1 || currentIndex === index + 1">
           <Single :options="questionList[index]" :model="model" @change="onSingleChange"
                   v-if="questionList[index] && questionList[index].question_type === 1" />
           <Multiple :options="questionList[index]" :model="model" @change="onSingleChange"
@@ -29,11 +29,11 @@
                 v-if="questionList[index] && questionList[index].question_type === 7" :question-bank="question_bank_id"
                 :log-id="exam_log_id" @change="onCaseChange" @submitanswe-case="submitAnswerChild"
                 />
-          <!-- </template> -->
+          </template>
       </swiper-item>
     </swiper>
 
-    <AnswerBar class="bar" v-if="questionList[currentIndex] && questionList[currentIndex].question_type" ref="answerbar" :is-end="isEnd" :is-start="isStart"
+    <AnswerBar class="bar" v-if="questionList[currentIndex]" ref="answerbar" :is-end="isEnd" :is-start="isStart"
                :time="time" :model="model" :isCollection="questionList[currentIndex].is_collect" @card="toCard"
                @submit-paper="submitPaper" @end-practice="endPractice" @collect="setCollection" @timeup="onTimeUp"
                @prev="handlePrev" @next="handleNext">
@@ -137,10 +137,6 @@ export default {
       return this.currentIndex > this.prevIndex
     },
   },
-  onBackPress() {
-    // console.log('onBackPress');
-  },
-
   onLoad(query) {
     this.init(query)
     this.injectApi()
@@ -173,7 +169,7 @@ export default {
       if (pages.length > 1) {
         uni.navigateBack()
       } else {
-        history.back() 
+        history.back()
       }
     },
 
@@ -204,7 +200,7 @@ export default {
         uni.setNavigationBarTitle({ title: title })
       }
     },
-
+    // 注入API
     injectApi() {
       this.answerSheetApiMap = {
         "wrong": wrongAnswerSheet,
@@ -227,7 +223,7 @@ export default {
         "memoryFavorites": collectAnswerSheet,
       }
     },
-
+    // 获取答题卡
     getAnswerSheet() {
       if (this.needChangeSheet.includes(this.source)) {
         this.getWrongCollectAnswerSheet()
@@ -235,7 +231,7 @@ export default {
         this.getPracticeAnswerSheet()
       }
     },
-
+    // 判空答案
     checkInputAnswer(answer) {
       let res = false
       if (Array.isArray(answer)) {
@@ -245,31 +241,31 @@ export default {
       }
       return res
     },
-
+    // 单选多选答案
     onSingleChange(answer) {
       let flag = this.checkInputAnswer(answer.answer)
       if (flag) { this.cacheAnswer(answer) }
     },
-
+    // 填空题答案
     onInputChange(answer) {
       let flag = this.checkInputAnswer(answer.answer)
       if (flag) { this.cacheAnswer(answer) }
     },
-
+    // 上一题
     handlePrev() {
       if (!this.isStart) {
         this.prevIndex = this.currentIndex
         this.currentIndex = this.currentIndex - 1
       }
     },
-
+    // 下一题
     handleNext() {
       if (!this.isEnd) {
         this.prevIndex = this.currentIndex
         this.currentIndex = this.currentIndex + 1
       }
     },
-
+    // swiper 滑动事件
     onSwiperChange({ detail }) {
       // console.log('detail', detail);
       this.disableTouch = true
@@ -288,7 +284,7 @@ export default {
       this.prevfetch()
       this.submitAnswer(this.prevIndex)
     },
-
+    // 预加载下一题
     prevfetch() {
       let index = 0
       if (this.isRight) {
@@ -312,11 +308,11 @@ export default {
         this.getQuestionDetail(question_id, index)
       }
     },
-
+    // 动画事件
     onAnimationfinish() {
       this.disableTouch = false
     },
-
+    // 用户滑屏事件
     onTouchmove(e) {
       // console.log('onTouchmove', e);
       e.preventDefault()
@@ -324,18 +320,18 @@ export default {
 
     onCaseIndexChange(index) {
     },
-
+    // 案例题滑动
     onCaseChange(caseIndex, answer) {
       this.caseIndex = caseIndex
       this.userAnswerMapCase[caseIndex] = answer
       // console.log('onCaseChange', this.userAnswerMapCase);
     },
-
+    // 获取当前答案
     getCurrAnswer(index) {
       let key = this.questionList[index].id
       return this.userAnswerMap[key]
     },
-
+    // 缓存答案
     cacheAnswer(answer) {
       let key = answer.id
       this.userAnswerMap[key] = answer
@@ -344,7 +340,7 @@ export default {
         this.submitAnswer()
       }
     },
-
+    // 工具方法拼接URL
     getPath(url, query) {
       let params = ''
       Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
@@ -352,7 +348,7 @@ export default {
       params = params.replace(/&?/, '?')
       return url + params
     },
-
+    // 批量获取参数
     getQuery(prevIndex) {
       let index = prevIndex !== undefined ? prevIndex : this.currentIndex
       let quetion = this.questionList[index]
@@ -369,7 +365,7 @@ export default {
 
       return { title, chapter_id, question_id, question_bank_id, exam_log_id, type, model, source, answer, answerCase }
     },
-
+    // 时间
     onTimeUp() {
       uni.showModal({
         title: '提示',
@@ -380,7 +376,7 @@ export default {
         }
       })
     },
-
+    // 去答题卡
     async toCard() {
       let url = '/pages/examinations/answerSheet/index'
       let { title, chapter_id, question_id, question_bank_id, exam_log_id, type, model, source, answer, answerCase } = this.getQuery()
@@ -401,7 +397,7 @@ export default {
         uni.redirectTo({ url: path })
       }
     },
-
+    // 收藏
     async setCollection() {
       let { question_id, question_bank_id } = this.getQuery()
       let params = { question_id, question_bank_id }
@@ -416,7 +412,7 @@ export default {
         this.$forceUpdate()
       }
     },
-
+    // 结束练习
     async endPractice() {
       let url = '/pages/examinations/answerSheet/index'
       let { title, chapter_id, question_id, question_bank_id, exam_log_id, type, model, source, answer, answerCase } = this.getQuery()
@@ -437,7 +433,7 @@ export default {
         uni.redirectTo({ url: path })
       }
     },
-
+    // 提交试卷
     async submitPaper() {
       let url = `/pages/examinations/answerResult/index`
       let { title, chapter_id, question_id, question_bank_id, exam_log_id, type, model, source, answer, answerCase } = this.getQuery()
@@ -461,7 +457,7 @@ export default {
         })
       }
     },
-
+    // 提交子题答案
     async submitAnswerChild() {
       let { exam_log_id, question_bank_id, source, answerCase } = this.getQuery()
       // console.log('submitAnswerChild', answerCase);
@@ -471,7 +467,7 @@ export default {
         return api(params)
       }
     },
-
+    // 提交答案
     async submitAnswer(prevIndex) {
       let { exam_log_id, question_bank_id, source, answer } = this.getQuery(prevIndex)
 
@@ -481,7 +477,7 @@ export default {
         return api(params)
       }
     },
-
+    // 获取题目
     async getQuestionDetail(question_id, index) {
       // console.log('getQuestionDetail', question_id, index);
       let params = { question_id, question_bank_id: this.question_bank_id }
@@ -496,13 +492,14 @@ export default {
       if (question_id) {
         let res = await getQuestionDetail(params)
         if (res.code === 0) {
-          this.questionList[index] = { ...res.data}
-          this.$forceUpdate()
+          this.questionList[index] = res.data
+          // this.questionList.splice (res.data, index, 1)
           //  this.$set(this.questionList, index, res.data)
+          // this.$forceUpdate()
         }
       }
     },
-
+    // 获取错题与收藏答题卡
     async getWrongCollectAnswerSheet() {
       let restart = this.restart
       let source = this.source
@@ -547,10 +544,10 @@ export default {
         this.initQuestion(prev, curr, next)
       } else if (res.code === 3999) {
         uni.showToast({ title: '题库不存在或已下架', icon: 'none' })
-        goBack()
+        this.goBack()
       }
     },
-
+    // 获取练习答题卡
     async getPracticeAnswerSheet() {
       let restart = this.restart
       let source = this.source
@@ -596,10 +593,10 @@ export default {
         this.initQuestion(prev, curr, next)
       } else if (res.code === 3999) {
         uni.showToast({ title: '题库不存在或已下架', icon: 'none' })
-        goBack()
+        this.goBack()
       }
     },
-
+    // 初始化题目
     async initQuestion(prev, curr, next) {
       let exam_log_id = this.exam_log_id
       let question_bank_id = this.question_bank_id
@@ -618,9 +615,9 @@ export default {
         this.fiilQuestion(list)
       }
     },
-
+    // 填充题目
     fiilQuestion(list) {
-      let total = this.total, index = this.currentIndex, arr = [].fill({}, 0, total)
+      let total = this.total, index = this.currentIndex, arr = [].fill('', 0, total)
       if (index > 0 && index < total - 1) {
         arr[index - 1] = list[0]
         arr[index] = list[1]

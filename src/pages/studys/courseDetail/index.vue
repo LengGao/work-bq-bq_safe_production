@@ -56,12 +56,12 @@
       </view>
     </uni-popup>
 
-    <uni-popup ref="faceVerification" class="face-verification" type="center" @change="onfaceVerificationChange">
+    <uni-popup ref="faceVerification" class="face-verification" type="center">
       <FaceVerification :lessonId="lesson_id" :courseId="course_id" :endSecond="faceTime"
                         @FaceVerifitySuccess="onFaceVerifitySuccess" />
     </uni-popup>
 
-    <uni-popup ref="realVerification" class="real-verification" type="center" @change="onfaceVerificationChange">
+    <uni-popup ref="realVerification" class="real-verification" type="center">
       <RealVerification @RealVerifitynSuccess="onRealVerifitynSuccess" />
     </uni-popup>
 
@@ -107,10 +107,8 @@ export default {
       course_id: 0,
       lesson_id: 0,
 
-      // 课程详情
-      courseInfo: {},
-      // 目录
-      chapterList: [],
+      courseInfo: {}, // 课程详情
+      chapterList: [], // 目录
       // 评价
       up: { page: { num: 0, size: 10, time: 1000 } },
       tags: [],
@@ -176,17 +174,20 @@ export default {
         this.getCourseGetVideoAuth({ lesson_id: this.lesson_id, region_id: this.region_id })
       }
     },
+    // dom隐藏时回调
     documentHide() {
       if (document.hidden) {
         this.player && this.player.pause();
         document.querySelector(".prism-big-play-btn").style.display = "block";
       }
     },
+    // 拼接url
     getPath(url, query) {
       let params = ''
       Object.keys(query).forEach((key) => { params += `&${key}=${query[key]}` })
       return url + params.replace(/&?/, '?')
     },
+    // 批量获取参数
     getQuery() {
       return {
         video: this.video,
@@ -297,18 +298,18 @@ export default {
         }
       })
     },
+    // 人脸认证成功
     onFaceVerifitySuccess() {
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
       this.closeFaceVerifity()
     },
+    // 显示人脸组件
     showFaceVerifity() {
       this.$refs['faceVerification'].open()
     },
+    // 关闭人脸组件
     closeFaceVerifity() {
       this.$refs['faceVerification'].close()
-    },
-    onfaceVerificationChange(e) {
-      console.log('onfaceVerificationChange', e);
     },
     // 人脸验证
     showModalForFaceVerifity(faceTime) {
@@ -329,13 +330,16 @@ export default {
         }
       })
     },
+    // 实名认证成功
     onRealVerifitynSuccess() {
       this.closeRealVerifity()
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
     },
+    // 显示实名认证
     showRealVerifity() {
       this.$refs['realVerification'].open()
     },
+    // 关闭实名认证
     closeRealVerifity() {
       this.$refs['realVerification'].close()
     },
@@ -356,7 +360,7 @@ export default {
         }
       })
     },
-    // 生成证书
+    // 学完生成证书
     showModalForFininsh() {
       let course_id = this.course_id
       const cancelCallback = () => {
@@ -389,6 +393,7 @@ export default {
     getLastLessonId(lessonId) {
       this.lesson_id = lessonId
     },
+    // 视频目录切换
     onChangeVideo(detailArr) {
       // 先发送记录
       this.stopInterval()
@@ -397,6 +402,7 @@ export default {
       this.lesson_id = curr.id
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: curr.id })
     },
+    // 刘经理要加的视频封面按钮
     onStartVideo() {
       this.canPlay = true
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
@@ -423,12 +429,15 @@ export default {
       this.getVideoErr = res.message
       this.canPlay = false
     },
+    // 记录解耦提示
     recondMessage(res) {
       uni.showToast({ title: res.message, icon: 'none' })
     },
+    // 显示视频提示
     showVideoMessage(message) {
       uni.showToast({ title: message, icon: 'none' })
     },
+    // 隐藏波分按钮
     hidePlayerBtns(otherSelector = []) {
       const selectors = [
         ".prism-setting-audio",
@@ -439,12 +448,14 @@ export default {
         document.querySelector(selector).style.display = "none";
       });
     },
+    // 清空播放器
     clearPlayer() {
       if (this.player) {
         this.player.dispose()
         this.player = null
       }
     },
+    // 创建播放器
     createPlayer(options) {
       let { video, lesson, record, face, user, autoplay } = options
       
@@ -596,6 +607,7 @@ export default {
         this.intervalId = null
       }
     },
+    // 结束计时器
     stopInterval() {
       if (this.intervalId) {
         clearInterval(this.intervalId)
@@ -603,6 +615,7 @@ export default {
         this.sendData()
       }
     },
+    // 开始计时器
     startInterval() {
       if (this.intervalId) {
         clearInterval(this.intervalId)
@@ -612,7 +625,7 @@ export default {
         this.sendData()
       }, this.time)
     },
-
+    // 发送数据
     async sendData() {
       const currentTime = this.player.getCurrentTime();
 
