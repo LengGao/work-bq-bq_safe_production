@@ -18,10 +18,6 @@
             <uni-icons v-else custom-prefix="iconfont" type="icon-shoucang2" size="36rpx" color="#ccc" />
             <text class="btn-text">{{ info.favorites ? '取消' : '收藏'}} </text>
           </button>
-          <!-- <button class="btn-share" v-if="isMiniapp" @click="onShare" open-type="share" plain>
-            <uni-icons custom-prefix="iconfont" type="icon-fenxiang" size="36rpx" />
-            <text class="btn-text">分享</text>
-          </button> -->
         </view>
 
       </view>
@@ -166,8 +162,8 @@ export default {
       }
 
       .btn-text {
-        font-size: $font-size-sm;
-        line-height: calc(1.5 * $font-size-sm);
+        font-size: $font-size-base;
+        line-height: calc(1.5 * $font-size-base);
       }
     }
   }
@@ -200,11 +196,11 @@ export default {
         flex-direction: row;
         margin-left: 16rpx;
         color: #777;
-        font-size: 24rpx;
+        font-size: 28rpx;
 
         &-text {
           color: #199fff;
-          font-size: 18rpx;
+          font-size: 28rpx;
         }
       }
     }
@@ -217,7 +213,7 @@ export default {
       padding: 8rpx 16rpx;
 
       &-text {
-        font-size: 24rpx;
+        font-size: 28rpx;
         color: #fff;
       }
     }

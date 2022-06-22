@@ -65,6 +65,10 @@
       <RealVerification @RealVerifitynSuccess="onRealVerifitynSuccess" />
     </uni-popup>
 
+    <uni-popup ref="popup" type="bottom">
+
+    </uni-popup>
+
   </view>
 </template>
 
@@ -142,6 +146,7 @@ export default {
     }
   },
   onLoad(query) {
+    console.log("userStatus", this.$store.getters.userStatus);
     this.init(query)
   },
   mounted() {
@@ -364,22 +369,22 @@ export default {
         uni.navigateTo({ url })
       }
 
-      // uni.showModal({
-      //   title: '提示',
-      //   content: `您已完成本课程所有课时的学习和考试，顺利毕业啦(*^▽^*)！`,
-      //   cancelText: '查看学习记录',
-      //   confirmText: '生成证书',
-      //   cancelColor: '#199fff',
-      //   confirmColor: '#199fff',
-      //   success: (res) => {
-      //     if (res.confirm) {
-      //       confirmCallback()
-      //     }
-      //     if (res.cancel) {
-      //       cancelCallback()
-      //     }
-      //   }
-      // })
+      uni.showModal({
+        title: '提示',
+        content: `您已完成本课程所有课时的学习和考试，顺利毕业啦(*^▽^*)！`,
+        cancelText: '查看学习记录',
+        confirmText: '生成证书',
+        cancelColor: '#199fff',
+        confirmColor: '#199fff',
+        success: (res) => {
+          if (res.confirm) {
+            confirmCallback()
+          }
+          if (res.cancel) {
+            cancelCallback()
+          }
+        }
+      })
     },
     getLastLessonId(lessonId) {
       this.lesson_id = lessonId
@@ -543,6 +548,7 @@ export default {
             this.showModalForExamination()
           }
           // 是否学完
+          console.log('t', this.userStatus);
           if (this.userStatus === 1) {
             player.pause()
             this.checkCourseGraduated()
