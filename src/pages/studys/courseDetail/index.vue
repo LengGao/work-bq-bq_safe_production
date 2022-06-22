@@ -510,8 +510,6 @@ export default {
           player.seek(this.start_second);
         })
 
-        player.play()
-
         player.on('pause', () => {
           // console.log('pause');
           this.stopInterval()
