@@ -129,10 +129,10 @@ export default {
     padding: 0 20rpx;
     box-sizing: border-box;
     transition: transform 300ms ease 0ms;
-    transform: translateY(-200%);
+    transform: translateX(120%);
     background-color: #fff;
     &--popup {
-      transform: translateY(0);
+      transform: translateX(0);
     }
   }
   &-option {

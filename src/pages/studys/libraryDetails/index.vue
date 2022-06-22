@@ -103,13 +103,16 @@ export default {
 
 .footer {
   position: absolute;
-  bottom: 0;
+  bottom: calc(40rpx + var(--window-bottom));
   left: 0;
+  padding: 0 30rpx;
   width: 100%;
+  box-sizing: border-box;
 
   .btn__primary {
     color: #fff;
     background-color: #199fff;
+    border-radius: 24rpx;
   }
 }
 </style>
