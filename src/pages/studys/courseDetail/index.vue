@@ -508,7 +508,6 @@ export default {
         let faceTime = face[0]
 
         player.on('ready', () => {
-          alert('ready')
           player.play()
         })
 
@@ -517,7 +516,7 @@ export default {
         })
 
         player.on('loadeddata', () => {
-          player.seek(this.start_second);
+          player.seek(this.start_second)
         })
 
         player.on('pause', () => {
@@ -532,7 +531,7 @@ export default {
         // 开始拖拽
         player.on("startSeek", () => {
           // console.log('startSeek');
-          this.stopInterval();
+          this.stopInterval()
         })
 
         // 结束拖拽
@@ -541,7 +540,7 @@ export default {
         })
 
         player.on('ended', () => {
-          console.log("ended");
+          console.log("ended")
           isPlayEnd = true;
           // 看完显示倍速
           if (!lesson.is_free && !lesson.is_forward) {
@@ -568,7 +567,6 @@ export default {
         player.on('timeupdate', () => {
           // 当前时间
           const currentTime = player.getCurrentTime();
-          // console.log(currentTime, faceTime);
           // 没看完禁止拖拽进度条
           if (!lesson.is_free && !lesson.is_forward && !isPlayEnd) {
             if (currentTime - finish_second >= 1) {
@@ -585,6 +583,7 @@ export default {
             player.pause()
             this.showVideoMessage('试看结束，如需购买前联系客服');
           }
+
           // 到达人脸核验时间
           if (faceTime !== undefined && currentTime >= faceTime) {
             player.pause()
