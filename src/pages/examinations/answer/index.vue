@@ -1,6 +1,6 @@
 <template>
   <view class="answer">
-    <custom-header :title="defaultTitle"></custom-header>
+    <custom-header :title="defaultTitle" :customBack="onCustomBack"></custom-header>
     <AnswerHead v-if="questionList[currentIndex] && questionList[currentIndex].question_type" :type="questionList[currentIndex].question_type" :total="total"
                 :serial-number="currentIndex + 1" />
     <swiper class="swiper" :duration="duration" :current="currentIndex"
@@ -158,7 +158,7 @@ export default {
     showModalForBack() {
       uni.showModal({
         title: '提示',
-        content: '随堂考试，您正在进行随堂考试，确定退出后本次学习将不计入相应学时',
+        content: '您正在进行随堂考试，确定退出后本次考试将不计算考试成绩，是否退出？',
         showCancel: true,
         success: ({ confirm, cancel }) => {
           if (confirm) {
@@ -173,10 +173,9 @@ export default {
       if (pages.length > 1) {
         uni.navigateBack()
       } else {
-        history.back()
+        history.back() 
       }
     },
-
 
     init(query) {
       let {
