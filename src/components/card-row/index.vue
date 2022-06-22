@@ -1,9 +1,9 @@
 <template>
   <view class="card-row">
-    <view class="card-body">
+    <view class="card-body" @click="onClickBody">
       <slot name="cardBodyLeft">
         <view class="card-body-left" @click="onClickLeft">
-          <image @click="previewImg" @load="onLoadImage" @errr="onerrorImagee" class="card-row-image" :src="leftImage || errorImage"
+          <image @load="onLoadImage" @errr="onerrorImagee" class="card-row-image" :src="leftImage || errorImage"
                  mode="aspectFill" />
         </view>
       </slot>
@@ -52,6 +52,9 @@ export default {
   mounted() {
   },
   methods: {
+    onClickBody() {
+      this.$emit('clickBody')
+    },
     // 点击左槽
     onClickLeft() {
       this.$emit('clickLeft')

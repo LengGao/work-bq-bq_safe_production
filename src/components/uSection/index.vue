@@ -5,7 +5,7 @@
 				<view :class="type" class="uni-section__head-tag"/>
 			</view>
 			<view class="uni-section__content">
-				<text :class="{'distraction':!subTitle}" :style="{color:color}" class="uni-section__content-title">{{ title }}</text>
+				<text :class="{'distraction':!subTitle}" :style="{color: color}" class="uni-section__content-title">{{ title }}</text>
 				<text v-if="subTitle" class="uni-section__content-sub">{{ subTitle }}</text>
 			</view>
 		</view>

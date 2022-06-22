@@ -52,18 +52,18 @@
 
       <view class="courses-list">
         <template v-if="courses.length">
-          <CardRow v-for="course in courses" :key="course.id">
+          <CardRow v-for="course in courses" :key="course.id" @clickBody="() => onClickRecommend(course.id)">
             <template v-slot:cardBodyLeft>
               <view class="logan-card-body-left">
                 <view class="cover-tag cover-tag--success" v-if="course.price_type === 0">免费课</view>
                 <view class="cover-tag cover-tag--primary" v-else-if="course.price_type === 1">认证课</view>
                 <view class="cover-tag" v-else>其他课</view>
-                <image @click="() => previewImg(course.cover)" :src="course.cover" class="logan-img-size-lg"
+                <image :src="course.cover" class="logan-img-size-lg"
                        mode="aspectFill" />
               </view>
             </template>
             <template v-slot:cardBodyRight>
-              <view class="logan-card-body-right" @click="() => onClickRecommend(course.id)">
+              <view class="logan-card-body-right">
                 <view class="logan-card-right-top">
                   <text>{{ course.title }}</text>
                 </view>
@@ -123,9 +123,9 @@
 
       <view class="library-list">
         <template v-if="librarys.length">
-          <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.cover" @previewImg="previewImg">
+          <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.cover" @clickBody="() => onClickLibrary(library.id)">
             <template v-slot:cardBodyRight>
-              <view class="card-body-right" @click="() => onClickLibrary(library.id)">
+              <view class="card-body-right">
                 <view class="card-right-top">
                   <uni-icons custom-prefix="iconfont" size="28rpx" :type="fileTypeMap[library.file_type] || defaultFileType" 
                   :color="fileTypeColorMap[librarys.file_type] || defaultFileTypeColor"/>

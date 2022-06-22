@@ -5,14 +5,14 @@
     <view class="list">
       <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
                      :safearea="true">
-        <CardRow v-for="course in courseData" :key="course.id" class="card-row">
+        <CardRow v-for="course in courseData" :key="course.id" class="card-row" @clickBody="() => onClickRecommend(course)">
           <template v-slot:cardBodyLeft>
             <view class="card-body-left">
-              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" mode="aspectFill" />
+              <image :src="course.cover" class="img-size-lg" mode="aspectFill" />
             </view>
           </template>
           <template v-slot:cardBodyRight>
-            <view class="card-body-right" @click="() => onClickRecommend(course)">
+            <view class="card-body-right">
               <view class="card-right-top">
                 <text>{{ course.title }}</text>
               </view>

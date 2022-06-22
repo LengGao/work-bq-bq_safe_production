@@ -4,8 +4,8 @@
     <view class="list">
       <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up"
                      :fixed="true">
-        <u-section v-for="item in classList" :key="item.id" :title="item.name" type="line" padding="30rpx" color="#999">
-          <CardRow :leftImage="item.thumb" @clickRight="() => onClickCource(item)" @previewImg="previewImg">
+        <u-section v-for="item in classList" :key="item.id" :title="item.name" type="line" padding="30rpx" color="#333">
+          <CardRow :leftImage="item.thumb" @clickBody="() => onClickCource(item)">
             <template v-slot:rightTop>
               <view class="logan-card-right-top">
                 班级类型：<text class="content">{{ item.user_type }}</text>

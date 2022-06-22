@@ -42,14 +42,14 @@
       <view class="courses-list">
       <template v-if="courseData.length">
       <scroll-view scroll-y @scrolltolower="() => upCallback(page)" class="courses-list-scroll">
-        <CardRow v-for="course in courseData" :key="course.id">
+        <CardRow v-for="course in courseData" :key="course.id" @clickBody="() => onClickCource(course)">
           <template v-slot:cardBodyLeft>
             <view class="card-body-left">
-              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" mode="aspectFill" />
+              <image :src="course.cover" class="img-size-lg" mode="aspectFill" />
             </view>
           </template>
           <template v-slot:cardBodyRight>
-            <view class="card-body-right" @click="() => onClickCource(course)">
+            <view class="card-body-right">
               <view class="card-right-top">
                 <text>{{ course.title }}</text>
               </view>

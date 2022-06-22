@@ -265,9 +265,10 @@ export default {
 }
 
 .dialog-footer {
-  position: absolute;
-  bottom: 40rpx;
-  left: 0;
+  position: fixed;
+  bottom: calc(40rpx + var(--window-bottom));
+  left: 10%;
+  width: 80%;
 
   .btn-primary {
     color: #fff;

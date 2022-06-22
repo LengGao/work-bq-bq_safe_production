@@ -264,10 +264,8 @@ export default {
 
       } else if (res.code === 2998) {
         uni.showToast({ title: '课程已下架', icon: 'none' })
-        goBack()
       } else if (res.code === 2999) {
         uni.showToast({ title: '课程不存在或被删除', icon: 'none' })
-        goBack()
       }
     },
     // 随堂测试
@@ -554,7 +552,7 @@ export default {
             this.showModalForExamination()
           }
           // 是否学完
-          if (!isTesting && this.userStatus === 1) {
+          if (!this.isTesting && this.userStatus === 1) {
             player.pause()
             this.checkCourseGraduated()
           }
