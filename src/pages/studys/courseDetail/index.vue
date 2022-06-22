@@ -139,7 +139,6 @@ export default {
       overFinish: false,
       autoplay: 0,
       getVideoErr: '',
-      jumpCount: 0,
     }
   },
   onLoad(query) {
@@ -293,10 +292,8 @@ export default {
         }
       })
     },
-    onFaceVerifitySuccess(result) {
-      if (result) {
-        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
-      }
+    onFaceVerifitySuccess() {
+      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
       this.closeFaceVerifity()
     },
     showFaceVerifity() {
@@ -399,15 +396,15 @@ export default {
       this.canPlay = true
       this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: this.lesson_id })
     },
+    // 跳转
     jumpVideo(lesson_id) {
-      if (!this.jumpCount) {
         this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: lesson_id })
-        this.jumpCount = 1
-      }
     },
+    // 设置课程封面
     setCover(url) {
       if (this.player) this.player.setCover(url);
     },
+    // 获取视频提示
     getVideoMessage(res) {
       uni.showToast({ title: res.message, icon: 'none' })
 
@@ -500,7 +497,7 @@ export default {
         let faceTime = face[0]
 
         player.on('ready', () => {
-          // alert('ready')
+          alert('ready')
           player.play()
         })
 
