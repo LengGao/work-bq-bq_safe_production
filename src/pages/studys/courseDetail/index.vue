@@ -134,7 +134,7 @@ export default {
 
       // 实名与人脸验证
       canPlay: false,  // 约束是否能播放
-      faceTime: 0,  
+      faceTime: 0,
       isFaceing: false,
       isTesting: false,
       isRealing: false,
@@ -285,7 +285,7 @@ export default {
 
       uni.showModal({
         title: '提示',
-        content: `本次学习需要进行随堂考试,每道题目限时60秒,每次考试有5次机会,测评合格后(≥80分)将计入相应学时`,
+        content: `本次学习需要进行随堂考试,每题限时60秒,每次考试有5次机会,剩余${this.lesson.exam_times}次,测评合格后(≥80分)将计入相应学时`,
         cancelText: '取消',
         confirmText: '开始考试',
         cancelColor: '#199fff',
@@ -409,7 +409,7 @@ export default {
     },
     // 跳转
     jumpVideo(lesson_id) {
-        this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: lesson_id })
+      this.getCourseGetVideoAuth({ region_id: this.region_id, lesson_id: lesson_id })
     },
     // 设置课程封面
     setCover(url) {
@@ -458,7 +458,7 @@ export default {
     // 创建播放器
     createPlayer(options) {
       let { video, lesson, record, face, user, autoplay } = options
-      
+
       this.clearPlayer()
 
       this.player = new Aliplayer({
@@ -552,8 +552,9 @@ export default {
           if (!lesson.is_free && !lesson.is_forward) {
             document.querySelector(".prism-setting-speed").style.display = "block";
           }
+          const duration = player.getDuration()
           // 随堂考试
-          if (lesson.is_practice && !lesson.is_done) {
+          if (lesson.is_practice && !lesson.is_done && this.start_second < duration) {
             this.isTesting = true;
             player.pause()
             this.showModalForExamination()

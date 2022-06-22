@@ -11,32 +11,35 @@
         <uni-icons custom-prefix="iconfont" type="icon-chacha" color="" size="96rpx" style="margin-bottom: 20rpx" />
         考试得分：{{ grader }}分
       </view>
-
       <view class="header-row-two">
         {{ pass ? victoryText : defeatText }}
       </view>
+      <view v-if="!pass" class="header-row-two">剩余{{times}}次机会</view>
     </view>
 
     <view class="main">
       <view class="gird">
         <view class="box" v-for="(item, index) in list" :key="index" :class="item ? 'success' : 'error'">
           {{ index + 1 }}
-          <uni-icons v-if="item" custom-prefix="iconfont" type="icon-zhengquetishitianchong"  
-          color="#49D204" size="36rpx" style="position: absolute; right: -4rpx; bottom: -8rpx;" />
-          <uni-icons v-else custom-prefix="iconfont" type="icon-cuowutishitianchong" 
-          color="#F76510" size="36rpx" style="position: absolute; right: -4rpx; bottom: -8rpx;" />
+          <uni-icons v-if="item" custom-prefix="iconfont" type="icon-zhengquetishitianchong" color="#49D204"
+                     size="36rpx" style="position: absolute; right: -4rpx; bottom: -8rpx;" />
+          <uni-icons v-else custom-prefix="iconfont" type="icon-cuowutishitianchong" color="#F76510" size="36rpx"
+                     style="position: absolute; right: -4rpx; bottom: -8rpx;" />
         </view>
       </view>
     </view>
 
     <view class="footer">
-      <button class="footer-first" plain @click="onAnalysis">查看解析</button>
+      <button class="footer-first" v-if="times" plain @click="onAnalysis">查看解析</button>
       <view class="footer-second" v-if="pass">
         <button class="footer-second-btn" @click="onNext">继续学习</button>
       </view>
       <view class="footer-second" v-else>
-        <button class="footer-second-btn" @click="() => onRestart('study')">再学一次</button>
-        <button class="footer-second-btn" @click="() => onRestart('examination')">再考一次</button>
+        <block v-if="times">
+          <button class="footer-second-btn" @click="() => onRestart('study')">再学一次</button>
+          <button class="footer-second-btn" @click="() => onRestart('examination')">再考一次</button>
+        </block>
+        <button v-else class="footer-second-btn" @click="() => onRestart('study')">重新学习</button>
       </view>
     </view>
   </view>
@@ -67,8 +70,9 @@ export default {
       lesson_id: '',
       course_id: '',
       next_lesson_id: '',
+      times: 0
     }
-  },  
+  },
   onLoad(options) {
     let { practice_id, lesson_id, course_id } = options
     this.practice_id = practice_id
@@ -100,8 +104,8 @@ export default {
     },
     onAnalysis() {
       let url = `/pages/studys/classTestMode/analysis/index`
-      let {practice_id, lesson_id, course_id, next_lesson_id, pass} = this.getQuery()
-      let query = {practice_id, lesson_id, course_id, next_lesson_id, pass}
+      let { practice_id, lesson_id, course_id, next_lesson_id, pass } = this.getQuery()
+      let query = { practice_id, lesson_id, course_id, next_lesson_id, pass }
       let path = this.getPath(url, query)
       uni.redirectTo({ url: path })
     },
@@ -120,7 +124,7 @@ export default {
       } else {
         url = `/pages/studys/classTestMode/answer/index`
         query = `?practice_id=${this.practice_id}&lesson_id=${this.lesson_id}&course_id=${this.course_id}`
-        uni.redirectTo({ url: url + query})
+        uni.redirectTo({ url: url + query })
       }
     },
     async getData() {
@@ -131,6 +135,7 @@ export default {
         this.grader = res.data.score
         this.pass = res.data.pass
         this.next_lesson_id = res.data.next_lesson_id
+        this.times = res.data.times
       }
     }
   }
@@ -146,13 +151,13 @@ export default {
 }
 
 .success {
-  color: #49D204;
-  border-color:#49D204; 
+  color: #49d204;
+  border-color: #49d204;
 }
 
 .error {
-  color: #F76510; 
-  border-color: #F76510; 
+  color: #f76510;
+  border-color: #f76510;
 }
 
 .header {
@@ -201,7 +206,7 @@ export default {
     justify-content: center;
     align-items: center;
     margin: 0 auto;
-    width:  80rpx;
+    width: 80rpx;
     height: 80rpx;
     font-size: 36rpx;
     border-width: 2rpx;
