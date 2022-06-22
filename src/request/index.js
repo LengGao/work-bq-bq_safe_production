@@ -12,6 +12,8 @@ if (userInfo || orgInfo) {
   service.setHeader({ token: userInfo.token, 'org-id': orgInfo.id })
 }
 
+// 开发过程中遇到了不允许使用拦截做提示的要求，所以拦截器编程了
+
 const interactiveMap = {
   loading: { open: GLOBAL.showLoading, close: GLOBAL.hideLoading, option: { title: '加载中' } },
   toast: { open: GLOBAL.showToast, class: GLOBAL.hideToast, option: { title: '', icon: 'none', position: 'center' } },
@@ -79,11 +81,8 @@ service.useResponseInterceptor((response) => {
   } else if (handlerError[`${body.code}`]) {
       handlerError[`${body.code}`]()
   }
-  
   return response
 })
-
-
 
 export { service }
 

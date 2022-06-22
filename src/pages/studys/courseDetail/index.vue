@@ -64,11 +64,6 @@
     <uni-popup ref="realVerification" class="real-verification" type="center">
       <RealVerification @RealVerifitynSuccess="onRealVerifitynSuccess" />
     </uni-popup>
-
-    <uni-popup ref="popup" type="bottom">
-
-    </uni-popup>
-
   </view>
 </template>
 
@@ -560,7 +555,6 @@ export default {
             this.showModalForExamination()
           }
           // 是否学完
-          console.log('t', this.userStatus);
           if (this.userStatus === 1) {
             player.pause()
             this.checkCourseGraduated()
