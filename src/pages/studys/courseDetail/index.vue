@@ -131,8 +131,8 @@ export default {
       start_second: 0, // 当前时间
 
       // 实名与人脸验证
-      canPlay: false,
-      faceTime: 0,
+      canPlay: false,  // 约束是否能播放
+      faceTime: 0,  
       isFaceing: false,
       isTesting: false,
       isRealing: false,
@@ -498,9 +498,10 @@ export default {
         // 人脸时间
         let faceTime = face[0]
 
-        // player.on('ready', () => {
-        //   player.play()
-        // })
+        player.on('ready', () => {
+          alert('ready')
+          player.play()
+        })
 
         player.on('canplay', () => {
           this.canPlay = true
@@ -546,7 +547,7 @@ export default {
             return;
           }
           // 是否学完
-          if (lesson.is_free) {
+          if (lesson.is_free && this.userStatus === 1) {
             this.checkCourseGraduated()
           }
 
@@ -586,6 +587,7 @@ export default {
         })
       })
     },
+    // 计时器相关
     destroyInterval() {
       if (this.intervalId) {
         clearInterval(this.intervalId)
@@ -604,7 +606,6 @@ export default {
         clearInterval(this.intervalId)
         this.intervalId = null
       }
-
       this.intervalId = setInterval(() => {
         this.sendData()
       }, this.time)
@@ -633,6 +634,8 @@ export default {
 
       this.start_second = currentTime;
     },
+
+    // 获取视频
     async getCourseGetVideoAuth(params, autoplay = true) {
       let res = await courseGetVideoAuth(params)
       let { video, lesson, record, face, user } = res.data
@@ -648,7 +651,6 @@ export default {
 
         if (lesson.is_in_exam && lesson.is_practice && this.userStatus === 1) {
           this.canPlay = false
-          // this.clearPlayer()
           if (this.player) this.player.pause();
           this.showModalForExamination()
           return;
@@ -656,7 +658,6 @@ export default {
 
         if (!user.real_status && this.userStatus === 1) {
           this.canPlay = false
-          // this.clearPlayer()
           if (this.player) this.player.pause();
           this.showModalForRealVerification()
           return;
@@ -670,6 +671,7 @@ export default {
       }
     },
 
+    // 检查是否播放结束
     async checkCourseGraduated() {
       let res = await checkCourseGraduated({ course_id: this.course_id })
       if (res.code === 0) {
