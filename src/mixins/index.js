@@ -29,6 +29,8 @@ export const userStatus = {
     }
   },
   mounted() {
+    this.userStatus = this.$store.getters.userStatus
+    this.questionBlankStatus = this.$store.getters.questionBankInfo.id
   },
   methods: {
     authority(option) {
