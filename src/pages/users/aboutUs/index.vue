@@ -1,11 +1,9 @@
 <template>
   <view class="about-us">
     <custom-header :title="defaultTitle"></custom-header>
-    <scroll-view scroll-x style="height: 80%">
       <view class="content">
-        <uParse :content="content || '--'"></uParse>
+        <view v-html="content || '--'"></view>
       </view>
-    </scroll-view>
   </view>
 </template>
 
@@ -43,8 +41,9 @@ export default {
 <style lang="scss" scoped>
 @import "@/styles/logan.scss";
 .about-us {
-  overflow: hidden;
+  width: 100%;
   height: 100%;
+  overflow: auto;
 }
 
 .content {

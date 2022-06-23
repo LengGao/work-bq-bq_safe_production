@@ -12,7 +12,7 @@
     </view>
     
     <view class="footer">
-      <button class="btn__primary" @click="onDownLoad" size="mini" v-if="libraryData.file_url"> 点击下载 </button>
+      <button class="btn__primary" @click="onDownLoad" v-if="libraryData.file_url"> 点击下载 </button>
     </view>
   </view>
 </template>
@@ -110,6 +110,7 @@ export default {
   box-sizing: border-box;
 
   .btn__primary {
+    font-size: 32rpx;
     color: #fff;
     background-color: #199fff;
     border-radius: 24rpx;

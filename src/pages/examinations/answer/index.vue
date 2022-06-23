@@ -488,7 +488,8 @@ export default {
       if (question_id) {
         let res = await getQuestionDetail(params)
         if (res.code === 0) {
-          this.questionList[index] = res.data
+          // this.questionList[index] = res.data
+          this.$set(this.questionList, index, res.data)
         }
       }
     },
