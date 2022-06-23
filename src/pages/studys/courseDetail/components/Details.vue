@@ -42,7 +42,8 @@
 
 
     <view class="course-rich">
-      <u-parse v-if="info.content" class="content" :content="info.content" />
+      <!-- <u-parse v-if="info.content" class="content" :content="info.content" /> -->
+      <view class="content" v-if="info.content" v-html="info.content"></view>
     </view>
   </view>
 </template>
@@ -78,6 +79,8 @@ export default {
     timeTotal() {
       return Math.imul(this.info.chapter_count, this.info.lesson_count)
     }
+  },
+  mounted() {
   },
   methods: {
     // 咨询
@@ -225,8 +228,21 @@ export default {
   overflow: hidden;
   padding: 30rpx;
   line-height: 2;
-  box-sizing: border-box;
   border-top: $logan-border-spacing-md;
+  box-sizing: border-box;
+
+  .content {
+    ::v-deep p {
+      text-indent: 2em;
+    }
+
+   ::v-deep img {
+      max-width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
 }
 
 .footer {
