@@ -57,8 +57,8 @@ export default {
       let file = tempFiles[0]
       let token = this.$store.getters.token
       let org = this.$store.getters.orgInfo
-      let header = {'token': token, 'org-id': org.id}
-      let ret = await uploadImage(file, header)
+      let header = { 'token': token, 'org-id': org.id }
+      let ret = await uploadImage(file.file, header)
       let res = JSON.parse(ret[1].data)
       if (res.code === 0) {
         let item = { id: file.uuid, url: res.data }
@@ -66,23 +66,23 @@ export default {
       }
     },
     ondel({ tempFile }) {
-      console.log('tempFiles', tempFile );
+      console.log('tempFiles', tempFile);
       let file = tempFile
       let index = this.form.images.findIndex(item => item.id === file.uuid)
       this.form.images.splice(index, 1)
     },
     async onSubmit(e) {
       let form = this.form
-      form.images = form.images.map(item => ( item.url ))
+      form.images = form.images.map(item => (item.url))
       let params = { ...form }
       let res = await feedback(params)
       if (res.code === 0) {
-        this.onReset() 
+        this.onReset()
         uni.showToast({ title: '提交成功', icon: 'success' })
         setTimeout(() => { this.goBack() }, 800)
       } else {
         uni.showToast({ title: `${res.message}`, icon: 'none' })
-      } 
+      }
     },
     onReset() {
       this.form = { type: '', content: '', images: [] }
