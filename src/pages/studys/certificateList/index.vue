@@ -49,7 +49,7 @@
           <view class="list-item-title">{{ item.title }}</view>
           <view class="list-item-time">获取时间：{{ item.time }}</view>
           <view class="list-item-image-box">
-            <image class="image" @click="() => previewImg(item.url)" :src="item.url" mode="aspectFill" />
+            <image class="image" @click="() => previewImg(item.url)" :src="item.url" mode="aspectFit" />
           </view>
           <view class="list-item-save">
             <button class="btn-primary" @click="() => onViewCertificate(item.url)">打开图片</button>
@@ -71,14 +71,14 @@
         <view class="section">
           <view class="hader">太好啦，您的证书已生成</view>
           <view class="certificate">
-            <image class="certificate-img" :src="downloadUrl" mode="widthFix" />
+            <image class="certificate-img" :src="downloadUrl" mode="aspectFit" />
           </view>
           <view class="close-icon">
             <uni-icons type="clear" size="56rpx" @click="onClose(2)"/>
           </view>
         </view>
         <view class="footer">
-          <button class="btn-primary">请长安图片保存 </button>
+          <button class="btn-primary">请长按图片保存 </button>
         </view>
       </view>
     </uni-popup>
@@ -420,7 +420,7 @@ export default {
       }
       .image {
         width: 100%;
-        height: 446rpx;
+        height: 846rpx;
       }
 
       .btn-primary {
