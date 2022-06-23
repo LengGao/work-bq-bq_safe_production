@@ -1,7 +1,8 @@
 <template>
   <view class="short">
     <view class="quetion-content">
-      <u-parse :content="options.title" />
+      <!-- <u-parse :content="options.title" /> -->
+      <view v-html="options.title"></view>
     </view>
     <textarea class="text" placeholder="请输入" :disabled="analysis" :value="checkedAnswer" @input="onInput" />
     

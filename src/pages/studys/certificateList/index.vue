@@ -15,7 +15,7 @@
         <CardRow v-for="course in courseData" :key="course.id" class="cardrow-color">
           <template v-slot:cardBodyLeft>
             <view class="card-body-left">
-              <image @click="() => previewImg(course.cover)" :src="course.cover" class="img-size-lg" mode="aspectFill"/>
+              <image :src="course.cover" class="img-size-lg" mode="aspectFill"/>
             </view>
           </template>
           <template v-slot:cardBodyRight>

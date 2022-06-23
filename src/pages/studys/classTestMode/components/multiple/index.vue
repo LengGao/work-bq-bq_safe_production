@@ -1,7 +1,8 @@
 <template>
   <view class="multiple">
     <view class="quetion-content">
-      <u-parse :content="options.title" />
+      <!-- <u-parse :content="options.title" /> -->
+      <view v-html="options.title"></view>
     </view>
     <Select :options="options.option" :value="checkedAnswer" :correct-answer="correctAnswer" multiple
             :analysis="analysis"

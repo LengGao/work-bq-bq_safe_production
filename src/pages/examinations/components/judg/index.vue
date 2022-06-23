@@ -1,7 +1,8 @@
 <template>
   <div class="judg">
     <view class="quetion-content">
-      <u-parse :content="options.title" />
+      <!-- <u-parse :content="options.title" /> -->
+      <view v-html="options.title"></view>
     </view>
     <Select :options="options.option" :value="checkedAnswer" :model="model" :correct-answer="correctAnswer"  @change="onChangeOpt" />
     <AnswerAnalysis v-if="correctAnswer" :question="options" :userAnswer="checkedAnswer" />
