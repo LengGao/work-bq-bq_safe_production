@@ -652,10 +652,10 @@ export default {
           this.player.seek(res.data.finish_second);
           this.start_second = res.data.finish_second;
           return;
-        } 
-      } else {
-        this.player.pause()
-      }
+        } else {
+          this.player.pause()
+        }
+      } 
 
       this.start_second = currentTime;
     },
