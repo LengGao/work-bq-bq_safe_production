@@ -523,9 +523,9 @@ export default {
         let faceTime = face[0]
 
         player.on('ready', () => {
-          // player.play() pass
+          player.play()
           // document.querySelector('#aliplayer').play() pass
-          this.resolveAutoplay(player)
+          // this.resolveAutoplay(player)
         })
 
         player.on('canplay', () => {
