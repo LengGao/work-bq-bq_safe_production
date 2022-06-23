@@ -129,6 +129,7 @@ export default {
 
       // 实名与人脸验证
       canPlay: false,  // 约束是否能播放
+      isLoad: false,
       faceTime: 0,
       isFaceing: false,
       isTesting: false,
@@ -452,15 +453,17 @@ export default {
           document.addEventListener('WeixinJSBridgeReady', () => {
             player.play()
           })
+          if (this.isLoad) player.play();
         } else if (document.attachEvent) {
           document.attachEvent('onWeixinJSBridgeReady', () => {
             player.play()
           })
+          if (this.isLoad) player.play();
         }
       } else {
         player.play()
       }
-
+      this.isLoad = true
     },
     // 创建播放器
     createPlayer(options) {
