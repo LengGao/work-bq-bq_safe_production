@@ -9,7 +9,7 @@
               <view class="title-text">
                 {{ item1.title }}
               </view>
-              <view v-if="item1.is_try" class="tag">试看</view>
+              <view v-if="!is_buy && item1.is_try" class="tag">试看</view>
             </view>
           </view>
         </template>

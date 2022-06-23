@@ -154,7 +154,7 @@ export default {
   },
   methods: {
     init(query) {
-      let { course_id, lesson_id, autoplay } = query
+      let { course_id, lesson_id, autoplay, nextAction } = query
       this.course_id = +course_id
       this.lesson_id = +lesson_id
       this.autoplay = +autoplay
@@ -166,6 +166,9 @@ export default {
       if (this.lesson_id) {
         this.canPlay = true
         this.getCourseGetVideoAuth({ lesson_id: this.lesson_id, region_id: this.region_id })
+      }
+      if (+nextAction) {
+        this.checkCourseGraduated()
       }
     },
     // dom隐藏时回调
@@ -570,12 +573,6 @@ export default {
             // player.pause()
             this.stopInterval()
             this.showModalForExamination()
-          }
-          // 是否学完
-          if (!this.isTesting && this.userStatus === 1) {
-            // player.pause()
-            this.stopInterval()
-            this.checkCourseGraduated()
           }
 
           // 重置播放开始时间

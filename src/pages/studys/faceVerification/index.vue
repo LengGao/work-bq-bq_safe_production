@@ -150,14 +150,14 @@ export default {
       history.back()
     },
     handlerSuccess(strem) {
-      console.log('strem', strem)      
+      // console.log('strem', strem) 
       this.showRestartBtn = false
       this.strem = strem
       this.video.srcObject = strem
       this.video.play()
     },
     handlerError(error) {
-      console.log('error', error)
+      // console.log('error', error)
       this.showRestartBtn = true
       let toastMsg = `${this.errMsgMap[error.name]}`
       uni.showToast({ title: toastMsg, icon: 'none' })

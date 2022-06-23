@@ -176,7 +176,8 @@ export function getDailyStatistics(data) {
   return request({
     url: 'question/getDailyStatistics',
     method: 'post',
-    data   
+    data,
+    nocatch: true
   })
 }
 

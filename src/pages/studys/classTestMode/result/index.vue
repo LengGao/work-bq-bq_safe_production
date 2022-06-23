@@ -14,7 +14,7 @@
       <view class="header-row-two">
         {{ pass ? victoryText : defeatText }}
       </view>
-      <view v-if="!pass" class="header-row-two">剩余{{times}}次机会</view>
+      <view v-if="!pass" class="header-row-two">剩余<text style="color: red;">{{times}}</text>次机会</view>
     </view>
 
     <view class="main">
@@ -111,7 +111,7 @@ export default {
     },
     onNext() {
       let url = `/pages/studys/courseDetail/index`
-      let query = `?lesson_id=${this.next_lesson_id}&course_id=${this.course_id}&autoplay=1`
+      let query = `?lesson_id=${this.next_lesson_id}&course_id=${this.course_id}&autoplay=1&nextAction=1`
       uni.reLaunch({ url: url + query })
     },
     onRestart(type) {
@@ -194,7 +194,7 @@ export default {
 
   .gird {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     grid-auto-rows: minmax(80rpx, auto);
     grid-gap: 40rpx;
     gap: 40rpx;

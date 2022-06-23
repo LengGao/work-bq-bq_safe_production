@@ -31,7 +31,7 @@
                 </view>
               </view>
               <view class="card-right-footer">
-                  <view class="tag" :class="course.learning_progress > 0  && course.learning_progress < 100 ? 'tag-two-full' : 'tag-three-full'"
+                  <view class="tag" :class="course.learning_progress > 0 ? 'tag-two-full' : 'tag-three-full'"
                         @click="() => generatorLearnRecond(course)">学习记录</view>
                   <view class="tag" :class="course.learning_progress >= 100 ? 'tag-one-full' : 'tag-three-full'"
                         @click="() => buildLearnCert(course)">学习证书</view>

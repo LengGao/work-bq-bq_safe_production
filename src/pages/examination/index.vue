@@ -120,10 +120,8 @@ export default {
         { id: 2, name: "模拟考试", desc: '仿真考试训练，智能组卷测评', bgColor: '#FFF7F7', arrow: '/static/img/examination_bg_list2.png', thumb: '/static/img/examination_icon_list1.png', url: '/pages/examinations/examinationMock/index' },
       ],
 
-      isLoad: false,
-      isReady: false,
       question_bank_id: '',
-      questionBankInfo: '',
+      questionBankInfo: {},
 
       statistics: {
         answer_days: 0,
@@ -133,39 +131,26 @@ export default {
       },
     };
   },
-  watch: {
-    questionBankInfo(val) {
-      if (val.id) {
-        this.setActiveQuestionBank([val])
-        this.getDailyStatistics()
-      }
-    }
-  },
   computed: {
     answerStatus() {
       return this.statistics.today_answer_num ? '继续练习' : '今日未练习'
     },
     activeQuestionBank() {
-      return this.questionBankInfo && this.questionBankInfo.id ? this.questionBankInfo.title : '请选择题库' 
+      return this.questionBankInfo.id ? this.questionBankInfo.title : '请选择题库' 
     }
   },
   onLoad() {
     this.questionBankInfo = this.$store.getters.questionBankInfo
-    if (!this.isLoad) { this.init() }
+    this.question_bank_id = this.questionBankInfo.id
   },
   onShow() {
-    if (this.isLoad) {
-      this.init()
-    } else {
-      this.isLoad = true
-    }
+    this.init()
   },  
   methods: {
     init() {
-      this.getQuestionBankList()
-      if (this.question_bank_id) {
+      this.getQuestionBankList().then(res => {
         this.getDailyStatistics()
-      }
+      })
     },
     to(url) {
       if (this.authority({ checkBlank: true })) {
@@ -178,8 +163,10 @@ export default {
       }
     },
     async onCandidates(e) {
-      this,getQuestionBankList()
-      this.$refs.popupRef.open()
+      getQuestionBankList().then(res =>{
+        this.candidates = res.data
+        this.$refs.popupRef.open()
+      })
     },
     openPopupChange({ show }) {
       if (show) {
@@ -193,6 +180,7 @@ export default {
       let questionBankInfo = this.candidates[index]
       this.questionBankInfo = questionBankInfo
       this.$refs.popupRef.close()
+      this.setActiveQuestionBank([questionBankInfo])
     },
     setActiveQuestionBank(questionBankList) {
       if (Array.isArray(questionBankList)) {
@@ -200,15 +188,27 @@ export default {
         this.question_bank_id = questionBankInfo.id
         this.questionBankInfo = questionBankInfo
         this.$store.commit('SET_QUESTION_BANK_INFO', questionBankInfo)
+        this.getDailyStatistics()
+      }
+    },
+    checkQuestionStatus(arr) {
+      let qId = this.$store.getters.questionBankInfo.id
+      let findIndex = arr.findIndex(item => item.id === qId)
+      if (findIndex === -1) {
+        if (this.userStatus === 1 && qId) {
+          uni.showToast({ title: '题库不存在或被删除', icon: 'none' })
+        }
+        this.questionBankInfo = {}
+        this.question_bank_id = ''
+        uni.removeStorageSync('questionBankInfo')
+        this.$store.commit('SET_QUESTION_BANK_INFO', {})
       }
     },
     async getQuestionBankList() {
       let res = await getQuestionBankList()
-      if (res.code === 0) {
+      if (res.code === 0) {    
         this.candidates = res.data
-        if (!this.questionBankInfo.id) {
-          this.setActiveQuestionBank(res.data)
-        }
+        this.checkQuestionStatus(res.data)
       }
       return res
     },
