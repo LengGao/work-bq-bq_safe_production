@@ -58,8 +58,7 @@
                 <view class="cover-tag cover-tag--success" v-if="course.price_type === 0">免费课</view>
                 <view class="cover-tag cover-tag--primary" v-else-if="course.price_type === 1">认证课</view>
                 <view class="cover-tag" v-else>其他课</view>
-                <image :src="course.cover" class="logan-img-size-lg"
-                       mode="aspectFill" />
+                <image :src="course.cover" class="logan-img-size-lg" mode="aspectFill" />
               </view>
             </template>
             <template v-slot:cardBodyRight>
@@ -100,8 +99,8 @@
       </view>
 
       <view class="policy-swiper">
-        <swiper :display-multiple-items="policys.length" :duration="500"
-                :autoplay="false" :circular="false" class="swiper">
+        <swiper :display-multiple-items="policys.length" :duration="500" :autoplay="false" :circular="false"
+                class="swiper">
           <swiper-item v-for="policy in policys" :key="policy.id">
             <view class="swiper-item-box" @click="() => onClickPolicy(policy.id)">
               <image :src="policy.cover" class="swiper-image" mode="aspectFill" />
@@ -123,12 +122,14 @@
 
       <view class="library-list">
         <template v-if="librarys.length">
-          <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.cover" @clickBody="() => onClickLibrary(library.id)">
+          <CardRow v-for="library in librarys" :key="library.id" :leftImage="library.cover"
+                   @clickBody="() => onClickLibrary(library.id)">
             <template v-slot:cardBodyRight>
               <view class="card-body-right">
                 <view class="card-right-top">
-                  <uni-icons custom-prefix="iconfont" size="28rpx" :type="fileTypeMap[library.file_type] || defaultFileType" 
-                  :color="fileTypeColorMap[librarys.file_type] || defaultFileTypeColor"/>
+                  <uni-icons custom-prefix="iconfont" size="28rpx"
+                             :type="fileTypeMap[library.file_type] || defaultFileType"
+                             :color="fileTypeColorMap[librarys.file_type] || defaultFileTypeColor" />
                   <text class="library-text">{{ library.title || '--' }}</text>
                 </view>
                 <view class="card-right-top">
@@ -169,6 +170,7 @@ import { mapGetters } from 'vuex'
 import { browser } from '@/mixins/index'
 
 import {
+  systemConfig,
   systemRegion,
   getLocation,
   banner,
@@ -215,28 +217,28 @@ export default {
         'txt': 'icon-txt',
         'zip': 'icon-wenjianleixing-biaozhuntu-yasuowenjian',
         'pdf': 'icon-wenjianleixing-biaozhuntu-PDFwendang',
-        'doc':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
-        'docx':  'icon-wenjianleixing-biaozhuntu-Wordwendang',
-        'xls':  'icon-wenjianleixing-suolvetu-gongzuobiao',
-        'xlsx':  'icon-wenjianleixing-suolvetu-gongzuobiao',
-        'jpg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-        'gif':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-        'png':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-        'jpeg':  'icon-wenjianleixing-suolvetu-tupianwenjian',
-      },            
+        'doc': 'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'docx': 'icon-wenjianleixing-biaozhuntu-Wordwendang',
+        'xls': 'icon-wenjianleixing-suolvetu-gongzuobiao',
+        'xlsx': 'icon-wenjianleixing-suolvetu-gongzuobiao',
+        'jpg': 'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'gif': 'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'png': 'icon-wenjianleixing-suolvetu-tupianwenjian',
+        'jpeg': 'icon-wenjianleixing-suolvetu-tupianwenjian',
+      },
       fileTypeColorMap: {
         'ppt': '#f98950',
         'txt': '#4fd397',
         'zip': '#576a95',
         'pdf': '#fa4e4e',
-        'doc':  '#4876f9',
-        'docx':  '#4876f9',
-        'xls':  '#4cb050',
-        'xlsx':  '#4cb050',
-        'jpg':  '#f6ad00',
-        'gif':  '#f6ad00',
-        'png':  '#f6ad00',
-        'jpeg':  '#f6ad00',
+        'doc': '#4876f9',
+        'docx': '#4876f9',
+        'xls': '#4cb050',
+        'xlsx': '#4cb050',
+        'jpg': '#f6ad00',
+        'gif': '#f6ad00',
+        'png': '#f6ad00',
+        'jpeg': '#f6ad00',
       },
     };
   },
@@ -248,10 +250,11 @@ export default {
       this.currLocationChange()
     }
   },
-  onLoad(option) {
+  onLoad({ org_id, org_name }) {
     this.banner()
     this.getSystemRegion()
     this.libraryList()
+    org_name && this.onChoiceOrg({ id: org_id, name: org_name })
   },
   onReady() {
     if (this.isReady) {
@@ -319,9 +322,9 @@ export default {
       if (orgSheet) {
         this.currOrganizationList = orgSheet
       } else {
-        this.currOrganizationList =  this.organizationList
+        this.currOrganizationList = this.organizationList
       }
-      
+
       if (list && list.length) {
         if (list.length > 1) {
           uni.hideTabBar()
@@ -356,7 +359,7 @@ export default {
       this.setTitle(item.name)
       this.setCurrOrg(item)
       this.changeReageBecauseOforg(item)
-      this.$refs['popup-org'].close()
+      this.$refs['popup-org'] && this.$refs['popup-org'].close()
     },
     // 机构与地区问题处理
     checkRegion() {
@@ -375,7 +378,7 @@ export default {
     },
     // 地区改变机构
     changeReageBecauseOforg(item) {
-      let currLocation = this.regions.find(region => region.id == item.region_id )
+      let currLocation = this.regions.find(region => region.id == item.region_id)
       if (currLocation) {
         this.currLocation = currLocation
         this.$store.commit('SET_REGION', currLocation)
