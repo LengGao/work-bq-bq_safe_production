@@ -248,7 +248,7 @@ export default {
       this.currLocationChange()
     }
   },
-  onLoad() {
+  onLoad(option) {
     this.banner()
     this.getSystemRegion()
     this.libraryList()

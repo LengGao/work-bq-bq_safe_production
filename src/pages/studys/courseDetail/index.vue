@@ -448,6 +448,22 @@ export default {
         this.player = null
       }
     },
+    resolveAutoplay(player) {
+      if (this.isWeixinJSBridge) {
+        if (document.addEventListener) {
+          document.addEventListener('WeixinJSBridgeReady', () => {
+            player.play()
+          })
+        } else if (document.attachEvent) {
+          document.attachEvent('onWeixinJSBridgeReady', () => {
+            player.play()
+          })
+        }
+      } else {
+        player.play()
+      }
+
+    },
     // 创建播放器
     createPlayer(options) {
       let { video, lesson, record, face, user, autoplay } = options
@@ -506,7 +522,8 @@ export default {
         let faceTime = face[0]
 
         player.on('ready', () => {
-          player.play()
+          // player.play()
+          document.querySelector('#aliplayer').play()
         })
 
         player.on('canplay', () => {
@@ -548,12 +565,14 @@ export default {
           // 随堂考试
           if (lesson.is_practice && !lesson.is_done && this.start_second < duration) {
             this.isTesting = true;
-            player.pause()
+            // player.pause()
+            this.stopInterval()
             this.showModalForExamination()
           }
           // 是否学完
           if (!this.isTesting && this.userStatus === 1) {
-            player.pause()
+            // player.pause()
+            this.stopInterval()
             this.checkCourseGraduated()
           }
 
