@@ -12,7 +12,7 @@
     </view>
     
     <view class="footer">
-      <button class="btn__primary" @click="onDownLoad" v-if="libraryData.file_url"> 点击下载 </button>
+      <button class="btn__primary" @click="onDownLoad" size="mini" v-if="libraryData.file_url"> 点击下载 </button>
     </view>
   </view>
 </template>

@@ -4,13 +4,13 @@
 
   <view class="main">
     <view class="section">
-      <view class="hader">太好啦，您的证书已生成</view>
+      <view class="hader">{{ toastTittle }}</view>
       <view class="certificate">
-        <image class="certificate-img" :src="downloadUrl" mode="widthFix" />
+        <image class="certificate-img" :src="downloadUrl" mode="aspectFit" />
       </view>
     </view>
-    <view class="footer">
-      <button class="btn-primary">请长安图片保存 </button>
+    <view class="footer" v-if="downloadUrl">
+      <button class="btn-primary">请长按图片保存 </button>
     </view>
   </view>
 </view>
@@ -28,6 +28,7 @@ export default {
       defaultTitle:  '学习证书',
       downloadUrl: '',
       course_id: 0,
+      toastTittle: '太好啦，您的证书已生成'
     }
   },
   onLoad(options) {
@@ -41,6 +42,7 @@ export default {
       if (res.code === 0) {
         this.downloadUrl = res.data.url
       } else {
+        this.toastTittle = res.message
         uni.showToast({ title:`${res.message}`, icon: 'none' })
       }
     }
@@ -77,6 +79,7 @@ export default {
 
     &-img {
       width: 100%;
+      height: 840rpx;
     }
   }
 }

@@ -1,7 +1,8 @@
 <template>
   <div class="short">
     <view class="quetion-content">
-      <u-parse :content="options.title" />
+      <!-- <u-parse :content="options.title" /> -->
+      <view v-html="options.title"></view>
     </view>
     <textarea :disabled="!!correctAnswer" class="text" @input="onInput" :value="checkedAnswer" placeholder="请输入" />
     <AnswerEye v-if="model !== 2" :correctAnswer="correctAnswer" @change="handleEyeChange" />

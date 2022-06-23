@@ -1,7 +1,8 @@
 <template>
   <div class="completion">
     <view class="quetion-content">
-      <u-parse :content="options.title" />
+      <!-- <u-parse :content="options.title" /> -->
+      <view v-html="options.title"></view>
     </view>
     <IOption v-for="(item, index) in inputItem" :key="index" :label="index + 1 + ''" :status="item.status">
       <template v-slot:label>

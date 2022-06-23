@@ -1,7 +1,8 @@
 <template>
   <div class="case">
     <view class="quetion-content">
-      <u-parse :content="options.title" />
+      <!-- <u-parse :content="options.title" /> -->
+      <view v-html="options.title"></view>
     </view>
     <view class="drawer" :class="{ 'drawer--open': isOpen }">
       <view class="btn" @click="handleToggle">

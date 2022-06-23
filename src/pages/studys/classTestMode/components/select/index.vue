@@ -5,7 +5,8 @@
       <template v-slot:label>
         <text> {{ selectLabel[index] }}</text>
       </template>
-      <u-parse :content="item.content" />
+      <!-- <u-parse :content="item.content" /> -->
+      <view v-html="item.content || '无'"></view>
     </s-option>
   </view>
 </template>

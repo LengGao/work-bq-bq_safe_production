@@ -1,7 +1,8 @@
 <template>
   <div class="indefinite">
     <view class="quetion-content">
-      <u-parse :content="options.title" />
+      <!-- <u-parse :content="options.title" /> -->
+      <view v-html="options.title"></view>
     </view>
     <Select :options="options.option" multiple :value="checkedAnswer" :model="model" :correct-answer="correctAnswer" @change="onChangeOpt" />
     <AnswerEye v-if="model !== 2" :correct-answer="correctAnswer" @change="handleEyeChange" />

@@ -1,10 +1,11 @@
 <template>
   <view class="about-us">
     <custom-header :title="defaultTitle"></custom-header>
-    <view class="content">
-       <uParse :content="content || '--'"></uParse>
-    </view>
-
+    <scroll-view scroll-x style="height: 80%">
+      <view class="content">
+        <uParse :content="content || '--'"></uParse>
+      </view>
+    </scroll-view>
   </view>
 </template>
 
