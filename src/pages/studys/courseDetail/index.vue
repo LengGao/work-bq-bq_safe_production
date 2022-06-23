@@ -121,7 +121,7 @@ export default {
       record: {}, // 学习记录
       face: [], // 人脸信息
       user: [], // 用户信息相关
-      intervalId: 0, //计时器
+      intervalId: 0, // 计时器
       time: 1000 * 10, // 记录时间
       end_time: 0,    // 终止时间
       prev_time: 0,   // 上次时间
@@ -139,7 +139,6 @@ export default {
     }
   },
   onLoad(query) {
-    console.log("userStatus", this.$store.getters.userStatus);
     this.init(query)
   },
   mounted() {
@@ -160,7 +159,6 @@ export default {
       this.autoplay = +autoplay
 
       this.region_id = this.$store.getters.region.id
-      uni.setStorageSync('course_id', course_id)
 
       this.getCourseInfo()
       this.getCommentHotWord()
@@ -522,8 +520,9 @@ export default {
         let faceTime = face[0]
 
         player.on('ready', () => {
-          // player.play()
-          document.querySelector('#aliplayer').play()
+          // player.play() pass
+          // document.querySelector('#aliplayer').play() pass
+          this.resolveAutoplay(player)
         })
 
         player.on('canplay', () => {
@@ -653,9 +652,9 @@ export default {
           this.player.seek(res.data.finish_second);
           this.start_second = res.data.finish_second;
           return;
-        } else {
-          this.player.pause()
-        }
+        } 
+      } else {
+        this.player.pause()
       }
 
       this.start_second = currentTime;
