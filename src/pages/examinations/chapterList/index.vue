@@ -8,7 +8,7 @@
       </view>
     </view>
 
-    <image class="b-img" src="../static/chapter_background2.png" mode="aspectFill"></image>
+    <image class="b-img" :src="bgImg" mode="aspectFill"></image>
     <view class="chapter-box">
       <scroll-view class="record-list" scroll-y @scrolltolower="onScrolltolower">
         <view class="chapter-container" v-if="chapterList.length">
@@ -41,6 +41,7 @@
 import NoData from "@/components/noData";
 import CustomHeader from '@/components/custom-header'
 import { getChapterList, restartPractice } from "@/api/question";
+import bgImg from '../static/chapter_background2.png'
 import { browser } from '@/mixins/index'
 
 export default {
@@ -59,6 +60,7 @@ export default {
       last_question_id: 0,
       source: 'chapter',
       isOnload: false,
+      bgImg: bgImg,
     };
   },
   onLoad() {
