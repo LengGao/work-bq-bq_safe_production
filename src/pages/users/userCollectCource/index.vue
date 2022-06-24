@@ -6,7 +6,7 @@
       <mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" :up="up" :fixed="true"
                      :topbar="true" :safearea="true">
         <view class="course-list-container">
-          <view class="course-item" v-for="item in courseData" :key="item.id" @clickBody="() => toDetails(item.id)">
+          <view class="course-item" v-for="item in courseData" :key="item.id" @click="() => toDetails(item.id)">
             <view class="course-item-cover">
               <image class="course-img" :src="item.cover" mode="aspectFill"  />
             </view>

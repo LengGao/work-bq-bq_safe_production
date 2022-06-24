@@ -77,7 +77,7 @@
             <uni-icons type="clear" size="56rpx" @click="onClose(2)"/>
           </view>
         </view>
-        <view class="footer">
+        <view class="footer" v-if="downloadUrl">
           <button class="btn-primary">请长按图片保存 </button>
         </view>
       </view>
@@ -142,7 +142,7 @@ export default {
       this.canScroll = true
     },
     generatorLearnRecond(course) {
-      if (course.learning_progress <= 0 || course.learning_progress >= 100) return;
+      if (course.learning_progress <= 0 ) return uni.showToast({ title: '该课程尚未学习', icon: 'none' });
       if (!course.status) return uni.showToast({ title: '该课程已下架', icon: 'none' });
 
       let url = '/pages/studys/learningRecords/index'
@@ -446,7 +446,8 @@ export default {
 }
 
 .certificate-detail {
-  height: 100vh;
+  height: 100%;
+  overflow: auto;
 
   .close-icon {
     margin-top: 20rpx;
@@ -454,7 +455,7 @@ export default {
   }
 
   .certificate-img {
-    width: 680rpx;
+    height: 1200rpx;
   }
 
   .footer {

@@ -42,6 +42,8 @@
 import logImag from "@/static/logo.png"
 import CustomHeader from "@/components/custom-header"
 import { browser } from '@/mixins/index'
+import { systemConfig } from '@/api/index'
+
 
 export default {
   mixins: [browser],
@@ -50,14 +52,14 @@ export default {
   },
   data() {
     return {
-      defaultTitle: '登录',
+      defaultTitle: '安培学堂',
       // username: '',
       // password: '',
-      // username: '430481199706297215',
-      // password: '123456',
-      // 琼琼
-      username: '430525199002265121',
+      username: '430481199706297215',
       password: '123456',
+      // 琼琼
+      // username: '430525199002265121',
+      // password: '123456',
       
       visibility: false,
       isRead: false,
@@ -69,6 +71,7 @@ export default {
   onLoad(query) {
     this.isRead = !!query.isRead
     this.from = query.from
+    this.systemConfig()
   },
   onShow() {
     console.log('this.isRead', this.isRead);
@@ -129,6 +132,17 @@ export default {
     onChecked(e) {
       this.isRead = e.target.value.length ? true : false
     },
+    async systemConfig() {
+      let res = await systemConfig()
+      if (res.code === 0) {
+        this.logImag = res.data.site_logo
+        this.defaultTitle = res.data.site_name
+        if (this.isWeixinJSBridge) {
+          uni.setNavigationBarTitle(res.data.site_name)
+        }
+      }
+      
+    }
   }
 }
 </script>
